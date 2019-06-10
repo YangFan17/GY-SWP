@@ -1,0 +1,104 @@
+<form nz-form #validateForm="ngForm" (ngSubmit)="save()" *ngIf="document">
+    <nz-card [nzBordered]="false" nzTitle="标准文档详情">
+        <div nz-row>
+            <div nz-col [nzSpan]="16">
+                <nz-form-item nz-row style="margin-bottom: 0px;">
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>归口部门</nz-form-label>
+                    <nz-form-control nz-col [nzSm]="20">
+                        <label>{{dept.name}}</label>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item nz-row style="margin-bottom: 0px;">
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>标准分类</nz-form-label>
+                    <nz-form-control nz-col [nzSm]="20">
+                        <label>{{category.name}}</label>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item nz-row>
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>标准编号</nz-form-label>
+                    <nz-form-control [nzSm]="20" nzHasFeedback>
+                        <input nz-input name="docNo" maxlength="100" #docNo="ngModel" [(ngModel)]="document.docNo"
+                            [placeholder]="'请填写标准编号'" required>
+                        <nz-form-explain *ngIf="docNo.control.dirty&&docNo.control.errors">
+                            <ng-container *ngIf="docNo.control.hasError('required')">请填写标准编号</ng-container>
+                            <ng-container *ngIf="docNo.control.hasError('maxlength')">字符长度小于等于100</ng-container>
+                        </nz-form-explain>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item nz-row>
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>标准名称</nz-form-label>
+                    <nz-form-control [nzSm]="20" nzHasFeedback>
+                        <input nz-input name="name" maxlength="200" #name="ngModel" [(ngModel)]="document.name"
+                            [placeholder]="'请填写标准名称'" required>
+                        <nz-form-explain *ngIf="name.control.dirty&&name.control.errors">
+                            <ng-container *ngIf="name.control.hasError('required')">请填写标准名称</ng-container>
+                            <ng-container *ngIf="name.control.hasError('maxlength')">字符长度小于等于200</ng-container>
+                        </nz-form-explain>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item nz-row>
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>可查看人员</nz-form-label>
+                    <nz-form-control [nzSm]="20">
+                        <nz-radio-group #isAllUsers="ngModel" [(ngModel)]="isAllUser"
+                            (ngModelChange)="allUserRadioChange($event)" [ngModelOptions]="{standalone: true}">
+                            <label nz-radio nzValue="1">部门所有人员</label>
+                            <label nz-radio nzValue="0">部门部分人员</label>
+                        </nz-radio-group>
+                        <div *ngIf="isAllUser == '0'">
+                            <nz-tag *ngFor="let user of userTags; let i = index;" [nzMode]="'closeable'"
+                                (nzAfterClose)="handleUserClose(user)">
+                                {{ user.name }}
+                            </nz-tag>
+                            <nz-tag class="editable-tag" [nzColor]="'#108ee9'" (click)="showDeptUserModel()">
+                                <i class="anticon anticon-plus"></i> 选择部门人员
+                            </nz-tag>
+                        </div>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item nz-row>
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>发布日期</nz-form-label>
+                    <nz-form-control [nzSm]="4" nzHasFeedback>
+                        <nz-date-picker [nzFormat]="'yyyy/MM/dd'" #publishTime="ngModel"
+                            [(ngModel)]="document.publishTime" [ngModelOptions]="{standalone: true}"></nz-date-picker>
+                        <nz-form-explain *ngIf="publishTime.control.dirty&&publishTime.control.errors">
+                            <ng-container *ngIf="publishTime.control.hasError('required')">请选择发布日期</ng-container>
+                        </nz-form-explain>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item nz-row>
+                    <nz-form-label nz-col [nzSm]="4" nzFor="attach">标准附件</nz-form-label>
+                    <nz-form-control [nzSm]="20">
+                        <nz-upload nzAction="{{actionUrl}}" [nzFileList]="fileList">
+                            <button nz-button type="button" (click)="uploadDocAttach()"><i nz-icon
+                                    nzType="upload"></i><span>上传附件</span></button>
+                        </nz-upload>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="8" class="text-center">
+                <div [style.display]="codeStyle">
+                    <qr [value]="qrCode.value" [background]="qrCode.background"
+                        [backgroundAlpha]="qrCode.backgroundAlpha" [foreground]="qrCode.foreground"
+                        [foregroundAlpha]="qrCode.foregroundAlpha" [level]="qrCode.level" [mime]="qrCode.mime"
+                        [padding]="qrCode.padding" [size]="qrCode.size"></qr>
+                </div>
+            </div>
+        </div>
+        <clause #clause></clause>
+        <footer-toolbar errorCollect>
+            <button nz-button [nzType]="'default'" (click)="return()">
+                返回
+            </button>
+            <button nz-button *ngIf="isUpdate" [nzType]="'danger'" (click)="delete()" [nzLoading]="saving">
+                删除
+            </button>
+            <!-- <button nz-button *ngIf="!document.isPublish" [nzType]="'primary'" (click)="save(true)" [nzLoading]="saving"
+                [disabled]="!validateForm.valid || saving">
+                保存并发布
+            </button> -->
+            <button nz-button [nzType]="'primary'" type="submit" [disabled]="!validateForm.valid || saving">
+                保存
+            </button>
+        </footer-toolbar>
+    </nz-card>
+</form>

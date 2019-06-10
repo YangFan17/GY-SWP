@@ -1,0 +1,39 @@
+<page-header [title]=""></page-header>
+<nz-card>
+    <div nz-row>
+        <div nz-col nzSpan="6">
+            <div style="padding-bottom: 10px;border-right-width: 10px;padding-right: 10px; padding-left: 10px;">
+                <!-- <button nz-button (click)="syncData()" style="width:100%" [acl]="'Admin'" [nzLoading]="syncDataLoading"
+                    nzType="primary"> -->
+                <button nz-button (click)="syncData()" style="width:100%" [nzLoading]="syncDataLoading"
+                    nzType="primary">
+                    <i class="anticon anticon-reload"></i>
+                    <span>同步组织架构</span>
+                </button>
+            </div>
+            <div style="padding-left:10px; padding-right:10px;">
+                <nz-tree style="margin:0px;" [(ngModel)]="nodes" [nzShowExpand]="true" (nzClick)="activeNode($event)"
+                    (nzDblClick)="openFolder($event)">
+                    <ng-template style="margin:0px;" #nzTreeTemplate let-node>
+                        <span class="custom-node" aria-grabbed="true" [class.active]="activedNode?.key===node.key">
+                            <span *ngIf="!node.isLeaf" [class.shine-animate]="node.origin.isLoading">
+                                <i class="anticon anticon-folder" *ngIf="!node.isExpanded"
+                                    (click)="openFolder(node)"></i>
+                                <i class="anticon anticon-folder-open" *ngIf="node.isExpanded"
+                                    (click)="openFolder(node)"></i>
+                                <span class="folder-name">{{node.title}}</span>
+                            </span>
+                            <span *ngIf="node.isLeaf">
+                                <i class="anticon anticon-folder"></i>
+                                <span class="file-name">{{node.title}}</span>
+                            </span>
+                        </span>
+                    </ng-template>
+                </nz-tree>
+            </div>
+        </div>
+        <div nz-col nzSpan="18">
+            <employee #employeeList></employee>
+        </div>
+    </div>
+</nz-card>

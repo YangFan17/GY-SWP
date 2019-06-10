@@ -1,0 +1,75 @@
+<page-header style="text-align: center;" title={{docInfo.name}}></page-header>
+<nz-card [nzBordered]="false" *ngIf="docInfo" class="info_card_margin">
+    <div nz-row nzGutter="16" style="margin-bottom: 16px;">
+        <div nz-col nzXs="24" nzSm="18">
+            <sv-container size="small" col="3" class="mb-md">
+                <sv label="标准编号">{{docInfo.docNo}}</sv>
+                <sv label="标准文档">
+                    <a title="预览" (click)="goPre(docInfo.id)"> {{docInfo.name}}
+                    </a>
+                </sv>
+                <sv label="归口部门">{{docInfo.deptName}}</sv>
+                <sv label="标准分类">{{docInfo.categoryDesc}}</sv>
+                <sv label="发布时间">{{docInfo.publishTime| date: "yyyy-MM-dd"}}</sv>
+            </sv-container>
+        </div>
+    </div>
+    <div nz-row>
+        <div nz-row [nzGutter]="24">
+            <div nz-col [nzSpan]="6" class="mb-md" [class.text-right]="'true'" style="float:right">
+                <button nz-button type="button" (click)="showDetail()" nzType="primary">
+                    <i class="anticon anticon-plus"></i>
+                    <span>添加条款</span>
+                </button>
+            </div>
+        </div>
+        <nz-table #expandTable [nzData]="listOfMapData" [nzShowPagination]="false">
+            <thead>
+                <tr>
+                    <th nzWidth="50px">
+                        <!-- <label nz-checkbox [(ngModel)]="isSelectedAll" (ngModelChange)="checkAll($event)">
+                        </label> -->
+                    </th>
+                    <th>条款编号</th>
+                    <th nzWidth="20%">条款标题</th>
+                    <th nzWidth="60%">条款内容</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngFor="let data of expandTable.data">
+                    <ng-container *ngFor="let item of mapOfExpandedData[data.id]">
+                        <tr *ngIf="(item.parent && item.parent.expand) || !item.parent"
+                            [ngClass]="{ 'true': item.checked == true}">
+                            <td style="text-align: right;">
+                                <label nz-checkbox [(ngModel)]="item.checked"
+                                    (ngModelChange)="isCancelCheck($event,item.id)">
+                                </label>
+                            </td>
+                            <td [nzIndentSize]="item.level * 20" [nzShowExpand]="item.children.length>0"
+                                [(nzExpand)]="item.expand"
+                                (nzExpandChange)="collapse(mapOfExpandedData[data.id], item, $event)">
+                                {{ item.clauseNo }}
+                            </td>
+                            <td>{{ item.title | lengthLimit:20}}</td>
+                            <td>{{ item.content| lengthLimit:60 }}</td>
+                            <td>
+                                <a (click)="showDetail(item.id)">阅读学习</a>
+                                <!-- <nz-divider nzType="vertical"></nz-divider>
+                                <a (click)="showDetail(item,'child')">添加子条款</a> -->
+                            </td>
+                        </tr>
+                    </ng-container>
+                </ng-container>
+            </tbody>
+        </nz-table>
+    </div>
+    <footer-toolbar>
+        <button nz-button [nzType]="'default'" (click)="return()">
+            返回
+        </button>
+        <button nz-button [nzType]="'primary'" type="button" [nzLoading]="saving" (click)="confirmClause()">
+            确认条款
+        </button>
+    </footer-toolbar>
+</nz-card>
