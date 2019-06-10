@@ -192,6 +192,25 @@ namespace GYSWP.EmployeeClauses
             await _entityRepository.DeleteAsync(s => input.Contains(s.Id));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<APIResultDto> GetIsConfirmAsync(ConfirmClauseInput input)
+        {
+            var user = await GetCurrentUserAsync();
+            int count = await _entityRepository.GetAll().Where(v => v.DocumentId == input.DocId && v.EmployeeId == user.EmployeeId).CountAsync();
+            if (count != 0)
+            {
+                return new APIResultDto() { Code = 0, Msg = "ok", Data = true };
+            }
+            else
+            {
+                return new APIResultDto() { Code = 0, Msg = "ok", Data = false };
+            }
+        }
+
 
         /// <summary>
         /// 确认条款
@@ -201,18 +220,53 @@ namespace GYSWP.EmployeeClauses
         public async Task<APIResultDto> ConfirmClauseAsync(ConfirmClauseInput input)
         {
             var user = await GetCurrentUserAsync();
+            await DeleteAll(user.EmployeeId, input.DocId);
             foreach (var item in input.ClauseIds)
             {
+                //bool isDelete = await NotExistClauseAsync(item, user.EmployeeId, input.DocId);
+                //if (isDelete == false)
+                //{
                 var entity = new EmployeeClause();
                 entity.ClauseId = item;
                 entity.EmployeeId = user.EmployeeId;
                 entity.EmployeeName = user.EmployeeName;
                 entity.DocumentId = input.DocId;
                 await _entityRepository.InsertAsync(entity);
+                //}
             }
             return new APIResultDto() { Code = 0, Msg = "保存成功" };
         }
+
+        /// <summary>
+        /// 删除取消的条款
+        /// </summary>
+        /// <param name="clauseId"></param>
+        /// <param name="userId"></param>
+        /// <param name="docId"></param>
+        /// <returns></returns>
+        //private async Task<bool> NotExistClauseAsync(Guid clauseId, string userId, Guid docId)
+        //{
+        //    var id = await _entityRepository.GetAll().Where(v => v.EmployeeId == userId && v.DocumentId == docId && v.ClauseId == clauseId).Select(v => v.Id).FirstOrDefaultAsync();
+        //    if (id != Guid.Empty)
+        //    {
+        //        await _entityRepository.DeleteAsync(id);
+        //        await CurrentUnitOfWork.SaveChangesAsync();
+        //        return true;
+        //    }
+        //    return false;
+        //}
+
+        /// <summary>
+        /// 全部删除
+        /// </summary>
+        /// <param name="clauseId"></param>
+        /// <param name="userId"></param>
+        /// <param name="docId"></param>
+        /// <returns></returns>
+        private async Task DeleteAll(string userId, Guid docId)
+        {
+            var ids = await _entityRepository.GetAll().Where(v => v.EmployeeId == userId && v.DocumentId == docId).Select(v => v.Id).ToListAsync();
+            await BatchDelete(ids);
+        }
     }
 }
-
-

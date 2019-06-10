@@ -26,26 +26,16 @@ namespace GYSWP.EmployeeClauses
         public virtual string EmployeeId { get; set; }
 
         /// <summary>
-        /// 是否自查
-        /// </summary>
-        [Required]
-        public virtual bool IsSelfCheck { get; set; }
-
-        /// <summary>
         /// 标准Id
         /// </summary>
+        [Required]
         public virtual Guid DocumentId { get; set; }
 
         /// <summary>
         /// 姓名快照
         /// </summary>
         public virtual string EmployeeName { get; set; }
-        /// <summary>
-        /// 自查时间
-        /// </summary>
-        public virtual DateTime? SelfCheckTime { get; set; }
 
         public virtual DateTime CreationTime { get; set; }
-
     }
 }

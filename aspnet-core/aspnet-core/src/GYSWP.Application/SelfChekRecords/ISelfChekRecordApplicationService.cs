@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.SelfChekRecords.Dtos;
 using GYSWP.SelfChekRecords;
+using GYSWP.Dtos;
 
 namespace GYSWP.SelfChekRecords
 {
@@ -72,11 +73,6 @@ namespace GYSWP.SelfChekRecords
         Task BatchDelete(List<Guid> input);
 
 
-		/// <summary>
-        /// 导出SelfChekRecord为excel表
-        /// </summary>
-        /// <returns></returns>
-		//Task<FileDto> GetToExcel();
-
+        Task<APIResultDto> SelfCheckedClauseAsync(GetSelfChekRecordsInput input);
     }
 }

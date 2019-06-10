@@ -54,19 +54,15 @@ export class ConfirmLearningComponent extends ModalComponentBase {
     }
 
     submit() {
-        // if (this.pId) {
-        //     this.clause.parentId = this.pId;
-        // }
-        // this.clause.documentId = this.docId;
-        // this.clause.hasAttchment = false;
-        // this.basicDataService.CreateOrUpdateClauseAsync(this.clause)
-        //     .finally(() => { this.saving = false; })
-        //     .subscribe(res => {
-        //         this.notify.info('保存成功！', '');
-        //         if (res.code == 0) {
-        //             this.clause.id = res.data;
-        //             this.success(true);
-        //         }
-        //     });
+        this.clause.documentId = this.docId;
+        this.clause.hasAttchment = false;
+        this.workCriterionService.selfCheckedClauseAsync(this.id, this.docId)
+            .finally(() => { this.saving = false; })
+            .subscribe(res => {
+                this.notify.info('已学习！', '');
+                if (res.code == 0) {
+                    this.success(true);
+                }
+            });
     }
 }

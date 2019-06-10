@@ -40,5 +40,11 @@ namespace GYSWP.SelfChekRecords
         /// 姓名快照
         /// </summary>
         public virtual string EmployeeName { get; set; }
+
+        /// <summary>
+        /// 标准Id
+        /// </summary>
+        [Required]
+        public virtual Guid DocumentId { get; set; }
     }
 }

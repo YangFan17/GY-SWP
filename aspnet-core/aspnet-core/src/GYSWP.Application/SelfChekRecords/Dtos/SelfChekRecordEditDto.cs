@@ -51,9 +51,10 @@ namespace  GYSWP.SelfChekRecords.Dtos
 		/// EmployeeName
 		/// </summary>
 		public string EmployeeName { get; set; }
-
-
-
-
+        /// <summary>
+        /// 标准Id
+        /// </summary>
+        [Required]
+        public Guid DocumentId { get; set; }
     }
 }

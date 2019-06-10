@@ -15,6 +15,7 @@ import { ConfirmLearningComponent } from './confirm-learning/confirm-learning.co
 })
 export class SelfLearningComponent extends AppComponentBase implements OnInit {
     docId: string;
+    isConfirm: boolean;
     listOfMapData = [];
     mapOfExpandedData: { [id: string]: TreeNodeInterface[] } = {};
     confirmModal: NzModalRef;
@@ -35,12 +36,25 @@ export class SelfLearningComponent extends AppComponentBase implements OnInit {
         this.getClauseList();
     }
 
+    getIsConfirm() {
+        let params: any = {};
+        params.docId = this.docId;
+        this.workCriterionService.getIsConfirm(params).subscribe((result) => {
+            if (result.code == 0) {
+                this.isConfirm = result.data;
+            } else {
+                this.notify.error('请重试！');
+            }
+        });
+    }
+
     getDocInfo() {
         if (this.docId) {
             let params: any = {};
             params.id = this.docId;
             this.workCriterionService.getDocInfoAsync(params).subscribe((result) => {
                 this.docInfo = result;
+                this.getIsConfirm();
             });
         }
     }
@@ -52,6 +66,13 @@ export class SelfLearningComponent extends AppComponentBase implements OnInit {
                 this.listOfMapData = result
                 this.listOfMapData.forEach(item => {
                     this.mapOfExpandedData[item.id] = this.convertTreeToList(item);
+                    // console.log(this.mapOfExpandedData[item.id]);
+                    // 初始化checkBox数据
+                    this.mapOfExpandedData[item.id].forEach(v => {
+                        if (v.checked == true) {
+                            this.selfChecked.push(v.id);
+                        }
+                    })
                 });
             });
         }
@@ -157,10 +178,20 @@ export class SelfLearningComponent extends AppComponentBase implements OnInit {
             .subscribe(res => {
                 if (res.code == 0) {
                     this.notify.info('保存成功！', '');
+                    this.isConfirm = true;
                 }
             });
     }
     //#endregion
+
+    resetChange(): void {
+        this.confirmModal = this.modal.confirm({
+            nzContent: `是否重新确认适用条款?`,
+            nzOnOk: () => {
+                this.isConfirm = false;
+            }
+        });
+    }
 }
 
 export interface TreeNodeInterface {

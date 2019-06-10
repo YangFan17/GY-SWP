@@ -8,48 +8,35 @@ using GYSWP.EmployeeClauses;
 
 namespace GYSWP.EmployeeClauses.Dtos
 {
-    public class EmployeeClauseListDto : EntityDto<Guid>,IHasCreationTime 
+    public class EmployeeClauseListDto : EntityDto<Guid>, IHasCreationTime
     {
 
-        
-		/// <summary>
-		/// ClauseId
-		/// </summary>
-		[Required(ErrorMessage="ClauseId不能为空")]
-		public Guid ClauseId { get; set; }
 
+        /// <summary>
+        /// ClauseId
+        /// </summary>
+        [Required(ErrorMessage = "ClauseId不能为空")]
+        public Guid ClauseId { get; set; }
 
+        /// <summary>
+        /// 标准Id
+        /// </summary>
+        public Guid DocumentId { get; set; }
 
-		/// <summary>
-		/// EmployeeId
-		/// </summary>
-		[Required(ErrorMessage="EmployeeId不能为空")]
-		public string EmployeeId { get; set; }
+        /// <summary>
+        /// 姓名快照
+        /// </summary>
+        public string EmployeeName { get; set; }
 
+        /// <summary>
+        /// EmployeeId
+        /// </summary>
+        [Required(ErrorMessage = "EmployeeId不能为空")]
+        public string EmployeeId { get; set; }
 
-
-		/// <summary>
-		/// IsSelfCheck
-		/// </summary>
-		[Required(ErrorMessage="IsSelfCheck不能为空")]
-		public bool IsSelfCheck { get; set; }
-
-
-
-		/// <summary>
-		/// SelfCheckTime
-		/// </summary>
-		public DateTime? SelfCheckTime { get; set; }
-
-
-
-		/// <summary>
-		/// CreationTime
-		/// </summary>
-		public DateTime CreationTime { get; set; }
-
-
-
-
+        /// <summary>
+        /// CreationTime
+        /// </summary>
+        public DateTime CreationTime { get; set; }
     }
 }

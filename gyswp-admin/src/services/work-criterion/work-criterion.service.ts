@@ -5,7 +5,6 @@ import { map } from "rxjs/operators";
 import { ApiResult, DocumentDto, ClauseTree, Clause, Employee, SelectGroup } from "entities";
 import { PagedResultDto } from "@shared/component-base";
 import { API_BASE_URL } from "@shared/service-proxies/service-proxies";
-
 @Injectable()
 export class WorkCriterionService {
     private _commonhttp: CommonHttpClient;
@@ -35,7 +34,7 @@ export class WorkCriterionService {
     }
 
     getClauseListAsync(params: any): Observable<any> {
-        let url_ = "/api/services/app/Clause/GetClauseTreeAsync1";
+        let url_ = "/api/services/app/Clause/GetClauseTreeWithCheckedAsync";
         return this._commonhttp.get(url_, params).pipe(map(data => {
             return data;
         }));
@@ -45,6 +44,13 @@ export class WorkCriterionService {
         let url_ = "/api/services/app/Document/GetDocumentTitleAsync";
         return this._commonhttp.get(url_, params).pipe(map(data => {
             return DocumentDto.fromJS(data);
+        }));
+    }
+
+    getIsConfirm(params: any): Observable<ApiResult> {
+        let url_ = "/api/services/app/EmployeeClause/GetIsConfirmAsync";
+        return this._commonhttp.get(url_, params).pipe(map(data => {
+            return ApiResult.fromJS(data);
         }));
     }
 
@@ -60,6 +66,14 @@ export class WorkCriterionService {
         let url_ = "/api/services/app/Clause/getById";
         return this._commonhttp.get(url_, { id: id }).pipe(map(data => {
             return Clause.fromJS(data);
+        }));
+    }
+
+    selfCheckedClauseAsync(id: string, docId: string): Observable<any> {
+        let url_ = "/api/services/app/SelfChekRecord/SelfCheckedClauseAsync";
+        let input = { clauseId: id, docId: docId };
+        return this._commonhttp.post(url_, input).pipe(map(data => {
+            return data;
         }));
     }
 }

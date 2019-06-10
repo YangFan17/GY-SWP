@@ -32,28 +32,21 @@ namespace  GYSWP.EmployeeClauses.Dtos
 
 
 
-		/// <summary>
-		/// IsSelfCheck
-		/// </summary>
-		[Required(ErrorMessage="IsSelfCheck不能为空")]
-		public bool IsSelfCheck { get; set; }
+        /// <summary>
+        /// 标准Id
+        /// </summary>
+        [Required(ErrorMessage = "DocumentId不能为空")]
+        public Guid DocumentId { get; set; }
+
+        /// <summary>
+        /// 姓名快照
+        /// </summary>
+        public string EmployeeName { get; set; }
 
 
-
-		/// <summary>
-		/// SelfCheckTime
-		/// </summary>
-		public DateTime? SelfCheckTime { get; set; }
-
-
-
-		/// <summary>
-		/// CreationTime
-		/// </summary>
-		public DateTime CreationTime { get; set; }
-
-
-
-
+        /// <summary>
+        /// CreationTime
+        /// </summary>
+        public DateTime CreationTime { get; set; }
     }
 }
