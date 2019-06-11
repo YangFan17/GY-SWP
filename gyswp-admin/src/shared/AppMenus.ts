@@ -45,12 +45,12 @@ export class AppMenus {
         {
             text: "配置管理",
             icon: { type: "icon", value: "tool" },
-            link: "/app/pm",
+            link: "/app/config",
             group: true,
             children: [
                 {
                     text: "数据配置",
-                    link: "/app/system/users",
+                    link: "/app/config/data-config",
                     reuse: false
                 },
             ]

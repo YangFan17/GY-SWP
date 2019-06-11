@@ -1,0 +1,47 @@
+<div class="padding-bottom-45">
+    <h3>
+        <span>制修废申请单</span>
+    </h3>
+    <form nz-form #validateForm="ngForm" (ngSubmit)="submit()" *ngIf="apply">
+        <nz-form-item nz-row style="margin-bottom:12px;">
+            <nz-form-label nz-col [nzSm]="4" nzRequired>所属标准</nz-form-label>
+            <nz-form-control [nzSm]="20">
+                <label>{{docName}}</label>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item nz-row>
+            <nz-form-label nz-col [nzSm]="4" nzRequired>申请原因</nz-form-label>
+            <nz-form-control [nzSm]="20" nzHasFeedback>
+                <textarea nz-input rows="4" name="reason" maxlength="2000" #reason="ngModel" [(ngModel)]="apply.reason"
+                    [placeholder]="'请填写条款内容'"></textarea>
+                <nz-form-explain *ngIf="reason.control.dirty&&reason.control.errors">
+                    <ng-container *ngIf="reason.control.hasError('required')">请填写申请原因</ng-container>
+                    <ng-container *ngIf="reason.control.hasError('maxlength')">字符长度小于等于500</ng-container>
+                </nz-form-explain>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item nz-row>
+            <nz-form-label nz-col [nzSm]="4" nzRequired>申请内容</nz-form-label>
+            <nz-form-control [nzSm]="20" nzHasFeedback>
+                <textarea nz-input rows="8" name="content" maxlength="2000" #content="ngModel"
+                    [(ngModel)]="apply.content" [placeholder]="'请填写条款内容'"></textarea>
+                <nz-form-explain *ngIf="content.control.dirty&&content.control.errors">
+                    <ng-container *ngIf="content.control.hasError('required')">请填写申请内容</ng-container>
+                    <ng-container *ngIf="content.control.hasError('maxlength')">字符长度小于等于1000</ng-container>
+                </nz-form-explain>
+            </nz-form-control>
+        </nz-form-item>
+        <!-- 功能按钮 -->
+        <div class="custom-modal-footer" style="text-align: right;">
+            <div class="custom-modal-footter-group">
+                <button nz-button type="button" [disabled]="saving" (click)="close()">
+                    取消
+                </button>
+                <button nz-button [nzType]="'primary'" type="button" (click)="submit()"
+                    [disabled]="!validateForm.valid ||saving">
+                    申请
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

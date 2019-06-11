@@ -1,24 +1,28 @@
 <page-header style="text-align: center;" title={{docInfo.name}}></page-header>
 <nz-card [nzBordered]="false" *ngIf="docInfo" class="info_card_margin">
-    <div nz-row nzGutter="16" style="margin-bottom: 16px;">
-        <div nz-col nzXs="24" nzSm="18">
-            <sv-container size="small" col="3" class="mb-md">
-                <sv label="标准编号">{{docInfo.docNo}}</sv>
-                <sv label="标准文档">
-                    <a title="预览" (click)="goPre(docInfo.id)"> {{docInfo.name}}
-                    </a>
-                </sv>
-                <sv label="归口部门">{{docInfo.deptName}}</sv>
-                <sv label="标准分类">{{docInfo.categoryDesc}}</sv>
-                <sv label="发布时间">{{docInfo.publishTime| date: "yyyy-MM-dd"}}</sv>
-            </sv-container>
-        </div>
-    </div>
+    <!-- <div nz-row nzGutter="16" style="margin-bottom: 16px;"> -->
+    <!-- <div nz-col nzXs="24" nzSm="18"> -->
+    <sv-container size="small" col="3" class="mb-md">
+        <sv label="标准编号">{{docInfo.docNo}}</sv>
+        <sv label="标准文档">
+            <a title="预览" (click)="goPre(docInfo.id)"> {{docInfo.name}}
+            </a>
+        </sv>
+        <sv label="归口部门">{{docInfo.deptName}}</sv>
+        <sv label="标准分类">{{docInfo.categoryDesc}}</sv>
+        <sv label="发布时间">{{docInfo.publishTime| date: "yyyy-MM-dd"}}</sv>
+    </sv-container>
+    <!-- </div> -->
+    <!-- </div> -->
     <div nz-row>
-        <div *ngIf="isConfirm" nz-row [nzGutter]="24">
+        <div nz-row [nzGutter]="24">
             <div nz-col [nzSpan]="6" class="mb-md" [class.text-right]="'true'" style="float:right">
-                <button nz-button type="button" (click)="resetChange()" nzType="primary">
+                <button *ngIf="isConfirm" nz-button type="button" (click)="resetChange()" nzType="primary">
                     <span>重新确认</span>
+                </button>
+                <button nz-button type="button" (click)="resetChange()">
+                    <i nz-icon type="form"></i>
+                    <span>制修废申请</span>
                 </button>
             </div>
         </div>

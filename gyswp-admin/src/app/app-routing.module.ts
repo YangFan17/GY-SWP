@@ -33,6 +33,11 @@ const routes: Routes = [
         loadChildren: './work-criterion/work-criterion.module#WorkCriterionModule',
         data: { preload: true },
       },
+      {
+        path: 'config',
+        loadChildren: './configs/configs.module#ConfigsModule',
+        data: { preload: true },
+      },
     ]
   }
 ];

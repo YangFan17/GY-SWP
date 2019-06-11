@@ -59,8 +59,11 @@ export class ConfirmLearningComponent extends ModalComponentBase {
         this.workCriterionService.selfCheckedClauseAsync(this.id, this.docId)
             .finally(() => { this.saving = false; })
             .subscribe(res => {
-                this.notify.info('已学习！', '');
                 if (res.code == 0) {
+                    this.notify.info('已学习！', '');
+                    this.success(true);
+                } else {
+                    this.notify.info('请重试', '');
                     this.success(true);
                 }
             });
