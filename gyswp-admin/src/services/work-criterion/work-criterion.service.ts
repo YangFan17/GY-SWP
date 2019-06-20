@@ -2,7 +2,7 @@ import { Inject, Optional, Injectable } from "@angular/core";
 import { Observer, Observable } from "rxjs";
 import { CommonHttpClient } from "services/common-httpclient";
 import { map } from "rxjs/operators";
-import { ApiResult, DocumentDto, ClauseTree, Clause, Employee, SelectGroup } from "entities";
+import { ApiResult, DocumentDto, ClauseTree, Clause, Employee, SelectGroup, ClauseRevision } from "entities";
 import { PagedResultDto } from "@shared/component-base";
 import { API_BASE_URL } from "@shared/service-proxies/service-proxies";
 @Injectable()
@@ -47,8 +47,8 @@ export class WorkCriterionService {
         }));
     }
 
-    getIsConfirm(params: any): Observable<ApiResult> {
-        let url_ = "/api/services/app/EmployeeClause/GetIsConfirmAsync";
+    getUserOperateAsync(params: any): Observable<ApiResult> {
+        let url_ = "/api/services/app/EmployeeClause/GetUserOperateAsync";
         return this._commonhttp.get(url_, params).pipe(map(data => {
             return ApiResult.fromJS(data);
         }));
@@ -62,7 +62,7 @@ export class WorkCriterionService {
         }));
     }
 
-    GetClauseByIdAsync(id: any): Observable<Clause> {
+    getClauseByIdAsync(id: any): Observable<Clause> {
         let url_ = "/api/services/app/Clause/getById";
         return this._commonhttp.get(url_, { id: id }).pipe(map(data => {
             return Clause.fromJS(data);
@@ -73,6 +73,77 @@ export class WorkCriterionService {
         let url_ = "/api/services/app/SelfChekRecord/SelfCheckedClauseAsync";
         let input = { clauseId: id, docId: docId };
         return this._commonhttp.post(url_, input).pipe(map(data => {
+            return data;
+        }));
+    }
+
+
+    applyDocAsync(input: any): Observable<any> {
+        let url_ = "/api/services/app/ApplyInfo/ApplyDocAsync";
+        // let info = { applyInfo: input };
+        return this._commonhttp.post(url_, input).pipe(map(data => {
+            return data;
+        }));
+    }
+
+    getClauseRevisionById(params): Observable<any> {
+        let url_ = "/api/services/app/ClauseRevision/GetClauseRevisionListByIdAsync";
+        // var input = { DocumentId: docId, ApplyInfoId: applyId };
+        return this._commonhttp.get(url_, params).pipe(map(data => {
+            return data;
+        }));
+    }
+
+    createRevisionAsync(input: any, type: number, applyId: string): Observable<any> {
+        let url_ = "/api/services/app/ClauseRevision/CreateRevisionAsync";
+        let cla = { entity: input, RevisionType: type, ApplyId: applyId };
+        return this._commonhttp.post(url_, cla).pipe(map(data => {
+            return data;
+        }));
+    }
+
+    createDeleteRevisionAsync(docId: string, applyId: string): Observable<any> {
+        let url_ = "/api/services/app/ClauseRevision/CreateDeleteRevisionAsync";
+        let cla = { DocumentId: docId, ApplyId: applyId };
+        return this._commonhttp.post(url_, cla).pipe(map(data => {
+            return data;
+        }));
+    }
+
+
+    deleteClauseById(id: string, docId: string, applyId: string): Observable<ApiResult> {
+        let url_ = "/api/services/app/ClauseRevision/ClauseRevisionRemoveById";
+        var input = { DocumentId: docId, ApplyInfoId: applyId, Id: id };
+        return this._commonhttp.post(url_, input).pipe(map(data => {
+            return data;
+        }));
+    }
+
+    removeRevisionById(id: string): Observable<ApiResult> {
+        let url_ = "/api/services/app/ClauseRevision/ClauseRevisionDeleteById";
+        return this._commonhttp.post(url_, { id: id }).pipe(map(data => {
+            return data;
+        }));
+    }
+
+    getClauseRevisionByIdAsync(id: any): Observable<ClauseRevision> {
+        let url_ = "/api/services/app/ClauseRevision/getById";
+        return this._commonhttp.get(url_, { id: id }).pipe(map(data => {
+            return ClauseRevision.fromJS(data);
+        }));
+    }
+
+    createOrUpdateRevisionAsync(input: any): Observable<any> {
+        let url_ = "/api/services/app/ClauseRevision/CreateOrUpdate";
+        let cla = { ClauseRevision: input };
+        return this._commonhttp.post(url_, cla).pipe(map(data => {
+            return data;
+        }));
+    }
+
+    saveRevised(applyId: string, docId: string): Observable<any> {
+        let url_ = "/api/services/app/Approval/SubmitRevisionApproval";
+        return this._commonhttp.post(url_, { ApplyInfoId: applyId, DocumentId: docId }).pipe(map(data => {
             return data;
         }));
     }

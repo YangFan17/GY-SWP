@@ -25,13 +25,12 @@ export class ClauseComponent extends AppComponentBase implements OnInit {
     }
     ngOnInit(): void {
         // this.getClauseList();
-
     }
 
     getClauseList() {
         let params: any = {};
         params.DocumentId = this.doc.id;
-        this.basicDataService.GetClauseListAsync(params).subscribe((result) => {
+        this.basicDataService.getClauseListAsync(params).subscribe((result) => {
             this.listOfMapData = result
             this.listOfMapData.forEach(item => {
                 this.mapOfExpandedData[item.id] = this.convertTreeToList(item);
@@ -107,12 +106,12 @@ export class ClauseComponent extends AppComponentBase implements OnInit {
         this.confirmModal = this.modal.confirm({
             nzContent: `是否删除当前条款[条款编号：${item.clauseNo}]?`,
             nzOnOk: () => {
-                this.basicDataService.DeleteClauseById(item.id).subscribe(res => {
+                this.basicDataService.deleteClauseById(item.id).subscribe(res => {
                     if (res.code == 0) {
                         this.notify.info('删除成功！', '');
                         this.getClauseList();
                     } else {
-                        this.notify.info('请确保当前条款下无子项条款后再删除！', '');
+                        this.notify.warn('请确保当前条款下无子项条款后再删除！', '');
                     }
                 });
             }

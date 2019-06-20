@@ -1,13 +1,14 @@
-import { Component, Injector, Input } from '@angular/core';
 import { Clause } from 'entities';
 import { ModalComponentBase } from '@shared/component-base';
 import { BasicDataService } from 'services';
+import { Component, Input, Injector } from '@angular/core';
 
 @Component({
     moduleId: module.id,
     selector: 'clause-detail',
     templateUrl: 'clause-detail.component.html',
-    styleUrls: ['clause-detail.component.less']
+    styleUrls: ['clause-detail.component.less'],
+    providers: [BasicDataService]
 })
 export class ClauseDetailComponent extends ModalComponentBase {
     @Input() docId: string;
@@ -28,7 +29,7 @@ export class ClauseDetailComponent extends ModalComponentBase {
 
     getClauseById() {
         if (this.id) {
-            this.basicDataService.GetClauseByIdAsync(this.id).subscribe(res => {
+            this.basicDataService.getClauseByIdAsync(this.id).subscribe(res => {
                 this.clause = res;
                 // this.pNo = res.
             })
@@ -36,12 +37,13 @@ export class ClauseDetailComponent extends ModalComponentBase {
     }
 
     submit() {
+        this.saving = true;
         if (this.pId) {
             this.clause.parentId = this.pId;
         }
         this.clause.documentId = this.docId;
         this.clause.hasAttchment = false;
-        this.basicDataService.CreateOrUpdateClauseAsync(this.clause)
+        this.basicDataService.createOrUpdateClauseAsync(this.clause)
             .finally(() => { this.saving = false; })
             .subscribe(res => {
                 this.notify.info('保存成功！', '');

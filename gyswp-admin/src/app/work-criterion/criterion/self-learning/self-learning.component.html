@@ -16,26 +16,41 @@
     <!-- </div> -->
     <div nz-row>
         <div nz-row [nzGutter]="24">
+            <div nz-col *ngIf="!isApply && !editMode && !isRevision" [nzSpan]="7" class="mb-md">
+                <nz-alert nzType="info" nzMessage="您的制修订申请已提交，审批通过后方可进行制修订操作" nzShowIcon></nz-alert>
+            </div>
+            <div nz-col *ngIf="!isApply && editMode && isRevision" [nzSpan]="11" class="mb-md">
+                <nz-alert nzType="success" nzMessage="您的制修订申请已通过，请进行制修订操作（注：修订后的条款将暂存至‘已修订列表’中，请前往提交）" nzShowIcon>
+                </nz-alert>
+            </div>
             <div nz-col [nzSpan]="6" class="mb-md" [class.text-right]="'true'" style="float:right">
-                <button *ngIf="isConfirm" nz-button type="button" (click)="resetChange()" nzType="primary">
+                <button *ngIf="isConfirm && !editMode" nz-button type="button" (click)="resetChange()" nzType="primary">
                     <span>重新确认</span>
                 </button>
-                <button nz-button type="button" (click)="resetChange()">
+                <button *ngIf="isApply && !editMode && !isRevision" nz-button type="button" (click)="docApply()">
                     <i nz-icon type="form"></i>
                     <span>制修废申请</span>
+                </button>
+                <button *ngIf="editMode" nz-button type="button" (click)="revisedList()">
+                    <i nz-icon type="form"></i>
+                    <span>已修订列表</span>
+                </button>
+                <button *ngIf="editMode" nz-button type="button" (click)="editDetail()" nzType="primary">
+                    <i class="anticon anticon-plus"></i>
+                    <span>添加条款</span>
                 </button>
             </div>
         </div>
         <nz-table #expandTable [nzData]="listOfMapData" [nzShowPagination]="false">
             <thead>
                 <tr>
-                    <th *ngIf="!isConfirm" nzWidth="50px">
+                    <th *ngIf="!isConfirm && !editMode" nzWidth="50px">
                         <!-- <label nz-checkbox [(ngModel)]="isSelectedAll" (ngModelChange)="checkAll($event)">
                         </label> -->
                     </th>
                     <th>条款编号</th>
                     <th nzWidth="20%">条款标题</th>
-                    <th nzWidth="60%">条款内容</th>
+                    <th nzWidth="50%">条款内容</th>
                     <th>操作</th>
                 </tr>
             </thead>
@@ -44,7 +59,7 @@
                     <ng-container *ngFor="let item of mapOfExpandedData[data.id]">
                         <tr *ngIf="(item.parent && item.parent.expand) || !item.parent"
                             [ngClass]="{ 'true': item.checked == true}">
-                            <td *ngIf="!isConfirm" style="text-align: right;">
+                            <td *ngIf="!isConfirm && !editMode" style="text-align: right;">
                                 <label nz-checkbox [(ngModel)]="item.checked"
                                     (ngModelChange)="isCancelCheck($event,item.id)">
                                 </label>
@@ -55,11 +70,14 @@
                                 {{ item.clauseNo }}
                             </td>
                             <td>{{ item.title | lengthLimit:20}}</td>
-                            <td>{{ item.content| lengthLimit:60 }}</td>
+                            <td>{{ item.content| lengthLimit:50 }}</td>
                             <td>
-                                <a (click)="showDetail(item.id)">阅读学习</a>
-                                <!-- <nz-divider nzType="vertical"></nz-divider>
-                                <a (click)="showDetail(item,'child')">添加子条款</a> -->
+                                <a *ngIf="!editMode" (click)="showDetail(item.id)">阅读学习</a>
+                                <a *ngIf="editMode" (click)="editDetail(item,'detail')">修订</a>
+                                <nz-divider *ngIf="editMode" nzType="vertical"></nz-divider>
+                                <a *ngIf="editMode" (click)="editDetail(item,'child')">添加子条款</a>
+                                <nz-divider *ngIf="editMode" nzType="vertical"></nz-divider>
+                                <a style="color:#ff4d4f;" *ngIf="editMode" (click)="deleteDetail(item)">删除</a>
                             </td>
                         </tr>
                     </ng-container>
@@ -71,9 +89,13 @@
         <button nz-button [nzType]="'default'" (click)="return()">
             返回
         </button>
-        <button *ngIf="!isConfirm" nz-button [nzType]="'primary'" type="button" [nzLoading]="saving"
-            (click)="confirmClause()">
+        <button *ngIf="!isConfirm && !editMode && listOfMapData.length>0" nz-button [nzType]="'primary'" type="button"
+            [nzLoading]="saving" (click)="confirmClause()">
             确认条款
         </button>
+        <!-- <button *ngIf="editMode && isSaveApply" nz-button [nzType]="'primary'" type="button" [nzLoading]="saving"
+            (click)="saveRevised()">
+            提交制修订
+        </button> -->
     </footer-toolbar>
 </nz-card>

@@ -14,6 +14,11 @@ import { PreviewDocComponent } from './criterion/preview-doc/preview-doc.compone
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { SelfLearningComponent } from './criterion/self-learning/self-learning.component';
 import { ConfirmLearningComponent } from './criterion/self-learning/confirm-learning/confirm-learning.component';
+import { DocApplicationComponent } from './criterion/self-learning/doc-application/doc-application.component';
+import { ClauseDetailComponent } from '@app/basic-data/document/clause/clause-detail/clause-detail.component';
+import { RevisedListComponent } from './criterion/self-learning/revised-list/revised-list.component';
+import { RevisedClauseDetailComponent } from './criterion/self-learning/revised-clause-detail/revised-clause-detail.component';
+import { RevisedListDetailComponent } from './criterion/self-learning/revised-list/revised-list-detail/revised-list-detail.component';
 
 @NgModule({
     imports: [
@@ -30,13 +35,21 @@ import { ConfirmLearningComponent } from './criterion/self-learning/confirm-lear
         CriterionComponent,
         PreviewDocComponent,
         SelfLearningComponent,
-        ConfirmLearningComponent
+        ConfirmLearningComponent,
+        DocApplicationComponent,
+        RevisedClauseDetailComponent,
+        RevisedListComponent,
+        RevisedListDetailComponent
     ],
     entryComponents: [
         CriterionComponent,
         PreviewDocComponent,
         SelfLearningComponent,
-        ConfirmLearningComponent
+        ConfirmLearningComponent,
+        DocApplicationComponent,
+        RevisedClauseDetailComponent,
+        RevisedListComponent,
+        RevisedListDetailComponent
     ],
     providers: [WorkCriterionService]
 })

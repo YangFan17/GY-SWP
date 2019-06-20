@@ -45,7 +45,7 @@ export class ConfirmLearningComponent extends ModalComponentBase {
 
     getClauseById() {
         if (this.id) {
-            this.workCriterionService.GetClauseByIdAsync(this.id).subscribe(res => {
+            this.workCriterionService.getClauseByIdAsync(this.id).subscribe(res => {
                 this.clause = res;
                 this.countDown();
                 // this.pNo = res.

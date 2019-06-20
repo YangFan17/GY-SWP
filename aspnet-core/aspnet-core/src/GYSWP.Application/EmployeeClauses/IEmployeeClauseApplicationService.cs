@@ -73,6 +73,6 @@ namespace GYSWP.EmployeeClauses
         Task BatchDelete(List<Guid> input);
 
         Task<APIResultDto> ConfirmClauseAsync(ConfirmClauseInput input);
-        Task<APIResultDto> GetIsConfirmAsync(ConfirmClauseInput input);
+        Task<APIResultDto> GetUserOperateAsync(ConfirmClauseInput input);
     }
 }

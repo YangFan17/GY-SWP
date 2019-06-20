@@ -28,6 +28,6 @@ namespace GYSWP.DingDing.Dtos
 
     public enum DingDingAppEnum
     {
-        标准化工作平台 = 1,
+        标准化工作平台 = 2,
     }
 }

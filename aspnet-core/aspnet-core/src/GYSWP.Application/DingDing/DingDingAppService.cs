@@ -69,7 +69,7 @@ namespace GYSWP.DingDing
                 case DingDingAppEnum.标准化工作平台:
                     {
                         configList = _systemDataRepository.GetAll()
-                                    .Where(s => s.ModelId == ConfigModel.标准化工作平台)
+                                    .Where(s => s.ModelId == ConfigModel.钉钉配置)
                                     .Where(s => s.Type == ConfigType.钉钉配置 || s.Type == ConfigType.标准化工作平台)
                                     .ToList();
                     }

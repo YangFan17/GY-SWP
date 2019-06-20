@@ -89,7 +89,7 @@ export class OrganizationComponent extends AppComponentBase implements OnInit {
 
     syncData() {
         this.syncDataLoading = true;
-        this.basicDataService.SynchronousOrganizationAsync().subscribe(() => {
+        this.basicDataService.synchronousOrganizationAsync().subscribe(() => {
             this.notify.info('同步成功！', '');
             this.syncDataLoading = false;
             this.getTrees();
@@ -98,7 +98,7 @@ export class OrganizationComponent extends AppComponentBase implements OnInit {
     }
 
     getTrees() {
-        this.basicDataService.GetTreesAsync().subscribe((data) => {
+        this.basicDataService.getTreesAsync().subscribe((data) => {
             this.nodes = data;
         });
     }

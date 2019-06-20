@@ -38,7 +38,7 @@ export class QrCodeCategoryComponent extends ModalComponentBase implements OnIni
     }
 
     getParentName(id: number) {
-        this.basicDataService.GetParentName(id).subscribe((result: string) => {
+        this.basicDataService.getParentName(id).subscribe((result: string) => {
             this.text = result;
         });
     }

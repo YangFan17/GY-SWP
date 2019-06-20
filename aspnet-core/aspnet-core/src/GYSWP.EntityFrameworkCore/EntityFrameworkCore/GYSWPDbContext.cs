@@ -12,6 +12,8 @@ using GYSWP.Clauses;
 using GYSWP.DocAttachments;
 using GYSWP.SelfChekRecords;
 using GYSWP.EmployeeClauses;
+using GYSWP.ApplyInfos;
+using GYSWP.ClauseRevisions;
 
 namespace GYSWP.EntityFrameworkCore
 {
@@ -33,5 +35,7 @@ namespace GYSWP.EntityFrameworkCore
         public virtual DbSet<DocAttachment> DocAttachments { get; set; }
         public virtual DbSet<SelfChekRecord> SelfChekRecords { get; set; }
         public virtual DbSet<EmployeeClause> EmployeeClauses { get; set; }
+        public virtual DbSet<ApplyInfo> ApplyInfos { get; set; }
+        public virtual DbSet<ClauseRevision> ClauseRevisions { get; set; }
     }
 }

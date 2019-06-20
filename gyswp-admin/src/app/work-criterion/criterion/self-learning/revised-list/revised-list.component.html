@@ -1,0 +1,62 @@
+<div class="padding-bottom-45">
+    <h3 style="text-align: center;">
+        <span>已修订列表</span>
+    </h3>
+    <div nz-row>
+        <nz-alert nzType="info"
+            nzMessage="当前共操作 {{dataCount.total}} 条，包括：新增 {{dataCount.cnumber}}， 修订 {{dataCount.unumber}}，删除 {{dataCount.dnumber}}（注：若修订相同条款，则默认采纳最近一次修订）"
+            nzShowIcon>
+        </nz-alert>
+    </div>
+    <div nz-row style="margin-bottom:24px;">
+        <div nz-col nzSpan="24">
+            <nz-table #nzTable [nzShowPagination]="false" [nzData]="dataList" [nzLoading]="isLoading"
+                [nzScroll]="{ y: '480px' }">
+                <thead>
+                    <tr>
+                        <th nzWidth="8%">条款编号</th>
+                        <th nzWidth="15%">条款标题</th>
+                        <th nzWidth="30%">条款内容</th>
+                        <th nzWidth="10%">类型</th>
+                        <th nzWidth="20%">修订时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of nzTable.data">
+                        <td>{{item.clauseNo}}</td>
+                        <td>{{item.title | lengthLimit:15}}</td>
+                        <td>{{item.content | lengthLimit:30}}</td>
+                        <td>
+                            <nz-badge *ngIf="item.revisionType == 1" [nzStatus]="'success'" [nzText]="'新增'"></nz-badge>
+                            <nz-badge *ngIf="item.revisionType == 2" [nzStatus]="'processing'" [nzText]="'修订'">
+                            </nz-badge>
+                            <nz-badge *ngIf="item.revisionType == 3" [nzStatus]="'error'" [nzText]="'删除'"></nz-badge>
+                        </td>
+                        <td>{{item.creationTime | _date}}</td>
+                        <td>
+                            <a (click)="edit(item,'detail')">详情</a>
+                            <nz-divider *ngIf="item.revisionType == 1" nzType="vertical">
+                            </nz-divider>
+                            <a *ngIf="item.revisionType == 1" (click)="edit(item,'child')">添加子条款</a>
+                            <nz-divider nzType="vertical"></nz-divider>
+                            <a style="color:#ff4d4f;" (click)="remove(item.id)">移除</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </nz-table>
+        </div>
+    </div>
+    <!-- </div> -->
+    <!-- 功能按钮 -->
+    <div class="custom-modal-footer" style="text-align: right;">
+        <div class="custom-modal-footter-group">
+            <button nz-button type="button" [disabled]="saving" (click)="close()">
+                取消
+            </button>
+            <button nz-button [nzType]="'primary'" type="button" (click)="saveRevised()" [nzLoading]="isLoading">
+                提交制修订
+            </button>
+        </div>
+    </div>
+</div>

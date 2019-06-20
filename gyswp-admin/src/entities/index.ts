@@ -6,3 +6,5 @@ export * from './document';
 export * from './clause';
 export * from './attachment';
 export * from './clauseTreeDto';
+export * from './apply-info';
+export * from './clause-revision';

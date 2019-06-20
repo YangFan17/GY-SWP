@@ -90,14 +90,15 @@ export class DetailComponent extends AppComponentBase implements OnInit {
             this.document.categoryDesc = this.category.name;
             this.document.deptIds = this.dept.id;
         }
-        this.getUserDepts();
         this.document.publishTime = this.dateFormat(this.document.publishTime);
-        this.basicDataService.CreateOrUpdateDocumentAsync(this.document)
+        this.document.isAllUser = this.isAllUser == '1' ? true : false;
+        this.getUserDepts();
+        this.basicDataService.createOrUpdateDocumentAsync(this.document)
             .finally(() => { this.saving = false; })
             .subscribe(res => {
                 this.notify.info('保存成功！', '');
                 if (res.data) {
-                    this.document.id = res.data;
+                    this.document = res.data;
                     this.id = this.document.id;
                     this.qrCode.value = this.document.id;
                 }
@@ -109,11 +110,12 @@ export class DetailComponent extends AppComponentBase implements OnInit {
 
     getById() {
         if (this.id) {
-            this.basicDataService.GetDocumentByIdAsync(this.id).subscribe(res => {
+            this.basicDataService.getDocumentByIdAsync(this.id).subscribe(res => {
                 this.document = res;
                 if (res.employeeIds || res.employeeDes) {
                     this.setUserDepts(this.document);
                 }
+                this.isUpdate = true;
                 this.isAllUser = res.isAllUser == true ? '1' : '0';
                 this.category.id = res.categoryId.toString();
                 this.category.name = res.categoryDesc;
@@ -202,7 +204,6 @@ export class DetailComponent extends AppComponentBase implements OnInit {
         if (this.document.isAllUser) {
             this.document.employeeIds = '';
             this.document.employeeDes = '';
-            this.document.deptIds = '';
         }
         else {
             let userIds = '';

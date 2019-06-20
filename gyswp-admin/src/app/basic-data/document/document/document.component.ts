@@ -35,7 +35,7 @@ export class DocumentComponent extends AppComponentBase implements OnInit {
     }
 
     getTrees() {
-        this.basicDataService.GetDeptDocNzTreeNodes().subscribe((data) => {
+        this.basicDataService.getDeptDocNzTreeNodes().subscribe((data) => {
             this.nodes = data;
             if (data.length > 0) {
                 var selectedNode = data[0].children[0];

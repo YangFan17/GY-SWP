@@ -45,7 +45,7 @@ export class CreateCategoryComponent extends ModalFormComponentBase<Category> im
 
     protected submitExecute(finisheCallback: Function): void {
         this.category.deptId = this.deptId;
-        this.basicDataService.CreateOrUpdateCategory(this.category)
+        this.basicDataService.createOrUpdateCategory(this.category)
             .finally(() => { this.saving = false; })
             .subscribe(res => {
                 this.notify.info(this.l('SavedSuccessfully'), '');

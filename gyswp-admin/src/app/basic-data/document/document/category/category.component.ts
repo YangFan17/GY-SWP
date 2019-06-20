@@ -138,7 +138,7 @@ export class CategoryComponent extends AppComponentBase implements OnInit {
         if (!deptId) {
             deptId = this.deptId;
         }
-        this.basicDataService.GetTreeByCategoryAsync(deptId).subscribe(res => {
+        this.basicDataService.getTreeByCategoryAsync(deptId).subscribe(res => {
             this.nodes = res;
         });
     }
@@ -150,7 +150,7 @@ export class CategoryComponent extends AppComponentBase implements OnInit {
         this.confirmModal = this.modal.confirm({
             nzContent: `是否删除当前分类[${this.rkeyNode.title}]?`,
             nzOnOk: () => {
-                this.basicDataService.DeleteCategoryById(parseInt(this.rkeyNode.key)).subscribe(res => {
+                this.basicDataService.deleteCategoryById(parseInt(this.rkeyNode.key)).subscribe(res => {
                     if (this.dropdown) {
                         this.dropdown.close();
                     }

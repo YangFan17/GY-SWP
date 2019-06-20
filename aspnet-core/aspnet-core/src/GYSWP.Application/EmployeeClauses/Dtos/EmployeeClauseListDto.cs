@@ -5,13 +5,12 @@ using Abp.Application.Services.Dto;
 using Abp.Domain.Entities.Auditing;
 using System.ComponentModel.DataAnnotations;
 using GYSWP.EmployeeClauses;
+using GYSWP.GYEnums;
 
 namespace GYSWP.EmployeeClauses.Dtos
 {
     public class EmployeeClauseListDto : EntityDto<Guid>, IHasCreationTime
     {
-
-
         /// <summary>
         /// ClauseId
         /// </summary>
@@ -38,5 +37,36 @@ namespace GYSWP.EmployeeClauses.Dtos
         /// CreationTime
         /// </summary>
         public DateTime CreationTime { get; set; }
+    }
+
+    public class DocUserInfo
+    {
+        /// <summary>
+        /// 是否已确认条款
+        /// </summary>
+        public bool IsConfirm { get; set; }
+        /// <summary>
+        /// 是否可申请制修订
+        /// </summary>
+        public bool IsApply { get; set; }
+        /// <summary>
+        /// 是否可制修订操作
+        /// </summary>
+        public bool IsRevision { get; set; }
+
+        /// <summary>
+        /// 是否为制修订莫事
+        /// </summary>
+        public bool EditModel { get; set; }
+
+        /// <summary>
+        /// 是否可提交保存
+        /// </summary>
+        public bool IsSave { get; set; }
+
+        /// <summary>
+        /// 申请Id
+        /// </summary>
+        public Guid? ApplyId { get; set; }
     }
 }

@@ -13,7 +13,7 @@ namespace GYSWP.Clauses.Dtos
     [AutoMapFrom(typeof(Clause))]
     public class ClauseListDto: FullAuditedEntityDto<Guid>
     {
-        public Guid Id { get; set; }
+        //public Guid Id { get; set; }
         /// <summary>
         /// ParentId
         /// </summary>

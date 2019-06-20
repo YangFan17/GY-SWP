@@ -18,7 +18,7 @@ export class BasicDataService {
         this.baseUrl = baseUrl ? baseUrl : "";
     }
 
-    GetTreesAsync(): Observable<NzTreeNode[]> {
+    getTreesAsync(): Observable<NzTreeNode[]> {
         let url = "/api/services/app/Organization/GetTreesAsync";
         return this._commonhttp.get(url).pipe(map(data => {
             let arry = [];
@@ -30,14 +30,14 @@ export class BasicDataService {
         }));
     }
 
-    SynchronousOrganizationAsync(): Observable<ApiResult> {
+    synchronousOrganizationAsync(): Observable<ApiResult> {
         let url_ = "/api/services/app/Organization/SynchronousOrganizationAsync";
         return this._commonhttp.post(url_).pipe(map(data => {
             return data.result;
         }));
     }
 
-    GetEmployeeListAsync(params: any): Observable<PagedResultDto> {
+    getEmployeeListAsync(params: any): Observable<PagedResultDto> {
         let url_ = "/api/services/app/Employee/GetEmployeeListByIdAsync";
         return this._commonhttp.get(url_, params).pipe(map(data => {
             const result = new PagedResultDto();
@@ -47,14 +47,14 @@ export class BasicDataService {
         }));
     }
 
-    GetEmployeeListByDeptIdAsync(params: any): Observable<Employee[]> {
+    getEmployeeListByDeptIdAsync(params: any): Observable<Employee[]> {
         let url_ = "/api/services/app/Employee/GetEmployeeListByDeptIdAsync";
         return this._commonhttp.get(url_, params).pipe(map(data => {
             return Employee.fromJSArray(data);
         }));
     }
 
-    GetDocumentListAsync(param: any): Observable<PagedResultDto> {
+    getDocumentListAsync(param: any): Observable<PagedResultDto> {
         let url_ = "/api/services/app/Document/getPaged";
         return this._commonhttp.get(url_, param).pipe(map(data => {
             const result = new PagedResultDto();
@@ -64,14 +64,14 @@ export class BasicDataService {
         }));
     }
 
-    Download(param: any): Observable<ApiResult> {
+    download(param: any): Observable<ApiResult> {
         let url_ = "/api/services/app/Document/downloadQRCodeZip";
         return this._commonhttp.post(url_, param).pipe(map(data => {
             return ApiResult.fromJS(data);
         }));
     }
 
-    DeleteCategoryById(id: number): Observable<ApiResult> {
+    deleteCategoryById(id: number): Observable<ApiResult> {
         let url_ = "/api/services/app/Category/CategoryRemoveById";
         var param = { id: id };
         return this._commonhttp.post(url_, param).pipe(map(data => {
@@ -79,21 +79,21 @@ export class BasicDataService {
         }));
     }
 
-    GetTreeByCategoryAsync(deptId: any): Observable<any> {
+    getTreeByCategoryAsync(deptId: any): Observable<any> {
         let url_ = "/api/services/app/Category/GetTreeAsync";
         return this._commonhttp.get(url_, { deptId: deptId }).pipe(map(data => {
             return data;
         }));
     }
 
-    GetParentName(id: number): Observable<string> {
+    getParentName(id: number): Observable<string> {
         let url_ = "/api/services/app/Category/GetParentName?id=" + id;
         return this._commonhttp.get(url_).pipe(map(data => {
             return data;
         }));
     }
 
-    CreateOrUpdateCategory(input: any): Observable<any> {
+    createOrUpdateCategory(input: any): Observable<any> {
         let url_ = "/api/services/app/Category/CreateOrUpdate";
         let cat = { category: input };
         return this._commonhttp.post(url_, cat).pipe(map(data => {
@@ -101,7 +101,7 @@ export class BasicDataService {
         }));
     }
 
-    GetDeptDocNzTreeNodes(): Observable<NzTreeNode[]> {
+    getDeptDocNzTreeNodes(): Observable<NzTreeNode[]> {
         let url_ = "/api/services/app/Document/GetDeptDocNzTreeNodesAsync";
         return this._commonhttp.get(url_, {}).pipe(map(data => {
             let arry = [];
@@ -113,7 +113,7 @@ export class BasicDataService {
         }));
     }
 
-    CreateOrUpdateDocumentAsync(input: any): Observable<any> {
+    createOrUpdateDocumentAsync(input: any): Observable<any> {
         let url_ = "/api/services/app/Document/CreateOrUpdate";
         let cat = { document: input };
         return this._commonhttp.post(url_, cat).pipe(map(data => {
@@ -121,14 +121,14 @@ export class BasicDataService {
         }));
     }
 
-    GetDocumentByIdAsync(id: any): Observable<DocumentDto> {
+    getDocumentByIdAsync(id: any): Observable<DocumentDto> {
         let url_ = "/api/services/app/Document/getById";
         return this._commonhttp.get(url_, { id: id }).pipe(map(data => {
             return DocumentDto.fromJS(data);
         }));
     }
 
-    CreateOrUpdateClauseAsync(input: any): Observable<any> {
+    createOrUpdateClauseAsync(input: any): Observable<any> {
         let url_ = "/api/services/app/Clause/CreateOrUpdate";
         let cla = { clause: input };
         return this._commonhttp.post(url_, cla).pipe(map(data => {
@@ -136,21 +136,21 @@ export class BasicDataService {
         }));
     }
 
-    GetClauseListAsync(params: any): Observable<any> {
+    getClauseListAsync(params: any): Observable<any> {
         let url_ = "/api/services/app/Clause/GetClauseTreeAsync";
         return this._commonhttp.get(url_, params).pipe(map(data => {
             return data;
         }));
     }
 
-    GetClauseByIdAsync(id: any): Observable<Clause> {
+    getClauseByIdAsync(id: any): Observable<Clause> {
         let url_ = "/api/services/app/Clause/getById";
         return this._commonhttp.get(url_, { id: id }).pipe(map(data => {
             return Clause.fromJS(data);
         }));
     }
 
-    DeleteClauseById(id: string): Observable<ApiResult> {
+    deleteClauseById(id: string): Observable<ApiResult> {
         let url_ = "/api/services/app/Clause/ClauseRemoveById";
         var param = { id: id };
         return this._commonhttp.post(url_, param).pipe(map(data => {

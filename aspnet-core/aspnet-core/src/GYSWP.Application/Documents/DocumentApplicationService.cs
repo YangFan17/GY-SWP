@@ -26,6 +26,9 @@ using GYSWP.Employees;
 using GYSWP.Organizations;
 using GYSWP.Dtos;
 using GYSWP.Categorys;
+using System.IO;
+using GYSWP.Clauses;
+using NPOI.XWPF.UserModel;
 
 namespace GYSWP.Documents
 {
@@ -40,6 +43,7 @@ namespace GYSWP.Documents
         private readonly IRepository<Organization, long> _organizationRepository;
         private readonly IRepository<Category> _categoryRepository;
         private readonly IDocumentManager _entityManager;
+        private readonly IRepository<Clause, Guid> _clauseRepository;
 
         /// <summary>
         /// 构造函数 
@@ -50,6 +54,7 @@ namespace GYSWP.Documents
         , IRepository<Organization, long> organizationRepository
         , IRepository<Category> categoryRepository
         , IDocumentManager entityManager
+        , IRepository<Clause, Guid> clauseRepository
         )
         {
             _entityRepository = entityRepository;
@@ -57,6 +62,7 @@ namespace GYSWP.Documents
             _employeeRepository = employeeRepository;
             _organizationRepository = organizationRepository;
             _categoryRepository = categoryRepository;
+            _clauseRepository = clauseRepository;
         }
 
 
@@ -150,13 +156,13 @@ namespace GYSWP.Documents
             //}
             if (input.Document.Id.HasValue)
             {
-                await Update(input.Document);
-                return new APIResultDto() { Code = 0, Msg = "保存成功" };
+                var entity = await Update(input.Document);
+                return new APIResultDto() { Code = 0, Msg = "保存成功", Data = entity };
             }
             else
             {
                 var entity = await Create(input.Document);
-                return new APIResultDto() { Code = 0, Msg = "保存成功", Data = entity.Id };
+                return new APIResultDto() { Code = 0, Msg = "保存成功", Data = entity };
             }
         }
 
@@ -181,7 +187,7 @@ namespace GYSWP.Documents
         /// 编辑Document
         /// </summary>
 
-        protected virtual async Task Update(DocumentEditDto input)
+        protected virtual async Task<DocumentEditDto> Update(DocumentEditDto input)
         {
             //TODO:更新前的逻辑判断，是否允许更新
 
@@ -190,6 +196,7 @@ namespace GYSWP.Documents
 
             // ObjectMapper.Map(input, entity);
             await _entityRepository.UpdateAsync(entity);
+            return entity.MapTo<DocumentEditDto>();
         }
 
 
@@ -336,6 +343,117 @@ namespace GYSWP.Documents
             var result = query.MapTo<DocumentTitleDto>();
             result.DeptName = deptName;
             return result;
+        }
+
+        public async Task<object> getPdf1Async(Guid id)
+        {
+            //XWPFDocument docx = new XWPFDocument();
+            //MemoryStream ms = new MemoryStream();
+
+            ////设置文档
+            //docx.Document.body.sectPr = new CT_SectPr();
+            //CT_SectPr setPr = docx.Document.body.sectPr;
+            ////获取页面大小
+            //Tuple<int, int> size = GetPaperSize(setting.PaperType);
+            //setPr.pgSz.w = (ulong)size.Item1;
+            //setPr.pgSz.h = (ulong)size.Item2;
+            ////创建一个段落
+            //CT_P p = docx.Document.body.AddNewP();
+            ////段落水平居中
+            //p.AddNewPPr().AddNewJc().val = ST_Jc.center;
+            //XWPFParagraph gp = new XWPFParagraph(p, docx);
+
+            //XWPFRun gr = gp.CreateRun();
+            ////创建标题
+            //if (!string.IsNullOrEmpty(setting.TitleSetting.Title))
+            //{
+            //    gr.GetCTR().AddNewRPr().AddNewRFonts().ascii = setting.TitleSetting.FontName;
+            //    gr.GetCTR().AddNewRPr().AddNewRFonts().eastAsia = setting.TitleSetting.FontName;
+            //    gr.GetCTR().AddNewRPr().AddNewRFonts().hint = ST_Hint.eastAsia;
+            //    gr.GetCTR().AddNewRPr().AddNewSz().val = (ulong)setting.TitleSetting.FontSize;//2号字体
+            //    gr.GetCTR().AddNewRPr().AddNewSzCs().val = (ulong)setting.TitleSetting.FontSize;
+            //    gr.GetCTR().AddNewRPr().AddNewB().val = setting.TitleSetting.HasBold; //加粗
+            //    gr.GetCTR().AddNewRPr().AddNewColor().val = "black";//字体颜色
+            //    gr.SetText(setting.TitleSetting.Title);
+            //}
+
+            ////创建文档主要内容
+            //if (!string.IsNullOrEmpty(setting.MainContentSetting.MainContent))
+            //{
+            //    p = docx.Document.body.AddNewP();
+            //    p.AddNewPPr().AddNewJc().val = ST_Jc.both;
+            //    gp = new XWPFParagraph(p, docx)
+            //    {
+            //        IndentationFirstLine = 2
+            //    };
+
+            //    //单倍为默认值（240）不需设置，1.5倍=240X1.5=360，2倍=240X2=480
+            //    p.AddNewPPr().AddNewSpacing().line = "400";//固定20磅
+            //    p.AddNewPPr().AddNewSpacing().lineRule = ST_LineSpacingRule.exact;
+
+            //    gr = gp.CreateRun();
+            //    CT_RPr rpr = gr.GetCTR().AddNewRPr();
+            //    CT_Fonts rfonts = rpr.AddNewRFonts();
+            //    rfonts.ascii = setting.MainContentSetting.FontName;
+            //    rfonts.eastAsia = setting.MainContentSetting.FontName;
+            //    rpr.AddNewSz().val = (ulong)setting.MainContentSetting.FontSize;//5号字体-21
+            //    rpr.AddNewSzCs().val = (ulong)setting.MainContentSetting.FontSize;
+            //    rpr.AddNewB().val = setting.MainContentSetting.HasBold;
+
+            //    gr.SetText(setting.MainContentSetting.MainContent);
+            //}
+
+            ////开始写入
+            //docx.Write(ms);
+
+            //using (FileStream fs = new FileStream(setting.SavePath, FileMode.Create, FileAccess.Write))
+            //{
+            //    byte[] data = ms.ToArray();
+            //    fs.Write(data, 0, data.Length);
+            //    fs.Flush(); 
+            //}
+            //ms.Close();
+            var data = await _clauseRepository.GetAll().Where(v => v.DocumentId == id).OrderBy(v=>v.ClauseNo).ToListAsync();
+            var title = await _entityRepository.GetAll().Where(v => v.Id == id).Select(v => v.Name).FirstOrDefaultAsync();
+            var newFile2 = $@"{title}.docx";
+            using (var fs = new FileStream(newFile2, FileMode.Create, FileAccess.Write))
+            {
+                XWPFDocument doc = new XWPFDocument();
+                //CT_SectPr m_SectPr = new CT_SectPr();       //实例一个尺寸类的实例
+                //m_SectPr.pgSz.w = 16838;        //设置宽度（这里是一个ulong类型）
+                //m_SectPr.pgSz.h = 11906;        //设置高度（这里是一个ulong类型）
+                //doc.Document.body.sectPr = m_SectPr;
+                foreach (var item in data)
+                {
+                    var p0 = doc.CreateParagraph();
+                    p0.Alignment = ParagraphAlignment.LEFT;
+                    XWPFRun r0 = p0.CreateRun();
+                    r0.FontFamily = "黑体";
+                    r0.FontSize = 10;
+                    r0.SetTextPosition(15);
+                    //r0.IsBold = false;
+                    r0.SetText(item.ClauseNo + ' ' + (item.Title ?? ""));
+                    var p1 = doc.CreateParagraph();
+                    p1.Alignment = ParagraphAlignment.LEFT;
+                    XWPFRun r1 = p1.CreateRun();
+                    p1.IndentationFirstLine = 600;
+                    r1.FontFamily = "宋体";
+                    r1.FontSize = 10;
+                    r1.SetTextPosition(15);
+                    r1.SetText(item.Content??"");
+                }
+                //var p1 = doc.CreateParagraph();
+                //p1.Alignment = ParagraphAlignment.LEFT;
+                //p1.IndentationFirstLine = 500;
+                //XWPFRun r1 = p1.CreateRun();
+                //r1.FontFamily = "·ÂËÎ";
+                //r1.FontSize = 12;
+                //r1.IsBold = true;
+                //r1.SetText("This is content, content content content content content content content content content");
+
+                doc.Write(fs);
+            }
+            return true;
         }
     }
 }

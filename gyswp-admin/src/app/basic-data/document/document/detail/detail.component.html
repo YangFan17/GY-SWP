@@ -58,8 +58,8 @@
                 <nz-form-item nz-row>
                     <nz-form-label nz-col [nzSm]="4" nzRequired>发布日期</nz-form-label>
                     <nz-form-control [nzSm]="4" nzHasFeedback>
-                        <nz-date-picker [nzFormat]="'yyyy/MM/dd'" #publishTime="ngModel"
-                            [(ngModel)]="document.publishTime" [ngModelOptions]="{standalone: true}"></nz-date-picker>
+                        <nz-date-picker name="publishTime" required [nzFormat]="'yyyy/MM/dd'" #publishTime="ngModel"
+                            [(ngModel)]="document.publishTime"></nz-date-picker>
                         <nz-form-explain *ngIf="publishTime.control.dirty&&publishTime.control.errors">
                             <ng-container *ngIf="publishTime.control.hasError('required')">请选择发布日期</ng-container>
                         </nz-form-explain>

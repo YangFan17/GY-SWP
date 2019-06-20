@@ -1,11 +1,14 @@
 import { Component, OnInit, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/component-base';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd';
-import { WorkCriterionService } from 'services';
+import { WorkCriterionService, BasicDataService } from 'services';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DocumentDto } from 'entities';
-import { getDocument } from 'pdfjs-dist';
+import { DocumentDto, Clause } from 'entities';
 import { ConfirmLearningComponent } from './confirm-learning/confirm-learning.component';
+import { DocApplicationComponent } from './doc-application/doc-application.component';
+import { ClauseDetailComponent } from '@app/basic-data/document/clause/clause-detail/clause-detail.component';
+import { RevisedListComponent } from './revised-list/revised-list.component';
+import { RevisedClauseDetailComponent } from './revised-clause-detail/revised-clause-detail.component';
 
 @Component({
     moduleId: module.id,
@@ -22,6 +25,11 @@ export class SelfLearningComponent extends AppComponentBase implements OnInit {
     docInfo: DocumentDto = new DocumentDto();
     selfChecked = []; // 选中的条款Ids
     saving: boolean = false;
+    isApply: boolean = false; // 是否可点击申请按钮
+    isRevision: boolean = false; // 是否允许制修订
+    editMode: boolean = false; //进入编辑模式
+    applyId: string; // 申请id
+    isSaveApply: boolean = false //是否可提交保存
     constructor(injector: Injector
         , private workCriterionService: WorkCriterionService
         , private actRouter: ActivatedRoute
@@ -36,12 +44,18 @@ export class SelfLearningComponent extends AppComponentBase implements OnInit {
         this.getClauseList();
     }
 
-    getIsConfirm() {
+    getUserOperate() {
         let params: any = {};
         params.docId = this.docId;
-        this.workCriterionService.getIsConfirm(params).subscribe((result) => {
+        this.workCriterionService.getUserOperateAsync(params).subscribe((result) => {
             if (result.code == 0) {
-                this.isConfirm = result.data;
+                this.isConfirm = result.data.isConfirm;
+                this.isApply = result.data.isApply;
+                this.isRevision = result.data.isRevision;
+                this.editMode = result.data.editModel;
+                this.applyId = result.data.applyId;
+                this.isSaveApply = result.data.isSave;
+                console.log(result.data);
             } else {
                 this.notify.error('请重试！');
             }
@@ -54,7 +68,7 @@ export class SelfLearningComponent extends AppComponentBase implements OnInit {
             params.id = this.docId;
             this.workCriterionService.getDocInfoAsync(params).subscribe((result) => {
                 this.docInfo = result;
-                this.getIsConfirm();
+                this.getUserOperate();
             });
         }
     }
@@ -140,7 +154,6 @@ export class SelfLearningComponent extends AppComponentBase implements OnInit {
     }
 
     //#region 确认条款
-
     isCancelCheck(bool: boolean, id: any) {
         if (bool && !this.existsChecked(id)) {
             this.selfChecked.push(id);
@@ -182,7 +195,6 @@ export class SelfLearningComponent extends AppComponentBase implements OnInit {
                 }
             });
     }
-    //#endregion
 
     resetChange(): void {
         this.confirmModal = this.modal.confirm({
@@ -192,6 +204,88 @@ export class SelfLearningComponent extends AppComponentBase implements OnInit {
             }
         });
     }
+    //#endregion
+
+    docApply(): void {
+        this.modalHelper
+            .open(DocApplicationComponent, { docId: this.docInfo.id, docName: this.docInfo.name }, 950, {
+                nzMask: true,
+                nzClosable: false,
+                nzMaskClosable: false,
+            })
+            .subscribe(isSave => {
+                if (isSave) {
+                    // this.getIsConfirm();
+                    this.isApply = false;
+                }
+            });
+    }
+
+    //#region 制修订操作
+    revisedList(): void {
+        if (this.docId) {
+            this.modalHelper
+                .open(RevisedListComponent, { docId: this.docId, applyId: this.applyId }, 1250, {
+                    nzMask: true,
+                    nzClosable: false,
+                    nzMaskClosable: false,
+                })
+                .subscribe(isSave => {
+                    if (isSave) {
+                    }
+                });
+        }
+    }
+
+    editDetail(item?: any, type?: string): void {
+        if (this.docId) {
+            var id;
+            var pId = '';
+            var pNo = '';
+            var applyId = this.applyId;
+            if (type == 'child') {
+                pId = item.id;
+                pNo = item.clauseNo;
+            }
+            if (type == 'detail') {
+                id = item.id;
+            }
+            this.modalHelper
+                .open(RevisedClauseDetailComponent, { docId: this.docId, docName: this.docInfo.name, pId: pId, pNo: pNo, id: id, applyId: applyId }, 950, {
+                    nzMask: true,
+                    nzClosable: false,
+                    nzMaskClosable: false,
+                })
+                .subscribe(isSave => {
+                    if (isSave) {
+                        // this.getClauseList();
+                    }
+                });
+        }
+    }
+
+    deleteDetail(item: Clause): void {
+        if (this.applyId) {
+            this.confirmModal = this.modal.confirm({
+                nzContent: `是否申请删除当前条款[条款编号：${item.clauseNo}]?`,
+                nzOnOk: () => {
+                    this.workCriterionService.deleteClauseById(item.id, this.docId, this.applyId).subscribe(res => {
+                        if (res.code == 0) {
+                            this.notify.info('删除申请提交成功！', '');
+                        } else if (res.code == 2) {
+                            this.notify.warn('重复删除，请前往‘已修订列表’进行确认！', '');
+                        } else if (res.code == 3) {
+                            this.notify.warn('已修订过的条款无法删除，请前往‘已修订列表’进行确认！', '');
+                        }
+                        else {
+                            this.notify.warn('请确保当前条款下无子项条款后再申请删除！', '');
+                        }
+                    });
+                }
+            });
+        }
+    }
+    //#endregion
 }
 
 export interface TreeNodeInterface {

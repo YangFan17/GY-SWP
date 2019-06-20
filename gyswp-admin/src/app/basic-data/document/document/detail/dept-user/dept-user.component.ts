@@ -38,7 +38,7 @@ export class DeptUserComponent extends ModalComponentBase implements OnInit {
         params.DepartId = this.deptId;
         params.keyWord = this.keyWord;
         this.isTableLoading = true;
-        this.basicDataService.GetEmployeeListByDeptIdAsync(params)
+        this.basicDataService.getEmployeeListByDeptIdAsync(params)
             .finally(() => {
                 this.isTableLoading = false;
             })

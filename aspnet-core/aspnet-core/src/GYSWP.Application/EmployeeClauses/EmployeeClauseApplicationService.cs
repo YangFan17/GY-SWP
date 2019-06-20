@@ -22,6 +22,8 @@ using GYSWP.EmployeeClauses;
 using GYSWP.EmployeeClauses.Dtos;
 using GYSWP.EmployeeClauses.DomainService;
 using GYSWP.Dtos;
+using GYSWP.ApplyInfos;
+using GYSWP.ClauseRevisions;
 
 namespace GYSWP.EmployeeClauses
 {
@@ -32,8 +34,9 @@ namespace GYSWP.EmployeeClauses
     public class EmployeeClauseAppService : GYSWPAppServiceBase, IEmployeeClauseAppService
     {
         private readonly IRepository<EmployeeClause, Guid> _entityRepository;
-
+        private readonly IRepository<ApplyInfo, Guid> _applyInfoRepository;
         private readonly IEmployeeClauseManager _entityManager;
+        private readonly IRepository<ClauseRevision, Guid> _clauseRevisionRepository;
 
         /// <summary>
         /// 构造函数 
@@ -41,10 +44,14 @@ namespace GYSWP.EmployeeClauses
         public EmployeeClauseAppService(
         IRepository<EmployeeClause, Guid> entityRepository
         , IEmployeeClauseManager entityManager
+        , IRepository<ApplyInfo, Guid> applyInfoRepository
+        , IRepository<ClauseRevision, Guid> clauseRevisionRepository
         )
         {
             _entityRepository = entityRepository;
             _entityManager = entityManager;
+            _applyInfoRepository = applyInfoRepository;
+            _clauseRevisionRepository = clauseRevisionRepository;
         }
 
 
@@ -193,22 +200,59 @@ namespace GYSWP.EmployeeClauses
         }
 
         /// <summary>
-        /// 
+        /// 获取用户操作权限相关信息
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public async Task<APIResultDto> GetIsConfirmAsync(ConfirmClauseInput input)
+        public async Task<APIResultDto> GetUserOperateAsync(ConfirmClauseInput input)
         {
+            DocUserInfo resultData = new DocUserInfo();
             var user = await GetCurrentUserAsync();
-            int count = await _entityRepository.GetAll().Where(v => v.DocumentId == input.DocId && v.EmployeeId == user.EmployeeId).CountAsync();
-            if (count != 0)
+            int count = await _entityRepository.CountAsync(v => v.DocumentId == input.DocId && v.EmployeeId == user.EmployeeId);
+            var applyInfo = await _applyInfoRepository.GetAll().Where(v => v.EmployeeId == user.EmployeeId && v.DocumentId == input.DocId).OrderByDescending(v=>v.CreationTime).Select(v => new { status= v.Status,id = v.Id}).FirstOrDefaultAsync();
+            if (applyInfo != null)
             {
-                return new APIResultDto() { Code = 0, Msg = "ok", Data = true };
+                int revisionCount = await _clauseRevisionRepository.CountAsync(v => v.ApplyInfoId == applyInfo.id);
+                //是否申请制修订
+                if (applyInfo.status == GYEnums.ApplyStatus.待审批)
+                {
+                    resultData.IsApply = false;
+                    resultData.EditModel = false;
+                }
+                else if(applyInfo.status == GYEnums.ApplyStatus.审批通过)
+                {
+                    resultData.IsRevision = true;
+                    resultData.EditModel = true;
+                    resultData.IsApply = false;
+                    resultData.ApplyId = applyInfo.id;
+                    if(revisionCount != 0)
+                    {
+                        resultData.IsSave = true;
+                    }
+                }
+                else 
+                {
+                    resultData.IsApply = true;
+                    resultData.EditModel = false;
+                }
             }
             else
             {
-                return new APIResultDto() { Code = 0, Msg = "ok", Data = false };
+                resultData.IsApply = true;
+                resultData.IsRevision = false;
+                resultData.EditModel = false;
             }
+
+            //是否确认条款
+            if (count != 0)
+            {
+                resultData.IsConfirm = true;
+            }
+            else
+            {
+                resultData.IsConfirm = false;
+            }
+            return new APIResultDto() { Code = 0, Msg = "ok", Data = resultData };
         }
 
 

@@ -5,7 +5,7 @@
       <span>{{l('EditRole')}} </span>
       <span *ngIf="role&&role.isStatic">
         <span>(</span>
-        <span style="color:red">static</span>
+        <span style="color:#ff4d4f;">static</span>
         <span>)</span>
       </span>
     </div>
@@ -18,8 +18,8 @@
       <!-- 角色名称 -->
       <nz-form-item>
         <nz-form-control nzHasFeedback>
-          <input nz-input name="name" #name="ngModel" [(ngModel)]="role.name" [placeholder]="l('Name')" [disabled]="role.isStatic"
-            required>
+          <input nz-input name="name" #name="ngModel" [(ngModel)]="role.name" [placeholder]="l('Name')"
+            [disabled]="role.isStatic" required>
           <nz-form-explain *ngIf="name.control.dirty&&name.control.errors">
             <ng-container *ngIf="name.control.hasError('required')">{{l('CanNotNull')}}</ng-container>
           </nz-form-explain>
@@ -29,8 +29,8 @@
       <!-- 角色展示名称 -->
       <nz-form-item>
         <nz-form-control nzHasFeedback>
-          <input nz-input name="displayName" #displayName="ngModel" [(ngModel)]="role.displayName" [placeholder]="l('DisplayName')"
-            required>
+          <input nz-input name="displayName" #displayName="ngModel" [(ngModel)]="role.displayName"
+            [placeholder]="l('DisplayName')" required>
           <nz-form-explain *ngIf="displayName.control.dirty&&displayName.control.errors">
             <ng-container *ngIf="displayName.control.hasError('required')">{{l('CanNotNull')}}</ng-container>
           </nz-form-explain>
@@ -46,7 +46,8 @@
 
       <!-- 权限组 -->
       <nz-form-item>
-        <nz-checkbox-group name="permissions" [(ngModel)]="permissionList" *ngIf="permissionList.length!=0"></nz-checkbox-group>
+        <nz-checkbox-group name="permissions" [(ngModel)]="permissionList" *ngIf="permissionList.length!=0">
+        </nz-checkbox-group>
       </nz-form-item>
 
       <!-- 功能按钮 -->

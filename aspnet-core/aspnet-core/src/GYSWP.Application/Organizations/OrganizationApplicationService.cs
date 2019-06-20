@@ -25,6 +25,8 @@ using GYSWP.Employees;
 using GYSWP.Dtos;
 using Senparc.CO2NET.HttpUtility;
 using GYSWP.Employees.Dtos;
+using GYSWP.DingDing.Dtos;
+using GYSWP.DingDing;
 
 namespace GYSWP.Organizations
 {
@@ -37,6 +39,7 @@ namespace GYSWP.Organizations
         private readonly IRepository<Organization, long> _entityRepository;
         private readonly IRepository<Employee, string> _employeeRepository;
         private readonly IOrganizationManager _entityManager;
+        private readonly IDingDingAppService _dingDingAppService;
 
         /// <summary>
         /// 构造函数 
@@ -45,11 +48,13 @@ namespace GYSWP.Organizations
         IRepository<Organization, long> entityRepository
         , IRepository<Employee, string> employeeRepository
         , IOrganizationManager entityManager
+        , IDingDingAppService dingDingAppService
         )
         {
             _entityRepository = entityRepository;
             _employeeRepository = employeeRepository;
             _entityManager = entityManager;
+            _dingDingAppService = dingDingAppService;
         }
 
 
@@ -240,8 +245,9 @@ namespace GYSWP.Organizations
         /// </summary>
         public async Task<APIResultDto> SynchronousOrganizationAsync()
         {
-            string accessToken = "46a654e963ef3fa299dc5a7a34181cb5";
-            //string accessToken = _dingDingAppService.GetAccessTokenByApp(DingDingAppEnum.会议申请); //GetAccessToken();
+            //string accessToken = "46a654e963ef3fa299dc5a7a34181cb5";
+            DingDingAppConfig ddConfig = _dingDingAppService.GetDingDingConfigByApp(DingDingAppEnum.标准化工作平台);
+            string accessToken = _dingDingAppService.GetAccessToken(ddConfig.Appkey, ddConfig.Appsecret);
             var depts = Get.GetJson<DingDepartmentDto>(string.Format("https://oapi.dingtalk.com/department/list?access_token={0}", accessToken));
             var entityByDD = depts.department.Select(o => new OrganizationListDto()
             {

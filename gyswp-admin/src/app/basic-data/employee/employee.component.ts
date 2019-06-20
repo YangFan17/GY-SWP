@@ -47,7 +47,7 @@ export class EmployeeComponent extends PagedListingComponentBase<any>{
         params.departId = this.departId;
         params.Name = this.search.name;
         params.Mobile = this.search.mobile;
-        this.basicDataService.GetEmployeeListAsync(params)
+        this.basicDataService.getEmployeeListAsync(params)
             .finally(() => {
                 finishedCallback();
             })

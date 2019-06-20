@@ -1,1 +1,42 @@
-配置管理
+<div nz-row>
+    <div nz-col nzSpan="18" style="padding-right:10px;">
+        <nz-input-group nzSearch [nzSuffix]="suffixButton">
+            <input type="text" [(ngModel)]="keyWord" nz-input placeholder="标准名称/编号">
+        </nz-input-group>
+        <ng-template #suffixButton>
+            <button nz-button nzType="default" [nzLoading]="isTableLoading" (click)="refreshData(true)"
+                nzSearch>搜索</button>
+        </ng-template>
+    </div>
+</div>
+<div nz-row>
+    <div nz-col nzSpan="24">
+        <ng-template #totalTemplate let-total>共 {{totalItems}} 条</ng-template>
+        <nz-table #nzTable [nzFrontPagination]="false" [nzShowTotal]="totalTemplate" [nzTotal]="totalItems"
+            [nzData]="dataList" [(nzPageIndex)]="pageNumber" [(nzPageSize)]="pageSize" [nzLoading]="isTableLoading"
+            [nzShowSizeChanger]="true" (nzPageIndexChange)="refreshData()" (nzPageSizeChange)="refreshData()">
+            <thead>
+                <tr>
+                    <th>配置类型</th>
+                    <th>编码</th>
+                    <th>配置项</th>
+                    <th>备注</th>
+                    <th>序号</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of nzTable.data">
+                    <td>{{item.docNo}}</td>
+                    <td>{{item.name}}</td>
+                    <td>{{item.categoryDesc}}</td>
+                    <td>
+                        <a (click)="editLeaf(leaf)">编辑</a>
+                        <nz-divider nzType="vertical"></nz-divider>
+                        <a (click)="deleteLeaf(leaf,deleteContent)">删除</a>
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>
+    </div>
+</div>
