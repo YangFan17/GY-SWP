@@ -40,7 +40,7 @@ namespace GYSWP.ApplyInfos
         /// </summary>
         public virtual DateTime CreationTime { get; set; }
         /// <summary>
-        /// 审批状态（已同意/已拒绝）
+        /// 申请状态（已同意/已拒绝）
         /// </summary>
         [Required]
         public virtual ApplyStatus Status { get; set; }
@@ -61,10 +61,29 @@ namespace GYSWP.ApplyInfos
         [Required]
         public virtual string Content { get; set; }
         /// <summary>
-        /// 审批Id
+        /// 申请Id
         /// </summary>
         [StringLength(50)]
         public virtual string ProcessInstanceId { get; set; }
+
+
+        /// <summary>
+        /// 审批发起时间
+        /// </summary>
+        public virtual DateTime? ProcessingCreationTime { get; set; }
+        /// <summary>
+        /// 审批发起时间
+        /// </summary>
+        public virtual DateTime? ProcessingHandleTime { get; set; }
+        /// <summary>
+        /// 审批Id
+        /// </summary>
+        [StringLength(50)]
+        public virtual string RevisionPId { get; set; }
+        /// <summary>
+        /// 审批状态（已同意/已拒绝）
+        /// </summary>
+        public virtual RevisionStatus? ProcessingStatus { get; set; }
     }
 
 }

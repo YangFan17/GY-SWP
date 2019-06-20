@@ -67,5 +67,16 @@ namespace GYSWP.Documents
         /// 员工授权Ids（以逗号分隔）
         /// </summary>
         public virtual string EmployeeIds { get; set; }
+
+        /// <summary>
+        /// 是否启用（作废）
+        /// </summary>
+        [Required]
+        public virtual bool IsAction { get; set; }
+
+        /// <summary>
+        /// 作废时间
+        /// </summary>
+        public virtual DateTime? InvalidTime { get; set; }
     }
 }

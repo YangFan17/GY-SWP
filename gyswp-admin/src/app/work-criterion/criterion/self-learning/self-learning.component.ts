@@ -29,7 +29,8 @@ export class SelfLearningComponent extends AppComponentBase implements OnInit {
     isRevision: boolean = false; // 是否允许制修订
     editMode: boolean = false; //进入编辑模式
     applyId: string; // 申请id
-    isSaveApply: boolean = false //是否可提交保存
+    // isSaveApply: boolean = false //是否可提交保存
+    isRevisionWaitTime: boolean = false //是否为审批提交后等待阶段
     constructor(injector: Injector
         , private workCriterionService: WorkCriterionService
         , private actRouter: ActivatedRoute
@@ -54,8 +55,9 @@ export class SelfLearningComponent extends AppComponentBase implements OnInit {
                 this.isRevision = result.data.isRevision;
                 this.editMode = result.data.editModel;
                 this.applyId = result.data.applyId;
-                this.isSaveApply = result.data.isSave;
-                console.log(result.data);
+                // this.isSaveApply = result.data.isSave;
+                this.isRevisionWaitTime = result.data.isRevisionWaitTime;
+                // console.log(result.data);
             } else {
                 this.notify.error('请重试！');
             }
@@ -232,6 +234,12 @@ export class SelfLearningComponent extends AppComponentBase implements OnInit {
                 })
                 .subscribe(isSave => {
                     if (isSave) {
+                        this.isConfirm = true;
+                        this.isApply = false;
+                        this.isRevision = false;
+                        this.editMode = false;
+                        this.applyId = null;
+                        this.isRevisionWaitTime = true;
                     }
                 });
         }

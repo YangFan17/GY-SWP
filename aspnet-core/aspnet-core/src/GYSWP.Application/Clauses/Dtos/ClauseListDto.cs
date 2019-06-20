@@ -38,6 +38,10 @@ namespace GYSWP.Clauses.Dtos
         /// DocumentId
         /// </summary>
         public Guid? DocumentId { get; set; }
+        /// <summary>
+        /// 业务操作Id(修订记录Id)
+        /// </summary>
+        public Guid? BLLId { get; set; }
     }
 
     /// <summary>

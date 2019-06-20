@@ -76,5 +76,6 @@ namespace GYSWP.Categorys
         Task<List<CategoryTreeNode>> GetTreeAsync(long? deptId);
         Task<string> GetParentName(int id);
         Task<List<SelectGroups>> GetCategoryTypeByDeptAsync();
+        Task<APIResultDto> InitDeptmentCategory();
     }
 }

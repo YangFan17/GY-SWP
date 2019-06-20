@@ -378,33 +378,5 @@ namespace GYSWP.ClauseRevisions
                 return new APIResultDto() { Code = 0, Msg = "删除成功" };
             }
         }
-
-        //public async Task<APIResultDto> ApplyDocAsync(ApplyInfoEditDto input)
-        //{
-        //    var user = await GetCurrentUserAsync();
-        //    input.EmployeeId = user.EmployeeId;
-        //    input.EmployeeName = user.EmployeeName;
-        //    input.Type = GYEnums.ApplyType.制修订申请;
-        //    input.Status = GYEnums.ApplyStatus.待审批;
-        //    input.CreationTime = DateTime.Now;
-        //    try
-        //    {
-        //        var result = await _approvalAppService.SubmitDocApproval(input.Reason, input.Content, input.CreationTime);
-        //        if (result.Code != 0)
-        //        {
-        //            Logger.ErrorFormat("SendMessageToEmployeeAsync errormsg{0}", result.Data);
-        //            return new APIResultDto() { Code = 901, Msg = "标准制修订申请失败" };
-        //        }
-        //        input.ProcessInstanceId = result.Data.ToString();
-        //        await Create(input);
-        //        return new APIResultDto() { Code = 0, Msg = "标准制修订申请成功" };
-        //    }
-        //    catch (Exception ex)
-        //    {
-
-        //        Logger.ErrorFormat("SendMessageToEmployeeAsync errormsg{0} Exception{1}", ex.Message, ex);
-        //        return new APIResultDto() { Code = 901, Msg = "标准制修订申请失败" };
-        //    }
-        //}
     }
 }

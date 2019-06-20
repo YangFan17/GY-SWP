@@ -115,7 +115,7 @@ namespace GYSWP.Web.Host.Controllers
                         }
                         else if (title.Contains("制修订审核流程测试"))
                         {
-                            await _applyInfoAppService.UpdateApplyInfoByPIIdAsync(processInstanceId, result);
+                            await _applyInfoAppService.UpdateDocClauseByPIIdAsync(processInstanceId, result);
                             return;
                         }
                         else //其他

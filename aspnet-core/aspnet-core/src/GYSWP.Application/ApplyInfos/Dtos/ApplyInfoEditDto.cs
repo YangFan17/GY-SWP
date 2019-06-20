@@ -91,5 +91,23 @@ namespace  GYSWP.ApplyInfos.Dtos
 		/// ProcessInstanceId
 		/// </summary>
 		public string ProcessInstanceId { get; set; }
+
+        /// <summary>
+        /// 审批发起时间
+        /// </summary>
+        public DateTime? ProcessingCreationTime { get; set; }
+        /// <summary>
+        /// 审批发起时间
+        /// </summary>
+        public DateTime? ProcessingHandleTime { get; set; }
+        /// <summary>
+        /// 审批Id
+        /// </summary>
+        [StringLength(50)]
+        public string RevisionPId { get; set; }
+        /// <summary>
+        /// 审批状态（已同意/已拒绝）
+        /// </summary>
+        public RevisionStatus ProcessingStatus { get; set; }
     }
 }

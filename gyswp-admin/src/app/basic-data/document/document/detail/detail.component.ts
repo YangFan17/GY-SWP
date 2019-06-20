@@ -39,19 +39,6 @@ export class DetailComponent extends AppComponentBase implements OnInit {
             status: 'done',
             response: 'Server Error 500', // custom error message to show
             url: 'http://www.baidu.com/xxx.png'
-        },
-        {
-            uid: 2,
-            name: 'yyy.png',
-            status: 'done',
-            url: 'http://www.baidu.com/yyy.png'
-        },
-        {
-            uid: 3,
-            name: 'zzz.png',
-            status: 'error',
-            response: 'Server Error 500', // custom error message to show
-            url: 'http://www.baidu.com/zzz.png'
         }
     ];
     saving: boolean = false;
@@ -89,6 +76,7 @@ export class DetailComponent extends AppComponentBase implements OnInit {
             this.document.categoryId = parseInt(this.category.id);
             this.document.categoryDesc = this.category.name;
             this.document.deptIds = this.dept.id;
+            this.document.isAction = true;
         }
         this.document.publishTime = this.dateFormat(this.document.publishTime);
         this.document.isAllUser = this.isAllUser == '1' ? true : false;
@@ -104,7 +92,7 @@ export class DetailComponent extends AppComponentBase implements OnInit {
                 }
                 this.isUpdate = true;
                 this.codeStyle = 'block';
-                this.clause.doc = { id: res.id, name: res.name };
+                this.clause.doc = { id: res.data.id, name: res.data.name };
             });
     }
 

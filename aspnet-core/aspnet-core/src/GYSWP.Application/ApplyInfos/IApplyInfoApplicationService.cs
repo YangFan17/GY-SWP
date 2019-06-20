@@ -74,5 +74,7 @@ namespace GYSWP.ApplyInfos
 
         Task<APIResultDto> ApplyDocAsync(ApplyInfoEditDto input);
         Task UpdateApplyInfoByPIIdAsync(string pIId, string result);
+        Task<APIResultDto> ApplyRevisionAsync(ApplyRevisionInput input);
+        Task UpdateDocClauseByPIIdAsync(string pIId, string result);
     }
 }

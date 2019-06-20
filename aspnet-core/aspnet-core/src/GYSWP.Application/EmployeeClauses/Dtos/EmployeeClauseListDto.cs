@@ -55,18 +55,27 @@ namespace GYSWP.EmployeeClauses.Dtos
         public bool IsRevision { get; set; }
 
         /// <summary>
-        /// 是否为制修订莫事
+        /// 是否为制修订模式
         /// </summary>
         public bool EditModel { get; set; }
 
         /// <summary>
         /// 是否可提交保存
         /// </summary>
-        public bool IsSave { get; set; }
+        //public bool IsSave { get; set; }
 
+        /// <summary>
+        /// 是否为审批提交后等待阶段
+        /// </summary>
+        public bool IsRevisionWaitTime { get; set; }
         /// <summary>
         /// 申请Id
         /// </summary>
         public Guid? ApplyId { get; set; }
+
+        /// <summary>
+        /// 是否制修订审批提交（流程结束）
+        /// </summary>
+        public bool IsRevisionOver { get; set; }
     }
 }

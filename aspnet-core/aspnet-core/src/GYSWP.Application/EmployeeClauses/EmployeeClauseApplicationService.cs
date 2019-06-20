@@ -209,28 +209,46 @@ namespace GYSWP.EmployeeClauses
             DocUserInfo resultData = new DocUserInfo();
             var user = await GetCurrentUserAsync();
             int count = await _entityRepository.CountAsync(v => v.DocumentId == input.DocId && v.EmployeeId == user.EmployeeId);
-            var applyInfo = await _applyInfoRepository.GetAll().Where(v => v.EmployeeId == user.EmployeeId && v.DocumentId == input.DocId).OrderByDescending(v=>v.CreationTime).Select(v => new { status= v.Status,id = v.Id}).FirstOrDefaultAsync();
+            var applyInfo = await _applyInfoRepository.GetAll().Where(v => v.EmployeeId == user.EmployeeId && v.DocumentId == input.DocId).OrderByDescending(v => v.CreationTime).FirstOrDefaultAsync();
             if (applyInfo != null)
             {
-                int revisionCount = await _clauseRevisionRepository.CountAsync(v => v.ApplyInfoId == applyInfo.id);
-                //是否申请制修订
-                if (applyInfo.status == GYEnums.ApplyStatus.待审批)
+                //int revisionCount = await _clauseRevisionRepository.CountAsync(v => v.ApplyInfoId == applyInfo.Id);
+                //是否申请制修订 审批等待阶段
+                if (applyInfo.Status == GYEnums.ApplyStatus.待审批)
                 {
                     resultData.IsApply = false;
                     resultData.EditModel = false;
                 }
-                else if(applyInfo.status == GYEnums.ApplyStatus.审批通过)
+                else if (applyInfo.Status == GYEnums.ApplyStatus.审批通过 && applyInfo.ProcessingStatus == GYEnums.RevisionStatus.等待提交 )
                 {
                     resultData.IsRevision = true;
                     resultData.EditModel = true;
-                    resultData.IsApply = false;
-                    resultData.ApplyId = applyInfo.id;
-                    if(revisionCount != 0)
-                    {
-                        resultData.IsSave = true;
-                    }
+                    //resultData.IsApply = false;
+                    resultData.ApplyId = applyInfo.Id;
+                    //if (revisionCount != 0)
+                    //{
+                    //    resultData.IsSave = true;
+                    //}
                 }
-                else 
+                // 申请通过，审批通过or结束 （流程结束）
+                else if (applyInfo.Status == GYEnums.ApplyStatus.审批通过 && (applyInfo.ProcessingStatus == GYEnums.RevisionStatus.审核拒绝 || applyInfo.ProcessingStatus == GYEnums.RevisionStatus.审核通过))
+                {
+                    resultData.IsApply = true;
+                    resultData.IsRevisionOver = true;
+                    //resultData.EditModel = false;
+                    //resultData.IsRevision = false;
+                }
+                // 申请通过，审批等待阶段
+                else if (applyInfo.Status == GYEnums.ApplyStatus.审批通过 && applyInfo.ProcessingStatus == GYEnums.RevisionStatus.待审核)
+                {
+                    resultData.IsRevisionWaitTime = true;
+                    //resultData.EditModel = false;
+                    //resultData.IsRevisionOver = false;
+                    //resultData.IsApply = false;
+                    //resultData.IsRevision = false;
+                    //resultData.EditModel = false;
+                }
+                else
                 {
                     resultData.IsApply = true;
                     resultData.EditModel = false;
@@ -239,8 +257,8 @@ namespace GYSWP.EmployeeClauses
             else
             {
                 resultData.IsApply = true;
-                resultData.IsRevision = false;
-                resultData.EditModel = false;
+                //resultData.IsRevision = false;
+                //resultData.EditModel = false;
             }
 
             //是否确认条款
@@ -248,10 +266,10 @@ namespace GYSWP.EmployeeClauses
             {
                 resultData.IsConfirm = true;
             }
-            else
-            {
-                resultData.IsConfirm = false;
-            }
+            //else
+            //{
+            //    resultData.IsConfirm = false;
+            //}
             return new APIResultDto() { Code = 0, Msg = "ok", Data = resultData };
         }
 

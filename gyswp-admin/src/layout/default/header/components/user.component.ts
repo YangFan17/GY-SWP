@@ -14,11 +14,7 @@ import { ChangePasswordComponent } from '@layout/default/change-password/change-
       <nz-avatar  nzSize="small" class="mr-sm"  [nzSrc]="'assets/avatar.jpg'" ></nz-avatar>
     </div>
     <div nz-menu class="width-sm">
-      <div nz-menu-item (click)="chanagepwd()">
-        <i nz-icon type="lock" class="mr-sm"></i>
-        修改密码
-      </div>
-      <li nz-menu-divider></li>
+
       <div nz-menu-item (click)="logout()">
         <i nz-icon type="logout" class="mr-sm"></i>
         退出
@@ -28,6 +24,11 @@ import { ChangePasswordComponent } from '@layout/default/change-password/change-
   <change-password-modal #changePasswordModal (modalSave)="callBack()"></change-password-modal>
   `,
 })
+// <div nz-menu-item (click)="chanagepwd()">
+// <i nz-icon type="lock" class="mr-sm"></i>
+// 修改密码
+// </div>
+// <li nz-menu-divider></li>
 export class HeaderUserComponent extends AppComponentBase {
 
   @ViewChild('changePasswordModal') changePasswordModal: ChangePasswordComponent;

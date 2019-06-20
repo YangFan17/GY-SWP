@@ -142,8 +142,9 @@ export class WorkCriterionService {
     }
 
     saveRevised(applyId: string, docId: string): Observable<any> {
-        let url_ = "/api/services/app/Approval/SubmitRevisionApproval";
-        return this._commonhttp.post(url_, { ApplyInfoId: applyId, DocumentId: docId }).pipe(map(data => {
+        let url_ = "/api/services/app/ApplyInfo/ApplyRevisionAsync";
+        var input = { documentId: docId, applyInfoId: applyId };
+        return this._commonhttp.post(url_, input).pipe(map(data => {
             return data;
         }));
     }

@@ -96,6 +96,7 @@ export class RevisedListComponent extends ModalComponentBase {
                     this.workCriterionService.saveRevised(this.applyId, this.docId).finally(() => { this.saving = false; }).subscribe(res => {
                         if (res.code == 0) {
                             this.notify.info('制修订申请提交成功！', '');
+                            this.success(true);
                         }
                         else {
                             this.notify.error('制修订申请提交失败，请重试！', '');

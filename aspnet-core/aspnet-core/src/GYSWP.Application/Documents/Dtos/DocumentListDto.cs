@@ -78,6 +78,15 @@ namespace GYSWP.Documents.Dtos
         /// 员工授权Ids（以逗号分隔）
         /// </summary>
         public string EmployeeIds { get; set; }
+
+        /// <summary>
+        /// 是否启用（作废）
+        /// </summary>
+        public bool IsAction { get; set; }
+        /// <summary>
+        /// 作废时间
+        /// </summary>
+        public DateTime? InvalidTime { get; set; }
     }
 
     [AutoMapFrom(typeof(Document))]

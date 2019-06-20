@@ -27,5 +27,9 @@ namespace GYSWP.Clauses
         /// 所属标准
         /// </summary>
         public virtual Guid? DocumentId { get; set; }
+        /// <summary>
+        /// 业务操作Id(修订记录Id)
+        /// </summary>
+        public virtual Guid? BLLId { get; set; }
     }
 }

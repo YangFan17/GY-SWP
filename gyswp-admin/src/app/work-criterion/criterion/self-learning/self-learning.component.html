@@ -16,16 +16,21 @@
     <!-- </div> -->
     <div nz-row>
         <div nz-row [nzGutter]="24">
-            <div nz-col *ngIf="!isApply && !editMode && !isRevision" [nzSpan]="7" class="mb-md">
-                <nz-alert nzType="info" nzMessage="您的制修订申请已提交，审批通过后方可进行制修订操作" nzShowIcon></nz-alert>
+            <div nz-col *ngIf="!isApply && !editMode && !isRevision && !isRevisionWaitTime" [nzSpan]="7" class="mb-md">
+                <nz-alert nzType="info" nzMessage="您的制修废申请已提交，审批通过后方可进行制修废操作" nzShowIcon></nz-alert>
             </div>
-            <div nz-col *ngIf="!isApply && editMode && isRevision" [nzSpan]="11" class="mb-md">
+            <div nz-col *ngIf="!isApply && editMode && isRevision && !isRevisionWaitTime" [nzSpan]="11" class="mb-md">
                 <nz-alert nzType="success" nzMessage="您的制修订申请已通过，请进行制修订操作（注：修订后的条款将暂存至‘已修订列表’中，请前往提交）" nzShowIcon>
                 </nz-alert>
             </div>
+            <div nz-col *ngIf="isRevisionWaitTime" [nzSpan]="7" class="mb-md">
+                <nz-alert nzType="info" nzMessage="您的制修订申请已提交，审批通过后标准将会自动更新" nzShowIcon>
+                </nz-alert>
+            </div>
             <div nz-col [nzSpan]="6" class="mb-md" [class.text-right]="'true'" style="float:right">
-                <button *ngIf="isConfirm && !editMode" nz-button type="button" (click)="resetChange()" nzType="primary">
-                    <span>重新确认</span>
+                <button *ngIf="isConfirm && !editMode && !isRevisionWaitTime" nz-button type="button"
+                    (click)="resetChange()" nzType="primary">
+                    <span>重新确认条款</span>
                 </button>
                 <button *ngIf="isApply && !editMode && !isRevision" nz-button type="button" (click)="docApply()">
                     <i nz-icon type="form"></i>
@@ -44,7 +49,7 @@
         <nz-table #expandTable [nzData]="listOfMapData" [nzShowPagination]="false">
             <thead>
                 <tr>
-                    <th *ngIf="!isConfirm && !editMode" nzWidth="50px">
+                    <th *ngIf="!isConfirm && !editMode && !isRevisionWaitTime" nzWidth="50px">
                         <!-- <label nz-checkbox [(ngModel)]="isSelectedAll" (ngModelChange)="checkAll($event)">
                         </label> -->
                     </th>
@@ -59,7 +64,7 @@
                     <ng-container *ngFor="let item of mapOfExpandedData[data.id]">
                         <tr *ngIf="(item.parent && item.parent.expand) || !item.parent"
                             [ngClass]="{ 'true': item.checked == true}">
-                            <td *ngIf="!isConfirm && !editMode" style="text-align: right;">
+                            <td *ngIf="!isConfirm && !editMode && !isRevisionWaitTime" style="text-align: right;">
                                 <label nz-checkbox [(ngModel)]="item.checked"
                                     (ngModelChange)="isCancelCheck($event,item.id)">
                                 </label>
@@ -89,8 +94,8 @@
         <button nz-button [nzType]="'default'" (click)="return()">
             返回
         </button>
-        <button *ngIf="!isConfirm && !editMode && listOfMapData.length>0" nz-button [nzType]="'primary'" type="button"
-            [nzLoading]="saving" (click)="confirmClause()">
+        <button *ngIf="!isConfirm && !editMode && listOfMapData.length>0 && !isRevisionWaitTime" nz-button
+            [nzType]="'primary'" type="button" [nzLoading]="saving" (click)="confirmClause()">
             确认条款
         </button>
         <!-- <button *ngIf="editMode && isSaveApply" nz-button [nzType]="'primary'" type="button" [nzLoading]="saving"

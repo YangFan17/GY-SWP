@@ -59,8 +59,12 @@ export class CategoryComponent extends AppComponentBase implements OnInit {
     }
 
     contextMenu($event: MouseEvent, template: TemplateRef<void>, node): void {
-        this.dropdown = this.nzDropdownService.create($event, template);
-        this.rkeyNode = node;
+        if (node.title == '技术标准' || node.title == '管理标准' || node.title == '工作标准' || node.title == '外来标准' || node.title == '作废标准库') {
+            // 默认分类无法修改
+        } else {
+            this.dropdown = this.nzDropdownService.create($event, template);
+            this.rkeyNode = node;
+        }
     }
 
     edit(): void {

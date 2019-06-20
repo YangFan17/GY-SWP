@@ -26,7 +26,8 @@ namespace GYSWP.GYEnums
     public enum ApplyType
     {
         制修订申请 = 1,
-        合理化建议 = 2
+        制修订审批 = 2, 
+        合理化建议 = 3
     }
 
     public enum OperateType
@@ -41,7 +42,9 @@ namespace GYSWP.GYEnums
     {
         待审核 = 1,
         审核通过 = 2,
-        审核拒绝 = 3
+        审核拒绝 = 3,
+        前置拒绝 = 4,
+        等待提交 = 5
     }
     public enum RevisionType
     {

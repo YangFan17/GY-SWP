@@ -318,7 +318,7 @@ namespace GYSWP.Documents
         public async Task<PagedResultDto<DocumentListDto>> GetPagedWithPermission(GetDocumentsInput input)
         {
             var curUser = await GetCurrentUserAsync();
-            var query = _entityRepository.GetAll().Where(v => (v.PublishTime.HasValue ? v.PublishTime <= DateTime.Today : false) && (v.IsAllUser == true || v.EmployeeIds.Contains(curUser.EmployeeId)))
+            var query = _entityRepository.GetAll().Where(v => v.IsAction == true && (v.PublishTime.HasValue ? v.PublishTime <= DateTime.Today : false) && (v.IsAllUser == true || v.EmployeeIds.Contains(curUser.EmployeeId)))
                 .WhereIf(input.CategoryId.HasValue, v => v.CategoryId == input.CategoryId)
                 .WhereIf(!string.IsNullOrEmpty(input.KeyWord), e => e.Name.Contains(input.KeyWord) || e.DocNo.Contains(input.KeyWord));
             var count = await query.CountAsync();

@@ -2,6 +2,7 @@
 using Abp.Runtime.Validation;
 using GYSWP.Dtos;
 using GYSWP.ApplyInfos;
+using System;
 
 namespace GYSWP.ApplyInfos.Dtos
 {
@@ -19,5 +20,11 @@ namespace GYSWP.ApplyInfos.Dtos
             }
         }
 
+    }
+
+    public class ApplyRevisionInput
+    {
+        public Guid ApplyInfoId { get; set; }
+        public Guid DocumentId { get; set; }
     }
 }
