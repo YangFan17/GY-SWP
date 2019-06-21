@@ -73,7 +73,7 @@ namespace GYSWP.ClauseRevisions
 
 
         /// <summary>
-        /// 类型（新增、修改、删除）
+        /// 类型（新增、修改、删除、标准制定）
         /// </summary>
         [Required]
         public virtual RevisionType RevisionType { get; set; }

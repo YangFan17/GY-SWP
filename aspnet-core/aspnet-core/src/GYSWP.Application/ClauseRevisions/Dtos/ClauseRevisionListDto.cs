@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using GYSWP.ClauseRevisions;
 using GYSWP.GYEnums;
 using System.Collections.Generic;
+using Abp.AutoMapper;
 
 namespace GYSWP.ClauseRevisions.Dtos
 {
@@ -156,5 +157,37 @@ namespace GYSWP.ClauseRevisions.Dtos
                 return RevisionType.ToString();
             }
         }
+    }
+
+    /// <summary>
+    /// 条款树形表格
+    /// </summary>
+    [AutoMapFrom(typeof(ClauseRevision))]
+    public class ClauseRevisionTreeNodeDto
+    {
+        public Guid Id { get; set; }
+        public Guid? ParentId { get; set; }
+
+        public string ClauseNo { get; set; }
+        public string Title { get; set; }
+        public string Content { get; set; }
+        public List<ClauseRevisionTreeNodeDto> Children = new List<ClauseRevisionTreeNodeDto>();
+    }
+    [AutoMapFrom(typeof(ClauseRevision))]
+    public class ClauseRevisionTreeListDto
+    {
+        public Guid Id { get; set; }
+        /// <summary>
+        /// ParentId
+        /// </summary>
+        public Guid? ParentId { get; set; }
+
+
+        public string Title { get; set; }
+        public string Content { get; set; }
+        /// <summary>
+        /// 父Id（root 为 空）
+        /// </summary>
+        public string ClauseNo { get; set; }
     }
 }

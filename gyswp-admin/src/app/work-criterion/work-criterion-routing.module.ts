@@ -4,6 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { CriterionComponent } from './criterion/criterion.component';
 import { PreviewDocComponent } from './criterion/preview-doc/preview-doc.component';
 import { SelfLearningComponent } from './criterion/self-learning/self-learning.component';
+import { DraftDocComponent } from './criterion/draft-doc/draft-doc/draft-doc.component';
 
 
 const routes: Routes = [
@@ -31,16 +32,12 @@ const routes: Routes = [
         canActivate: [AppRouteGuard],
         data: { title: '自查学习' },
     },
-    // {
-    //     path: 'doc-detail',
-    //     component: DetailComponent,
-    //     canActivate: [AppRouteGuard],
-    // },
-    // {
-    //     path: 'doc-detail/:id',
-    //     component: DetailComponent,
-    //     canActivate: [AppRouteGuard],
-    // },
+    {
+        path: 'draft-doc/:id',
+        component: DraftDocComponent,
+        canActivate: [AppRouteGuard],
+        data: { title: '制定标准' },
+    },
 ];
 
 @NgModule({

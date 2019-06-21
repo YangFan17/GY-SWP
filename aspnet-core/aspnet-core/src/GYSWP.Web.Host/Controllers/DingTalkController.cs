@@ -113,14 +113,19 @@ namespace GYSWP.Web.Host.Controllers
                             await _applyInfoAppService.UpdateApplyInfoByPIIdAsync(processInstanceId, result);
                             return;
                         }
-                        else if (title.Contains("制修订审核流程测试"))
+                        else if (title.Contains("修订审核流程测试"))
                         {
                             await _applyInfoAppService.UpdateDocClauseByPIIdAsync(processInstanceId, result);
                             return;
                         }
+                        else if (title.Contains("制定审批流程测试"))
+                        {
+                            await _applyInfoAppService.CreateDraDocByPIIdAsync(processInstanceId, result);
+                            return;
+                        }
                         else //其他
                         {
-                            return;
+
                         }
                     }
                     else//审批实例终止

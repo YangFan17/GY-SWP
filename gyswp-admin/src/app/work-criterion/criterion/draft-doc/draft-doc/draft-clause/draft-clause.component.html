@@ -1,0 +1,53 @@
+<div *ngIf="doc.id" nz-row>
+    <div *ngIf="doc.isWait" nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="7" class="mb-md">
+            <nz-alert nzType="info" nzMessage="您制订的标准申请已提交，审批通过后标准将会自动发布" nzShowIcon>
+            </nz-alert>
+        </div>
+    </div>
+    <div *ngIf="!doc.isWait" nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="6" class="mb-md" [class.text-right]="'true'" style="float:right">
+            <button nz-button type="button" (click)="editDetail()" nzType="primary">
+                <i class="anticon anticon-plus"></i>
+                <span>添加条款</span>
+            </button>
+        </div>
+    </div>
+    <nz-table #expandTable [nzData]="listOfMapData" [nzShowPagination]="false">
+        <thead>
+            <tr>
+                <th nzWidth="10%">条款编号</th>
+                <th nzWidth="20%">条款标题</th>
+                <th nzWidth="50%">条款内容</th>
+                <th *ngIf="!doc.isWait">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <ng-container *ngFor="let data of expandTable.data">
+                <ng-container *ngFor="let item of mapOfExpandedData[data.id]">
+                    <tr *ngIf="(item.parent && item.parent.expand) || !item.parent"
+                        [ngClass]="{ 'true': item.checked == true}">
+                        <td [nzIndentSize]="item.level * 20" [nzShowExpand]="item.children.length>0"
+                            [(nzExpand)]="item.expand"
+                            (nzExpandChange)="collapse(mapOfExpandedData[data.id], item, $event)">
+                            {{ item.clauseNo }}
+                        </td>
+                        <td>{{ item.title | lengthLimit:20}}</td>
+                        <td>
+                            <label *ngIf="item.bllId && item.lastModificationTime" style="color: red;">
+                                new
+                            </label>{{ item.content| lengthLimit:50 }}
+                        </td>
+                        <td *ngIf="!doc.isWait">
+                            <a (click)="editDetail(item,'detail')">详情</a>
+                            <nz-divider nzType="vertical"></nz-divider>
+                            <a (click)="editDetail(item,'child')">添加子条款</a>
+                            <nz-divider nzType="vertical"></nz-divider>
+                            <a style="color:#ff4d4f;" (click)="deleteClause(item)">删除</a>
+                        </td>
+                    </tr>
+                </ng-container>
+            </ng-container>
+        </tbody>
+    </nz-table>
+</div>

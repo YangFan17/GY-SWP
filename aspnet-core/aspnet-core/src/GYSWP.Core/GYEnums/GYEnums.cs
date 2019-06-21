@@ -50,7 +50,8 @@ namespace GYSWP.GYEnums
     {
         新增 = 1,
         修订 = 2,
-        删除 = 3
+        删除 = 3,
+        标准制定 =4
     }
 
 }

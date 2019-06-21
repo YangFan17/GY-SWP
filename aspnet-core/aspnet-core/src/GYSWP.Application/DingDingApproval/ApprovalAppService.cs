@@ -8,19 +8,8 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-
-using Abp.UI;
-using Abp.AutoMapper;
-using Abp.Extensions;
 using Abp.Authorization;
 using Abp.Domain.Repositories;
-using Abp.Application.Services.Dto;
-using Abp.Linq.Extensions;
-
-
-using GYSWP.DocAttachments;
-using GYSWP.DocAttachments.Dtos;
-using GYSWP.DocAttachments.DomainService;
 using GYSWP.Dtos;
 using GYSWP.DingDingApproval.Dtos;
 using Senparc.CO2NET.Helpers;
@@ -38,6 +27,7 @@ using GYSWP.ClauseRevisions;
 using GYSWP.Clauses;
 using GYSWP.GYEnums;
 using GYSWP.ApplyInfos;
+using GYSWP.DocRevisions;
 
 namespace GYSWP.DingDingApproval
 {
@@ -51,6 +41,7 @@ namespace GYSWP.DingDingApproval
         private readonly IRepository<Clause, Guid> _clauseRepository;
         private readonly IDingDingAppService _dingDingAppService;
         private readonly IRepository<ApplyInfo, Guid> _applyInfoRepository;
+        private readonly IRepository<DocRevision, Guid> _docRevisionRepository;
 
         public ApprovalAppService(IRepository<SystemData> systemDataRepository
             , IRepository<Organization, long> organizationRepository
@@ -59,6 +50,7 @@ namespace GYSWP.DingDingApproval
             , IRepository<ClauseRevision, Guid> clauseRevisionRepository
             , IRepository<Clause, Guid> clauseRepository
             , IRepository<ApplyInfo, Guid> applyInfoRepository
+            , IRepository<DocRevision, Guid> docRevisionRepository
 )
         {
             _systemDataRepository = systemDataRepository;
@@ -68,6 +60,7 @@ namespace GYSWP.DingDingApproval
             _clauseRevisionRepository = clauseRevisionRepository;
             _clauseRepository = clauseRepository;
             _applyInfoRepository = applyInfoRepository;
+            _docRevisionRepository = docRevisionRepository;
         }
 
         /// <summary>
@@ -78,7 +71,7 @@ namespace GYSWP.DingDingApproval
         /// <param name="CreationTime"></param>
         /// <returns></returns>
         [AbpAllowAnonymous]
-        public async Task<APIResultDto> SubmitDocApproval(string Reason, string Content, DateTime CreationTime, OperateType OperateType,string DocName)
+        public async Task<APIResultDto> SubmitDocApproval(string Reason, string Content, DateTime CreationTime, OperateType OperateType, string DocName)
         {
             //string accessToken = "5febf1152a49339ab414ce9cb11dfa66";
             DingDingAppConfig ddConfig = _dingDingAppService.GetDingDingConfigByApp(DingDingAppEnum.标准化工作平台);
@@ -120,7 +113,7 @@ namespace GYSWP.DingDingApproval
         }
 
         /// <summary>
-        /// 提交制修订审批流程
+        /// 提交修订审批流程
         /// </summary>
         /// <param name="ApplyInfoId"></param>
         /// <param name="DocumentId"></param>
@@ -207,7 +200,71 @@ namespace GYSWP.DingDingApproval
                 items.Add(revisionDetail);
             }
             approvalList.Add(new Approval() { name = "制修订明细", value = JsonConvert.SerializeObject(items) });
-            approvalList.Add(new Approval() { name = "关联审批", value = string.Format("[\"{0}\"]",pId) });
+            approvalList.Add(new Approval() { name = "关联审批", value = string.Format("[\"{0}\"]", pId) });
+            request.form_component_values = approvalList;
+            ApprovalReturn approvalReturn = new ApprovalReturn();
+            var jsonString = SerializerHelper.GetJsonString(request, null);
+            using (MemoryStream ms = new MemoryStream())
+            {
+                var bytes = Encoding.UTF8.GetBytes(jsonString);
+                ms.Write(bytes, 0, bytes.Length);
+                ms.Seek(0, SeekOrigin.Begin);
+                approvalReturn = Post.PostGetJson<ApprovalReturn>(url, null, ms);
+            };
+            if (approvalReturn.errcode == 0)
+            {
+                return new APIResultDto() { Code = 0, Msg = "提交成功", Data = approvalReturn.process_instance_id };
+            }
+            else
+            {
+                return new APIResultDto() { Code = 4, Msg = "提交失败", Data = approvalReturn.errmsg };
+            }
+        }
+
+
+        /// <summary>
+        /// 提交制定标准审批修成
+        /// </summary>
+        /// <param name="ApplyInfoId"></param>
+        /// <param name="DocumentId"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public async Task<APIResultDto> SubmitDraftDocApproval(Guid ApplyInfoId, Guid DocumentId)
+        {
+            DingDingAppConfig ddConfig = _dingDingAppService.GetDingDingConfigByApp(DingDingAppEnum.标准化工作平台);
+            string accessToken = _dingDingAppService.GetAccessToken(ddConfig.Appkey, ddConfig.Appsecret);
+            var user = await GetCurrentUserAsync();
+            var dept = await _employeeRepository.GetAll().Where(v => v.Id == user.EmployeeId).Select(v => v.Department).FirstOrDefaultAsync();
+            var deptId = dept.Replace('[', ' ').Replace(']', ' ').Trim();
+            var url = string.Format("https://oapi.dingtalk.com/topapi/processinstance/create?access_token={0}", accessToken);
+            string pId = await _applyInfoRepository.GetAll().Where(v => v.Id == ApplyInfoId).Select(v => v.ProcessInstanceId).FirstOrDefaultAsync();
+            string docName = await _docRevisionRepository.GetAll().Where(v => v.Id == DocumentId).Select(v => v.Name).FirstOrDefaultAsync();
+            var clauseList = await _clauseRevisionRepository.GetAll().Where(v => v.DocumentId == DocumentId && v.RevisionType == RevisionType.标准制定 && v.ApplyInfoId == ApplyInfoId).OrderBy(v => v.RevisionType).ThenBy(v => v.ClauseNo).ThenByDescending(v => v.CreationTime).ToListAsync();
+            SubmitApprovalEntity request = new SubmitApprovalEntity();
+            request.process_code = "PROC-BFE69EF9-4B66-4697-B917-362D28B71F68";
+            request.originator_user_id = user.EmployeeId;
+            request.agent_id = ddConfig.AgentID;
+            request.dept_id = Convert.ToInt32(deptId);
+            List<Approval> approvalList = new List<Approval>();
+            approvalList.Add(new Approval() { name = "申请人", value = user.EmployeeName });
+            approvalList.Add(new Approval() { name = "申请时间", value = DateTime.Now.ToString("yyyy-MM-dd HH:mm") });
+            approvalList.Add(new Approval() { name = "标准名称", value = docName });
+            ArrayList items = new ArrayList();
+            foreach (var item in clauseList)
+            {
+                var clause = await _clauseRepository.FirstOrDefaultAsync(v => v.Id == item.ClauseId);
+                ArrayList revisionDetail = new ArrayList();
+                revisionDetail.Add(new Approval()
+                {
+                    name = "制定内容",
+                    value = "[编号]：" + item.ClauseNo + "\n"
+                    + "[标题]：" + (item.Title.Length > 10 ? item.Title.Substring(0, 10) + "..." : item.Title) + "\n"
+                    + "[内容]：" + (item.Content.Length > 30 ? item.Content.Substring(0, 30) + "..." : item.Content)
+                });
+                items.Add(revisionDetail);
+            }
+            approvalList.Add(new Approval() { name = "标准制定明细", value = JsonConvert.SerializeObject(items) });
+            approvalList.Add(new Approval() { name = "关联审批", value = string.Format("[\"{0}\"]", pId) });
             request.form_component_values = approvalList;
             ApprovalReturn approvalReturn = new ApprovalReturn();
             var jsonString = SerializerHelper.GetJsonString(request, null);

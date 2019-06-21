@@ -107,7 +107,6 @@ export class DetailComponent extends AppComponentBase implements OnInit {
                 this.isAllUser = res.isAllUser == true ? '1' : '0';
                 this.category.id = res.categoryId.toString();
                 this.category.name = res.categoryDesc;
-                this.codeStyle = 'block';
                 this.qrCode.value = res.id;
                 this.codeStyle = 'block';
                 this.clause.doc = { id: res.id, name: res.name };

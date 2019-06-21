@@ -14,6 +14,7 @@ using GYSWP.SelfChekRecords;
 using GYSWP.EmployeeClauses;
 using GYSWP.ApplyInfos;
 using GYSWP.ClauseRevisions;
+using GYSWP.DocRevisions;
 
 namespace GYSWP.EntityFrameworkCore
 {
@@ -37,5 +38,6 @@ namespace GYSWP.EntityFrameworkCore
         public virtual DbSet<EmployeeClause> EmployeeClauses { get; set; }
         public virtual DbSet<ApplyInfo> ApplyInfos { get; set; }
         public virtual DbSet<ClauseRevision> ClauseRevisions { get; set; }
+        public virtual DbSet<DocRevision> DocRevisions { get; set; }
     }
 }

@@ -78,5 +78,7 @@ namespace GYSWP.ClauseRevisions
         Task<APIResultDto> CreateRevisionAsync(ApplyInput input);
         Task<APIResultDto> ClauseRevisionRemoveById(ApplyDeleteInput input);
         Task<APIResultDto> ClauseRevisionDeleteById(EntityDto<Guid> id);
+        Task<List<ClauseRevisionTreeNodeDto>> GetDraftClauseTreeWithCheckedAsync(Guid documentId);
+        Task<APIResultDto> ClauseDraftRemoveById(EntityDto<Guid> id);
     }
 }

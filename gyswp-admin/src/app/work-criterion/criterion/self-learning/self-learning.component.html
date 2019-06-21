@@ -7,6 +7,7 @@
         <sv label="标准文档">
             <a title="预览" (click)="goPre(docInfo.id)"> {{docInfo.name}}
             </a>
+            <label style="color:red">[受控,现行有效]</label>
         </sv>
         <sv label="归口部门">{{docInfo.deptName}}</sv>
         <sv label="标准分类">{{docInfo.categoryDesc}}</sv>
@@ -24,7 +25,7 @@
                 </nz-alert>
             </div>
             <div nz-col *ngIf="isRevisionWaitTime" [nzSpan]="7" class="mb-md">
-                <nz-alert nzType="info" nzMessage="您的制修订申请已提交，审批通过后标准将会自动更新" nzShowIcon>
+                <nz-alert nzType="info" nzMessage="您制修订的内容申请已提交，审批通过后标准将会自动更新" nzShowIcon>
                 </nz-alert>
             </div>
             <div nz-col [nzSpan]="6" class="mb-md" [class.text-right]="'true'" style="float:right">
@@ -75,7 +76,11 @@
                                 {{ item.clauseNo }}
                             </td>
                             <td>{{ item.title | lengthLimit:20}}</td>
-                            <td>{{ item.content| lengthLimit:50 }}</td>
+                            <td>
+                                <label *ngIf="item.bllId && item.lastModificationTime" style="color: red;">
+                                    new
+                                </label>{{ item.content| lengthLimit:50 }}
+                            </td>
                             <td>
                                 <a *ngIf="!editMode" (click)="showDetail(item.id)">阅读学习</a>
                                 <a *ngIf="editMode" (click)="editDetail(item,'detail')">修订</a>

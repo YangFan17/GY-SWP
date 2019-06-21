@@ -13,6 +13,8 @@ export class Clause {
     lastModifierUserId: string;
     deletionTime: Date;
     deleterUserId: string;
+    bLLId: string;
+
     constructor(data?: any) {
         if (data) {
             for (var property in data) {
@@ -37,6 +39,7 @@ export class Clause {
             this.lastModifierUserId = data["lastModifierUserId"];
             this.deletionTime = data["deletionTime"];
             this.deleterUserId = data["deleterUserId"];
+            this.bLLId = data["bLLId"];
         }
     }
     toJSON(data?: any) {
@@ -55,6 +58,7 @@ export class Clause {
         data["lastModifierUserId"] = this.lastModifierUserId;
         data["deletionTime"] = this.deletionTime;
         data["deleterUserId"] = this.deleterUserId;
+        data["bLLId"] = this.bLLId;
         return data;
     }
     static fromJS(data: any): Clause {

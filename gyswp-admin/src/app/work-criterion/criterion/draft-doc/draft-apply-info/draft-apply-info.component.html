@@ -1,0 +1,51 @@
+<div class="padding-bottom-45">
+    <h3 style="text-align: center;">
+        <span>制定申请单</span>
+    </h3>
+    <form nz-form #validateForm="ngForm" (ngSubmit)="submit()" *ngIf="applyInfo">
+        <nz-form-item nz-row>
+            <nz-form-label nz-col [nzSm]="4" nzRequired>申请类型</nz-form-label>
+            <nz-form-control [nzSm]="20">
+                <nz-radio-group name="operateType" #operateType="ngModel" [(ngModel)]="applyInfo.operateType">
+                    <label nz-radio *ngFor="let o of operateTypes" [nzValue]="o.value">
+                        <span>{{o.text}}</span>
+                    </label>
+                </nz-radio-group>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item nz-row>
+            <nz-form-label nz-col [nzSm]="4" nzRequired>申请原因</nz-form-label>
+            <nz-form-control [nzSm]="20" nzHasFeedback>
+                <textarea nz-input rows="4" name="reason" required maxlength="1000" #reason="ngModel"
+                    [(ngModel)]="applyInfo.reason" [placeholder]="'请填写申请原因'"></textarea>
+                <nz-form-explain *ngIf="reason.control.dirty&&reason.control.errors">
+                    <ng-container *ngIf="reason.control.hasError('required')">请填写申请原因</ng-container>
+                    <ng-container *ngIf="reason.control.hasError('maxlength')">字符长度小于等于1000</ng-container>
+                </nz-form-explain>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item nz-row>
+            <nz-form-label nz-col [nzSm]="4" nzRequired>申请内容</nz-form-label>
+            <nz-form-control [nzSm]="20" nzHasFeedback>
+                <textarea nz-input rows="8" name="content" required maxlength="2000" #content="ngModel"
+                    [(ngModel)]="applyInfo.content" [placeholder]="'请填写申请内容'"></textarea>
+                <nz-form-explain *ngIf="content.control.dirty&&content.control.errors">
+                    <ng-container *ngIf="content.control.hasError('required')">请填写申请内容</ng-container>
+                    <ng-container *ngIf="content.control.hasError('maxlength')">字符长度小于等于2000</ng-container>
+                </nz-form-explain>
+            </nz-form-control>
+        </nz-form-item>
+        <!-- 功能按钮 -->
+        <div class="custom-modal-footer" style="text-align: right;">
+            <div class="custom-modal-footter-group">
+                <button nz-button type="button" (click)="close()">
+                    取消
+                </button>
+                <button nz-button [nzType]="'primary'" type="button" (click)="submit()"
+                    [disabled]="!validateForm.valid || saving">
+                    申请
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

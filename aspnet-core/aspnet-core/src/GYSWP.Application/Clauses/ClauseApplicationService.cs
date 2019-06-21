@@ -282,6 +282,8 @@ namespace GYSWP.Clauses
                 Title = c.Title,
                 Content = c.Content,
                 ParentId = c.ParentId,
+                BLLId = c.BLLId,
+                LastModificationTime = c.LastModificationTime,
                 Checked = c.Checked,
                 Children = GetChildrenWithChecked(c.Id, clauseList)
             }).ToList();
@@ -304,6 +306,8 @@ namespace GYSWP.Clauses
                 ClauseNo = v.ClauseNo,
                 Title = v.Title,
                 Content = v.Content,
+                BLLId = v.BLLId,
+                LastModificationTime = v.LastModificationTime,
                 ParentId = v.ParentId
             }).OrderBy(v => v.ClauseNo).ToListAsync();
             foreach (var item in clause)

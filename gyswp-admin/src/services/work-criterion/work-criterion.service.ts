@@ -2,7 +2,7 @@ import { Inject, Optional, Injectable } from "@angular/core";
 import { Observer, Observable } from "rxjs";
 import { CommonHttpClient } from "services/common-httpclient";
 import { map } from "rxjs/operators";
-import { ApiResult, DocumentDto, ClauseTree, Clause, Employee, SelectGroup, ClauseRevision } from "entities";
+import { ApiResult, DocumentDto, ClauseTree, Clause, Employee, SelectGroup, ClauseRevision, DocRevision } from "entities";
 import { PagedResultDto } from "@shared/component-base";
 import { API_BASE_URL } from "@shared/service-proxies/service-proxies";
 @Injectable()
@@ -40,6 +40,13 @@ export class WorkCriterionService {
         }));
     }
 
+    getClauseRevisionListAsync(id: string): Observable<any> {
+        let url_ = "/api/services/app/ClauseRevision/GetDraftClauseTreeWithCheckedAsync";
+        return this._commonhttp.get(url_, { documentId: id }).pipe(map(data => {
+            return data;
+        }));
+    }
+
     getDocInfoAsync(params: any): Observable<DocumentDto> {
         let url_ = "/api/services/app/Document/GetDocumentTitleAsync";
         return this._commonhttp.get(url_, params).pipe(map(data => {
@@ -50,6 +57,20 @@ export class WorkCriterionService {
     getUserOperateAsync(params: any): Observable<ApiResult> {
         let url_ = "/api/services/app/EmployeeClause/GetUserOperateAsync";
         return this._commonhttp.get(url_, params).pipe(map(data => {
+            return ApiResult.fromJS(data);
+        }));
+    }
+
+    getUserOperateDraftAsync(): Observable<ApiResult> {
+        let url_ = "/api/services/app/EmployeeClause/GetUserOperateDraftAsync";
+        return this._commonhttp.get(url_).pipe(map(data => {
+            return ApiResult.fromJS(data);
+        }));
+    }
+
+    getDraftOperateDraftAsync(): Observable<ApiResult> {
+        let url_ = "/api/services/app/EmployeeClause/GetDraftOperateDraftAsync";
+        return this._commonhttp.get(url_).pipe(map(data => {
             return ApiResult.fromJS(data);
         }));
     }
@@ -86,7 +107,7 @@ export class WorkCriterionService {
         }));
     }
 
-    getClauseRevisionById(params): Observable<any> {
+    getClauseRevisionListById(params): Observable<any> {
         let url_ = "/api/services/app/ClauseRevision/GetClauseRevisionListByIdAsync";
         // var input = { DocumentId: docId, ApplyInfoId: applyId };
         return this._commonhttp.get(url_, params).pipe(map(data => {
@@ -126,6 +147,13 @@ export class WorkCriterionService {
         }));
     }
 
+    removeDraftRevisionById(id: string): Observable<ApiResult> {
+        let url_ = "/api/services/app/ClauseRevision/ClauseDraftRemoveById";
+        return this._commonhttp.post(url_, { id: id }).pipe(map(data => {
+            return data;
+        }));
+    }
+
     getClauseRevisionByIdAsync(id: any): Observable<ClauseRevision> {
         let url_ = "/api/services/app/ClauseRevision/getById";
         return this._commonhttp.get(url_, { id: id }).pipe(map(data => {
@@ -143,6 +171,29 @@ export class WorkCriterionService {
 
     saveRevised(applyId: string, docId: string): Observable<any> {
         let url_ = "/api/services/app/ApplyInfo/ApplyRevisionAsync";
+        var input = { documentId: docId, applyInfoId: applyId };
+        return this._commonhttp.post(url_, input).pipe(map(data => {
+            return data;
+        }));
+    }
+
+    createOrUpdateDocRevisionAsync(input: any): Observable<any> {
+        let url_ = "/api/services/app/DocRevision/CreateOrUpdate";
+        let cat = { docRevision: input };
+        return this._commonhttp.post(url_, cat).pipe(map(data => {
+            return data;
+        }));
+    }
+
+    getDocRevisionByIdAsync(id: any): Observable<DocRevision> {
+        let url_ = "/api/services/app/DocRevision/getById";
+        return this._commonhttp.get(url_, { id: id }).pipe(map(data => {
+            return DocRevision.fromJS(data);
+        }));
+    }
+
+    saveDraftDoc(applyId: string, docId: string): Observable<any> {
+        let url_ = "/api/services/app/ApplyInfo/ApplyDraftDocAsync";
         var input = { documentId: docId, applyInfoId: applyId };
         return this._commonhttp.post(url_, input).pipe(map(data => {
             return data;

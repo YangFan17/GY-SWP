@@ -27,15 +27,15 @@ export class RevisedListComponent extends ModalComponentBase {
     }
 
     ngOnInit(): void {
-        this.getClauseRevisionById();
+        this.getClauseRevisionListById();
     }
 
-    getClauseRevisionById() {
+    getClauseRevisionListById() {
         let params: any = {};
         params.ApplyInfoId = this.applyId;
         params.DocumentId = this.docId;
         this.isLoading = true;
-        this.workCriterionService.getClauseRevisionById(params).finally(() => {
+        this.workCriterionService.getClauseRevisionListById(params).finally(() => {
             this.isLoading = false;
         }).subscribe((result) => {
             this.dataList = result.list;
@@ -63,7 +63,7 @@ export class RevisedListComponent extends ModalComponentBase {
                 })
                 .subscribe(isSave => {
                     if (isSave) {
-                        this.getClauseRevisionById();
+                        this.getClauseRevisionListById();
                     }
                 });
         }
@@ -77,7 +77,7 @@ export class RevisedListComponent extends ModalComponentBase {
                     this.workCriterionService.removeRevisionById(id).subscribe(res => {
                         if (res.code == 0) {
                             this.notify.info('移除成功！', '');
-                            this.getClauseRevisionById();
+                            this.getClauseRevisionListById();
                         }
                         else {
                             this.notify.warn('请确保当前条款下无子项条款后再进行移除！', '');

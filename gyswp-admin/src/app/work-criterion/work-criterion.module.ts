@@ -15,10 +15,12 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { SelfLearningComponent } from './criterion/self-learning/self-learning.component';
 import { ConfirmLearningComponent } from './criterion/self-learning/confirm-learning/confirm-learning.component';
 import { DocApplicationComponent } from './criterion/self-learning/doc-application/doc-application.component';
-import { ClauseDetailComponent } from '@app/basic-data/document/clause/clause-detail/clause-detail.component';
 import { RevisedListComponent } from './criterion/self-learning/revised-list/revised-list.component';
 import { RevisedClauseDetailComponent } from './criterion/self-learning/revised-clause-detail/revised-clause-detail.component';
 import { RevisedListDetailComponent } from './criterion/self-learning/revised-list/revised-list-detail/revised-list-detail.component';
+import { DraftApplyInfoComponent } from './criterion/draft-doc/draft-apply-info/draft-apply-info.component';
+import { DraftDocComponent } from './criterion/draft-doc/draft-doc/draft-doc.component';
+import { DraftClauseComponent } from './criterion/draft-doc/draft-doc/draft-clause/draft-clause.component';
 
 @NgModule({
     imports: [
@@ -39,7 +41,10 @@ import { RevisedListDetailComponent } from './criterion/self-learning/revised-li
         DocApplicationComponent,
         RevisedClauseDetailComponent,
         RevisedListComponent,
-        RevisedListDetailComponent
+        RevisedListDetailComponent,
+        DraftApplyInfoComponent,
+        DraftDocComponent,
+        DraftClauseComponent
     ],
     entryComponents: [
         CriterionComponent,
@@ -49,7 +54,10 @@ import { RevisedListDetailComponent } from './criterion/self-learning/revised-li
         DocApplicationComponent,
         RevisedClauseDetailComponent,
         RevisedListComponent,
-        RevisedListDetailComponent
+        RevisedListDetailComponent,
+        DraftApplyInfoComponent,
+        DraftDocComponent,
+        DraftClauseComponent
     ],
     providers: [WorkCriterionService]
 })

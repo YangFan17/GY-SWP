@@ -25,12 +25,36 @@
                 <div nz-col [nzSpan]="8" class="mb-md right" [class.text-right]="'true'" style="float: right;">
                     <nz-form-item class="d-flex" style="margin-right: 0px;margin-bottom: 0px;">
                         <nz-form-control class="flex-1">
+                            <button nz-button type="button" *ngIf="editMode || isRevisionWaitTime" (click)="draftDoc()">
+                                <i nz-icon type="form"></i>
+                                <span>标准制定</span>
+                            </button>
                             <button nz-button type="button" (click)="refreshData()" nzType="primary"
                                 [nzLoading]="isTableLoading">查询</button>
                             <button nz-button type="button" (click)="reset()" class="mx-sm">重置</button>
+                            <button nz-button type="button" *ngIf="isApply && !editMode && !isRevision"
+                                (click)="draftApply()">
+                                <i nz-icon type="form"></i>
+                                <span>制定申请</span>
+                            </button>
                         </nz-form-control>
                     </nz-form-item>
                 </div>
+            </div>
+            <div nz-row [nzGutter]="18">
+                <div nz-col *ngIf="!isApply && !editMode && !isRevision && !isRevisionWaitTime" [nzSpan]="7"
+                    class="mb-md">
+                    <nz-alert nzType="info" nzMessage="您的制定申请已提交，审批通过后方可进行制定标准操作" nzShowIcon></nz-alert>
+                </div>
+                <div nz-col *ngIf="!isApply && editMode && isRevision && !isRevisionWaitTime" [nzSpan]="11"
+                    class="mb-md">
+                    <nz-alert nzType="success" nzMessage="您的制定申请已通过，请点击‘标准制定’进行操作" nzShowIcon>
+                    </nz-alert>
+                </div>
+                <!-- <div nz-col *ngIf="isRevisionWaitTime" [nzSpan]="7" class="mb-md">
+                    <nz-alert nzType="info" nzMessage="您制定的内容申请已提交，审批通过后标准将会自动更新" nzShowIcon>
+                    </nz-alert>
+                </div> -->
             </div>
         </form>
         <ng-template #totalTemplate let-total>共 {{totalItems}} 条</ng-template>

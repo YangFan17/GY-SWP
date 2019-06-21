@@ -27,6 +27,7 @@ using GYSWP.ClauseRevisions;
 using GYSWP.Clauses;
 using GYSWP.Documents;
 using GYSWP.Categorys;
+using GYSWP.DocRevisions;
 
 namespace GYSWP.ApplyInfos
 {
@@ -43,6 +44,7 @@ namespace GYSWP.ApplyInfos
         private readonly IRepository<Clause, Guid> _clauseRepository;
         private readonly IRepository<Document, Guid> _documentRepository;
         private readonly IRepository<Category> _categoryRepository;
+        private readonly IRepository<DocRevision, Guid> _docRevisionRepository;
 
         /// <summary>
         /// 构造函数 
@@ -55,6 +57,7 @@ namespace GYSWP.ApplyInfos
         , IRepository<Clause, Guid> clauseRepository
         , IRepository<Document, Guid> documentRepository
         , IRepository<Category> categoryRepository
+        , IRepository<DocRevision, Guid> docRevisionRepository
         )
         {
             _entityRepository = entityRepository;
@@ -64,6 +67,7 @@ namespace GYSWP.ApplyInfos
             _clauseRepository = clauseRepository;
             _documentRepository = documentRepository;
             _categoryRepository = categoryRepository;
+            _docRevisionRepository = docRevisionRepository;
         }
 
 
@@ -226,7 +230,15 @@ namespace GYSWP.ApplyInfos
             input.CreationTime = DateTime.Now;
             try
             {
-                string docName = await _documentRepository.GetAll().Where(v => v.Id == input.DocumentId).Select(v => v.Name).FirstOrDefaultAsync();
+                string docName = "";
+                if (input.OperateType == GYEnums.OperateType.制定标准)
+                {
+                    docName = "暂无";
+                }
+                else
+                {
+                    docName = await _documentRepository.GetAll().Where(v => v.Id == input.DocumentId).Select(v => v.Name).FirstOrDefaultAsync();
+                }
                 var result = await _approvalAppService.SubmitDocApproval(input.Reason, input.Content, input.CreationTime, input.OperateType, docName);
                 if (result.Code != 0)
                 {
@@ -279,7 +291,40 @@ namespace GYSWP.ApplyInfos
         }
 
         /// <summary>
-        /// 申请回调后修改状态
+        /// 发起标准制定审核并生成记录
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<APIResultDto> ApplyDraftDocAsync(ApplyRevisionInput input)
+        {
+            var entity = await _entityRepository.FirstOrDefaultAsync(v => v.Id == input.ApplyInfoId);
+            if (entity == null)
+            {
+                Logger.ErrorFormat("SendMessageToEmployeeAsync errormsg:未找到申请单实例");
+                return new APIResultDto() { Code = 903, Msg = "标准制修订审批失败" };
+            }
+            try
+            {
+                var result = await _approvalAppService.SubmitDraftDocApproval(input.ApplyInfoId, input.DocumentId);
+                if (result.Code != 0)
+                {
+                    Logger.ErrorFormat("SendMessageToEmployeeAsync errormsg{0}", result.Data);
+                    return new APIResultDto() { Code = 901, Msg = "标准制修订审批失败" };
+                }
+                entity.RevisionPId = result.Data.ToString();
+                entity.ProcessingCreationTime = DateTime.Now;
+                entity.ProcessingStatus = GYEnums.RevisionStatus.待审核;
+                return new APIResultDto() { Code = 0, Msg = "标准制修订审批成功" };
+            }
+            catch (Exception ex)
+            {
+                Logger.ErrorFormat("SendMessageToEmployeeAsync errormsg{0} Exception{1}", ex.Message, ex);
+                return new APIResultDto() { Code = 901, Msg = "标准制修订审批失败" };
+            }
+        }
+
+        /// <summary>
+        /// 制修订申请回调后修改状态
         /// </summary>
         /// <param name="pIId"></param>
         /// <param name="result"></param>
@@ -311,7 +356,7 @@ namespace GYSWP.ApplyInfos
                 }
                 else
                 {
-
+                    entity.ProcessingStatus = GYEnums.RevisionStatus.等待提交;
                 }
             }
             else
@@ -337,7 +382,7 @@ namespace GYSWP.ApplyInfos
         }
 
         /// <summary>
-        /// 审批回调后修改内容、状态哦
+        /// 修订审批回调后修改内容、状态
         /// </summary>
         /// <param name="pIId"></param>
         /// <param name="result"></param>
@@ -399,6 +444,64 @@ namespace GYSWP.ApplyInfos
             {
                 entity.ProcessingStatus = GYEnums.RevisionStatus.审核拒绝;
                 foreach (var item in list)
+                {
+                    item.Status = GYEnums.RevisionStatus.审核拒绝;
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// 审批通过后创建制定标准
+        /// </summary>
+        /// <param name="pIId"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public async Task CreateDraDocByPIIdAsync(string pIId, string result)
+        {
+            var entity = await _entityRepository.FirstOrDefaultAsync(v => v.RevisionPId == pIId);
+            entity.ProcessingHandleTime = DateTime.Now;
+            var docRevision = await _docRevisionRepository.FirstOrDefaultAsync(v => v.ApplyInfoId == entity.Id);
+            var clauseRevisionList = await _clauseRevisionRepository.GetAll().Where(v => v.ApplyInfoId == entity.Id && v.RevisionType == GYEnums.RevisionType.标准制定).OrderBy(v => v.ClauseNo).ThenBy(v => v.CreationTime).ToListAsync();
+            if (result == "agree")
+            {
+                docRevision.Status = GYEnums.RevisionStatus.审核通过;
+                entity.ProcessingStatus = GYEnums.RevisionStatus.审核通过;
+                string categoryName = await _categoryRepository.GetAll().Where(v => v.Id == docRevision.CategoryId).Select(v=>v.Name).FirstOrDefaultAsync();
+                //先创建标准实体
+                Document doc = new Document();
+                doc.Name = docRevision.Name;
+                doc.CategoryId = docRevision.CategoryId;
+                doc.CategoryDesc = categoryName;
+                doc.IsAction = false;
+                doc.DeptIds = docRevision.DeptId;
+                Guid docId = await _documentRepository.InsertAndGetIdAsync(doc);
+                await CurrentUnitOfWork.SaveChangesAsync();
+                foreach (var item in clauseRevisionList)
+                {
+                    item.Status = GYEnums.RevisionStatus.审核通过;
+                    Clause clause = new Clause();
+                    clause.DocumentId = docId;
+                    clause.ClauseNo = item.ClauseNo;
+                    clause.Title = item.Title;
+                    clause.Content = item.Content;
+                    clause.HasAttchment = item.HasAttchment;
+                    clause.BLLId = item.Id;
+                    if (item.ParentId.HasValue)
+                    {
+                        Guid newId = await _clauseRepository.GetAll().Where(v => v.BLLId == item.ParentId).Select(v => v.Id).FirstOrDefaultAsync();
+                        clause.ParentId = newId;
+                    }
+                    await _clauseRepository.InsertAsync(clause);
+                    await CurrentUnitOfWork.SaveChangesAsync();
+                }
+            }
+            else
+            {
+                entity.ProcessingStatus = GYEnums.RevisionStatus.审核拒绝;
+                docRevision.Status = GYEnums.RevisionStatus.审核拒绝;
+                foreach (var item in clauseRevisionList)
                 {
                     item.Status = GYEnums.RevisionStatus.审核拒绝;
                 }

@@ -57,6 +57,8 @@ namespace GYSWP.Clauses.Dtos
         public string Title { get; set; }
         public string Content { get; set; }
         public bool Checked { get; set; }
+        public Guid? BLLId { get; set; }
+        public DateTime? LastModificationTime { get; set; }
         //public int Level { get; set; } = 0;
         public List<ClauseTreeNodeDto> Children = new List<ClauseTreeNodeDto>();
     }
@@ -77,5 +79,7 @@ namespace GYSWP.Clauses.Dtos
         /// 父Id（root 为 空）
         /// </summary>
         public string ClauseNo { get; set; }
+        public Guid? BLLId { get; set; }
+        public DateTime? LastModificationTime { get; set; }
     }
 }

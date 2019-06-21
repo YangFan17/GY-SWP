@@ -149,7 +149,7 @@ namespace GYSWP.ClauseRevisions
                 var user = await GetCurrentUserAsync();
                 input.ClauseRevision.EmployeeId = user.EmployeeId;
                 input.ClauseRevision.EmployeeName = user.EmployeeName;
-                input.ClauseRevision.RevisionType = GYEnums.RevisionType.新增;
+                //input.ClauseRevision.RevisionType = GYEnums.RevisionType.新增;
                 input.ClauseRevision.Status = GYEnums.RevisionStatus.待审核;
                 var entity = await Create(input.ClauseRevision);
                 return new APIResultDto() { Code = 0, Msg = "保存成功", Data = entity.Id };
@@ -360,7 +360,7 @@ namespace GYSWP.ClauseRevisions
         }
 
         /// <summary>
-        /// 删除申请条款
+        /// 修订删除申请条款
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -377,6 +377,64 @@ namespace GYSWP.ClauseRevisions
                 await _entityRepository.DeleteAsync(id.Id);
                 return new APIResultDto() { Code = 0, Msg = "删除成功" };
             }
+        }
+
+        /// <summary>
+        /// 制定删除条款
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<APIResultDto> ClauseDraftRemoveById(EntityDto<Guid> id)
+        {
+            int childCount = await _entityRepository.GetAll().Where(v => v.ParentId == id.Id).CountAsync();
+            if (childCount != 0)
+            {
+                return new APIResultDto() { Code = 1, Msg = "存在子条款" };
+            }
+            else
+            {
+                await _entityRepository.DeleteAsync(id.Id);
+                return new APIResultDto() { Code = 0, Msg = "删除成功" };
+            }
+        }
+
+        /// <summary>
+        /// 获取子条款
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="clauseList"></param>
+        /// <returns></returns>
+        private List<ClauseRevisionTreeNodeDto> GetDraftChildren(Guid? id, List<ClauseRevisionTreeListDto> clauseList)
+        {
+            var list = clauseList.Where(c => c.ParentId == id).Select(c => new ClauseRevisionTreeNodeDto()
+            {
+                Id = c.Id,
+                ClauseNo = c.ClauseNo,
+                Title = c.Title,
+                Content = c.Content,
+                ParentId = c.ParentId,
+                Children = GetDraftChildren(c.Id, clauseList)
+            }).ToList();
+            return list;
+        }
+
+        /// <summary>
+        /// 获取制定标准的条款树形表
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<List<ClauseRevisionTreeNodeDto>> GetDraftClauseTreeWithCheckedAsync(Guid documentId)
+        {
+            var user = await GetCurrentUserAsync();
+            var clause = await _entityRepository.GetAll().Where(v => v.DocumentId == documentId && v.EmployeeId == user.EmployeeId).Select(v => new ClauseRevisionTreeListDto()
+            {
+                Id = v.Id,
+                ClauseNo = v.ClauseNo,
+                Title = v.Title,
+                Content = v.Content,
+                ParentId = v.ParentId
+            }).OrderBy(v => v.ClauseNo).ToListAsync();
+            return GetDraftChildren(null, clause);
         }
     }
 }

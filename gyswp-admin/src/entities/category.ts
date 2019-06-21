@@ -64,7 +64,7 @@ export class Category {
 
 export class SelectGroup {
     text: string;
-    value: string;
+    value: number;
     constructor(data?: any) {
         if (data) {
             for (var property in data) {

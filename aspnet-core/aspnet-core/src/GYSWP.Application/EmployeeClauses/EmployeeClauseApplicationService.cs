@@ -24,6 +24,8 @@ using GYSWP.EmployeeClauses.DomainService;
 using GYSWP.Dtos;
 using GYSWP.ApplyInfos;
 using GYSWP.ClauseRevisions;
+using GYSWP.Organizations;
+using GYSWP.Employees;
 
 namespace GYSWP.EmployeeClauses
 {
@@ -37,6 +39,8 @@ namespace GYSWP.EmployeeClauses
         private readonly IRepository<ApplyInfo, Guid> _applyInfoRepository;
         private readonly IEmployeeClauseManager _entityManager;
         private readonly IRepository<ClauseRevision, Guid> _clauseRevisionRepository;
+        private readonly IRepository<Employee, string> _employeeRepository;
+        private readonly IRepository<Organization, long> _organizationRepository;
 
         /// <summary>
         /// 构造函数 
@@ -46,12 +50,16 @@ namespace GYSWP.EmployeeClauses
         , IEmployeeClauseManager entityManager
         , IRepository<ApplyInfo, Guid> applyInfoRepository
         , IRepository<ClauseRevision, Guid> clauseRevisionRepository
+        , IRepository<Employee, string> employeeRepository
+        , IRepository<Organization, long> organizationRepository
         )
         {
             _entityRepository = entityRepository;
             _entityManager = entityManager;
             _applyInfoRepository = applyInfoRepository;
             _clauseRevisionRepository = clauseRevisionRepository;
+            _employeeRepository = employeeRepository;
+            _organizationRepository = organizationRepository;
         }
 
 
@@ -200,7 +208,7 @@ namespace GYSWP.EmployeeClauses
         }
 
         /// <summary>
-        /// 获取用户操作权限相关信息
+        /// 标准详情页获取用户操作权限相关信息
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -219,7 +227,7 @@ namespace GYSWP.EmployeeClauses
                     resultData.IsApply = false;
                     resultData.EditModel = false;
                 }
-                else if (applyInfo.Status == GYEnums.ApplyStatus.审批通过 && applyInfo.ProcessingStatus == GYEnums.RevisionStatus.等待提交 )
+                else if (applyInfo.Status == GYEnums.ApplyStatus.审批通过 && applyInfo.ProcessingStatus == GYEnums.RevisionStatus.等待提交)
                 {
                     resultData.IsRevision = true;
                     resultData.EditModel = true;
@@ -271,6 +279,76 @@ namespace GYSWP.EmployeeClauses
             //    resultData.IsConfirm = false;
             //}
             return new APIResultDto() { Code = 0, Msg = "ok", Data = resultData };
+        }
+
+        /// <summary>
+        /// 获取用户制定操作权限
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<APIResultDto> GetUserOperateDraftAsync()
+        {
+            DocUserInfo resultData = new DocUserInfo();
+            var user = await GetCurrentUserAsync();
+            var applyInfo = await _applyInfoRepository.GetAll().Where(v => v.EmployeeId == user.EmployeeId && v.OperateType == GYEnums.OperateType.制定标准).OrderByDescending(v => v.CreationTime).FirstOrDefaultAsync();
+            if (applyInfo != null)
+            {
+                //是否申请制修订 审批等待阶段
+                if (applyInfo.Status == GYEnums.ApplyStatus.待审批)
+                {
+                    resultData.IsApply = false;
+                    resultData.EditModel = false;
+                }
+                else if (applyInfo.Status == GYEnums.ApplyStatus.审批通过 && applyInfo.ProcessingStatus == GYEnums.RevisionStatus.等待提交)
+                {
+                    resultData.IsRevision = true;
+                    resultData.EditModel = true;
+                    resultData.ApplyId = applyInfo.Id;
+                }
+                // 申请通过，审批通过or结束 （流程结束）
+                else if (applyInfo.Status == GYEnums.ApplyStatus.审批通过 && (applyInfo.ProcessingStatus == GYEnums.RevisionStatus.审核拒绝 || applyInfo.ProcessingStatus == GYEnums.RevisionStatus.审核通过))
+                {
+                    resultData.IsApply = true;
+                    resultData.IsRevisionOver = true;
+                }
+                // 申请通过，审批等待阶段
+                else if (applyInfo.Status == GYEnums.ApplyStatus.审批通过 && applyInfo.ProcessingStatus == GYEnums.RevisionStatus.待审核)
+                {
+                    resultData.IsRevisionWaitTime = true;
+                    resultData.ApplyId = applyInfo.Id;
+                }
+                else
+                {
+                    resultData.IsApply = true;
+                    resultData.EditModel = false;
+                }
+            }
+            else
+            {
+                resultData.IsApply = true;
+            }
+            return new APIResultDto() { Code = 0, Msg = "ok", Data = resultData };
+        }
+
+        /// <summary>
+        /// 判断用户是否为制定等待阶段（防止改参数跳过验证）
+        /// </summary>
+        /// <returns></returns>
+        public async Task<APIResultDto> GetDraftOperateDraftAsync()
+        {
+            var user = await GetCurrentUserAsync();
+            string deptId = await _employeeRepository.GetAll().Where(v => v.Id == user.EmployeeId).Select(v => v.Department).FirstOrDefaultAsync();
+            string deptName = await _organizationRepository.GetAll().Where(v => "["+ v.Id + "]" == deptId).Select(v => v.DepartmentName).FirstOrDefaultAsync();
+            var applyInfo = await _applyInfoRepository.GetAll().Where(v => v.EmployeeId == user.EmployeeId && v.OperateType == GYEnums.OperateType.制定标准).OrderByDescending(v => v.CreationTime).FirstOrDefaultAsync();
+            bool IsRevisionWaitTime = false;
+            if (applyInfo != null)
+            {
+                if (applyInfo.Status == GYEnums.ApplyStatus.审批通过 && applyInfo.ProcessingStatus == GYEnums.RevisionStatus.待审核)
+                {
+                    IsRevisionWaitTime = true;
+                }
+            }
+            return new APIResultDto() { Code = 0, Msg = "ok", Data = new { IsRevisionWaitTime , deptName } };
         }
 
 

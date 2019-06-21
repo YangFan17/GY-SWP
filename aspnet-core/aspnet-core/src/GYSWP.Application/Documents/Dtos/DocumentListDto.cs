@@ -22,7 +22,7 @@ namespace GYSWP.Documents.Dtos
         /// <summary>
         /// DocNo
         /// </summary>
-        [Required(ErrorMessage = "DocNo不能为空")]
+        //[Required(ErrorMessage = "DocNo不能为空")]
         public string DocNo { get; set; }
 
 

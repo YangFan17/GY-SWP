@@ -74,5 +74,7 @@ namespace GYSWP.EmployeeClauses
 
         Task<APIResultDto> ConfirmClauseAsync(ConfirmClauseInput input);
         Task<APIResultDto> GetUserOperateAsync(ConfirmClauseInput input);
+        Task<APIResultDto> GetUserOperateDraftAsync();
+        Task<APIResultDto> GetDraftOperateDraftAsync();
     }
 }

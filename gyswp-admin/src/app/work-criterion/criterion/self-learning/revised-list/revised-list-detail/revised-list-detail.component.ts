@@ -15,6 +15,8 @@ export class RevisedListDetailComponent extends ModalComponentBase {
     @Input() pNo: string;
     @Input() id: string;
     @Input() applyId: string;
+    @Input() isDraft: boolean = false; // 是否为制定标准
+
     title: string = '条款详情';
     clause: ClauseRevision = new ClauseRevision();
     type: number;
@@ -44,6 +46,11 @@ export class RevisedListDetailComponent extends ModalComponentBase {
         this.clause.documentId = this.docId;
         this.clause.hasAttchment = false;
         this.clause.applyInfoId = this.applyId;
+        if (this.isDraft) {
+            this.clause.revisionType = 4; //制定标准
+        } else {
+            this.clause.revisionType = 1; // 新增
+        }
         this.workCriterionService.createOrUpdateRevisionAsync(this.clause)
             .finally(() => { this.saving = false; })
             .subscribe(res => {

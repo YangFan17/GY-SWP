@@ -305,5 +305,7 @@ export interface TreeNodeInterface {
     expand: boolean;
     level: number;
     checked: boolean;
+    bLLId: string;
+    lastModificationTime: Date;
     children?: TreeNodeInterface[];
 }

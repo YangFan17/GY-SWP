@@ -18,7 +18,7 @@ namespace GYSWP.Documents
         /// 标准编号
         /// </summary>
         [StringLength(100)]
-        [Required]
+        //[Required]
         public virtual string DocNo { get; set; }
         /// <summary>
         /// 标准分类Id
