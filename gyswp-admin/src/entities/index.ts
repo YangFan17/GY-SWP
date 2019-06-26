@@ -9,3 +9,7 @@ export * from './clauseTreeDto';
 export * from './apply-info';
 export * from './clause-revision';
 export * from './doc-revision';
+export * from './criterion-examine';
+export * from './examine-detail';
+export * from './examine-result';
+export * from './examine-feedback';

@@ -54,7 +54,8 @@ namespace GYSWP.Web.Host.Controllers
             CallBackRequest request = new CallBackRequest();
             request.call_back_tag = new List<string>();
             request.call_back_tag.Add("bpms_instance_change");
-            request.url = "http://yangfan.vaiwan.com/DingTalk/ApprovalCallbackAsync";
+            //request.url = "http://yangfan.vaiwan.com/DingTalk/ApprovalCallbackAsync";
+            request.url = "http://gy.intcov.com/DingTalk/ApprovalCallbackAsync";
             request.aes_key = "99skhqweass5232345IUJKWEDL5251054DSFdsuhfW9";
             request.token = "12345";
             var jsonString = SerializerHelper.GetJsonString(request, null);
@@ -200,7 +201,8 @@ namespace GYSWP.Web.Host.Controllers
             //var url = string.Format("https://oapi.dingtalk.com/call_back/update_call_back?access_token={0}", accessToken);
             DefaultDingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/call_back/update_call_back");
             OapiCallBackUpdateCallBackRequest request = new OapiCallBackUpdateCallBackRequest();
-            request.Url = "http://pm.hechuangcd.com/DingTalk/ApprovalCallbackAsync";
+            //request.Url = "http://pm.hechuangcd.com/DingTalk/ApprovalCallbackAsync";
+            request.Url = "http://gy.intcov.com/DingTalk/ApprovalCallbackAsync";
             request.AesKey = "45skhqweass5232345IUJKWEDL5251054DSFdsuhfW1";
             request.Token = "123";
             List<string> items = new List<string>();

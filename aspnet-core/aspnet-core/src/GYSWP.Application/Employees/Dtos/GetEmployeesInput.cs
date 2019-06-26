@@ -10,6 +10,7 @@ namespace GYSWP.Employees.Dtos
         public string KeyWord { get; set; }
         public string Name { get; set; }
         public string DepartId { get; set; }
+        public string DepartName { get; set; }
         public string Mobile { get; set; }
 
         /// <summary>

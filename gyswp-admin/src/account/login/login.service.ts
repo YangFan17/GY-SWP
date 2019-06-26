@@ -105,7 +105,7 @@ export class LoginService {
     );
 
     let initialUrl = UrlHelper.initialUrl;
-    if (initialUrl.indexOf('/login') > 0) {
+    if (initialUrl.indexOf('/login') > 0 || initialUrl.indexOf('/#/') > 0) {
       initialUrl = AppConsts.appBaseUrl;
     }
 

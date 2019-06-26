@@ -9,6 +9,7 @@ import { DocApplicationComponent } from './doc-application/doc-application.compo
 import { ClauseDetailComponent } from '@app/basic-data/document/clause/clause-detail/clause-detail.component';
 import { RevisedListComponent } from './revised-list/revised-list.component';
 import { RevisedClauseDetailComponent } from './revised-clause-detail/revised-clause-detail.component';
+import * as moment from 'moment';
 
 @Component({
     moduleId: module.id,
@@ -85,8 +86,16 @@ export class SelfLearningComponent extends AppComponentBase implements OnInit {
                     // console.log(this.mapOfExpandedData[item.id]);
                     // 初始化checkBox数据
                     this.mapOfExpandedData[item.id].forEach(v => {
+                        //判断确认过的条款
                         if (v.checked == true) {
                             this.selfChecked.push(v.id);
+                        }
+                        if (v.bllId && v.lastModificationTime) {
+                            let pickDate = moment(v.lastModificationTime);
+                            let diff = pickDate.diff(moment(), 'days');//相差几天
+                            if (diff > 0 - 90) {
+                                v.isNew = true;
+                            }
                         }
                     })
                 });
@@ -305,7 +314,8 @@ export interface TreeNodeInterface {
     expand: boolean;
     level: number;
     checked: boolean;
-    bLLId: string;
+    bllId: string;
+    isNew: boolean;
     lastModificationTime: Date;
     children?: TreeNodeInterface[];
 }

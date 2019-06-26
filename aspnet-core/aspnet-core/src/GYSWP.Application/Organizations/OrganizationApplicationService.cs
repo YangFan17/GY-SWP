@@ -240,6 +240,7 @@ namespace GYSWP.Organizations
             }).ToList();
             return treeNodeList;
         }
+
         /// <summary>
         /// 同步组织架构&内部员工
         /// </summary>
@@ -376,6 +377,89 @@ namespace GYSWP.Organizations
             var entity = ObjectMapper.Map<Employee>(input);
             entity = await _employeeRepository.InsertAsync(entity);
             return entity.MapTo<Employee>();
+        }
+
+
+        private List<OrganizationTreeNodeDto> GetExamineChildren(long? id)
+        {
+            var list = _entityRepository.GetAll().Where(c => c.ParentId == id).Select(c => new OrganizationTreeNodeDto()
+            {
+                Key = c.Id,
+                Title = c.DepartmentName,
+                ParentId = c.ParentId,
+                Children = GetExamineChildren(c.Id)
+            }).ToList();
+            return list;
+        }
+
+        /// <summary>
+        /// 获取可抽查的部门列表树
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>        
+        public async Task<OrganizationTreeNodeDto> GetDeptExamineTreeAsync()
+        {
+            OrganizationTreeNodeDto result = new OrganizationTreeNodeDto();
+            result.Key = 0;
+            result.Title = "考核部门";
+            var user = await GetCurrentUserAsync();
+            string deptId = await _employeeRepository.GetAll().Where(v => v.Id == user.EmployeeId).Select(v => v.Department).FirstOrDefaultAsync();
+            string position = await _employeeRepository.GetAll().Where(v => v.Id == user.EmployeeId).Select(v => v.Position).FirstOrDefaultAsync();
+            var organization = await _entityRepository.GetAll().Where(v => "[" + v.Id + "]" == deptId).Select(v => new OrganizationTreeNodeDto()
+            {
+                Key = v.Id,
+                Title = v.DepartmentName,
+                ParentId = v.ParentId
+            }).FirstOrDefaultAsync();
+            organization.Children = GetExamineChildren(organization.Key);
+            result.Children.Add(organization);
+            if (organization.ParentId == 1 && ( position == "主任" || position == "科长"))
+            {
+                string subordinate = "";
+                if (organization.Title == "营销中心")
+                {
+                    subordinate = "市场营销科";
+                }
+                else if (organization.Title == "专卖科")
+                {
+                    subordinate = "专卖科";
+                }
+                else if (organization.Title == "办公室")
+                {
+                    subordinate = "办公室";
+                }
+
+                var list = await _entityRepository.GetAll().Where(v => v.DepartmentName == subordinate && v.Id != organization.Key).Select(v => new OrganizationTreeNodeDto()
+                {
+                    Key = v.Id,
+                    Title = v.DepartmentName,
+                    ParentId = v.ParentId,
+                }).ToListAsync();
+                foreach (var item in list)
+                {
+                    var temp = await _entityRepository.GetAll().Where(v => v.Id == item.ParentId).Select(v => new OrganizationTreeNodeDto()
+                    {
+                        Key = v.Id,
+                        Title = v.DepartmentName,
+                        Disabled = true
+                    }).FirstOrDefaultAsync();
+                    temp.Children.Add(item);
+                    result.Children.Add(temp);
+                }
+            }
+            if (result.Children.Count == 0)
+            {
+                result.Children.Add(new OrganizationTreeNodeDto()
+                {
+                    Key = -1,
+                    Title = "没有任何部门权限"
+                });
+            }
+            else
+            {
+                result.Children[0].Selected = true;
+            }
+            return result;
         }
     }
 }

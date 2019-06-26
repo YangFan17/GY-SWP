@@ -39,39 +39,39 @@ namespace GYSWP.Web.Host.Controllers
 
         public IActionResult Index(string code)
         {
-            //return Redirect("/gyswp/index.html");
+            return Redirect("/gyswp/index.html");
+            ////return Redirect("/swagger");
+            //if (!string.IsNullOrEmpty(code))
+            //{
+            //    //string accessToken = "b759f2aae1813d679fa728b731758160";
+            //    //var userId = _dingDingAppService.GetUserId(accessToken, code);
+            //    //string appId = "dingoalplojp7nlay8p1x5";
+            //    string appSecret = "--HvFZSQx765LkFskrrKhELYQZdSqpxUgDEYktz60D860O45QTNCRYosZ-SXsB3E";
+            //    string accessToken = _dingDingAppService.GetAccessTokenByAppId(APPID, appSecret);
+            //    var url = string.Format("https://oapi.dingtalk.com/sns/getuserinfo_bycode?access_token={0}", accessToken);
+            //    ScanLogin dto = new ScanLogin();
+            //    dto.tmp_auth_code = code;
+            //    var jsonString = SerializerHelper.GetJsonString(dto, null);
+            //    using (MemoryStream ms = new MemoryStream())
+            //    {
+            //        var bytes = Encoding.UTF8.GetBytes(jsonString);
+            //        ms.Write(bytes, 0, bytes.Length);
+            //        ms.Seek(0, SeekOrigin.Begin);
+            //        var obj = Post.PostGetJson<ScanLoginInfo>(url, null, ms);
+            //        if (obj.errcode == "0")
+            //        {
+            //            var user = _employeeAppService.GetEmployeeByUnionIdAsync(obj.user_info.unionId).Result;
+            //            return Json(user);
+            //            //return RedirectToAction("Authenticate", "TokenAuth",user);
+            //        }
+            //        else
+            //        {
+            //            return Redirect(string.Format("https://oapi.dingtalk.com/connect/qrconnect?appid={0}&response_type=code&scope=snsapi_login&state=STATE&redirect_uri={1}", APPID, REDIRECT_URI));
+            //        }
+            //    };
+            //}
             //return Redirect("/swagger");
-            if (!string.IsNullOrEmpty(code))
-            {
-                //string accessToken = "b759f2aae1813d679fa728b731758160";
-                //var userId = _dingDingAppService.GetUserId(accessToken, code);
-                //string appId = "dingoalplojp7nlay8p1x5";
-                string appSecret = "--HvFZSQx765LkFskrrKhELYQZdSqpxUgDEYktz60D860O45QTNCRYosZ-SXsB3E";
-                string accessToken = _dingDingAppService.GetAccessTokenByAppId(APPID, appSecret);
-                var url = string.Format("https://oapi.dingtalk.com/sns/getuserinfo_bycode?access_token={0}", accessToken);
-                ScanLogin dto = new ScanLogin();
-                dto.tmp_auth_code = code;
-                var jsonString = SerializerHelper.GetJsonString(dto, null);
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    var bytes = Encoding.UTF8.GetBytes(jsonString);
-                    ms.Write(bytes, 0, bytes.Length);
-                    ms.Seek(0, SeekOrigin.Begin);
-                    var obj = Post.PostGetJson<ScanLoginInfo>(url, null, ms);
-                    if (obj.errcode == "0")
-                    {
-                        var user = _employeeAppService.GetEmployeeByUnionIdAsync(obj.user_info.unionId).Result;
-                        return Json(user);
-                        //return RedirectToAction("Authenticate", "TokenAuth",user);
-                    }
-                    else
-                    {
-                        return Redirect(string.Format("https://oapi.dingtalk.com/connect/qrconnect?appid={0}&response_type=code&scope=snsapi_login&state=STATE&redirect_uri={1}", APPID, REDIRECT_URI));
-                    }
-                };
-            }
-            return Redirect("/swagger");
-            //return Redirect(string.Format("https://oapi.dingtalk.com/connect/qrconnect?appid={0}&response_type=code&scope=snsapi_login&state=STATE&redirect_uri={1}", APPID, REDIRECT_URI));
+            ////return Redirect(string.Format("https://oapi.dingtalk.com/connect/qrconnect?appid={0}&response_type=code&scope=snsapi_login&state=STATE&redirect_uri={1}", APPID, REDIRECT_URI));
         }
 
         public IActionResult AuthenticateByScanCodeAsync(string code, string state)

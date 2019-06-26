@@ -74,5 +74,6 @@ namespace GYSWP.Employees
         Task<List<EmployeeListDto>> GetEmployeeListByDeptIdAsync(GetEmployeesInput input);
 
         Task<ScanUserInfo> GetEmployeeByUnionIdAsync(string unionId);
+        Task<List<EmployeeListDto>> GetEmployeeListByExamineAsync(GetEmployeesInput input);
     }
 }

@@ -34,6 +34,11 @@ const routes: Routes = [
         data: { preload: true },
       },
       {
+        path: 'supervision',
+        loadChildren: './supervision/supervision.module#SupervisionModule',
+        data: { preload: true },
+      },
+      {
         path: 'config',
         loadChildren: './configs/configs.module#ConfigsModule',
         data: { preload: true },

@@ -43,6 +43,52 @@ export class AppMenus {
             ]
         },
         {
+            text: "监督检查",
+            icon: { type: "icon", value: "audit" },
+            reuse: false,
+            link: "/app/supervision",
+            group: true,
+            children: [
+                {
+                    text: "标准考核",
+                    link: "/app/supervision/supervision",
+                    reuse: false
+                },
+                {
+                    text: "考核指标",
+                    link: "/app/supervision/supervision1",
+                    reuse: false
+                },
+            ]
+        },
+        {
+            text: "合理化建议",
+            icon: { type: "icon", value: "form" },
+            reuse: false,
+            link: "/app/criterion/criterion",
+            group: true,
+            children: [
+            ]
+        },
+        {
+            text: "数据统计",
+            icon: { type: "icon", value: "bar-chart" },
+            reuse: false,
+            link: "/app/criterion/criterion",
+            group: true,
+            children: [
+            ]
+        },
+        {
+            text: "设备管理",
+            icon: { type: "icon", value: "control" },
+            reuse: false,
+            link: "/app/criterion/criterion",
+            group: true,
+            children: [
+            ]
+        },
+        {
             text: "配置管理",
             icon: { type: "icon", value: "tool" },
             link: "/app/config",

@@ -11,7 +11,6 @@
     <RootNamespace>GYSWP</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="NPOI" Version="2.4.1" />
     <PackageReference Include="Senparc.CO2NET" Version="0.3.0.2" />
   </ItemGroup>
   <ItemGroup>

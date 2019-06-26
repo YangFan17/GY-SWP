@@ -12,8 +12,8 @@ namespace GYSWP.GYEnums
     public enum ConfigModel
     {
         标准化工作平台 = 1,
-        物流中心 =2,
-        钉钉配置 =3
+        物流中心 = 2,
+        钉钉配置 = 3
     }
 
     public enum ApplyStatus
@@ -26,7 +26,7 @@ namespace GYSWP.GYEnums
     public enum ApplyType
     {
         制修订申请 = 1,
-        制修订审批 = 2, 
+        制修订审批 = 2,
         合理化建议 = 3
     }
 
@@ -51,7 +51,38 @@ namespace GYSWP.GYEnums
         新增 = 1,
         修订 = 2,
         删除 = 3,
-        标准制定 =4
+        标准制定 = 4
+    }
+    public enum CriterionExamineType
+    {
+        内部考核 = 1,
+        外部考核 = 2
+    }
+    public enum ExamineStatus
+    {
+        未检查 = 1,
+        合格 = 2,
+        不合格 = 3
     }
 
+    public enum ResultStatus
+    {
+        未开始 = 1,
+        已完成 = 2
+    }
+
+    public enum FeedType
+    {
+        标准考核 = 1,
+        考核指标 = 2
+    }
+
+    public enum FactorType
+    {
+        人 = 1,
+        机 = 2,
+        料 = 3,
+        发 = 4,
+        环 = 5
+    }
 }

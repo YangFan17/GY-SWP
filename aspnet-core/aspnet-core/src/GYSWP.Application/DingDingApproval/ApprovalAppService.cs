@@ -159,9 +159,12 @@ namespace GYSWP.DingDingApproval
                     revisionDetail.Add(new Approval()
                     {
                         name = "当前内容",
-                        value = "[编号]：" + item.ClauseNo + "\n"
-                        + "[标题]：" + (item.Title.Length > 10 ? item.Title.Substring(0, 10) + "..." : item.Title) + "\n"
-                        + "[内容]：" + (item.Content.Length > 30 ? item.Content.Substring(0, 30) + "..." : item.Content)
+                        //value = "[编号]：" + item.ClauseNo + "\n"
+                        //+ "[标题]：" + (item.Title.Length > 10 ? item.Title.Substring(0, 10) + "..." : item.Title) + "\n"
+                        //+ "[内容]：" + (item.Content.Length > 30 ? item.Content.Substring(0, 30) + "..." : item.Content)
+                        value = "[编号]：" + clause.ClauseNo + "\n"
+    + "[标题]：" + clause.Title + "\n"
+    + "[内容]：" + clause.Content
                     });
                 }
                 else if (item.RevisionType == GYEnums.RevisionType.修订)
@@ -169,9 +172,12 @@ namespace GYSWP.DingDingApproval
                     revisionDetail.Add(new Approval()
                     {
                         name = "原始内容",
+                        //                    value = "[编号]：" + clause.ClauseNo + "\n"
+                        //+ "[标题]：" + (clause.Title.Length > 10 ? clause.Title.Substring(0, 10) + "..." : clause.Title) + "\n"
+                        //+ "[内容]：" + (clause.Content.Length > 30 ? clause.Content.Substring(0, 30) + "..." : clause.Content)
                         value = "[编号]：" + clause.ClauseNo + "\n"
-    + "[标题]：" + (clause.Title.Length > 10 ? clause.Title.Substring(0, 10) + "..." : clause.Title) + "\n"
-    + "[内容]：" + (clause.Content.Length > 30 ? clause.Content.Substring(0, 30) + "..." : clause.Content)
+    + "[标题]：" + clause.Title + "\n"
+    + "[内容]：" + clause.Content
                     });
                     revisionDetail.Add(new Approval()
                     {
@@ -186,9 +192,13 @@ namespace GYSWP.DingDingApproval
                     revisionDetail.Add(new Approval()
                     {
                         name = "原始内容",
+                        //                    value = "[编号]：" + clause.ClauseNo + "\n"
+                        //+ "[标题]：" + (clause.Title.Length > 10 ? clause.Title.Substring(0, 10) + "..." : clause.Title) + "\n"
+                        //+ "[内容]：" + (clause.Content.Length > 30 ? clause.Content.Substring(0, 30) + "..." : clause.Content)
+                        //                });
                         value = "[编号]：" + clause.ClauseNo + "\n"
-    + "[标题]：" + (clause.Title.Length > 10 ? clause.Title.Substring(0, 10) + "..." : clause.Title) + "\n"
-    + "[内容]：" + (clause.Content.Length > 30 ? clause.Content.Substring(0, 30) + "..." : clause.Content)
+    + "[标题]：" + clause.Title + "\n"
+    + "[内容]：" + clause.Content
                     });
                     revisionDetail.Add(new Approval()
                     {
@@ -244,7 +254,8 @@ namespace GYSWP.DingDingApproval
             request.process_code = "PROC-BFE69EF9-4B66-4697-B917-362D28B71F68";
             request.originator_user_id = user.EmployeeId;
             request.agent_id = ddConfig.AgentID;
-            request.dept_id = Convert.ToInt32(deptId);
+            //request.dept_id = Convert.ToInt32(deptId); 
+            request.dept_id = 67209026; // 测试环境 发布需要放开
             List<Approval> approvalList = new List<Approval>();
             approvalList.Add(new Approval() { name = "申请人", value = user.EmployeeName });
             approvalList.Add(new Approval() { name = "申请时间", value = DateTime.Now.ToString("yyyy-MM-dd HH:mm") });
@@ -257,9 +268,12 @@ namespace GYSWP.DingDingApproval
                 revisionDetail.Add(new Approval()
                 {
                     name = "制定内容",
+                    //value = "[编号]：" + item.ClauseNo + "\n"
+                    //+ "[标题]：" + (item.Title.Length > 10 ? item.Title.Substring(0, 10) + "..." : item.Title) + "\n"
+                    //+ "[内容]：" + (item.Content.Length > 30 ? item.Content.Substring(0, 30) + "..." : item.Content)
                     value = "[编号]：" + item.ClauseNo + "\n"
-                    + "[标题]：" + (item.Title.Length > 10 ? item.Title.Substring(0, 10) + "..." : item.Title) + "\n"
-                    + "[内容]：" + (item.Content.Length > 30 ? item.Content.Substring(0, 30) + "..." : item.Content)
+                    + "[标题]：" + item.Title + "\n"
+                    + "[内容]：" + item.Content
                 });
                 items.Add(revisionDetail);
             }

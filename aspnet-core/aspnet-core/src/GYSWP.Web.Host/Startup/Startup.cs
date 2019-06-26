@@ -97,6 +97,7 @@ namespace GYSWP.Web.Host.Startup
 
             app.UseAbpRequestLocalization();
 
+            app.UseJump404();// not found page code 404
 
             app.UseSignalR(routes =>
             {

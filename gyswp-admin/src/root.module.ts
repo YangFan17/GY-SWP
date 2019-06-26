@@ -1,5 +1,5 @@
 import { NgModule, Injector } from '@angular/core';
-import { CommonModule, PlatformLocation } from '@angular/common';
+import { CommonModule, PlatformLocation, LocationStrategy, HashLocationStrategy } from '@angular/common';
 
 import { RootComponent } from 'root.component';
 import { AppSessionService } from '@shared/session/app-session.service';
@@ -112,6 +112,7 @@ const I18NSERVICE_PROVIDES = [
         { provide: API_BASE_URL, useFactory: getRemoteServiceBaseUrl },
         { provide: APP_INITIALIZER, useFactory: appInitializerFactory, deps: [Injector, PlatformLocation], multi: true },
         { provide: LOCALE_ID, useFactory: getCurrentLanguage, },
+        { provide: LocationStrategy, useClass: HashLocationStrategy },
         I18NSERVICE_PROVIDES,
     ],
     bootstrap: [RootComponent],

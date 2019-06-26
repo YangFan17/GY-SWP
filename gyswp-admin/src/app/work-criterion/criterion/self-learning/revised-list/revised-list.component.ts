@@ -15,7 +15,7 @@ export class RevisedListComponent extends ModalComponentBase {
     @Input() docId: string;
     @Input() applyId: string;
     dataList: ClauseRevision[] = [];
-    dataCount = {};
+    dataCount = { total: 0, cnumber: 0, unumber: 0, dnumber: 0 };
     isLoading: boolean = false;
     confirmModal: NzModalRef;
 

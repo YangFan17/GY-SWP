@@ -1,0 +1,44 @@
+<div nz-row style="text-align:right;">
+    <button nz-button type="button" (click)="internalExa()">
+        <i nz-icon type="user"></i>
+        <span>部门内部考核</span>
+    </button>
+    <button nz-button type="button" (click)="subordinateExa()">
+        <i nz-icon type="usergroup-add"></i>
+        <span>部门全体考核</span>
+    </button>
+</div>
+<div nz-row>
+    <div nz-col nzSpan="24">
+        <nz-table #nzTable [nzFrontPagination]="false" [nzShowPagination]="false" [nzData]="empList"
+            [nzLoading]="loading">
+            <thead>
+                <tr>
+                    <th style="text-align: right;">
+                        <label nz-checkbox [(ngModel)]="isSelectedAll" (ngModelChange)="checkAll($event)">
+                        </label>
+                    </th>
+                    <th>姓名</th>
+                    <th>职位</th>
+                    <th>电话号码</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of nzTable.data">
+                    <td style="text-align: right;">
+                        <label nz-checkbox [(ngModel)]="item.checked" (nzCheckedChange)="isCancelCheck($event)">
+                        </label>
+                    </td>
+                    <td>{{item.name}}</td>
+                    <td>{{item.position}}</td>
+                    <td>{{item.mobile}}</td>
+                    <td>详情</td>
+                </tr>
+            </tbody>
+        </nz-table>
+        <div style="float: right;margin-top: 5px;font-size: 14px;">
+            共 {{!empList?0:empList.length}} 条
+        </div>
+    </div>
+</div>

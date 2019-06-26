@@ -2,7 +2,7 @@
     <h3 style="text-align: center;">
         <span>人员选择({{deptName}})</span>
     </h3>
-    <div nz-row>
+    <!-- <div nz-row>
         <div nz-col nzSpan="20" style="margin-top:20px;margin-bottom:20px;">
             <nz-input-group nzSearch [nzSuffix]="suffixButton">
                 <input type="text" [(ngModel)]="keyWord" nz-input placeholder="姓名、电话号码">
@@ -12,11 +12,11 @@
                     nzSearch>搜索</button>
             </ng-template>
         </div>
-    </div>
+    </div> -->
     <div nz-row>
         <div nz-col nzSpan="24">
-            <nz-table #nzTable [nzShowPagination]="false" [nzLoading]="isTableLoading" [nzData]="dataList"
-                [nzScroll]="{ y: '480px' }">
+            <nz-table #nzTable [nzShowPagination]="false" [nzFrontPagination]="false" [nzLoading]="isTableLoading"
+                [nzData]="dataList" [nzScroll]="{ y: '480px' }">
                 <thead>
                     <tr>
                         <th nzWidth="50px"></th>

@@ -7,5 +7,5 @@ import { Component } from '@angular/core';
     styleUrls: ['data-config.component.less']
 })
 export class DataConfigComponent {
-
+    keyWord: string;
 }

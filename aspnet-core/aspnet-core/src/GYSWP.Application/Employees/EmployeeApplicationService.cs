@@ -264,6 +264,69 @@ namespace GYSWP.Employees
             }).FirstOrDefaultAsync();
             return user;
         }
+
+        /// <summary>
+        /// 部门选择员工
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<List<EmployeeListDto>> GetEmployeeListByExamineAsync(GetEmployeesInput input)
+        {
+            var user = await GetCurrentUserAsync();
+            string position = await _entityRepository.GetAll().Where(v => v.Id == user.EmployeeId).Select(v => v.Position).FirstOrDefaultAsync();
+            if (input.DepartName == "营销中心" || input.DepartName == "烟叶生产经营中心")//机关单位含内设部门
+            {
+                if(position == "主任" )//主任考核部长
+                {
+                    var query = _entityRepository.GetAll().Where(v => v.Department.Contains(input.DepartId) && v.Position.Contains("部长") &&v.Id != user.EmployeeId);
+                    var employees = await query
+                            .OrderBy(v => v.Name).AsNoTracking()
+                            .ToListAsync();
+                    var employeeListDtos = employees.MapTo<List<EmployeeListDto>>();
+                    return employeeListDtos;
+                }
+                else //部长自主选则员工
+                {
+                    var query = _entityRepository.GetAll().Where(v => v.Department.Contains(input.DepartId) && v.Id != user.EmployeeId && !v.Position.Contains("主任") &&!v.Position.Contains("部长"));
+                    var employees = await query
+                            .OrderBy(v => v.Name).AsNoTracking()
+                            .ToListAsync();
+                    var employeeListDtos = employees.MapTo<List<EmployeeListDto>>();
+                    return employeeListDtos;
+                }
+
+            }
+            else if(input.DepartName == "市场营销科" || input.DepartName == "专卖科")//机关无内设部门
+            {
+                if (position == "主任")//主任考核县级部门
+                {
+                    var query = _entityRepository.GetAll().Where(v => v.Department.Contains(input.DepartId) && v.Id != user.EmployeeId);
+                    var employees = await query
+                            .OrderBy(v => v.Name).AsNoTracking()
+                            .ToListAsync();
+                    var employeeListDtos = employees.MapTo<List<EmployeeListDto>>();
+                    return employeeListDtos;
+                }
+                else //县局科长内部考核
+                {
+                    var query = _entityRepository.GetAll().Where(v => v.Department.Contains(input.DepartId) && v.Id != user.EmployeeId);
+                    var employees = await query
+                            .OrderBy(v => v.Name).AsNoTracking()
+                            .ToListAsync();
+                    var employeeListDtos = employees.MapTo<List<EmployeeListDto>>();
+                    return employeeListDtos;
+                }
+            }
+            else
+            {
+                var query = _entityRepository.GetAll().Where(v => v.Department.Contains(input.DepartId));
+                var employees = await query
+                        .OrderBy(v => v.Name).AsNoTracking()
+                        .ToListAsync();
+                var employeeListDtos = employees.MapTo<List<EmployeeListDto>>();
+                return employeeListDtos;
+            }
+        }
     }
 }
 

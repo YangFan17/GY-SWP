@@ -34,6 +34,7 @@ export class CriterionComponent extends PagedListingComponentBase<any>{
     getCategoryType() {
         this.workCriterionService.getCategoryTypeAsync().subscribe((result: SelectGroup[]) => {
             this.categories.push(SelectGroup.fromJS({ value: '0', text: '全部' }));
+            result = result.filter(v => v.text != '作废标准库');
             this.categories.push(...result);
             this.refresh();
         });
