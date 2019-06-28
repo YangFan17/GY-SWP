@@ -1,0 +1,48 @@
+<div class="padding-bottom-45">
+    <h3 style="text-align: center;">
+        <span>整改分析单</span>
+    </h3>
+    <form nz-form #validateForm="ngForm" *ngIf="examineFeedback">
+        <nz-form-item nz-row style="margin-bottom:0px;">
+            <nz-form-label nz-col [nzSm]="4" nzRequired>创建人</nz-form-label>
+            <nz-form-control [nzSm]="20">
+                <nz-form-text>
+                    {{examineFeedback.employeeName}}
+                </nz-form-text>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item nz-row>
+            <nz-form-label nz-col [nzSm]="4" nzRequired>分类</nz-form-label>
+            <nz-form-control [nzSm]="20">
+                <!-- <nz-radio-group name="operateType" #operateType="ngModel" [(ngModel)]="applyInfo.operateType">
+                    <label nz-radio *ngFor="let o of operateTypes" [nzValue]="o.value">
+                        <span>{{o.text}}</span>
+                    </label>
+                </nz-radio-group> -->
+                <nz-checkbox-group nzDisabled name="courseType" [(ngModel)]="courseTypes"></nz-checkbox-group>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item nz-row>
+            <nz-form-label nz-col [nzSm]="4" nzRequired>原因</nz-form-label>
+            <nz-form-control [nzSm]="20" nzHasFeedback>
+                <textarea nz-input rows="4" readonly name="reason" required maxlength="1000" #reason="ngModel"
+                    [(ngModel)]="examineFeedback.reason" [placeholder]="'请填写原因'"></textarea>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item nz-row>
+            <nz-form-label nz-col [nzSm]="4" nzRequired>措施</nz-form-label>
+            <nz-form-control [nzSm]="20" nzHasFeedback>
+                <textarea nz-input rows="8" readonly name="solution" required maxlength="2000" #solution="ngModel"
+                    [(ngModel)]="examineFeedback.solution" [placeholder]="'请填写措施'"></textarea>
+            </nz-form-control>
+        </nz-form-item>
+        <!-- 功能按钮 -->
+        <div class="custom-modal-footer" style="text-align: right;">
+            <div class="custom-modal-footter-group">
+                <button nz-button type="button" (click)="close()">
+                    确定
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

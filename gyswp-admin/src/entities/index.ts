@@ -13,3 +13,4 @@ export * from './criterion-examine';
 export * from './examine-detail';
 export * from './examine-result';
 export * from './examine-feedback';
+export * from './examine-record';

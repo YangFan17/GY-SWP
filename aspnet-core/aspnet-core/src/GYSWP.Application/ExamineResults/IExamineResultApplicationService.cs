@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.ExamineResults.Dtos;
 using GYSWP.ExamineResults;
+using GYSWP.Dtos;
 
 namespace GYSWP.ExamineResults
 {
@@ -55,7 +56,7 @@ namespace GYSWP.ExamineResults
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task CreateOrUpdate(CreateOrUpdateExamineResultInput input);
+        Task<APIResultDto> CreateOrUpdate(CreateOrUpdateExamineResultInput input);
 
 
         /// <summary>
@@ -70,13 +71,6 @@ namespace GYSWP.ExamineResults
         /// 批量删除ExamineResult
         /// </summary>
         Task BatchDelete(List<Guid> input);
-
-
-		/// <summary>
-        /// 导出ExamineResult为excel表
-        /// </summary>
-        /// <returns></returns>
-		//Task<FileDto> GetToExcel();
-
+        Task<ExamineResultListDto> GetExamineResultByIdAsync(EntityDto<Guid> input);
     }
 }

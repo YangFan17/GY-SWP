@@ -33,13 +33,32 @@ export class AppMenus {
                 },
             ]
         },
+        // {
+        //     text: "我的标准",
+        //     icon: { type: "icon", value: "read" },
+        //     reuse: false,
+        //     link: "/app/criterion/criterion",
+        //     group: true,
+        //     children: [
+        //     ]
+        // },
         {
-            text: "我的标准",
-            icon: { type: "icon", value: "read" },
+            text: "工作中心",
+            icon: { type: "icon", value: "laptop" },
             reuse: false,
             link: "/app/criterion/criterion",
             group: true,
             children: [
+                {
+                    text: "我的标准",
+                    link: "/app/criterion/criterion",
+                    reuse: false
+                },
+                {
+                    text: "标准考核",
+                    link: "/app/criterion/my-examine",
+                    reuse: false
+                },
             ]
         },
         {
@@ -50,7 +69,7 @@ export class AppMenus {
             group: true,
             children: [
                 {
-                    text: "标准考核",
+                    text: "标准监督",
                     link: "/app/supervision/supervision",
                     reuse: false
                 },

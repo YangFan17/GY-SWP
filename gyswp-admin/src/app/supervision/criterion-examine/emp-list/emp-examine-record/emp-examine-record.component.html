@@ -1,0 +1,54 @@
+<page-header style="text-align: center;" title="考核记录"></page-header>
+<nz-card>
+    <div nz-row>
+        <ng-template #totalTemplate let-total>共 {{totalItems}} 条</ng-template>
+        <nz-table #nzTable [nzFrontPagination]="false" [nzShowTotal]="totalTemplate" [nzTotal]="totalItems"
+            [nzData]="dataList" [(nzPageIndex)]="pageNumber" [(nzPageSize)]="pageSize" [nzLoading]="isTableLoading"
+            [nzShowSizeChanger]="true" (nzPageIndexChange)="refresh()" (nzPageSizeChange)="refresh()">
+            <thead>
+                <tr>
+                    <th>考核名称</th>
+                    <th>创建部门</th>
+                    <th>考核类型</th>
+                    <th>所属标准</th>
+                    <th>考核部门</th>
+                    <th>考核对象</th>
+                    <th>创建时间</th>
+                    <th>完成状态</th>
+                    <th>考核结果</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of nzTable.data">
+                    <td>{{item.title}}</td>
+                    <td>{{item.creatorDeptName}}</td>
+                    <td>{{item.typeName}}</td>
+                    <td>{{item.documentName}}</td>
+                    <td>{{item.deptName}}</td>
+                    <td>{{item.employeeName}}</td>
+                    <td>{{item.creationTime | _date}}</td>
+                    <td>
+                        <nz-badge *ngIf="item.status == 1" [nzStatus]="'default'" [nzText]="'未开始'"></nz-badge>
+                        <nz-badge *ngIf="item.status == 2" [nzStatus]="'success'" [nzText]="'已完成'"></nz-badge>
+                    </td>
+                    <td>
+                        <nz-badge *ngIf="item.result == 1" [nzStatus]="'default'" [nzText]="'未检查'"></nz-badge>
+                        <nz-badge *ngIf="item.result == 2" [nzStatus]="'success'" [nzText]="'合格'"></nz-badge>
+                        <nz-badge *ngIf="item.result == 3" [nzStatus]="'error'" [nzText]="'不合格'"></nz-badge>
+                    </td>
+                    <td>
+                        <a *ngIf="item.status == 2" (click)="checkingResult(item.id)">{{item.result ==1 ?'考核':'详情'}}</a>
+                        <nz-divider *ngIf="item.result == 3" nzType="vertical"></nz-divider>
+                        <a *ngIf="item.result == 3" (click)="resultFeedBack(item.id)">整改措施</a>
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>
+    </div>
+    <footer-toolbar>
+        <button nz-button [nzType]="'default'" (click)="return()">
+            返回
+        </button>
+    </footer-toolbar>
+</nz-card>

@@ -5,6 +5,8 @@ import { CriterionComponent } from './criterion/criterion.component';
 import { PreviewDocComponent } from './criterion/preview-doc/preview-doc.component';
 import { SelfLearningComponent } from './criterion/self-learning/self-learning.component';
 import { DraftDocComponent } from './criterion/draft-doc/draft-doc/draft-doc.component';
+import { MyExamineComponent } from './my-examine/my-examine.component';
+import { ExamineDetailComponent } from './my-examine/examine-detail/examine-detail.component';
 
 
 const routes: Routes = [
@@ -38,6 +40,18 @@ const routes: Routes = [
         canActivate: [AppRouteGuard],
         data: { title: '制定标准' },
     },
+    {
+        path: 'my-examine',
+        component: MyExamineComponent,
+        canActivate: [AppRouteGuard],
+        data: { title: '标准考核' },
+    },
+    {
+        path: 'examine-detail/:id',
+        component: ExamineDetailComponent,
+        canActivate: [AppRouteGuard],
+    },
+
 ];
 
 @NgModule({

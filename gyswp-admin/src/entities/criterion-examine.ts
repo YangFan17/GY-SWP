@@ -9,6 +9,7 @@ export class CriterionExamine {
     deptId: number;
     creatorDeptName: string;
     deptName: string;
+    typeName: string;
     constructor(data?: any) {
         if (data) {
             for (var property in data) {
@@ -29,6 +30,7 @@ export class CriterionExamine {
             this.deptId = data["deptId"];
             this.creatorDeptName = data["creatorDeptName"];
             this.deptName = data["deptName"];
+            this.typeName = data["typeName"];
         }
     }
     toJSON(data?: any) {

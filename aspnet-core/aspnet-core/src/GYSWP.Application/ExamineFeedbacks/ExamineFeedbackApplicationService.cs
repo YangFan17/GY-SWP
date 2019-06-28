@@ -21,8 +21,7 @@ using Abp.Linq.Extensions;
 using GYSWP.ExamineFeedbacks;
 using GYSWP.ExamineFeedbacks.Dtos;
 using GYSWP.ExamineFeedbacks.DomainService;
-
-
+using GYSWP.Dtos;
 
 namespace GYSWP.ExamineFeedbacks
 {
@@ -122,18 +121,22 @@ ExamineFeedbackEditDto editDto;
 		/// <param name="input"></param>
 		/// <returns></returns>
 		
-		public async Task CreateOrUpdate(CreateOrUpdateExamineFeedbackInput input)
+		public async Task<APIResultDto> CreateOrUpdate(CreateOrUpdateExamineFeedbackInput input)
 		{
-
 			if (input.ExamineFeedback.Id.HasValue)
 			{
 				await Update(input.ExamineFeedback);
-			}
-			else
+                return new APIResultDto() { Code = 0, Msg = "保存成功" };
+            }
+            else
 			{
-				await Create(input.ExamineFeedback);
-			}
-		}
+                var user = await GetCurrentUserAsync();
+                input.ExamineFeedback.EmployeeId = user.EmployeeId;
+                input.ExamineFeedback.EmployeeName = user.EmployeeName;
+                var entity = await Create(input.ExamineFeedback);
+                return new APIResultDto() { Code = 0, Msg = "保存成功" };
+            }
+        }
 
 
 		/// <summary>
@@ -194,18 +197,16 @@ ExamineFeedbackEditDto editDto;
 		}
 
 
-		/// <summary>
-		/// 导出ExamineFeedback为excel表,等待开发。
-		/// </summary>
-		/// <returns></returns>
-		//public async Task<FileDto> GetToExcel()
-		//{
-		//	var users = await UserManager.Users.ToListAsync();
-		//	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
-		//	await FillRoleNames(userListDtos);
-		//	return _userListExcelExporter.ExportToFile(userListDtos);
-		//}
-
+        /// <summary>
+        /// 根据ExamineDetailId获取信息
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<ExamineFeedbackListDto> GetExamineFeedbackByIdAsync(EntityDto<Guid> input)
+        {
+            var entity = await _entityRepository.FirstOrDefaultAsync(v => v.BusinessId == input.Id);
+            return entity.MapTo<ExamineFeedbackListDto>();
+        }
     }
 }
 

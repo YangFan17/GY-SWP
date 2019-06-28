@@ -7,7 +7,7 @@ namespace GYSWP.CriterionExamines.Dtos
 {
     public class GetCriterionExaminesInput : PagedSortedAndFilteredInputDto, IShouldNormalize
     {
-
+        public long DeptId { get; set; }
         /// <summary>
         /// 正常化排序使用
         /// </summary>

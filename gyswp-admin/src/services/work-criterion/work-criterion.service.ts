@@ -1,8 +1,8 @@
 import { Inject, Optional, Injectable } from "@angular/core";
-import { Observer, Observable } from "rxjs";
+import { Observable } from "rxjs";
 import { CommonHttpClient } from "services/common-httpclient";
 import { map } from "rxjs/operators";
-import { ApiResult, DocumentDto, ClauseTree, Clause, Employee, SelectGroup, ClauseRevision, DocRevision } from "entities";
+import { ApiResult, DocumentDto, Clause, SelectGroup, ClauseRevision, DocRevision, CriterionExamine, ExamineRecord, Attachment, ExamineResult, ExamineFeedback } from "entities";
 import { PagedResultDto } from "@shared/component-base";
 import { API_BASE_URL } from "@shared/service-proxies/service-proxies";
 @Injectable()
@@ -197,6 +197,92 @@ export class WorkCriterionService {
         var input = { documentId: docId, applyInfoId: applyId };
         return this._commonhttp.post(url_, input).pipe(map(data => {
             return data;
+        }));
+    }
+
+    getPagedExamineByCurrentIdAsync(param: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/CriterionExamine/GetPagedExamineByCurrentIdAsync";
+        return this._commonhttp.get(url_, param).pipe(map(data => {
+            const result = new PagedResultDto();
+            result.items = data.items;
+            result.totalCount = data.totalCount;
+            return result;
+        }));
+    }
+
+    getExamineDetailByCurrentIdAsync(params: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/ExamineDetail/GetExamineDetailByCurrentIdAsync";
+        return this._commonhttp.get(url_, params).pipe(map(data => {
+            const result = new PagedResultDto();
+            result.items = data.items;
+            result.totalCount = data.totalCount;
+            return result;
+        }));
+    }
+
+    getExamineInfo(params: any): Observable<CriterionExamine> {
+        let url_ = "/api/services/app/CriterionExamine/GetById";
+        return this._commonhttp.get(url_, params).pipe(map(data => {
+            return CriterionExamine.fromJS(data);
+        }));
+    }
+
+    getExamineDetailByIdAsync(id: any): Observable<ExamineRecord> {
+        let url_ = "/api/services/app/ExamineDetail/GetExamineDetailByIdAsync";
+        return this._commonhttp.get(url_, { id: id }).pipe(map(data => {
+            return ExamineRecord.fromJS(data);
+        }));
+    }
+
+    uploadAttachment(input: any): Observable<any> {
+        let url_ = "/api/services/app/DocAttachment/CreateOrUpdate";
+        let att = { docAttachment: input };
+        return this._commonhttp.post(url_, att).pipe(map(data => {
+            return data;
+        }));
+    }
+
+    deleteAttachmentByIdAsync(id: string): Observable<any> {
+        let url_ = "/api/services/app/DocAttachment/Delete";
+        return this._commonhttp.delete(url_, { id: id }).pipe(map(data => {
+            return data;
+        }));
+    }
+
+    getAttachmentListByIdAsync(params: any): Observable<Attachment[]> {
+        let url_ = "/api/services/app/DocAttachment/GetAttachmentListByIdAsync";
+        return this._commonhttp.get(url_, params).pipe(map(data => {
+            return Attachment.fromJSArray(data);
+        }));
+    }
+
+    createExamineResultAsync(input: any): Observable<any> {
+        let url_ = "/api/services/app/ExamineResult/CreateOrUpdate";
+        let result = { examineResult: input };
+        return this._commonhttp.post(url_, result).pipe(map(data => {
+            return data;
+        }));
+    }
+
+    getExamineResult(id: string): Observable<ExamineResult> {
+        let url_ = "/api/services/app/ExamineResult/GetExamineResultByIdAsync";
+        return this._commonhttp.get(url_, { id: id }).pipe(map(data => {
+            return ExamineResult.fromJS(data);
+        }));
+    }
+
+    createExamineFeedbackAsync(input: any): Observable<any> {
+        let url_ = "/api/services/app/ExamineFeedback/CreateOrUpdate";
+        let result = { examineFeedback: input };
+        return this._commonhttp.post(url_, result).pipe(map(data => {
+            return data;
+        }));
+    }
+
+    getExamineFeedbackByIdAsync(id: any): Observable<ExamineFeedback> {
+        let url_ = "/api/services/app/ExamineFeedback/GetExamineFeedbackByIdAsync";
+        return this._commonhttp.get(url_, { id: id }).pipe(map(data => {
+            return ExamineFeedback.fromJS(data);
         }));
     }
 }

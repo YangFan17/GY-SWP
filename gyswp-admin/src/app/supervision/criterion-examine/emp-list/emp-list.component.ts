@@ -97,23 +97,35 @@ export class EmpListComponent extends AppComponentBase implements OnInit {
      */
     internalExa(): void {
         let num: number = 0;
+        let checkedInfo: Employee[] = [];
         num = this.checkedLength;
-        if (num == 0) {
+        if (num == 0) { //默认全选
             num = this.empList.length;
+            checkedInfo = this.empList;
+        } else { //过滤筛选
+            checkedInfo = this.empList.filter(v => v.checked);
         }
         this.confirmModal = this.modal.confirm({
             nzContent: `是否为当前 ${num} 人生成考核记录信息?`,
             nzOnOk: () => {
-                // this.supervisionService.saveDraftDoc(this.applyId, this.id).finally(() => { this.saving = false; }).subscribe(res => {
-                //     if (res.code == 0) {
-                //         this.notify.info('制订申请提交成功！', '');
-                //         this.modal.closeAll();
-                //         this.return();
-                //     }
-                //     else {
-                //         this.notify.error('制订申请提交失败，请重试！', '');
-                //     }
-                // });
+                let empInfo: any[] = [];
+                checkedInfo.forEach(v => {
+                    empInfo.push({ EmpId: v.id, EmpName: v.name });
+                });
+                let params: any = {};
+                params.Type = 1;
+                params.DeptId = this.dept.id;
+                params.DeptName = this.dept.name;
+                params.EmpInfo = empInfo;
+                this.supervisionService.createExamineAsync(params).finally(() => { this.saving = false; }).subscribe(res => {
+                    if (res.code == 0) {
+                        this.notify.info('考核表创建成功', '');
+                        this.modal.closeAll();
+                    }
+                    else {
+                        this.notify.error('考核表创建失败，请重试！', '');
+                    }
+                });
             },
             nzOnCancel: () => {
                 this.saving = false;
@@ -121,15 +133,16 @@ export class EmpListComponent extends AppComponentBase implements OnInit {
         });
     }
 
-    create() {
-        if (!this.selectedCategory || !this.selectedCategory.id) {
-            // this.notify.info('请先选择分类');
-            return;
+    empRecord(id: string) {
+        if (id) {
+            this.router.navigate(['app/supervision/emp-record', id]);
         }
-        this.router.navigate(['app/basic/doc-detail', { cid: this.selectedCategory.id, cname: this.selectedCategory.name, deptId: this.dept.id, deptName: this.dept.name }]);
     }
 
-    edit(item) {
-        this.router.navigate(['app/basic/doc-detail', { id: item.id, deptId: this.dept.id, deptName: this.dept.name }]);
+    examineRecord() {
+        if (!this.dept.id) {
+            this.notify.info('请选择考核部门');
+        }
+        this.router.navigate(['app/supervision/record', this.dept.id, this.dept.name]);
     }
 }

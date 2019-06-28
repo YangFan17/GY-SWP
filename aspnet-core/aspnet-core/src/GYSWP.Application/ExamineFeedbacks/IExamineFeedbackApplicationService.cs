@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.ExamineFeedbacks.Dtos;
 using GYSWP.ExamineFeedbacks;
+using GYSWP.Dtos;
 
 namespace GYSWP.ExamineFeedbacks
 {
@@ -55,7 +56,7 @@ namespace GYSWP.ExamineFeedbacks
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task CreateOrUpdate(CreateOrUpdateExamineFeedbackInput input);
+        Task<APIResultDto> CreateOrUpdate(CreateOrUpdateExamineFeedbackInput input);
 
 
         /// <summary>
@@ -70,13 +71,6 @@ namespace GYSWP.ExamineFeedbacks
         /// 批量删除ExamineFeedback
         /// </summary>
         Task BatchDelete(List<Guid> input);
-
-
-		/// <summary>
-        /// 导出ExamineFeedback为excel表
-        /// </summary>
-        /// <returns></returns>
-		//Task<FileDto> GetToExcel();
-
+        Task<ExamineFeedbackListDto> GetExamineFeedbackByIdAsync(EntityDto<Guid> input);
     }
 }

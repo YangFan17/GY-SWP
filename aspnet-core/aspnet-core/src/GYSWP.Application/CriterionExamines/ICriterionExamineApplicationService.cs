@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.CriterionExamines.Dtos;
 using GYSWP.CriterionExamines;
+using GYSWP.Dtos;
 
 namespace GYSWP.CriterionExamines
 {
@@ -70,13 +71,7 @@ namespace GYSWP.CriterionExamines
         /// 批量删除CriterionExamine
         /// </summary>
         Task BatchDelete(List<Guid> input);
-
-
-		/// <summary>
-        /// 导出CriterionExamine为excel表
-        /// </summary>
-        /// <returns></returns>
-		//Task<FileDto> GetToExcel();
-
+        Task<APIResultDto> CreateExamineAsync(CriterionExamineInfoDto input);
+        Task<PagedResultDto<CriterionExamineListDto>> GetPagedExamineByCurrentIdAsync(GetCriterionExaminesInput input);
     }
 }

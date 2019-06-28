@@ -21,6 +21,11 @@ namespace GYSWP.ExamineDetails
         [Required]
         public virtual Guid ClauseId { get; set; }
         /// <summary>
+        /// 所属标准Id
+        /// </summary>
+        [Required]
+        public virtual Guid DocumentId { get; set; }
+        /// <summary>
         /// 考核状态（未开始/已完成）
         /// </summary>
         [Required]

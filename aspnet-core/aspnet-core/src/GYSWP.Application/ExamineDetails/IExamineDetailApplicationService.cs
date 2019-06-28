@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.ExamineDetails.Dtos;
 using GYSWP.ExamineDetails;
+using GYSWP.Dtos;
 
 namespace GYSWP.ExamineDetails
 {
@@ -71,12 +72,10 @@ namespace GYSWP.ExamineDetails
         /// </summary>
         Task BatchDelete(List<Guid> input);
 
-
-		/// <summary>
-        /// 导出ExamineDetail为excel表
-        /// </summary>
-        /// <returns></returns>
-		//Task<FileDto> GetToExcel();
-
+        Task<PagedResultDto<ExamineRecordDto>> GetExamineRecordByIdAsync(GetExamineDetailsInput input);
+        Task<PagedResultDto<ExamineRecordDto>> GetExamineDetailByCurrentIdAsync(GetExamineDetailsInput input);
+        Task<ExamineRecordDto> GetExamineDetailByIdAsync(GetExamineDetailsInput input);
+        Task<APIResultDto> ChangeStatusByIdAsync(GetExamineDetailsInput input);
+        Task<PagedResultDto<ExamineListDto>> GetExamineDetailByEmpIdAsync(GetExamineDetailsInput input);
     }
 }

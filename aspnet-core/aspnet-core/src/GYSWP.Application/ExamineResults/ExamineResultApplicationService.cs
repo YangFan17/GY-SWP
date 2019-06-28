@@ -21,8 +21,8 @@ using Abp.Linq.Extensions;
 using GYSWP.ExamineResults;
 using GYSWP.ExamineResults.Dtos;
 using GYSWP.ExamineResults.DomainService;
-
-
+using GYSWP.Dtos;
+using GYSWP.ExamineDetails;
 
 namespace GYSWP.ExamineResults
 {
@@ -33,7 +33,7 @@ namespace GYSWP.ExamineResults
     public class ExamineResultAppService : GYSWPAppServiceBase, IExamineResultAppService
     {
         private readonly IRepository<ExamineResult, Guid> _entityRepository;
-
+        private readonly IRepository<ExamineDetail, Guid> _examineDetailRepository;
         private readonly IExamineResultManager _entityManager;
 
         /// <summary>
@@ -42,10 +42,12 @@ namespace GYSWP.ExamineResults
         public ExamineResultAppService(
         IRepository<ExamineResult, Guid> entityRepository
         ,IExamineResultManager entityManager
+        , IRepository<ExamineDetail, Guid> examineDetailRepository
         )
         {
             _entityRepository = entityRepository; 
              _entityManager=entityManager;
+            _examineDetailRepository = examineDetailRepository;
         }
 
 
@@ -122,18 +124,24 @@ ExamineResultEditDto editDto;
 		/// <param name="input"></param>
 		/// <returns></returns>
 		
-		public async Task CreateOrUpdate(CreateOrUpdateExamineResultInput input)
+		public async Task<APIResultDto> CreateOrUpdate(CreateOrUpdateExamineResultInput input)
 		{
-
 			if (input.ExamineResult.Id.HasValue)
 			{
 				await Update(input.ExamineResult);
-			}
-			else
+                return new APIResultDto() { Code = 0, Msg = "保存成功" };
+            }
+            else
 			{
-				await Create(input.ExamineResult);
-			}
-		}
+                var user = await GetCurrentUserAsync();
+                input.ExamineResult.EmployeeId = user.EmployeeId;
+                input.ExamineResult.EmployeeName = user.EmployeeName;
+                var entity = await Create(input.ExamineResult);
+                var examineDetail = await _examineDetailRepository.FirstOrDefaultAsync(v => v.Id == input.ExamineResult.ExamineDetailId);
+                examineDetail.Status = GYEnums.ResultStatus.已完成;
+                return new APIResultDto() { Code = 0, Msg = "保存成功", Data = entity.Id };
+            }
+        }
 
 
 		/// <summary>
@@ -142,12 +150,7 @@ ExamineResultEditDto editDto;
 		
 		protected virtual async Task<ExamineResultEditDto> Create(ExamineResultEditDto input)
 		{
-			//TODO:新增前的逻辑判断，是否允许新增
-
-            // var entity = ObjectMapper.Map <ExamineResult>(input);
             var entity=input.MapTo<ExamineResult>();
-			
-
 			entity = await _entityRepository.InsertAsync(entity);
 			return entity.MapTo<ExamineResultEditDto>();
 		}
@@ -193,19 +196,16 @@ ExamineResultEditDto editDto;
 			await _entityRepository.DeleteAsync(s => input.Contains(s.Id));
 		}
 
-
-		/// <summary>
-		/// 导出ExamineResult为excel表,等待开发。
-		/// </summary>
-		/// <returns></returns>
-		//public async Task<FileDto> GetToExcel()
-		//{
-		//	var users = await UserManager.Users.ToListAsync();
-		//	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
-		//	await FillRoleNames(userListDtos);
-		//	return _userListExcelExporter.ExportToFile(userListDtos);
-		//}
-
+        /// <summary>
+        /// 根据ExamineDetailId获取信息
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<ExamineResultListDto> GetExamineResultByIdAsync(EntityDto<Guid> input)
+        {
+            var entity = await _entityRepository.FirstOrDefaultAsync(v=>v.ExamineDetailId == input.Id);
+            return entity.MapTo<ExamineResultListDto>();
+        }
     }
 }
 

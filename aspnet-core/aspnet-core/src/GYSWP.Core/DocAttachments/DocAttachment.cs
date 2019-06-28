@@ -1,4 +1,5 @@
 ﻿using Abp.Domain.Entities.Auditing;
+using GYSWP.GYEnums;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,7 +13,7 @@ namespace GYSWP.DocAttachments
         /// 类型（标准附件、条款附件、考核附件）
         /// </summary>
         [Required]
-        public virtual int Type { get; set; }
+        public virtual AttachmentType Type { get; set; }
         /// <summary>
         /// 附件名
         /// </summary>

@@ -2,7 +2,7 @@ export class ExamineFeedback {
     id: string;
     type: number;
     businessId: string;
-    courseType: number;
+    courseType: string;
     reason: string;
     solution: string;
     creationTime: Date;

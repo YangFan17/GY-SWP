@@ -21,6 +21,10 @@ import { RevisedListDetailComponent } from './criterion/self-learning/revised-li
 import { DraftApplyInfoComponent } from './criterion/draft-doc/draft-apply-info/draft-apply-info.component';
 import { DraftDocComponent } from './criterion/draft-doc/draft-doc/draft-doc.component';
 import { DraftClauseComponent } from './criterion/draft-doc/draft-doc/draft-clause/draft-clause.component';
+import { MyExamineComponent } from './my-examine/my-examine.component';
+import { ExamineDetailComponent } from './my-examine/examine-detail/examine-detail.component';
+import { ResultDetailComponent } from './my-examine/examine-detail/result-detail/result-detail.component';
+import { ResultFeedbackComponent } from './my-examine/examine-detail/result-feedback/result-feedback.component';
 
 @NgModule({
     imports: [
@@ -44,7 +48,11 @@ import { DraftClauseComponent } from './criterion/draft-doc/draft-doc/draft-clau
         RevisedListDetailComponent,
         DraftApplyInfoComponent,
         DraftDocComponent,
-        DraftClauseComponent
+        DraftClauseComponent,
+        MyExamineComponent,
+        ExamineDetailComponent,
+        ResultDetailComponent,
+        ResultFeedbackComponent
     ],
     entryComponents: [
         CriterionComponent,
@@ -57,7 +65,11 @@ import { DraftClauseComponent } from './criterion/draft-doc/draft-doc/draft-clau
         RevisedListDetailComponent,
         DraftApplyInfoComponent,
         DraftDocComponent,
-        DraftClauseComponent
+        DraftClauseComponent,
+        MyExamineComponent,
+        ExamineDetailComponent,
+        ResultDetailComponent,
+        ResultFeedbackComponent
     ],
     providers: [WorkCriterionService]
 })

@@ -1,0 +1,62 @@
+<div class="padding-bottom-45">
+    <h3 style="text-align: center;">
+        <span>考核信息</span>
+    </h3>
+    <form nz-form #validateForm="ngForm" *ngIf="examineRecord">
+        <nz-form-item nz-row style="margin-bottom: 0px;">
+            <nz-form-label nz-col [nzSm]="4" nzRequired>所属标准</nz-form-label>
+            <nz-form-control [nzSm]="20">
+                <nz-form-text>
+                    {{examineRecord.documentName}}
+                </nz-form-text>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item nz-row>
+            <nz-form-label nz-col [nzSm]="4" nzRequired>考核内容</nz-form-label>
+            <nz-form-control [nzSm]="20">
+                <textarea readonly nz-input rows="13" name="clauseInfo" #clauseInfo="ngModel"
+                    [(ngModel)]="examineRecord.clauseInfo"></textarea>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item nz-row>
+            <nz-form-label nz-col [nzSm]="4" nzRequired>检查情况</nz-form-label>
+            <nz-form-control [nzSm]="20" nzHasFeedback>
+                <textarea nz-input rows="3" readonly name="content" required maxlength="500" #reason="ngModel"
+                    [(ngModel)]="examineResult.content" [placeholder]="'请填写检查情况'"></textarea>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item nz-row>
+            <div nz-col [nzSm]="4"></div>
+            <nz-form-control [nzSm]="20">
+                <nz-list class="demo-loadmore-list" [nzDataSource]="attachmentList" [nzItemLayout]="'horizontal'"
+                    nzHeader="附件列表" [nzRenderItem]="item">
+                    <ng-template #item let-item>
+                        <nz-list-item>
+                            <nz-list-item-meta style="text-align: left;" [nzDescription]="nzDescription">
+                            </nz-list-item-meta>
+                            <ng-template #nzDescription>
+                                <a href="{{item.fileUrl | hostUrl}}" target="_blank">"{{item.name}}"</a>
+                            </ng-template>
+                        </nz-list-item>
+                    </ng-template>
+                </nz-list>
+            </nz-form-control>
+        </nz-form-item>
+        <!-- 功能按钮 -->
+        <div class="custom-modal-footer" style="text-align: right;">
+            <div class="custom-modal-footter-group">
+                <button nz-button type="button" (click)="close()">
+                    {{examineRecord.result == 1?'取消':'确定'}}
+                </button>
+                <button *ngIf="examineRecord.status ==2 && examineRecord.result == 1" nz-button [nzType]="'danger'"
+                    type="button" (click)="submit(3)" [nzLoading]="saving">
+                    不合格
+                </button>
+                <button *ngIf="examineRecord.status ==2 && examineRecord.result == 1" nz-button [nzType]="'primary'"
+                    type="button" (click)="submit(2)" [nzLoading]="saving">
+                    合格
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

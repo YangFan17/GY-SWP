@@ -1,4 +1,8 @@
 <div nz-row style="text-align:right;">
+    <button nz-button type="button" (click)="examineRecord()" nzType="primary">
+        <i nz-icon type="profile"></i>
+        <span>部门考核记录</span>
+    </button>
     <button nz-button type="button" (click)="internalExa()">
         <i nz-icon type="user"></i>
         <span>部门内部考核</span>
@@ -33,7 +37,9 @@
                     <td>{{item.name}}</td>
                     <td>{{item.position}}</td>
                     <td>{{item.mobile}}</td>
-                    <td>详情</td>
+                    <td>
+                        <a (click)="empRecord(item.id)">考核记录</a>
+                    </td>
                 </tr>
             </tbody>
         </nz-table>

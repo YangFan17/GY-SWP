@@ -24,7 +24,7 @@ namespace GYSWP.ExamineFeedbacks
         /// 人、机、料、法、环
         /// </summary>
         [Required]
-        public virtual FactorType CourseType { get; set; }
+        public virtual string CourseType { get; set; }
         /// <summary>
         /// 原因
         /// </summary>

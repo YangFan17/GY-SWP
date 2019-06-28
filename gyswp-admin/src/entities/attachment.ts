@@ -81,3 +81,51 @@ export class DocAttachment {
         return result;
     }
 }
+
+export class Attachment {
+    id: string;
+    name: string;
+    fileSize: number;
+    constructor(data?: any) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.fileSize = data["fileSize"];
+        }
+    }
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["fileSize"] = this.fileSize;
+        return data;
+    }
+    static fromJS(data: any): Attachment {
+        let result = new Attachment();
+        result.init(data);
+        return result;
+    }
+    static fromJSArray(dataArray: any[]): Attachment[] {
+        let array = [];
+        dataArray.forEach(result => {
+            let item = new Attachment();
+            item.init(result);
+            array.push(item);
+        });
+        return array;
+    }
+    clone() {
+        const json = this.toJSON();
+        let result = new Attachment();
+        result.init(json);
+        return result;
+    }
+}

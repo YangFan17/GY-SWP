@@ -85,4 +85,11 @@ namespace GYSWP.GYEnums
         发 = 4,
         环 = 5
     }
+
+    public enum AttachmentType
+    {
+        标准附件 = 1,
+        条款附件 = 2,
+        考核附件 = 3
+    }
 }

@@ -33,7 +33,7 @@ namespace GYSWP.ExamineFeedbacks.Dtos
 		/// CourseType
 		/// </summary>
 		[Required(ErrorMessage="CourseType不能为空")]
-		public FactorType CourseType { get; set; }
+		public string CourseType { get; set; }
 
 
 

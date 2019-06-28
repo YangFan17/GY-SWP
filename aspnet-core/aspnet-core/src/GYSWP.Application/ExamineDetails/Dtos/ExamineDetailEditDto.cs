@@ -22,12 +22,16 @@ namespace  GYSWP.ExamineDetails.Dtos
 		[Required(ErrorMessage="ClauseId不能为空")]
 		public Guid ClauseId { get; set; }
 
+        /// <summary>
+        /// 所属标准Id
+        /// </summary>
+        [Required]
+        public Guid DocumentId { get; set; }
 
-
-		/// <summary>
-		/// Status
-		/// </summary>
-		[Required(ErrorMessage="Status不能为空")]
+        /// <summary>
+        /// Status
+        /// </summary>
+        [Required(ErrorMessage="Status不能为空")]
 		public ResultStatus Status { get; set; }
 
 

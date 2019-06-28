@@ -27,8 +27,7 @@ namespace  GYSWP.ExamineFeedbacks.Dtos
 		/// <summary>
 		/// CourseType
 		/// </summary>
-		[Required(ErrorMessage="CourseType不能为空")]
-		public FactorType CourseType { get; set; }
+		public string CourseType { get; set; }
 
 
 
@@ -44,23 +43,16 @@ namespace  GYSWP.ExamineFeedbacks.Dtos
 		/// </summary>
 		public string Solution { get; set; }
 
-
-
 		/// <summary>
 		/// CreationTime
 		/// </summary>
 		[Required(ErrorMessage="CreationTime不能为空")]
 		public DateTime CreationTime { get; set; }
 
-
-
 		/// <summary>
 		/// EmployeeId
 		/// </summary>
-		[Required(ErrorMessage="EmployeeId不能为空")]
 		public string EmployeeId { get; set; }
-
-
 
 		/// <summary>
 		/// EmployeeName

@@ -3,10 +3,11 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using Abp.Domain.Entities.Auditing;
 using GYSWP.DocAttachments;
+using GYSWP.GYEnums;
 
 namespace  GYSWP.DocAttachments.Dtos
 {
-    public class DocAttachmentEditDto
+    public class DocAttachmentEditDto : FullAuditedEntity<Guid>
     {
 
         /// <summary>
@@ -20,7 +21,7 @@ namespace  GYSWP.DocAttachments.Dtos
 		/// Type
 		/// </summary>
 		[Required(ErrorMessage="Type不能为空")]
-		public int Type { get; set; }
+		public AttachmentType Type { get; set; }
 
 
 
