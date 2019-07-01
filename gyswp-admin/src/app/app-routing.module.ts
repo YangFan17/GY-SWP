@@ -43,6 +43,11 @@ const routes: Routes = [
         loadChildren: './configs/configs.module#ConfigsModule',
         data: { preload: true },
       },
+      {
+        path: 'reports',
+        loadChildren: './reports/reports.module#ReportsModule',
+        data: { preload: true },
+      },
     ]
   }
 ];

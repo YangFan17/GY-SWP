@@ -96,6 +96,11 @@ export class AppMenus {
             link: "/app/criterion/criterion",
             group: true,
             children: [
+                {
+                    text: "自查统计",
+                    link: "/app/reports/inspect",
+                    reuse: false
+                },
             ]
         },
         {

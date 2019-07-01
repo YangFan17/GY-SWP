@@ -5,6 +5,7 @@ import { LayoutModule } from '@layout/layout.module';
 import { SharedModule } from '@shared/shared.module';
 import { HttpClientModule } from '@angular/common/http';
 import { ReportsRoutingModule } from './reports-routing.module';
+import { InspectComponent } from './inspect/inspect.component';
 
 
 @NgModule({
@@ -18,11 +19,11 @@ import { ReportsRoutingModule } from './reports-routing.module';
         SharedModule,
     ],
     declarations: [
-
+        InspectComponent
     ],
     entryComponents: [
 
     ],
     // providers: [LocalizationService, MenuService],
 })
-export class ReportModule { }
+export class ReportsModule { }

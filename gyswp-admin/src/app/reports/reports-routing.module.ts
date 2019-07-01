@@ -1,14 +1,15 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AppRouteGuard } from '@shared/auth/auth-route-guard';
+import { InspectComponent } from './inspect/inspect.component';
 
 const routes: Routes = [
-    /*{
-        path: 'roles',
-        component: RolesComponent,
+    {
+        path: 'inspect',
+        component: InspectComponent,
         canActivate: [AppRouteGuard],
     },
-    {
+    /*{
         path: 'users',
         component: UsersComponent,
         canActivate: [AppRouteGuard],
