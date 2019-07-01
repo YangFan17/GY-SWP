@@ -267,13 +267,13 @@ namespace GYSWP.Documents
             return trees;
         }
 
-        public async Task<List<DocNzTreeNode>> GetDeptDocNzTreeNodesAsync()
+        public async Task<List<DocNzTreeNode>> GetDeptDocNzTreeNodesAsync(string rootName)
         {
             var docDeptList = new List<DocNzTreeNode>();
             var root = new DocNzTreeNode()
             {
                 key = "0",
-                title = "标准归口部门"
+                title = rootName //"标准归口部门"
             };
 
             //当前用户角色

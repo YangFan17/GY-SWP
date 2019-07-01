@@ -16,4 +16,11 @@ export class InspectService {
         this._commonhttp = commonhttp;
         this.baseUrl = baseUrl ? baseUrl : "";
     }
+
+    getSearchInspectReports(input: any): Observable<any> {
+        let url_ = "/api/services/app/Inspect/GetSearchInspectReports";
+        return this._commonhttp.get(url_, input).pipe(map(data => {
+            return data;
+        }));
+    }
 }

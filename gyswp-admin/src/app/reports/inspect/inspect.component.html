@@ -7,7 +7,60 @@
             </nz-tree>
         </div>
         <div nz-col nzSpan="20">
-
+            <form nz-form (ngSubmit)="refreshData(departId)" [nzLayout]="'inline'">
+                <div nz-row [nzGutter]="18">
+                    <div nz-col [nzSpan]="8" class="mb-md">
+                        <nz-form-item class="d-flex" style="margin-bottom: 0px;">
+                            <nz-form-label nzFor="month">月份</nz-form-label>
+                            <nz-form-control class="flex-1">
+                                <nz-month-picker [(ngModel)]="search.month" nzPlaceHolder="选择月份"></nz-month-picker>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <div nz-col [nzSpan]="8" class="mb-md">
+                        <nz-form-item class="d-flex" style="margin-bottom: 0px;">
+                            <nz-form-label nzFor="userName">姓名</nz-form-label>
+                            <nz-form-control class="flex-1">
+                                <input nz-input name="userName" [(ngModel)]="search.userName" [placeholder]="'请输入姓名'">
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <div nz-col [nzSpan]="8" class="mb-md right" [class.text-right]="'true'" style="float: right;">
+                        <nz-form-item class="d-flex" style="margin-right: 0px;margin-bottom: 0px;">
+                            <nz-form-control class="flex-1">
+                                <button nz-button type="button" (click)="refreshData()" nzType="primary"
+                                    [nzLoading]="isTableLoading">
+                                    <i nz-icon nzType="search"></i>
+                                    查询</button>
+                                <button nz-button type="button" (click)="reset()" class="mx-sm">重置</button>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                </div>
+            </form>
+            <nz-table #nzTable [nzFrontPagination]="false" [nzShowPagination]="false" [nzHideOnSinglePage]="'true'"
+                [nzData]="dataList" [nzLoading]="isTableLoading">
+                <thead>
+                    <tr>
+                        <th>姓名</th>
+                        <th>职位</th>
+                        <th>岗位适用条数</th>
+                        <th>点击率（{{month}}月）</th>
+                        <th>点击面</th>
+                        <th>点击量（{{month}}月）</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of nzTable.data">
+                        <td>{{item.employeeName}}</td>
+                        <td>{{item.employeePosition}}</td>
+                        <td>{{item.postUseNum}}</td>
+                        <td>{{item.clickRateDesc}}</td>
+                        <td>{{item.surfaceRateDesc}}</td>
+                        <td>{{item.clickNum}}</td>
+                    </tr>
+                </tbody>
+            </nz-table>
         </div>
     </div>
 </nz-card>

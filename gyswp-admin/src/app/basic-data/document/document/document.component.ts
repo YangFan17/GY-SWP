@@ -35,7 +35,7 @@ export class DocumentComponent extends AppComponentBase implements OnInit {
     }
 
     getTrees() {
-        this.basicDataService.getDeptDocNzTreeNodes().subscribe((data) => {
+        this.basicDataService.getDeptDocNzTreeNodes('标准归口部门').subscribe((data) => {
             this.nodes = data;
             if (data.length > 0) {
                 var selectedNode = data[0].children[0];
@@ -60,4 +60,5 @@ export class DocumentComponent extends AppComponentBase implements OnInit {
         this.docList.dept = this.selectedDept;
         this.docList.refresh();
     }
+
 }
