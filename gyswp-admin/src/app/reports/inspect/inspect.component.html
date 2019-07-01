@@ -1,2 +1,13 @@
 <page-header [title]=""></page-header>
-<h1>自查</h1>
+<nz-card>
+    <div nz-row>
+        <div nz-col nzSpan="4">
+            <nz-spin nzSimple [nzSize]="'small'" *ngIf="!nodes || nodes.length == 0"></nz-spin>
+            <nz-tree #detpTree [(ngModel)]="nodes" (nzClick)="activeNode($event)" [nzDefaultExpandAll]="true">
+            </nz-tree>
+        </div>
+        <div nz-col nzSpan="20">
+
+        </div>
+    </div>
+</nz-card>

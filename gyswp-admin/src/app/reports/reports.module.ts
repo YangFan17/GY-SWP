@@ -6,7 +6,7 @@ import { SharedModule } from '@shared/shared.module';
 import { HttpClientModule } from '@angular/common/http';
 import { ReportsRoutingModule } from './reports-routing.module';
 import { InspectComponent } from './inspect/inspect.component';
-
+import { BasicDataService } from 'services';
 
 @NgModule({
     imports: [
@@ -24,6 +24,6 @@ import { InspectComponent } from './inspect/inspect.component';
     entryComponents: [
 
     ],
-    // providers: [LocalizationService, MenuService],
+    providers: [BasicDataService],
 })
 export class ReportsModule { }
