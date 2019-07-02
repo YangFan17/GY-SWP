@@ -17,8 +17,10 @@ export class InspectComponent extends AppComponentBase implements OnInit {
     nodes: any[];
     selectedDept: any = { id: '', name: '' };
     month: number;
+    date = new Date();
     dataList: any[];
-    search = { month: new Date(), deptId: 0, userName: '' };
+    search = { month: '', deptId: 0, userName: '' };
+    isTableLoading = false;
 
     constructor(injector: Injector,
         private basicDataService: BasicDataService,
@@ -28,6 +30,7 @@ export class InspectComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit(): void {
+        this.search.month = this.date.getFullYear() + '-' + (this.date.getMonth() + 1) + '-1';
         this.getTrees();
     }
 
@@ -56,9 +59,12 @@ export class InspectComponent extends AppComponentBase implements OnInit {
 
     getInspectData() {
         this.search.deptId = this.selectedDept.id;
-        this.month = this.search.month.getMonth() + 1;
+        this.month = this.date.getMonth() + 1;
+        this.isTableLoading = true;
+        //alert(this.month)
         this.inspectService.getSearchInspectReports(this.search).subscribe((data) => {
             this.dataList = data;
+            this.isTableLoading = false;
         });
     }
 
@@ -66,8 +72,9 @@ export class InspectComponent extends AppComponentBase implements OnInit {
         this.getInspectData();
     }
 
-    reset() {
-
+    onChange(result: Date): void {
+        this.search.month = this.date.getFullYear() + '-' + (this.date.getMonth() + 1) + '-1';
+        //console.log('onChange: ', result);
     }
 
 }

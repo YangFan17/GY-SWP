@@ -18,7 +18,7 @@ namespace GYSWP.EntityFrameworkCore.Repositories
     public class SelfChekRecordRepository : GYSWPRepositoryBase<SelfChekRecord, Guid> , ISelfChekRecordRepository
     {
         private readonly IActiveTransactionProvider _transactionProvider;
-        protected SelfChekRecordRepository(IDbContextProvider<GYSWPDbContext> dbContextProvider, IActiveTransactionProvider transactionProvider)
+        public SelfChekRecordRepository(IDbContextProvider<GYSWPDbContext> dbContextProvider, IActiveTransactionProvider transactionProvider)
           : base(dbContextProvider)
         {
             _transactionProvider = transactionProvider;
@@ -65,9 +65,11 @@ namespace GYSWP.EntityFrameworkCore.Repositories
             {
                 new SqlParameter("@Year", input.Month.Year),
                 new SqlParameter("@Month", input.Month.Month),
-                new SqlParameter("@UserName", input.UserName),
+                new SqlParameter("@UserName", SqlDbType.NVarChar, 100),
                 new SqlParameter("@DeptId", input.DeptId)
             };
+            param[2].Value = input.UserName == null ? "" : "%" + input.UserName + "%";
+
             var sql = @"SELECT A.Id
                         ,A.DeptId
                         ,A.DepartmentName
