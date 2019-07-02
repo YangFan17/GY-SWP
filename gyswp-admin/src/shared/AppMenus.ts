@@ -101,6 +101,11 @@ export class AppMenus {
                     link: "/app/reports/inspect",
                     reuse: false
                 },
+                {
+                    text: "标准统计",
+                    link: "/app/reports/standardrevision",
+                    reuse: false
+                },
             ]
         },
         {
