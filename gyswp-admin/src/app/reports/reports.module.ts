@@ -8,6 +8,7 @@ import { ReportsRoutingModule } from './reports-routing.module';
 import { InspectComponent } from './inspect/inspect.component';
 import { BasicDataService } from 'services';
 import { SuperviseComponent } from './supervise/supervise.component';
+import { StandardrevisionComponent } from './standardrevision/standardrevision.component';
 
 @NgModule({
     imports: [
@@ -21,7 +22,8 @@ import { SuperviseComponent } from './supervise/supervise.component';
     ],
     declarations: [
         InspectComponent,
-        SuperviseComponent
+        SuperviseComponent,
+        StandardrevisionComponent,
     ],
     entryComponents: [
 

@@ -4,3 +4,4 @@ export * from './work-criterion/work-criterion.service';
 export * from './supervision/supervision.service';
 export * from './reports/inspect.service';
 export * from './reports/supervise.service';
+export * from './reports/standardrevision';

@@ -97,6 +97,11 @@ export class AppMenus {
             group: true,
             children: [
                 {
+                    text: "标准统计",
+                    link: "/app/reports/standardrevision",
+                    reuse: false
+                },
+                {
                     text: "自查统计",
                     link: "/app/reports/inspect",
                     reuse: false
