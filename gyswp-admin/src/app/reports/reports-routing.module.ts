@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AppRouteGuard } from '@shared/auth/auth-route-guard';
 import { InspectComponent } from './inspect/inspect.component';
+import { SuperviseComponent } from './supervise/supervise.component';
 
 const routes: Routes = [
     {
@@ -9,11 +10,11 @@ const routes: Routes = [
         component: InspectComponent,
         canActivate: [AppRouteGuard],
     },
-    /*{
-        path: 'users',
-        component: UsersComponent,
+    {
+        path: 'supervise',
+        component: SuperviseComponent,
         canActivate: [AppRouteGuard],
-    },*/
+    },
 ];
 
 @NgModule({

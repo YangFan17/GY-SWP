@@ -101,6 +101,11 @@ export class AppMenus {
                     link: "/app/reports/inspect",
                     reuse: false
                 },
+                {
+                    text: "监督查询",
+                    link: "/app/reports/supervise",
+                    reuse: false
+                },
             ]
         },
         {
