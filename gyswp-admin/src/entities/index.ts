@@ -14,3 +14,4 @@ export * from './examine-detail';
 export * from './examine-result';
 export * from './examine-feedback';
 export * from './examine-record';
+export * from './systemdata';

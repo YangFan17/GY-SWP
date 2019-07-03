@@ -6,6 +6,8 @@ import { LayoutModule } from "@layout/layout.module";
 import { SharedModule } from "@shared/shared.module";
 import { DataConfigComponent } from "./data-config/data-config.component";
 import { ConfigsRoutingModule } from "./configs-routing.module";
+import { ModifyConfigComponent } from './data-config/modify-config/modify-config.component';
+import { DataConfigServiceProxy } from 'services'
 
 @NgModule({
     imports: [
@@ -19,11 +21,13 @@ import { ConfigsRoutingModule } from "./configs-routing.module";
     ],
     declarations: [
         DataConfigComponent,
+        ModifyConfigComponent,
     ],
     entryComponents: [
         DataConfigComponent,
+        ModifyConfigComponent,
     ],
-    providers: [],
+    providers: [DataConfigServiceProxy],
 })
 export class ConfigsModule {
 

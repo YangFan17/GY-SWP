@@ -33,13 +33,13 @@ namespace GYSWP.SystemDatas
 		///</summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<PagedResultDto<SystemDataListDto>> GetPaged(GetSystemDatasInput input);
+        Task<PagedResultDto<SystemDataListDto>> GetPagedAsync(GetSystemDatasInput input);
 
 
 		/// <summary>
 		/// 通过指定id获取SystemDataListDto信息
 		/// </summary>
-		Task<SystemDataListDto> GetById(EntityDto<int> input);
+		Task<SystemDataListDto> GetByIdAsync(EntityDto<int> input);
 
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace GYSWP.SystemDatas
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<GetSystemDataForEditOutput> GetForEdit(NullableIdDto<int> input);
+        Task<GetSystemDataForEditOutput> GetForEditAsync(NullableIdDto<int> input);
 
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace GYSWP.SystemDatas
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task CreateOrUpdate(CreateOrUpdateSystemDataInput input);
+        Task CreateOrUpdateAsync(CreateOrUpdateSystemDataInput input);
 
 
         /// <summary>
@@ -63,13 +63,13 @@ namespace GYSWP.SystemDatas
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task Delete(EntityDto<int> input);
+        Task DeleteAsync(EntityDto<int> input);
 
 
         /// <summary>
         /// 批量删除SystemData
         /// </summary>
-        Task BatchDelete(List<int> input);
+        Task BatchDeleteAsync(List<int> input);
 
 
 		/// <summary>

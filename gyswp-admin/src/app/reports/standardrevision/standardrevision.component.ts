@@ -4,6 +4,7 @@ import { NzTreeComponent, NzFormatEmitEvent } from 'ng-zorro-antd';
 import { BasicDataService, StandardRevisionService } from 'services';
 
 @Component({
+  moduleId: module.id,
   selector: 'app-standardrevision',
   templateUrl: './standardrevision.component.html',
   styles: [],
