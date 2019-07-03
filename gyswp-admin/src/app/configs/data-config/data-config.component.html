@@ -1,42 +1,66 @@
-<!-- <div nz-row>
-    <div nz-col nzSpan="18" style="padding-right:10px;">
-        <nz-input-group nzSearch [nzSuffix]="suffixButton">
-            <input type="text" [(ngModel)]="keyWord" nz-input placeholder="标准名称/编号">
-        </nz-input-group>
-        <ng-template #suffixButton>
-            <button nz-button nzType="default" [nzLoading]="isTableLoading" (click)="refreshData(true)"
-                nzSearch>搜索</button>
-        </ng-template>
+<page-header></page-header>
+<nz-tabset (nzSelectedIndexChange)="selectedChange($event)">
+
+  <nz-tab nzTitle="标准化工作平台">
+    <form nz-form (ngSubmit)="getconfigs()" [nzLayout]="'inline'">
+      <div nz-row [nzGutter]="24">
+        <div nz-col nzOffset="20" [nzSpan]="4" class="mb-md" [class.text-right]="'true'">
+          <button nz-button (click)="getconfigs()" nzShape="circle">
+            <i class="anticon anticon-reload"></i>
+          </button>
+          <button nz-button (click)="create()" nzShape="circle" [nzType]="'primary'">
+            <i class="anticon anticon-plus"></i>
+          </button>
+        </div>
+      </div>
+    </form>
+    <st #st [columns]="configData" [data]="standardizations" [loading]="loading" [page]="pages"
+      [total]="standardizationTotal" (change)="stChange($event)">
+    </st>
+  </nz-tab>
+  <nz-tab nzTitle="物流中心">
+    <form nz-form (ngSubmit)="getconfigs()" [nzLayout]="'inline'">
+      <div nz-row [nzGutter]="24">
+        <div nz-col nzOffset="20" [nzSpan]="4" class="mb-md" [class.text-right]="'true'">
+          <button nz-button (click)="getconfigs()" nzShape="circle">
+            <i class="anticon anticon-reload"></i>
+          </button>
+          <button nz-button (click)="create()" nzShape="circle" [nzType]="'primary'">
+            <i class="anticon anticon-plus"></i>
+          </button>
+        </div>
+      </div>
+    </form>
+    <st #st [columns]="configData" [data]="logisticss" [loading]="loading" [page]="pages" [total]="logisticsTotal"
+      (change)="stChange($event)">
+    </st>
+  </nz-tab>
+  <nz-tab nzTitle="钉钉配置">
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="4" class="mb-md">
+        <ul nz-menu [nzMode]="'inline'">
+          <li *ngFor="let item of configDing" nz-menu-item [nzSelected]="item.selected"
+            (click)="checkChangeconfigDing(item.value)">{{item.text}}</li>
+        </ul>
+      </div>
+      <div nz-col [nzSpan]="20" class="mb-md">
+        <form nz-form (ngSubmit)="getconfigs()" [nzLayout]="'inline'">
+          <div nz-row [nzGutter]="24">
+            <div nz-col nzOffset="20" [nzSpan]="4" class="mb-md" [class.text-right]="'true'">
+              <button nz-button (click)="getconfigs()" nzShape="circle">
+                <i class="anticon anticon-reload"></i>
+              </button>
+              <button nz-button (click)="create()" nzShape="circle" [nzType]="'primary'">
+                <i class="anticon anticon-plus"></i>
+              </button>
+            </div>
+          </div>
+        </form>
+        <st #st [columns]="configData" [data]="query.data" [loading]="loading" [page]="pages" [total]="query.total"
+          (change)="stChange($event)">
+        </st>
+      </div>
+
     </div>
-</div>
-<div nz-row>
-    <div nz-col nzSpan="24">
-        <ng-template #totalTemplate let-total>共 {{totalItems}} 条</ng-template>
-        <nz-table #nzTable [nzFrontPagination]="false" [nzShowTotal]="totalTemplate" [nzTotal]="totalItems"
-            [nzData]="dataList" [(nzPageIndex)]="pageNumber" [(nzPageSize)]="pageSize" [nzLoading]="isTableLoading"
-            [nzShowSizeChanger]="true" (nzPageIndexChange)="refreshData()" (nzPageSizeChange)="refreshData()">
-            <thead>
-                <tr>
-                    <th>配置类型</th>
-                    <th>编码</th>
-                    <th>配置项</th>
-                    <th>备注</th>
-                    <th>序号</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let item of nzTable.data">
-                    <td>{{item.docNo}}</td>
-                    <td>{{item.name}}</td>
-                    <td>{{item.categoryDesc}}</td>
-                    <td>
-                        <a (click)="editLeaf(leaf)">编辑</a>
-                        <nz-divider nzType="vertical"></nz-divider>
-                        <a (click)="deleteLeaf(leaf,deleteContent)">删除</a>
-                    </td>
-                </tr>
-            </tbody>
-        </nz-table>
-    </div>
-</div> -->
+  </nz-tab>
+</nz-tabset>
