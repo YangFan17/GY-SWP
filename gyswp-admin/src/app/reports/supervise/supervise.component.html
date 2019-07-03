@@ -1,0 +1,79 @@
+<page-header [title]=""></page-header>
+<nz-card>
+    <div nz-row>
+        <div nz-col nzSpan="4">
+            <nz-spin nzSimple [nzSize]="'small'" *ngIf="!nodes || nodes.length == 0"></nz-spin>
+            <nz-tree #detpTree [(ngModel)]="nodes" (nzClick)="activeNode($event)" [nzDefaultExpandAll]="true">
+            </nz-tree>
+        </div>
+        <div nz-col nzSpan="20">
+            <form nz-form [nzLayout]="'inline'">
+                <div nz-row [nzGutter]="18">
+                    <div nz-col [nzSpan]="6" class="mb-md">
+                        <nz-form-item class="d-flex" style="margin-bottom: 0px;">
+                            <nz-form-label nzFor="month">时间</nz-form-label>
+                            <nz-form-control class="flex-1">
+                                <nz-range-picker name="dateRange" [(ngModel)]="dateRange"
+                                    (ngModelChange)="onChange($event)">
+                                </nz-range-picker>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <div nz-col [nzSpan]="6" class="mb-md">
+                        <nz-form-item class="d-flex" style="margin-bottom: 0px;">
+                            <nz-form-label nzFor="userName">姓名</nz-form-label>
+                            <nz-form-control class="flex-1">
+                                <input nz-input name="userName" [(ngModel)]="search.userName" [placeholder]="'请输入姓名'"
+                                    maxlength="50">
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <div nz-col [nzSpan]="6" class="mb-md right" [class.text-right]="'true'" style="float: right;">
+                        <nz-form-item class="d-flex" style="margin-right: 0px;margin-bottom: 0px;">
+                            <nz-form-control class="flex-1">
+                                <button nz-button type="button" (click)="refreshData()" nzType="primary"
+                                    [nzLoading]="isTableLoading">
+                                    查询</button>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                </div>
+            </form>
+            <nz-table #nzTable [nzFrontPagination]="false" [nzShowPagination]="false" [nzHideOnSinglePage]="'true'"
+                [nzData]="dataList" [nzLoading]="isTableLoading">
+                <thead>
+                    <tr>
+                        <th>姓名</th>
+                        <th>职位</th>
+                        <th>抽查表</th>
+                        <th>抽查时间</th>
+                        <th>抽查条数</th>
+                        <th>不符合</th>
+                        <th>符合</th>
+                        <th>未完成</th>
+                        <th>执行率</th>
+                        <th>达成率</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of nzTable.data">
+                        <td>{{item.userName}}</td>
+                        <td>{{item.position}}</td>
+                        <td>{{item.examineTitle}}</td>
+                        <td>{{item.examineTime | date:'yyyy-MM-dd'}}</td>
+                        <td>{{item.examineNum}}</td>
+                        <td>{{item.notUpNum}}</td>
+                        <td>{{item.okNum}}</td>
+                        <td>{{item.notFinished}}</td>
+                        <td>
+                            {{item.implementRate}}
+                        </td>
+                        <td>
+                            {{item.reachRate}}
+                        </td>
+                    </tr>
+                </tbody>
+            </nz-table>
+        </div>
+    </div>
+</nz-card>

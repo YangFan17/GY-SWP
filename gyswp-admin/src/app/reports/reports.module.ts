@@ -7,6 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ReportsRoutingModule } from './reports-routing.module';
 import { InspectComponent } from './inspect/inspect.component';
 import { BasicDataService } from 'services';
+import { SuperviseComponent } from './supervise/supervise.component';
 import { StandardrevisionComponent } from './standardrevision/standardrevision.component';
 
 @NgModule({
@@ -21,7 +22,8 @@ import { StandardrevisionComponent } from './standardrevision/standardrevision.c
     ],
     declarations: [
         InspectComponent,
-        StandardrevisionComponent
+        SuperviseComponent,
+        StandardrevisionComponent,
     ],
     entryComponents: [
 

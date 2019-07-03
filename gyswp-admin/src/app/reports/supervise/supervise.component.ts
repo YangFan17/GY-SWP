@@ -1,46 +1,46 @@
 import { Component, OnInit, ViewChild, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/component-base';
 import { NzTreeComponent, NzFormatEmitEvent } from 'ng-zorro-antd';
-import { BasicDataService, InspectService } from 'services';
+import { BasicDataService, SuperviseService } from 'services';
+import { addDays } from 'date-fns';
 
 
 @Component({
-    selector: 'inspect',
-    templateUrl: 'inspect.component.html',
-    styleUrls: ['inspect.component.less'],
-    providers: [InspectService]
+    selector: 'supervise',
+    templateUrl: 'supervise.component.html',
+    styleUrls: ['supervise.component.less'],
+    providers: [SuperviseService]
 })
-export class InspectComponent extends AppComponentBase implements OnInit {
+export class SuperviseComponent extends AppComponentBase implements OnInit {
 
     @ViewChild('detpTree') detpTree: NzTreeComponent;
     nodes: any[];
     selectedDept: any = { id: '', name: '' };
-    month: number;
-    date = new Date();
+    dateRange = [addDays(new Date(), -1 * (new Date()).getDay() + 1), new Date()];
     dataList: any[];
-    search = { month: '', deptId: 0, userName: '' };
+    search = { beginTime: '', endTime: '', deptId: 0, userName: '' };
     isTableLoading = false;
 
     constructor(injector: Injector,
         private basicDataService: BasicDataService,
-        private inspectService: InspectService
+        private superviseService: SuperviseService
     ) {
         super(injector);
     }
 
     ngOnInit(): void {
-        this.search.month = this.date.getFullYear() + '-' + (this.date.getMonth() + 1) + '-1';
+        this.setSearchTime();
         this.getTrees();
     }
 
     getTrees() {
-        this.basicDataService.getDeptDocNzTreeNodes('自查部门').subscribe((data) => {
+        this.basicDataService.getDeptDocNzTreeNodes('监督查询部门').subscribe((data) => {
             this.nodes = data;
             if (data.length > 0) {
                 var selectedNode = data[0].children[0];
                 if (selectedNode && selectedNode.isSelected) {
                     this.selectedDept = { id: selectedNode.key, name: selectedNode.title };
-                    this.getInspectData();
+                    this.getSuperviseData();
                 }
             }
         });
@@ -53,27 +53,29 @@ export class InspectComponent extends AppComponentBase implements OnInit {
         } else {
             this.selectedDept = { id: data.node.key, name: data.node.title };
         }
-        this.getInspectData();
+        this.getSuperviseData();
     }
 
-    getInspectData() {
+    getSuperviseData() {
         this.search.deptId = this.selectedDept.id;
-        this.month = this.date.getMonth() + 1;
         this.isTableLoading = true;
-        //alert(this.month)
-        this.inspectService.getSearchInspectReports(this.search).subscribe((data) => {
+        this.superviseService.getSuperviseReportData(this.search).subscribe((data) => {
             this.dataList = data;
             this.isTableLoading = false;
         });
     }
 
     refreshData() {
-        this.getInspectData();
+        this.getSuperviseData();
     }
 
     onChange(result: Date): void {
-        this.search.month = this.date.getFullYear() + '-' + (this.date.getMonth() + 1) + '-1';
+        this.setSearchTime();
         //console.log('onChange: ', result);
     }
 
+    setSearchTime() {
+        this.search.beginTime = this.dateRange[0].getFullYear() + '-' + (this.dateRange[0].getMonth() + 1) + '-' + this.dateRange[0].getDay();
+        this.search.endTime = this.dateRange[1].getFullYear() + '-' + (this.dateRange[1].getMonth() + 1) + '-' + this.dateRange[1].getDay();
+    }
 }
