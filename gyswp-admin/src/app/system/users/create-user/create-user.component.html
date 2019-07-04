@@ -61,8 +61,8 @@
         <nz-form-item>
           <nz-form-control nzHasFeedback>
             <input nz-input name="confirmPassword" #confirmPassword='ngModel' [(ngModel)]="confirmPasswordInput"
-              [placeholder]="l('ConfirmPassword')" type="password" validateEqual="password" reverse="false"
-              minlength="6" maxlength="32" autocomplete="current-password" required>
+              [placeholder]="'确认密码'" type="password" validateEqual="password" reverse="false" minlength="6"
+              maxlength="32" autocomplete="current-password" required>
             <nz-form-explain *ngIf="confirmPassword.control.dirty&&confirmPassword.control.errors">
               <ng-container *ngIf="confirmPassword.control.hasError('required')">{{l('CanNotNull')}}</ng-container>
               <ng-container *ngIf="confirmPassword.control.hasError('minlength')">长度需大于等于6</ng-container>

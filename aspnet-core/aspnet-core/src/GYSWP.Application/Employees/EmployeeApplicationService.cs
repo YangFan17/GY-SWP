@@ -22,6 +22,9 @@ using GYSWP.Employees.Dtos;
 using GYSWP.Employees.DomainService;
 using GYSWP.Authorization.Users;
 using GYSWP.Organizations;
+using GYSWP.DingDing.Dtos;
+using Abp.Auditing;
+using GYSWP.DingDing;
 
 namespace GYSWP.Employees
 {
@@ -34,6 +37,7 @@ namespace GYSWP.Employees
         private readonly IRepository<Employee, string> _entityRepository;
         private readonly IRepository<User, long> _userRepository;
         private readonly IRepository<Organization, long> _organizationRepository;
+        private readonly IDingDingAppService _dingDingAppService;
         private readonly IEmployeeManager _entityManager;
 
         /// <summary>
@@ -42,11 +46,13 @@ namespace GYSWP.Employees
         public EmployeeAppService(
         IRepository<Employee, string> entityRepository
         , IEmployeeManager entityManager
+        , IDingDingAppService dingDingAppService
         , IRepository<User, long> userRepository
         , IRepository<Organization, long> organizationRepository
         )
         {
             _entityRepository = entityRepository;
+            _dingDingAppService = dingDingAppService;
             _userRepository = userRepository;
             _entityManager = entityManager;
             _organizationRepository = organizationRepository;
@@ -381,6 +387,24 @@ namespace GYSWP.Employees
             //return employeeListDtos;
             //}
             return null;
+        }
+
+        [AbpAllowAnonymous]
+        [Audited]
+
+        public async Task<DingDingUserDto> GetDingDingUserByCodeAsync(string code, DingDingAppEnum appId)
+        {
+            var ddConfig = _dingDingAppService.GetDingDingConfigByApp(appId);
+            //测试环境注释
+            var assessToken = _dingDingAppService.GetAccessToken(ddConfig.Appkey, ddConfig.Appsecret);
+            var userId = _dingDingAppService.GetUserId(assessToken, code);
+            userId = "16550049332052666774";//测试
+            if (userId == null)
+            {
+                return new DingDingUserDto();
+            }
+            var query = await _entityRepository.GetAsync(userId);
+            return query.MapTo<DingDingUserDto>();
         }
     }
 }

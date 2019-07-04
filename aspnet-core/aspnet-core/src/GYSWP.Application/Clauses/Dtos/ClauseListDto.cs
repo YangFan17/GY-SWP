@@ -42,6 +42,8 @@ namespace GYSWP.Clauses.Dtos
         /// 业务操作Id(修订记录Id)
         /// </summary>
         public Guid? BLLId { get; set; }
+
+        public bool IsConfirm { get; set; }
     }
 
     /// <summary>

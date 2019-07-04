@@ -39,8 +39,8 @@ namespace GYSWP.Web.Host.Controllers
 
         public IActionResult Index(string code)
         {
-            return Redirect("/gyswp/index.html");
-            ////return Redirect("/swagger");
+            //return Redirect("/gyswp/index.html");
+            return Redirect("/swagger");
             //if (!string.IsNullOrEmpty(code))
             //{
             //    //string accessToken = "b759f2aae1813d679fa728b731758160";

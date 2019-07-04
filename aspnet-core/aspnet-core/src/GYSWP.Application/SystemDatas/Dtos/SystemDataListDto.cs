@@ -64,6 +64,9 @@ namespace GYSWP.SystemDatas.Dtos
 
 
 
-
+        public string ModelName
+        {
+            get { return ModelId.ToString(); }
+        }
     }
 }

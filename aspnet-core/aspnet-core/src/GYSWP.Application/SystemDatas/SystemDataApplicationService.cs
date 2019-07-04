@@ -55,10 +55,12 @@ namespace GYSWP.SystemDatas
         /// <param name="input"></param>
         /// <returns></returns>
 		 
-        public async Task<PagedResultDto<SystemDataListDto>> GetPaged(GetSystemDatasInput input)
+        public async Task<PagedResultDto<SystemDataListDto>> GetPagedAsync(GetSystemDatasInput input)
 		{
 
-		    var query = _entityRepository.GetAll();
+		    var query = _entityRepository.GetAll()
+                .WhereIf(input.ModelId.HasValue,aa=>aa.ModelId==input.ModelId.Value)
+                .WhereIf(input.Type.HasValue, aa => aa.Type == input.Type.Value);
 			// TODO:根据传入的参数添加过滤条件
             
 
@@ -80,7 +82,7 @@ namespace GYSWP.SystemDatas
 		/// 通过指定id获取SystemDataListDto信息
 		/// </summary>
 		 
-		public async Task<SystemDataListDto> GetById(EntityDto<int> input)
+		public async Task<SystemDataListDto> GetByIdAsync(EntityDto<int> input)
 		{
 			var entity = await _entityRepository.GetAsync(input.Id);
 
@@ -93,7 +95,7 @@ namespace GYSWP.SystemDatas
 		/// <param name="input"></param>
 		/// <returns></returns>
 		
-		public async Task<GetSystemDataForEditOutput> GetForEdit(NullableIdDto<int> input)
+		public async Task<GetSystemDataForEditOutput> GetForEditAsync(NullableIdDto<int> input)
 		{
 			var output = new GetSystemDataForEditOutput();
 SystemDataEditDto editDto;
@@ -122,7 +124,7 @@ SystemDataEditDto editDto;
 		/// <param name="input"></param>
 		/// <returns></returns>
 		
-		public async Task CreateOrUpdate(CreateOrUpdateSystemDataInput input)
+		public async Task CreateOrUpdateAsync(CreateOrUpdateSystemDataInput input)
 		{
 
 			if (input.SystemData.Id.HasValue)
@@ -175,7 +177,7 @@ SystemDataEditDto editDto;
 		/// <param name="input"></param>
 		/// <returns></returns>
 		
-		public async Task Delete(EntityDto<int> input)
+		public async Task DeleteAsync(EntityDto<int> input)
 		{
 			//TODO:删除前的逻辑判断，是否允许删除
 			await _entityRepository.DeleteAsync(input.Id);
@@ -187,7 +189,7 @@ SystemDataEditDto editDto;
 		/// 批量删除SystemData的方法
 		/// </summary>
 		
-		public async Task BatchDelete(List<int> input)
+		public async Task BatchDeleteAsync(List<int> input)
 		{
 			// TODO:批量删除前的逻辑判断，是否允许删除
 			await _entityRepository.DeleteAsync(s => input.Contains(s.Id));

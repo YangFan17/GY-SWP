@@ -101,9 +101,9 @@ export class BasicDataService {
         }));
     }
 
-    getDeptDocNzTreeNodes(): Observable<NzTreeNode[]> {
+    getDeptDocNzTreeNodes(root: any): Observable<NzTreeNode[]> {
         let url_ = "/api/services/app/Document/GetDeptDocNzTreeNodesAsync";
-        return this._commonhttp.get(url_, {}).pipe(map(data => {
+        return this._commonhttp.get(url_, { rootName: root }).pipe(map(data => {
             let arry = [];
             data.map(d => {
                 let tree = new NzTreeNode(d);

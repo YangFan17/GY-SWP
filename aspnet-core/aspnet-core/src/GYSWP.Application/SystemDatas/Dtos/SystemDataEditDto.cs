@@ -1,19 +1,15 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using Abp.Application.Services.Dto;
 using Abp.Domain.Entities.Auditing;
 using GYSWP.GYEnums;
 using GYSWP.SystemDatas;
 
 namespace  GYSWP.SystemDatas.Dtos
 {
-    public class SystemDataEditDto
-    {
-
-        /// <summary>
-        /// Id
-        /// </summary>
-        public int? Id { get; set; }         
+    public class SystemDataEditDto: EntityDto<int?>,IHasCreationTime
+    {        
 
 
         
@@ -64,7 +60,7 @@ namespace  GYSWP.SystemDatas.Dtos
 		/// <summary>
 		/// CreationTime
 		/// </summary>
-		public DateTime? CreationTime { get; set; }
+		public DateTime CreationTime { get; set; }
 
 
 

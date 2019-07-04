@@ -1,4 +1,5 @@
 ﻿using Abp.Domain.Entities;
+using Abp.Domain.Entities.Auditing;
 using GYSWP.GYEnums;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -10,7 +11,7 @@ namespace GYSWP.SystemDatas
     /// 系统配置数据
     /// </summary>
     [Table("SystemDatas")]
-    public class SystemData : Entity
+    public class SystemData : Entity, IHasCreationTime
     {
 
         /// <summary>
@@ -48,6 +49,6 @@ namespace GYSWP.SystemDatas
         /// <summary>
         /// CreationTime
         /// </summary>
-        public virtual DateTime? CreationTime { get; set; }
+        public virtual DateTime CreationTime { get; set; }
     }
 }

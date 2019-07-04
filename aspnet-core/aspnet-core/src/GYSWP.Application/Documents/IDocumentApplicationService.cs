@@ -73,8 +73,14 @@ namespace GYSWP.Documents
         /// </summary>
         Task BatchDelete(List<Guid> input);
 
-        Task<List<DocNzTreeNode>> GetDeptDocNzTreeNodesAsync();
+        Task<List<DocNzTreeNode>> GetDeptDocNzTreeNodesAsync(string rootName);
         Task<PagedResultDto<DocumentListDto>> GetPagedWithPermission(GetDocumentsInput input);
         Task<DocumentTitleDto> GetDocumentTitleAsync(Guid id);
+
+        Task<List<DocumentListDto>> GetDocumentListByDDUserIdAsync(EntityDto<string> input);
+
+        Task<bool> GetHasDocPermissionFromScanAsync(Guid id, string userId);
+
+        Task<DocumentListDto> GetDocInfoByScanAsync(Guid id, string userId);
     }
 }

@@ -6,16 +6,15 @@ using Abp.Domain.Entities.Auditing;
 using System.ComponentModel.DataAnnotations;
 using GYSWP.Documents;
 using Abp.AutoMapper;
+using GYSWP.Clauses.Dtos;
+using System.Collections.Generic;
 
 namespace GYSWP.Documents.Dtos
 {
     [AutoMapFrom(typeof(Document))]
     public class DocumentListDto : FullAuditedEntityDto<Guid>
     {
-        /// <summary>
-        /// Name
-        /// </summary>
-        [Required(ErrorMessage = "Name不能为空")]
+
         public string Name { get; set; }
 
 
@@ -30,10 +29,7 @@ namespace GYSWP.Documents.Dtos
         /// DeptIds
         /// </summary>
         public string DeptIds { get; set; }
-        /// <summary>
-        /// CategoryId
-        /// </summary>
-        [Required(ErrorMessage = "CategoryId不能为空")]
+
         public int CategoryId { get; set; }
 
 
@@ -87,6 +83,26 @@ namespace GYSWP.Documents.Dtos
         /// 作废时间
         /// </summary>
         public DateTime? InvalidTime { get; set; }
+
+        public string SubTitle
+        {
+            get
+            {
+                return string.Format("{0} 发布于：{1}", DocNo, TimeFormat);
+            }
+        }
+
+        public string TimeFormat
+        {
+            get
+            {
+                return PublishTime.HasValue ? PublishTime.Value.ToString("yyyy.MM.dd") : "";
+            }
+        }
+
+        public string DeptName { get; set; }
+
+        public List<ClauseListDto> ClauseList { get; set; }
     }
 
     [AutoMapFrom(typeof(Document))]

@@ -16,6 +16,7 @@ namespace GYSWP.EntityFrameworkCore.Repositories
         protected GYSWPRepositoryBase(IDbContextProvider<GYSWPDbContext> dbContextProvider)
             : base(dbContextProvider)
         {
+            
         }
 
         // Add your common methods for all repositories
