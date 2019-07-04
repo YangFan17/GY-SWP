@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.Employees.Dtos;
 using GYSWP.Employees;
+using GYSWP.DingDing.Dtos;
 
 namespace GYSWP.Employees
 {
@@ -75,5 +76,7 @@ namespace GYSWP.Employees
 
         Task<ScanUserInfo> GetEmployeeByUnionIdAsync(string unionId);
         Task<List<EmployeeListDto>> GetEmployeeListByExamineAsync(GetEmployeesInput input);
+
+        Task<DingDingUserDto> GetDingDingUserByCodeAsync(string code, DingDingAppEnum appId);
     }
 }
