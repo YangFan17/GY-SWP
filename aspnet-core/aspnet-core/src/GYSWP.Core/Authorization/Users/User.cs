@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Abp.Authorization.Users;
 using Abp.Extensions;
 
@@ -15,6 +16,15 @@ namespace GYSWP.Authorization.Users
         {
             return Guid.NewGuid().ToString("N").Truncate(16);
         }
+
+        [StringLength(256)]
+        public override string EmailAddress { get; set; }
+
+
+        [StringLength(256)]
+        public override string NormalizedEmailAddress { get; set; }
+
+
 
         public static User CreateTenantAdminUser(int tenantId, string emailAddress)
         {
@@ -32,5 +42,6 @@ namespace GYSWP.Authorization.Users
 
             return user;
         }
+
     }
 }

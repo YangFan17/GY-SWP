@@ -21,6 +21,8 @@ export class UsersComponent extends PagedListingComponentBase<UserDto> {
     super(injector);
   }
 
+  syncDataLoading = false;
+
   protected fetchDataList(
     request: PagedRequestDto,
     pageNumber: number,
@@ -50,6 +52,15 @@ export class UsersComponent extends PagedListingComponentBase<UserDto> {
         }
       },
     );
+  }
+
+  synchroDingUser(): void {
+    this.syncDataLoading = true;
+    this._userService.synchroDingUser().subscribe(() => {
+      this.notify.info('同步成功！', '');
+      this.syncDataLoading = false;
+      this.refresh();
+    });
   }
 
   create(): void {
