@@ -208,6 +208,20 @@ namespace GYSWP.SelfChekRecords
             await _entityRepository.InsertAsync(entity);
             return new APIResultDto() { Code = 0, Msg = "保存成功" };
         }
+
+        /// <summary>
+        /// 确认自查 钉钉端
+        /// </summary>
+        [AbpAllowAnonymous]
+        public async Task SelfCheckedClauseWithDDAsync(SelfChekDDInput input)
+        {
+            var entity = new SelfChekRecord();
+            entity.ClauseId = input.ClauseId;
+            entity.EmployeeId = input.EmployeeId;
+            entity.EmployeeName = input.EmployeeName;
+            entity.DocumentId = input.DocId;
+            await _entityRepository.InsertAsync(entity);
+        }
     }
 }
 
