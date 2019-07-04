@@ -1,4 +1,3 @@
-
 using System;
 using System.Data;
 using System.Linq;
@@ -378,17 +377,39 @@ namespace GYSWP.Organizations
             entity = await _employeeRepository.InsertAsync(entity);
             return entity.MapTo<Employee>();
         }
+        //private List<OrganizationTreeNodeDto>  getDeptChildTree(long pid, List<Organization> depts)
+        //{
+        //    var trees = depts.Where(d => d.ParentId == pid).Select(d => new OrganizationTreeNodeDto()
+        //    {
+        //        Key = d.Id,
+        //        Title = d.DepartmentName,
+        //        Children = getDeptChildTree(d.Id, depts)
+        //    });
 
-
-        private List<OrganizationTreeNodeDto> GetExamineChildren(long? id)
+        //    return trees.ToList();
+        //}
+        //private async Task<List<OrganizationTreeNodeDto>> GetExamineChildrenAsync(long id)
+        //{
+        //    var trees = new List<OrganizationTreeNodeDto>();
+        //    var depts = await _entityRepository.GetAll().AsNoTracking().ToListAsync();
+        //    var dept = depts.Where(d => d.Id == id).First();
+        //    trees.Add(new OrganizationTreeNodeDto()
+        //    {
+        //        Key = dept.Id,
+        //        Title = dept.DepartmentName,
+        //        Children = getDeptChildTree(id, depts)
+        //    });
+        //    return trees;
+        //}
+        private async Task<List<OrganizationTreeNodeDto>> GetExamineChildrenAsync(long? id)
         {
-            var list = _entityRepository.GetAll().Where(c => c.ParentId == id).Select(c => new OrganizationTreeNodeDto()
+            var list = await _entityRepository.GetAll().Where(c => c.ParentId == id).Select(c => new OrganizationTreeNodeDto()
             {
                 Key = c.Id,
                 Title = c.DepartmentName,
                 ParentId = c.ParentId,
-                Children = GetExamineChildren(c.Id)
-            }).ToList();
+                //Children = GetExamineChildren(c.Id)
+            }).ToListAsync();
             return list;
         }
 
@@ -411,41 +432,173 @@ namespace GYSWP.Organizations
                 Title = v.DepartmentName,
                 ParentId = v.ParentId
             }).FirstOrDefaultAsync();
-            organization.Children = GetExamineChildren(organization.Key);
+            organization.Children = await GetExamineChildrenAsync(organization.Key);
             result.Children.Add(organization);
-            if (organization.ParentId == 1 && ( position == "主任" || position == "科长"))
+            if (organization.ParentId == 1 && (position == "主任" || position == "科长" || (organization.Title == "信息中心" && position == "副主任")))
             {
-                string subordinate = "";
+                List<OrganizationTreeNodeDto> list = new List<OrganizationTreeNodeDto>();
+                //string subordinate = "";
                 if (organization.Title == "营销中心")
                 {
-                    subordinate = "市场营销科";
+                    //subordinate = "市场营销科";
+                    list = await _entityRepository.GetAll().Where(v => (v.DepartmentName == "市场营销科") && v.Id != organization.Key).Select(v => new OrganizationTreeNodeDto()
+                    {
+                        Key = v.Id,
+                        Title = v.DepartmentName,
+                        ParentId = v.ParentId,
+                    }).OrderBy(v => v.Key).ToListAsync();
                 }
-                else if (organization.Title == "专卖科")
+                else if (organization.Title == "专卖科" || organization.Title == "内管派驻办")
                 {
-                    subordinate = "专卖科";
+                    //subordinate = "专卖科";
+                    list = await _entityRepository.GetAll().Where(v => (v.DepartmentName == "专卖科") && v.Id != organization.Key).Select(v => new OrganizationTreeNodeDto()
+                    {
+                        Key = v.Id,
+                        Title = v.DepartmentName,
+                        ParentId = v.ParentId,
+                    }).OrderBy(v => v.Key).ToListAsync();
                 }
-                else if (organization.Title == "办公室")
+                else if (organization.Title == "办公室" || organization.Title == "人事科" || organization.Title == "思政科" || organization.Title == "信息中心")
                 {
-                    subordinate = "办公室";
+                    //subordinate = "办公室";//subordinate = "综合管理部";
+                    list = await _entityRepository.GetAll().Where(v => (v.DepartmentName == "办公室" || v.DepartmentName == "综合管理部") && v.Id != organization.Key).Select(v => new OrganizationTreeNodeDto()
+                    {
+                        Key = v.Id,
+                        Title = v.DepartmentName,
+                        ParentId = v.ParentId,
+                    }).OrderBy(v => v.Key).ToListAsync();
+                }
+                else if (organization.Title == "财务科")
+                {
+                    //subordinate = "财务管理科";//烟产区 //subordinate = "办公室";//纯销区
+                    list = await _entityRepository.GetAll()
+                        .Where(v => ((v.ParentId == 59634065 && v.DepartmentName == "办公室")
+                        || (v.ParentId == 59587088 && v.DepartmentName == "办公室")
+                        || (v.ParentId == 59584066 && v.DepartmentName == "办公室")
+                        || (v.ParentId == 59549059 && v.DepartmentName == "办公室")
+                        || v.DepartmentName == "综合管理部"
+                        || v.DepartmentName == "财务管理科") && v.Id != organization.Key).Select(v => new OrganizationTreeNodeDto()
+                        {
+                            Key = v.Id,
+                            Title = v.DepartmentName,
+                            ParentId = v.ParentId,
+                        }).OrderBy(v => v.Key).ToListAsync();
+                }
+                else if (organization.Title == "法规科" || organization.Title == "派驻审计办" || organization.Title == "企管科" || organization.Title == "监察科")
+                {
+                    //subordinate = "综合办";//subordinate = "综合管理部";//subordinate = "综合科";
+                    list = await _entityRepository.GetAll().Where(v => (v.DepartmentName == "综合办" || v.DepartmentName == "综合管理部" || v.DepartmentName == "综合科") && v.Id != organization.Key).Select(v => new OrganizationTreeNodeDto()
+                    {
+                        Key = v.Id,
+                        Title = v.DepartmentName,
+                        ParentId = v.ParentId,
+                    }).OrderBy(v => v.Key).ToListAsync();
+                }
+                else if (organization.Title == "安全科")
+                {
+                    //subordinate = "综合办";//subordinate = "综合管理部";//subordinate = "综合科";//subordinate = "安全保卫科";//subordinate = "安全管理部";
+                    list = await _entityRepository.GetAll().Where(v => (v.DepartmentName == "综合办" || v.DepartmentName == "综合管理部" || v.DepartmentName == "综合科" || v.DepartmentName == "安全保卫科" || v.DepartmentName == "安全管理部") && v.Id != organization.Key).Select(v => new OrganizationTreeNodeDto()
+                    {
+                        Key = v.Id,
+                        Title = v.DepartmentName,
+                        ParentId = v.ParentId,
+                    }).OrderBy(v => v.Key).ToListAsync();
+                }
+                else if (organization.Title == "投资科")
+                {
+                    //subordinate = "综合办";//subordinate = "综合管理部";//subordinate = "综合科";//subordinate = "烟叶基础设施建设办公室";
+                    list = await _entityRepository.GetAll().Where(v => (v.DepartmentName == "综合办" || v.DepartmentName == "综合管理部" || v.DepartmentName == "综合科" || v.DepartmentName == "烟叶基础设施建设办公室") && v.Id != organization.Key).Select(v => new OrganizationTreeNodeDto()
+                    {
+                        Key = v.Id,
+                        Title = v.DepartmentName,
+                        ParentId = v.ParentId,
+                    }).OrderBy(v => v.Key).ToListAsync();
+                }
+                else if (organization.Title == "烟叶生产经营中心")
+                {
+                    //subordinate = "烟叶生产科";//subordinate = "烟站||烟点";
+                    //list = await _entityRepository.GetAll().Where(v => (v.DepartmentName == "烟叶生产科" || v.Id == 59523784 || v.Id == 59523787 //昭化
+                    //        || v.Id == 59954059 || v.Id == 99768033 || v.Id == 100648776 || v.Id == 100738759//旺苍
+                    //        || v.Id == 59943105 || v.Id == 59949047 || v.Id == 59949048 || v.Id == 60034045) && v.Id != organization.Key).Select(v => new OrganizationTreeNodeDto()
+                    //        {
+                    //            Key = v.Id,
+                    //            Title = v.DepartmentName,
+                    //            ParentId = v.ParentId,
+                    //        }).OrderBy(v => v.Key).ToListAsync();
+                    //昭化
+                    var zhaoHuaZhanDian = await _entityRepository.GetAll().Where(v => v.Id == 59523787).Select(v => new OrganizationTreeNodeDto()
+                    {
+                        Key = v.Id,
+                        Title = v.DepartmentName,
+                        ParentId = v.ParentId
+                    }).OrderBy(v => v.Key).ToListAsync();
+                    var zhaoHua = await _entityRepository.GetAll().Where(v => v.Id == 59523784)
+                        .Select(v => new OrganizationTreeNodeDto()
+                        {
+                            Key = v.Id,
+                            Title = v.DepartmentName,
+                            ParentId = v.ParentId,
+                            Children = zhaoHuaZhanDian
+                        }).OrderBy(v => v.Key).FirstOrDefaultAsync();
+                    //剑阁
+                    var jianGeZhanDian = await _entityRepository.GetAll().Where(v => v.Id == 59949047 || v.Id == 59949048 || v.Id == 60034045).Select(v => new OrganizationTreeNodeDto()
+                    {
+                        Key = v.Id,
+                        Title = v.DepartmentName,
+                        ParentId = v.ParentId
+                    }).OrderBy(v => v.Key).ToListAsync();
+                    var jianGe = await _entityRepository.GetAll().Where(v => v.Id == 59943105).Select(v => new OrganizationTreeNodeDto()
+                    {
+                        Key = v.Id,
+                        Title = v.DepartmentName,
+                        ParentId = v.ParentId,
+                        Children = jianGeZhanDian
+                    }).OrderBy(v => v.Key).FirstOrDefaultAsync();
+                    //旺苍
+                    var wangCangZhanDian = await _entityRepository.GetAll().Where(v => v.Id == 99768033 || v.Id == 100648776 || v.Id == 100738759).Select(v => new OrganizationTreeNodeDto()
+                    {
+                        Key = v.Id,
+                        Title = v.DepartmentName,
+                        ParentId = v.ParentId
+                    }).OrderBy(v => v.Key).ToListAsync();
+                    var wangCang = await _entityRepository.GetAll().Where(v => v.Id == 59954059).Select(v => new OrganizationTreeNodeDto()
+                    {
+                        Key = v.Id,
+                        Title = v.DepartmentName,
+                        ParentId = v.ParentId,
+                        Children = wangCangZhanDian
+                    }).OrderBy(v => v.Key).FirstOrDefaultAsync();
+                    list.Add(zhaoHua);
+                    list.Add(jianGe);
+                    list.Add(wangCang);
                 }
 
-                var list = await _entityRepository.GetAll().Where(v => v.DepartmentName == subordinate && v.Id != organization.Key).Select(v => new OrganizationTreeNodeDto()
+                var parentIds = list.GroupBy(v => v.ParentId).Select(v => v.Key).Where(v => v != 1).ToList();
+                foreach (var pId in parentIds)
                 {
-                    Key = v.Id,
-                    Title = v.DepartmentName,
-                    ParentId = v.ParentId,
-                }).ToListAsync();
-                foreach (var item in list)
-                {
-                    var temp = await _entityRepository.GetAll().Where(v => v.Id == item.ParentId).Select(v => new OrganizationTreeNodeDto()
+                    var temp = await _entityRepository.GetAll().Where(v => v.Id == pId).Select(v => new OrganizationTreeNodeDto()
                     {
                         Key = v.Id,
                         Title = v.DepartmentName,
                         Disabled = true
                     }).FirstOrDefaultAsync();
-                    temp.Children.Add(item);
+                    foreach (var item in list.Where(v => v.ParentId == pId))
+                    {
+                        temp.Children.Add(item);
+                    }
                     result.Children.Add(temp);
                 }
+                //foreach (var item in list)
+                //{
+                //    var temp = await _entityRepository.GetAll().Where(v => v.Id == item.ParentId).Select(v => new OrganizationTreeNodeDto()
+                //    {
+                //        Key = v.Id,
+                //        Title = v.DepartmentName,
+                //        Disabled = true
+                //    }).FirstOrDefaultAsync();
+                //    temp.Children.Add(item);
+                //    result.Children.Add(temp);
+                //}
             }
             if (result.Children.Count == 0)
             {
@@ -461,7 +614,96 @@ namespace GYSWP.Organizations
             }
             return result;
         }
+
+        /// <summary>
+        /// 企管科超级管理员考核部门
+        /// </summary>
+        /// <returns></returns>
+        public async Task<OrganizationTreeNodeDto> GetDeptTreeByQGAdminAsync()
+        {
+            OrganizationTreeNodeDto result = new OrganizationTreeNodeDto();
+            result.Key = 0;
+            result.Title = "考核部门";
+            var organization = await _entityRepository.GetAll().Where(v => v.ParentId == 1).Select(v => new OrganizationTreeNodeDto()
+            {
+                Key = v.Id,
+                Title = v.DepartmentName,
+                ParentId = v.ParentId
+            }).ToListAsync();
+            result.Children.AddRange(organization);
+            return result;
+        }
+
+        /// <summary>
+        /// 县局管理员考核部门
+        /// </summary>
+        /// <returns></returns>
+        public async Task<OrganizationTreeNodeDto> GetDeptTreeByCountyAdminAsync()
+        {
+            var user = await GetCurrentUserAsync();
+            string deptId = await _employeeRepository.GetAll().Where(v => v.Id == user.EmployeeId).Select(v => v.Department).FirstOrDefaultAsync();
+            var orgInfo = await _entityRepository.GetAll().Where(v => "[" + v.Id + "]" == deptId).Select(v => new { v.Id, v.ParentId }).FirstOrDefaultAsync();
+            long? id;
+            if (orgInfo.ParentId != 1)
+            {
+                long? resultId = orgInfo.ParentId;
+                id = GetTopDeptId(orgInfo.ParentId,ref resultId);
+            }
+            else
+            {
+                id = orgInfo.Id;
+            }
+            OrganizationTreeNodeDto result = new OrganizationTreeNodeDto();
+            result.Key = 0;
+            result.Title = "考核部门";
+            var organization = await _entityRepository.GetAll().Where(v => v.Id == id).Select(v => new OrganizationTreeNodeDto()
+            {
+                Key = v.Id,
+                Title = v.DepartmentName,
+                ParentId = v.ParentId
+            }).FirstOrDefaultAsync();
+            var allList = await _entityRepository.GetAll().Select(v => new OrganizationTreeNodeDto()
+            {
+                Key = v.Id,
+                Title = v.DepartmentName,
+                ParentId = v.ParentId
+            }).ToListAsync();
+            organization.Children = GetDeptChildrenAsync(organization.Key, allList);
+            result.Children.Add(organization);
+            return result;
+        }
+
+        /// <summary>
+        /// 查询当前部门所以子级部门
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        private List<OrganizationTreeNodeDto> GetDeptChildrenAsync(long id, List<OrganizationTreeNodeDto> childrenList)
+        {
+            var list = childrenList.Where(c => c.ParentId == id).Select(c => new OrganizationTreeNodeDto()
+            {
+                Key = c.Key,
+                Title = c.Title,
+                ParentId = c.ParentId,
+                Children = GetDeptChildrenAsync(c.Key, childrenList)
+            });
+            return list.ToList();
+        }
+
+        /// <summary>
+        /// 查询顶级部门Id
+        /// </summary>
+        /// <param name="pId"></param>
+        /// <returns></returns>
+        private long? GetTopDeptId( long? pId,ref long? resultId)
+        {
+            var result = _entityRepository.GetAll().Where(v => v.Id == pId).Select(v => new { v.ParentId, v.Id }).FirstOrDefault();
+            resultId = result.Id;
+            if (result.ParentId != 1)
+            {
+                GetTopDeptId(result.ParentId , ref resultId);
+            }
+            return resultId;
+        }
     }
 }
-
-

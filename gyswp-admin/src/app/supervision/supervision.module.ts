@@ -13,6 +13,7 @@ import { RecordDetailComponent } from './criterion-examine/dept-examine-record/r
 import { CheckingResultComponent } from './criterion-examine/checking-result/checking-result.component';
 import { EmpExamineRecordComponent } from './criterion-examine/emp-list/emp-examine-record/emp-examine-record.component';
 import { FeedbackResultComponent } from './criterion-examine/feedback-result/feedback-result.component';
+import { SuperAdminComponent } from './criterion-examine/super-admin/super-admin.component';
 
 @NgModule({
     imports: [
@@ -32,6 +33,7 @@ import { FeedbackResultComponent } from './criterion-examine/feedback-result/fee
         CheckingResultComponent,
         EmpExamineRecordComponent,
         FeedbackResultComponent,
+        SuperAdminComponent,
     ],
     entryComponents: [
         CriterionExamineComponent,
@@ -41,6 +43,7 @@ import { FeedbackResultComponent } from './criterion-examine/feedback-result/fee
         CheckingResultComponent,
         EmpExamineRecordComponent,
         FeedbackResultComponent,
+        SuperAdminComponent,
     ],
     providers: [SupervisionService]
 })

@@ -3,6 +3,7 @@ import { AppComponentBase } from '@shared/component-base';
 import { NzTreeComponent, NzFormatEmitEvent } from 'ng-zorro-antd';
 import { SupervisionService } from 'services';
 import { EmpListComponent } from './emp-list/emp-list.component';
+import { SuperAdminComponent } from './super-admin/super-admin.component';
 
 @Component({
     moduleId: module.id,
@@ -16,7 +17,8 @@ export class CriterionExamineComponent extends AppComponentBase implements OnIni
     categoryName: string;
     nodes: any[];
     selectedDept: any = { id: '', name: '' };
-
+    isCurDept: boolean = false; //是否为本部门
+    curDeptId: any;
     constructor(injector: Injector
         , private supervisionService: SupervisionService
     ) {
@@ -32,8 +34,14 @@ export class CriterionExamineComponent extends AppComponentBase implements OnIni
             this.nodes = data;
             if (data.length > 0) {
                 var selectedNode = data[0].children[0];
+                this.curDeptId = selectedNode.key;
                 if (selectedNode && selectedNode.isSelected) {
-                    this.selectedDept = { id: selectedNode.key, name: selectedNode.title };
+                    if (this.curDeptId == data[0].children[0].key) {
+                        this.isCurDept = true;
+                    } else {
+                        this.isCurDept = false;
+                    }
+                    this.selectedDept = { id: selectedNode.key, name: selectedNode.title, isCurDept: this.isCurDept };
                     this.empList.dept = this.selectedDept;
                     this.empList.getEmployeeList();
                 }
@@ -46,9 +54,27 @@ export class CriterionExamineComponent extends AppComponentBase implements OnIni
         if (data.node.key == '0' || data.node.key == '-1' || data.node.key == null || data.node.isDisabled == true) {
             this.selectedDept = { id: '', name: '' };
         } else {
-            this.selectedDept = { id: data.node.key, name: data.node.title };
+            if (this.curDeptId == data.node.key) {
+                this.isCurDept = true;
+            } else {
+                this.isCurDept = false;
+            }
+            this.selectedDept = { id: data.node.key, name: data.node.title, isCurDept: this.isCurDept };
             this.empList.dept = this.selectedDept;
             this.empList.getEmployeeList();
         }
+    }
+
+    adminExa(type: number): void {
+        this.modalHelper
+            .open(SuperAdminComponent, { type: type }, 'md', {
+                nzMask: true,
+                nzClosable: false,
+                nzMaskClosable: false,
+            })
+            .subscribe(isSave => {
+                if (isSave) {
+                }
+            });
     }
 }

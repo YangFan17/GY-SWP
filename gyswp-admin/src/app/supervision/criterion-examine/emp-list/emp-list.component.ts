@@ -1,5 +1,5 @@
 import { Component, Injector, OnInit } from '@angular/core';
-import { PagedListingComponentBase, PagedRequestDto, PagedResultDto, AppComponentBase } from '@shared/component-base';
+import { AppComponentBase } from '@shared/component-base';
 import { SupervisionService } from 'services';
 import { Router } from '@angular/router';
 import { Employee } from 'entities';
@@ -12,7 +12,7 @@ import { NzModalRef, NzModalService } from 'ng-zorro-antd';
     styleUrls: ['emp-list.component.less']
 })
 export class EmpListComponent extends AppComponentBase implements OnInit {
-    dept: any = { id: '', name: '' };
+    dept: any = { id: '', name: '', isCurDept: false };
     loading = false;
     selectedCategory = { id: '', name: '' };
     empList: Employee[] = [];
@@ -20,7 +20,6 @@ export class EmpListComponent extends AppComponentBase implements OnInit {
     isSelectedAll: boolean = false; // 是否全选
     checkboxCount: number = 0; // 所有Checkbox数量
     checkedLength: number = 0; // 已选中的数量
-
     constructor(injector: Injector
         , private router: Router
         , private modal: NzModalService
@@ -117,7 +116,7 @@ export class EmpListComponent extends AppComponentBase implements OnInit {
                 params.DeptId = this.dept.id;
                 params.DeptName = this.dept.name;
                 params.EmpInfo = empInfo;
-                this.supervisionService.createExamineAsync(params).finally(() => { this.saving = false; }).subscribe(res => {
+                this.supervisionService.createInternalExamineAsync(params).finally(() => { this.saving = false; }).subscribe(res => {
                     if (res.code == 0) {
                         this.notify.info('考核表创建成功', '');
                         this.modal.closeAll();

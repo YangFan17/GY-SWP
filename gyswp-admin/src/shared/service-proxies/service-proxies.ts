@@ -7,12 +7,14 @@
 // ReSharper disable InconsistentNaming
 
 import 'rxjs/add/operator/finally';
-import { mergeMap as _observableMergeMap, catchError as _observableCatch } from 'rxjs/operators';
+import { mergeMap as _observableMergeMap, catchError as _observableCatch, map } from 'rxjs/operators';
 import { Observable, throwError as _observableThrow, of as _observableOf } from 'rxjs';
 import { Injectable, Inject, Optional, InjectionToken } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angular/common/http';
 
 import * as moment from 'moment';
+import { ApiResult } from 'entities';
+import { CommonHttpClient } from 'services/common-httpclient';
 
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
@@ -1288,6 +1290,23 @@ export class UserServiceProxy {
                 }
             } else
                 return <Observable<UserDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    synchroDingUser(): Observable<any> {
+        let url_ = this.baseUrl + "/api/services/app/User/SynchroDingUserAsync";
+        url_ = url_.replace(/[?&]$/, "");
+        let options_: any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_: any) => {
+            return this.processCreate(response_);
         }));
     }
 
