@@ -71,7 +71,8 @@ namespace GYSWP.CriterionExamines
         /// 批量删除CriterionExamine
         /// </summary>
         Task BatchDelete(List<Guid> input);
-        Task<APIResultDto> CreateExamineAsync(CriterionExamineInfoDto input);
+        Task<APIResultDto> CreateInternalExamineAsync(CriterionExamineInfoDto input);
         Task<PagedResultDto<CriterionExamineListDto>> GetPagedExamineByCurrentIdAsync(GetCriterionExaminesInput input);
+        Task<APIResultDto> CreateExamineByQiGuanAsync(CriterionExamineInfoDto input);
     }
 }

@@ -16,5 +16,9 @@ namespace GYSWP.Employees.DomainService
         /// 初始化方法
         ///</summary>
         void InitEmployee();
+        /// <summary>
+        /// 获取部门及下面子部门
+        /// </summary>
+        Task<string[]> GetDeptIdArrayAsync(long deptId);
     }
 }

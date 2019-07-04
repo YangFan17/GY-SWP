@@ -39,8 +39,15 @@ export class SupervisionService {
         }));
     }
 
-    createExamineAsync(params: any): Observable<ApiResult> {
-        let url_ = "/api/services/app/CriterionExamine/CreateExamineAsync";
+    createInternalExamineAsync(params: any): Observable<ApiResult> {
+        let url_ = "/api/services/app/CriterionExamine/CreateInternalExamineAsync";
+        return this._commonhttp.post(url_, params).pipe(map(data => {
+            return ApiResult.fromJS(data);
+        }));
+    }
+
+    createExamineByQiGuanAsync(params: any): Observable<ApiResult> {
+        let url_ = "/api/services/app/CriterionExamine/CreateExamineByQiGuanAsync";
         return this._commonhttp.post(url_, params).pipe(map(data => {
             return ApiResult.fromJS(data);
         }));
@@ -115,6 +122,26 @@ export class SupervisionService {
         let url_ = "/api/services/app/ExamineFeedback/GetExamineFeedbackByIdAsync";
         return this._commonhttp.get(url_, { id: id }).pipe(map(data => {
             return ExamineFeedback.fromJS(data);
+        }));
+    }
+
+    getDeptTreeByQGAdminAsync(): Observable<NzTreeNode[]> {
+        let url_ = "/api/services/app/Organization/GetDeptTreeByQGAdminAsync";
+        return this._commonhttp.get(url_, {}).pipe(map(data => {
+            let arry = [];
+            let tree = new NzTreeNode(data);
+            arry.push(tree);
+            return arry;
+        }));
+    }
+
+    getDeptTreeByCountyAdminAsync(): Observable<NzTreeNode[]> {
+        let url_ = "/api/services/app/Organization/GetDeptTreeByCountyAdminAsync";
+        return this._commonhttp.get(url_, {}).pipe(map(data => {
+            let arry = [];
+            let tree = new NzTreeNode(data);
+            arry.push(tree);
+            return arry;
         }));
     }
 }

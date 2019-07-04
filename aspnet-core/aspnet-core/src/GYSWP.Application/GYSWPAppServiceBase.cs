@@ -51,5 +51,11 @@ namespace GYSWP
             var roles = await UserManager.GetRolesAsync(currentUser);
             return roles;
         }
+
+        protected async Task<IList<User>> GetUsersInRoleAsync(string roleName)
+        {
+            var user = await UserManager.GetUsersInRoleAsync(roleName);
+            return user;
+        }
     }
 }

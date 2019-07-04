@@ -75,5 +75,7 @@ namespace GYSWP.Organizations
         Task<List<OrganizationNzTreeNode>> GetTreesAsync();
         Task<APIResultDto> SynchronousOrganizationAsync();
         Task<OrganizationTreeNodeDto> GetDeptExamineTreeAsync();
+        Task<OrganizationTreeNodeDto> GetDeptTreeByQGAdminAsync();
+        Task<OrganizationTreeNodeDto> GetDeptTreeByCountyAdminAsync();
     }
 }

@@ -3,14 +3,22 @@
         <i nz-icon type="profile"></i>
         <span>部门考核记录</span>
     </button>
-    <button nz-button type="button" (click)="internalExa()">
+    <button nz-button type="button" *ngIf="dept.isCurDept" (click)="internalExa()">
         <i nz-icon type="user"></i>
         <span>部门内部考核</span>
     </button>
-    <button nz-button type="button" (click)="subordinateExa()">
+    <button nz-button type="button" *ngIf="!dept.isCurDept" (click)="subordinateExa()">
         <i nz-icon type="usergroup-add"></i>
-        <span>部门全体考核</span>
+        <span>部门考核</span>
     </button>
+    <!-- <button nz-button type="button" (click)="qiGuanExa()">
+        <i nz-icon type="audit"></i>
+        <span>企管科管理员考核</span>
+    </button>
+    <button nz-button type="button" (click)="subordinateExa()">
+        <i nz-icon type="audit"></i>
+        <span>县局管理员考核</span>
+    </button> -->
 </div>
 <div nz-row>
     <div nz-col nzSpan="24">
@@ -18,7 +26,7 @@
             [nzLoading]="loading">
             <thead>
                 <tr>
-                    <th style="text-align: right;">
+                    <th *ngIf="dept.isCurDept" style="text-align: right;">
                         <label nz-checkbox [(ngModel)]="isSelectedAll" (ngModelChange)="checkAll($event)">
                         </label>
                     </th>
@@ -30,7 +38,7 @@
             </thead>
             <tbody>
                 <tr *ngFor="let item of nzTable.data">
-                    <td style="text-align: right;">
+                    <td *ngIf="dept.isCurDept" style="text-align: right;">
                         <label nz-checkbox [(ngModel)]="item.checked" (nzCheckedChange)="isCancelCheck($event)">
                         </label>
                     </td>

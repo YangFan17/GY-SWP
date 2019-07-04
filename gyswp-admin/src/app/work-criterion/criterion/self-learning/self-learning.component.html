@@ -7,10 +7,10 @@
         <sv label="标准文档">
             <a title="预览" (click)="goPre(docInfo.id)"> {{docInfo.name}}
             </a>
-            <label style="color:red">[受控,现行有效]</label>
         </sv>
         <sv label="归口部门">{{docInfo.deptName}}</sv>
         <sv label="标准分类">{{docInfo.categoryDesc}}</sv>
+        <sv label="标准状态"><label style="color:red">[受控,现行有效]</label></sv>
         <sv label="发布时间">{{docInfo.publishTime| date: "yyyy-MM-dd"}}</sv>
     </sv-container>
     <!-- </div> -->
@@ -73,7 +73,8 @@
                             <td [nzIndentSize]="item.level * 20" [nzShowExpand]="item.children.length>0"
                                 [(nzExpand)]="item.expand"
                                 (nzExpandChange)="collapse(mapOfExpandedData[data.id], item, $event)">
-                                {{ item.clauseNo }} <nz-tag [nzColor]="'red'">已确认</nz-tag>
+                                {{ item.clauseNo }}
+                                <!-- <nz-tag [nzColor]="'red'">已确认</nz-tag> -->
                             </td>
                             <td>{{ item.title | lengthLimit:20}}</td>
                             <td>
