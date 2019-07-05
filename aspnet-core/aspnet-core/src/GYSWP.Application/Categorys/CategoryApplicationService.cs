@@ -314,12 +314,22 @@ namespace GYSWP.Categorys
                 var dateNow = DateTime.Now;
                 if (item != 1)
                 {
+                    #region 现行标准库
+                    var category999 = new Category();
+                    category999.Name = "现行标准库";
+                    category999.DeptId = item;
+                    category999.CreatorUserId = AbpSession.UserId;
+                    category999.CreationTime = dateNow;
+                    category999.ParentId = 0;
+                    category999.Desc = "[系统默认生成，无法修改]";
+                    await _entityRepository.InsertAsync(category999);
+                    await CurrentUnitOfWork.SaveChangesAsync();
                     var category0 = new Category();
                     category0.Name = "技术标准";
                     category0.DeptId = item;
                     category0.CreatorUserId = AbpSession.UserId;
                     category0.CreationTime = dateNow;
-                    category0.ParentId = 0;
+                    category0.ParentId = category999.Id;
                     category0.Desc = "[系统默认生成，无法修改]";
                     await _entityRepository.InsertAsync(category0);
                     await CurrentUnitOfWork.SaveChangesAsync();
@@ -328,7 +338,7 @@ namespace GYSWP.Categorys
                     category1.DeptId = item;
                     category1.CreatorUserId = AbpSession.UserId;
                     category1.CreationTime = dateNow;
-                    category1.ParentId = 0;
+                    category1.ParentId = category999.Id;
                     category1.Desc = "[系统默认生成，无法修改]";
                     await _entityRepository.InsertAsync(category1);
                     await CurrentUnitOfWork.SaveChangesAsync();
@@ -337,7 +347,7 @@ namespace GYSWP.Categorys
                     category2.DeptId = item;
                     category2.CreatorUserId = AbpSession.UserId;
                     category2.CreationTime = dateNow;
-                    category2.ParentId = 0;
+                    category2.ParentId = category999.Id;
                     category2.Desc = "[系统默认生成，无法修改]";
                     await _entityRepository.InsertAsync(category2);
                     await CurrentUnitOfWork.SaveChangesAsync();
@@ -346,19 +356,76 @@ namespace GYSWP.Categorys
                     category3.DeptId = item;
                     category3.CreatorUserId = AbpSession.UserId;
                     category3.CreationTime = dateNow;
-                    category3.ParentId = 0;
+                    category3.ParentId = category999.Id;
                     category3.Desc = "[系统默认生成，无法修改]";
                     await _entityRepository.InsertAsync(category3);
                     await CurrentUnitOfWork.SaveChangesAsync();
                     var category4 = new Category();
-                    category4.Name = "作废标准库";
+                    category4.Name = "风险库";
                     category4.DeptId = item;
                     category4.CreatorUserId = AbpSession.UserId;
                     category4.CreationTime = dateNow;
-                    category4.ParentId = 0;
+                    category4.ParentId = category999.Id;
                     category4.Desc = "[系统默认生成，无法修改]";
                     await _entityRepository.InsertAsync(category4);
                     await CurrentUnitOfWork.SaveChangesAsync();
+                    #endregion
+                    #region 作废标准库
+                    var category000 = new Category();
+                    category000.Name = "作废标准库";
+                    category000.DeptId = item;
+                    category000.CreatorUserId = AbpSession.UserId;
+                    category000.CreationTime = dateNow;
+                    category000.ParentId = 0;
+                    category000.Desc = "[系统默认生成，无法修改]";
+                    await _entityRepository.InsertAsync(category4);
+                    await CurrentUnitOfWork.SaveChangesAsync();
+                    var category5 = new Category();
+                    category5.Name = "技术标准";
+                    category5.DeptId = item;
+                    category5.CreatorUserId = AbpSession.UserId;
+                    category5.CreationTime = dateNow;
+                    category5.ParentId = category000.Id;
+                    category5.Desc = "[系统默认生成，无法修改]";
+                    await _entityRepository.InsertAsync(category5);
+                    await CurrentUnitOfWork.SaveChangesAsync();
+                    var category6 = new Category();
+                    category6.Name = "管理标准";
+                    category6.DeptId = item;
+                    category6.CreatorUserId = AbpSession.UserId;
+                    category6.CreationTime = dateNow;
+                    category6.ParentId = category000.Id;
+                    category6.Desc = "[系统默认生成，无法修改]";
+                    await _entityRepository.InsertAsync(category6);
+                    await CurrentUnitOfWork.SaveChangesAsync();
+                    var category7 = new Category();
+                    category7.Name = "工作标准";
+                    category7.DeptId = item;
+                    category7.CreatorUserId = AbpSession.UserId;
+                    category7.CreationTime = dateNow;
+                    category7.ParentId = category000.Id;
+                    category7.Desc = "[系统默认生成，无法修改]";
+                    await _entityRepository.InsertAsync(category7);
+                    await CurrentUnitOfWork.SaveChangesAsync();
+                    var category8 = new Category();
+                    category8.Name = "外来文件";
+                    category8.DeptId = item;
+                    category8.CreatorUserId = AbpSession.UserId;
+                    category8.CreationTime = dateNow;
+                    category8.ParentId = category000.Id;
+                    category8.Desc = "[系统默认生成，无法修改]";
+                    await _entityRepository.InsertAsync(category8);
+                    await CurrentUnitOfWork.SaveChangesAsync();
+                    var category9 = new Category();
+                    category9.Name = "风险库";
+                    category9.DeptId = item;
+                    category9.CreatorUserId = AbpSession.UserId;
+                    category9.CreationTime = dateNow;
+                    category9.ParentId = category000.Id;
+                    category9.Desc = "[系统默认生成，无法修改]";
+                    await _entityRepository.InsertAsync(category9);
+                    await CurrentUnitOfWork.SaveChangesAsync();
+                    #endregion
                 }
             }
             return new APIResultDto() { Code = 0, Msg = "生成成功" };

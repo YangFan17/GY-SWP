@@ -1,6 +1,16 @@
 <page-header [title]=""></page-header>
 <nz-card>
     <div nz-row>
+        <div style="padding-bottom: 10px;border-right-width: 10px;padding-right: 10px; padding-left: 10px;">
+            <button nz-button type="button" (click)="adminExa(1)">
+                <i nz-icon type="audit"></i>
+                <span>企管科管理员考核</span>
+            </button>
+            <button nz-button type="button" (click)="adminExa(2)">
+                <i nz-icon type="audit"></i>
+                <span>县局管理员考核</span>
+            </button>
+        </div>
         <div nz-col nzSpan="6">
             <nz-spin nzSimple [nzSize]="'small'" *ngIf="!nodes || nodes.length == 0"></nz-spin>
             <nz-tree #detpTree [(ngModel)]="nodes" (nzClick)="activeNode($event)" [nzDefaultExpandAll]="true">
