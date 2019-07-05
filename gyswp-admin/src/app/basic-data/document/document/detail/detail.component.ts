@@ -19,6 +19,7 @@ export class DetailComponent extends AppComponentBase implements OnInit {
     @ViewChild('clause') clause: ClauseComponent;
     isAllUser = '1';
     userTags = [];
+    deptTags = [];
     host = AppConsts.remoteServiceBaseUrl;
     actionUrl = this.host + '/GYISMSFile/MeetingRoomPost?fileName=room';
     qrCode = {
@@ -74,7 +75,7 @@ export class DetailComponent extends AppComponentBase implements OnInit {
     save() {
         if (!this.document.id) {
             this.document.categoryId = parseInt(this.category.id);
-            this.document.categoryDesc = this.category.name;
+            // this.document.categoryDesc = this.category.name;
             this.document.deptIds = this.dept.id;
             this.document.isAction = true;
         }
@@ -176,6 +177,52 @@ export class DetailComponent extends AppComponentBase implements OnInit {
         this.isAllUser = ngmodel;
     }
 
+    getUserDepts() {
+        if (this.document.isAllUser) {
+            this.document.employeeIds = '';
+            this.document.employeeDes = '';
+            this.document.deptIds = '';
+            this.document.deptDesc = '';
+        }
+        else {
+            let userIds = '';
+            let userNames = '';
+            for (let u of this.userTags) {
+                userIds += u.id + ',';
+                userNames += u.name + ',';
+            }
+            this.document.employeeIds = (userIds == '' ? '' : userIds.substr(0, userIds.length - 1));
+            this.document.employeeDes = (userNames == '' ? '' : userNames.substr(0, userNames.length - 1));
+            let deptIds = '';
+            let deptNames = '';
+            for (let u of this.deptTags) {
+                deptIds += u.id + ',';
+                deptNames += u.name + ',';
+            }
+            this.document.deptIds = (deptIds == '' ? '' : deptIds.substr(0, deptIds.length - 1));
+            this.document.deptDesc = (deptNames == '' ? '' : deptNames.substr(0, deptNames.length - 1));
+        }
+    }
+
+    showDeptUserModel() {
+        this.modalHelper
+            .open(DeptUserComponent, { deptId: this.dept.id, deptName: this.dept.name, selectedUsers: this.userTags, selectedDepts: this.deptTags }, 'lg', {
+                nzMask: true,
+                nzClosable: false,
+                nzMaskClosable: false,
+            })
+            .subscribe(isconfirm => {
+                if (!isconfirm) {
+                    this.setUserDepts(this.document);
+                }
+            });
+    }
+
+    setUserDepts(entity: DocumentDto) {
+        this.userTags = entity.getUsers();
+        this.deptTags = entity.getDepts();
+    }
+
     handleUserClose(tag: any) {
         var i = 0;
         for (const item of this.userTags) {
@@ -187,38 +234,15 @@ export class DetailComponent extends AppComponentBase implements OnInit {
         }
     }
 
-    getUserDepts() {
-        if (this.document.isAllUser) {
-            this.document.employeeIds = '';
-            this.document.employeeDes = '';
-        }
-        else {
-            let userIds = '';
-            let userNames = '';
-            for (let u of this.userTags) {
-                userIds += u.id + ',';
-                userNames += u.name + ',';
+    handleDeptClose(tag: any) {
+        var i = 0;
+        for (const item of this.deptTags) {
+            if (item.id == tag.id) {
+                this.deptTags.splice(i, 1);
+                break;
             }
-            this.document.employeeIds = (userIds == '' ? '' : userIds.substr(0, userIds.length - 1));
-            this.document.employeeDes = (userNames == '' ? '' : userNames.substr(0, userNames.length - 1));
+            i++;
         }
-    }
-
-    showDeptUserModel() {
-        this.modalHelper
-            .open(DeptUserComponent, { deptId: this.dept.id, deptName: this.dept.name, selectedUsers: this.userTags }, 'lg', {
-                nzMask: true,
-                nzClosable: false,
-            })
-            .subscribe(isconfirm => {
-                if (!isconfirm) {
-                    this.setUserDepts(this.document);
-                }
-            });
-    }
-
-    setUserDepts(entity: DocumentDto) {
-        this.userTags = entity.getUsers();
     }
     //#endregion
 }

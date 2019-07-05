@@ -49,13 +49,24 @@ namespace GYSWP.Categorys.DomainService
 			throw new NotImplementedException();
 		}
 
-		// TODO:编写领域业务代码
+        private async Task GetParentCategoryAsync(int id, List<Category> plist)
+        {
+            var entity = await _repository.GetAsync(id);
+            if (entity != null)
+            {
+                plist.Insert(0, entity);
+                if (entity.ParentId.HasValue && entity.ParentId != 0)
+                {
+                    await GetParentCategoryAsync(entity.ParentId.Value, plist);
+                }
+            }
+        }
 
-
-
-		 
-		  
-		 
-
-	}
+        public async Task<List<Category>> GetHierarchyCategories(int id)
+        {
+            var plist = new List<Category>();
+            await GetParentCategoryAsync(id, plist);
+            return plist;
+        }
+    }
 }

@@ -9,9 +9,19 @@ namespace GYSWP.Documents.Dtos
     {
         public string KeyWord { get; set; }
 
-        public string DeptId { get; set; }
+        public long DeptId { get; set; }
         public int? CategoryId { get; set; }
-
+        public string CategoryCode
+        {
+            get
+            {
+                if (CategoryId.HasValue)
+                {
+                    return "," + CategoryId.ToString() + ",";
+                }
+                return null;
+            }
+        }
         /// <summary>
         /// 正常化排序使用
         /// </summary>

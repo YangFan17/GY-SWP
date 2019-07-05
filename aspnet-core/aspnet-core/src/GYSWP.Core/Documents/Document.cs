@@ -25,11 +25,19 @@ namespace GYSWP.Documents
         /// </summary>
         [Required]
         public virtual int CategoryId { get; set; }
-
+        /// <summary>
+        /// 分类Id层级 用逗号分隔
+        /// </summary>
+        [StringLength(200)]
+        public virtual string CategoryCode { get; set; }
         /// <summary>
         /// DeptIds
         /// </summary>
         public virtual string DeptIds { get; set; }
+        /// <summary>
+        /// DeptDesc
+        /// </summary>
+        public virtual string DeptDesc { get; set; }
         /// <summary>
         /// 分类名描述（分类名层级以逗号分隔）
         /// </summary>

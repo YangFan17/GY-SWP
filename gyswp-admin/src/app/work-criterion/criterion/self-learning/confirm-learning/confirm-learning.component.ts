@@ -19,6 +19,7 @@ export class ConfirmLearningComponent extends ModalComponentBase {
     disabledClick: boolean = true;
     btnText: string = '确认学习';
     clause: Clause = new Clause();
+    txt: string;
     constructor(injector: Injector
         , private workCriterionService: WorkCriterionService
     ) {
@@ -47,6 +48,7 @@ export class ConfirmLearningComponent extends ModalComponentBase {
         if (this.id) {
             this.workCriterionService.getClauseByIdAsync(this.id).subscribe(res => {
                 this.clause = res;
+                this.txt = this.clause.clauseNo + (this.clause.title ? '\t' + this.clause.title : '') + (this.clause.content ? '\r\n' + this.clause.content : '');
                 this.countDown();
                 // this.pNo = res.
             })

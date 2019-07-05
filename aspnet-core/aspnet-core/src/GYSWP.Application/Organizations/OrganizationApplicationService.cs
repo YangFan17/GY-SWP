@@ -705,5 +705,20 @@ namespace GYSWP.Organizations
             }
             return resultId;
         }
+
+        public async Task<OrganizationTreeNodeDto> GetDeptTreeBy1QGAdminAsync()
+        {
+            OrganizationTreeNodeDto result = new OrganizationTreeNodeDto();
+            result.Key = 0;
+            result.Title = "考核部门";
+            var organization = await _entityRepository.GetAll().Where(v => v.ParentId == 1).Select(v => new OrganizationTreeNodeDto()
+            {
+                Key = v.Id,
+                Title = v.DepartmentName,
+                ParentId = v.ParentId
+            }).ToListAsync();
+            result.Children.AddRange(organization);
+            return result;
+        }
     }
 }

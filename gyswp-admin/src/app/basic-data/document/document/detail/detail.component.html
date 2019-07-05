@@ -41,16 +41,20 @@
                     <nz-form-control [nzSm]="20">
                         <nz-radio-group #isAllUsers="ngModel" [(ngModel)]="isAllUser"
                             (ngModelChange)="allUserRadioChange($event)" [ngModelOptions]="{standalone: true}">
-                            <label nz-radio nzValue="1">部门所有人员</label>
-                            <label nz-radio nzValue="0">部门部分人员</label>
+                            <label nz-radio nzValue="1">当前部门所有人员</label>
+                            <label nz-radio nzValue="0">其他部门和部分人员</label>
                         </nz-radio-group>
                         <div *ngIf="isAllUser == '0'">
+                            <nz-tag *ngFor="let dept of deptTags; let i = index;" [nzColor]="'blue'"
+                                [nzMode]="'closeable'" (nzAfterClose)="handleDeptClose(dept)">
+                                {{ dept.name }}
+                            </nz-tag>
                             <nz-tag *ngFor="let user of userTags; let i = index;" [nzMode]="'closeable'"
                                 (nzAfterClose)="handleUserClose(user)">
                                 {{ user.name }}
                             </nz-tag>
                             <nz-tag class="editable-tag" [nzColor]="'#108ee9'" (click)="showDeptUserModel()">
-                                <i class="anticon anticon-plus"></i> 选择部门人员
+                                <i class="anticon anticon-plus"></i> 选择部门和人员
                             </nz-tag>
                         </div>
                     </nz-form-control>

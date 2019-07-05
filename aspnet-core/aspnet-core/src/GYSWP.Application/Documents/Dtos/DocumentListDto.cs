@@ -29,10 +29,16 @@ namespace GYSWP.Documents.Dtos
         /// DeptIds
         /// </summary>
         public string DeptIds { get; set; }
-
+        /// <summary>
+        /// DeptDesc
+        /// </summary>
+        public string DeptDesc { get; set; }
         public int CategoryId { get; set; }
 
-
+        /// <summary>
+        /// 分类Id层级 用逗号分隔
+        /// </summary>
+        public string CategoryCode { get; set; }
         /// <summary>
         /// CategoryDesc
         /// </summary>

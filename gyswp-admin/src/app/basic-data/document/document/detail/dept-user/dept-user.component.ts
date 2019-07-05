@@ -3,7 +3,7 @@ import { ModalComponentBase } from '@shared/component-base';
 import { Router } from '@angular/router';
 import { BasicDataService } from 'services';
 import { Employee } from 'entities';
-import { NzModalService } from 'ng-zorro-antd';
+import { NzModalService, NzFormatEmitEvent } from 'ng-zorro-antd';
 
 @Component({
     moduleId: module.id,
@@ -14,6 +14,7 @@ import { NzModalService } from 'ng-zorro-antd';
 export class DeptUserComponent extends ModalComponentBase implements OnInit {
     @Output() modalCancel: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Input() selectedUsers = [];
+    @Input() selectedDepts = [];
     @Input() deptId: string;
     @Input() deptName: string;
     keyWord: string;
@@ -22,6 +23,8 @@ export class DeptUserComponent extends ModalComponentBase implements OnInit {
     dataList: Employee[] = [];
     allChecked = false;
     orgCheckedKeys = [];
+    nodes = [];
+    checkedDeptKeys = [];
 
     constructor(injector: Injector, private router: Router
         , private basicDataService: BasicDataService
@@ -30,9 +33,16 @@ export class DeptUserComponent extends ModalComponentBase implements OnInit {
     }
 
     ngOnInit(): void {
+        this.initOrgCheckedKeys();
         this.getEmployeeList();
+        this.getTrees();
     }
-
+    getTrees() {
+        this.basicDataService.getTreesAsync().subscribe((data) => {
+            this.nodes = data;
+            this.checkedDeptKeys = this.orgCheckedKeys;
+        });
+    }
     getEmployeeList() {
         let params: any = {};
         params.DepartId = this.deptId;
@@ -56,6 +66,53 @@ export class DeptUserComponent extends ModalComponentBase implements OnInit {
                 this.refreshStatus(null, null);
             });
     }
+
+    //#region 部门选择相关方法
+    initOrgCheckedKeys() {
+        this.orgCheckedKeys = this.selectedDepts.map(dept => { return dept.id; });
+    }
+
+    handleDeptClose(tag: any) {
+        var i = 0;
+        for (const item of this.selectedDepts) {
+            if (item.id == tag.id) {
+                let keys = this.orgCheckedKeys.filter(o => o == item.id);
+                if (keys.length > 0) {
+                    this.orgCheckedKeys.splice(this.orgCheckedKeys.indexOf(keys[0]), 1);
+                }
+                this.selectedDepts.splice(i, 1);
+                console.log(this.orgCheckedKeys);
+                const tempKeys = this.orgCheckedKeys.concat();
+                console.log(tempKeys);
+                if (tempKeys.length > 0) {
+                    this.checkedDeptKeys = tempKeys;
+                } else {
+                    this.getTrees();
+                }
+                break;
+            }
+            i++;
+        }
+    }
+
+    refreshDeptTags(item: any) {
+        let depts = this.selectedDepts.filter(s => s.id == item.id);
+        if (item.isChecked) {
+            if (depts.length == 0) {
+                this.selectedDepts.push({ id: item.id, name: item.name });
+            }
+        } else {
+            if (depts.length > 0) {
+                this.selectedDepts.splice(this.selectedDepts.indexOf(depts[0]), 1);
+            }
+        }
+    }
+
+    checkBoxChange(data: NzFormatEmitEvent) {
+        this.orgCheckedKeys = data.keys;
+        this.refreshDeptTags({ id: data.node.key, name: data.node.origin.deptName, isChecked: data.node.isChecked });
+    }
+    //#endregion
 
     handleUserClose(tag: any) {
         var i = 0;

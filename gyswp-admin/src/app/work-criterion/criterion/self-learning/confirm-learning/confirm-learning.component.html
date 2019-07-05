@@ -3,7 +3,7 @@
         <span>{{title}}</span>
     </h3>
     <form nz-form *ngIf="clause">
-        <nz-form-item nz-row style="margin-bottom:0px;">
+        <!-- <nz-form-item nz-row style="margin-bottom:0px;">
             <nz-form-label nz-col [nzSm]="4" nzRequired>所属标准</nz-form-label>
             <nz-form-control [nzSm]="20">
                 <nz-form-text>{{docName}}</nz-form-text>
@@ -24,8 +24,17 @@
         <nz-form-item nz-row>
             <nz-form-label nz-col [nzSm]="4">条款内容</nz-form-label>
             <nz-form-control [nzSm]="20" nzHasFeedback>
-                <textarea readonly nz-input rows="13" name="content" #content="ngModel"
+                <textarea readonly nz-input nzAutosize name="content" #content="ngModel"
                     [(ngModel)]="clause.content"></textarea>
+            </nz-form-control>
+        </nz-form-item> -->
+        <nz-form-item nz-row>
+            <!-- <nz-form-label nz-col [nzSm]="4"></nz-form-label> -->
+            <!-- <div nz-col [nzSm]="4"></div> -->
+            <nz-form-control [nzSm]="24">
+                <!-- <textarea readonly nz-input nzAutosize name="content" #content="ngModel"
+                    [(ngModel)]="clause.clauseNo  +\r\n+  clause.title + clause.content"></textarea> -->
+                <textarea readonly nz-input nzAutosize name="content" #content="ngModel" [(ngModel)]="txt"></textarea>
             </nz-form-control>
         </nz-form-item>
         <!-- 功能按钮 -->

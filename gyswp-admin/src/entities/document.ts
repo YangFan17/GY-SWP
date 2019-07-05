@@ -9,6 +9,7 @@ export class DocumentDto {
     publishTime: string;
     qrCodeUrl: string;
     deptIds: string;
+    deptDesc: string;
     isDeleted: boolean;
     creationTime: Date;
     creatorUserId: string;
@@ -44,6 +45,20 @@ export class DocumentDto {
         return users;
     }
 
+    getDepts(): any[] {
+        let depts = [];
+        let ids = this.deptIds.split(',');
+        let names = this.deptDesc.split(',');
+        let i = 0;
+        for (let id of ids) {
+            if (id) {
+                depts.push({ id: id, name: names[i] });
+            }
+            i++;
+        }
+        return depts;
+    }
+
     init(data?: any) {
         if (data) {
             this.id = data["id"];
@@ -56,6 +71,7 @@ export class DocumentDto {
             this.publishTime = data["publishTime"];
             this.qrCodeUrl = data["qrCodeUrl"];
             this.deptIds = data["deptIds"];
+            this.deptDesc = data["deptDesc"];
             this.isDeleted = data["isDeleted"];
             this.creationTime = data["creationTime"];
             this.creatorUserId = data["creatorUserId"];
@@ -82,6 +98,7 @@ export class DocumentDto {
         data["publishTime"] = this.publishTime;
         data["qrCodeUrl"] = this.qrCodeUrl;
         data["deptIds"] = this.deptIds;
+        data["deptDesc"] = this.deptDesc;
         data["isDeleted"] = this.isDeleted;
         data["creationTime"] = this.creationTime;
         data["creatorUserId"] = this.creatorUserId;

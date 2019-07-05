@@ -30,6 +30,8 @@ using System.IO;
 using GYSWP.Clauses;
 using GYSWP.EmployeeClauses;
 using GYSWP.Clauses.Dtos;
+using GYSWP.Categorys.DomainService;
+using System.Text;
 
 namespace GYSWP.Documents
 {
@@ -46,6 +48,7 @@ namespace GYSWP.Documents
         private readonly IDocumentManager _entityManager;
         private readonly IRepository<Clause, Guid> _clauseRepository;
         private readonly IRepository<EmployeeClause, Guid> _employeeClauseRepository;
+        private readonly ICategoryManager _categoryManager;
 
         /// <summary>
         /// 构造函数 
@@ -58,6 +61,7 @@ namespace GYSWP.Documents
         , IDocumentManager entityManager
         , IRepository<Clause, Guid> clauseRepository
         , IRepository<EmployeeClause, Guid> employeeClauseRepository
+        , ICategoryManager categoryManager
         )
         {
             _entityRepository = entityRepository;
@@ -67,6 +71,7 @@ namespace GYSWP.Documents
             _categoryRepository = categoryRepository;
             _clauseRepository = clauseRepository;
             _employeeClauseRepository = employeeClauseRepository;
+            _categoryManager = categoryManager;
         }
 
 
@@ -78,10 +83,10 @@ namespace GYSWP.Documents
 
         public async Task<PagedResultDto<DocumentListDto>> GetPaged(GetDocumentsInput input)
         {
-            //var categories = await _categoryRepository.GetAll().Where(d => d.DeptId == input.DeptId).Select(c => c.Id).ToArrayAsync();
-            //var carr = Array.ConvertAll(categories, c => "," + c + ",");
-            var query = _entityRepository.GetAll().Where(v => v.DeptIds == input.DeptId)
-                .WhereIf(input.CategoryId.HasValue, v => v.CategoryId == input.CategoryId)
+            var categories = await _categoryRepository.GetAll().Where(d => d.DeptId == input.DeptId).Select(c => c.Id).ToArrayAsync();
+            var carr = Array.ConvertAll(categories, c => "," + c + ",");
+            var query = _entityRepository.GetAll().Where(e => carr.Any(c => ("," + e.CategoryCode + ",").Contains(c)))
+                .WhereIf(!string.IsNullOrEmpty(input.CategoryCode), e => ("," + e.CategoryCode + ",").Contains(input.CategoryCode))
                 .WhereIf(!string.IsNullOrEmpty(input.KeyWord), e => e.Name.Contains(input.KeyWord) || e.DocNo.Contains(input.KeyWord));
             //var query = _entityRepository.GetAll();
             // TODO:根据传入的参数添加过滤条件
@@ -181,8 +186,9 @@ namespace GYSWP.Documents
 
             // var entity = ObjectMapper.Map <Document>(input);
             var entity = input.MapTo<Document>();
-
-
+            var categoryList = await _categoryManager.GetHierarchyCategories(input.CategoryId);
+            entity.CategoryCode = string.Join(',', categoryList.Select(c => c.Id).ToArray());
+            entity.CategoryDesc = string.Join(',', categoryList.Select(c => c.Name).ToArray());
             entity = await _entityRepository.InsertAsync(entity);
             return entity.MapTo<DocumentEditDto>();
         }
@@ -322,12 +328,14 @@ namespace GYSWP.Documents
         public async Task<PagedResultDto<DocumentListDto>> GetPagedWithPermission(GetDocumentsInput input)
         {
             var curUser = await GetCurrentUserAsync();
-            var query = _entityRepository.GetAll().Where(v => v.IsAction == true && (v.PublishTime.HasValue ? v.PublishTime <= DateTime.Today : false) && (v.IsAllUser == true || v.EmployeeIds.Contains(curUser.EmployeeId)))
+            string deptStr = await _employeeRepository.GetAll().Where(v => v.Id == curUser.EmployeeId).Select(v => v.Department).FirstOrDefaultAsync();
+            var deptId = deptStr.Replace('[', ' ').Replace(']', ' ').Trim();
+            var query = _entityRepository.GetAll().Where(v => v.IsAction == true && (v.PublishTime.HasValue ? v.PublishTime <= DateTime.Today : false) && (v.IsAllUser == true || v.DeptIds.Contains(deptId) || v.EmployeeIds.Contains(curUser.EmployeeId)))
                 .WhereIf(input.CategoryId.HasValue, v => v.CategoryId == input.CategoryId)
                 .WhereIf(!string.IsNullOrEmpty(input.KeyWord), e => e.Name.Contains(input.KeyWord) || e.DocNo.Contains(input.KeyWord));
             var count = await query.CountAsync();
             var entityList = await query
-                    .OrderBy(v=>v.CategoryId)
+                    .OrderBy(v => v.CategoryId)
                     .ThenByDescending(v => v.PublishTime).AsNoTracking()
                     .PageBy(input)
                     .ToListAsync();
@@ -379,123 +387,253 @@ namespace GYSWP.Documents
             var confirmIds = await _employeeClauseRepository.GetAll().Where(v => v.DocumentId == id && v.EmployeeId == userId).Select(v => v.ClauseId).ToListAsync();
             var clauseList = await _clauseRepository.GetAll().Where(v => v.DocumentId == id).OrderBy(v => v.ClauseNo).AsNoTracking().ToListAsync();
             var clauseDtoList = clauseList.MapTo<List<ClauseListDto>>();
-            clauseDtoList.ForEach((c) => 
+            clauseDtoList.ForEach((c) =>
             {
                 c.IsConfirm = confirmIds.Any(e => e == c.Id);
             });
             result.ClauseList = clauseDtoList;
             return result;
         }
+        #region 文档导入
+        public async Task<bool> documentReadAsync(string path)
+        {
+            //Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            //Console.WriteLine("文档转换");
+            var docs = GetDocsByDirectory($@"{path}");
+            foreach (var doc in docs)
+            {
+                Document entity = new Document();
+                entity.Name = doc.DocName;
+                entity.DocNo = "GY-NO";
+                entity.IsAllUser = true;
+                entity.IsAction = true;
+                entity.PublishTime = DateTime.Today.AddDays(-1);
+                var id = await _entityRepository.InsertAndGetIdAsync(entity);
+                await CurrentUnitOfWork.SaveChangesAsync();
+                foreach (var item in doc.Sections)
+                {
+                    Clause cla = new Clause();
+                    cla.Id = item.Id.Value;
+                    cla.DocumentId = id;
+                    cla.ClauseNo = item.No;
+                    cla.Title = item.Title;
+                    cla.Content = item.Context;
+                    cla.ParentId = doc.Sections.Where(v => v.No == item.PNo).Select(v => v.Id).FirstOrDefault();
+                    var pId = await _clauseRepository.InsertAsync(cla);
+                    await CurrentUnitOfWork.SaveChangesAsync();
 
-        //public async Task<object> getPdf1Async(Guid id)
-        //{
-        ////XWPFDocument docx = new XWPFDocument();
-        ////MemoryStream ms = new MemoryStream();
+                }
+            }
 
-        //////设置文档
-        ////docx.Document.body.sectPr = new CT_SectPr();
-        ////CT_SectPr setPr = docx.Document.body.sectPr;
-        //////获取页面大小
-        ////Tuple<int, int> size = GetPaperSize(setting.PaperType);
-        ////setPr.pgSz.w = (ulong)size.Item1;
-        ////setPr.pgSz.h = (ulong)size.Item2;
-        //////创建一个段落
-        ////CT_P p = docx.Document.body.AddNewP();
-        //////段落水平居中
-        ////p.AddNewPPr().AddNewJc().val = ST_Jc.center;
-        ////XWPFParagraph gp = new XWPFParagraph(p, docx);
+            return true;
+        }
+        private static List<DocInfo> GetDocsByDirectory(string directoryPath)
+        {
+            var docs = new List<DocInfo>();
 
-        ////XWPFRun gr = gp.CreateRun();
-        //////创建标题
-        ////if (!string.IsNullOrEmpty(setting.TitleSetting.Title))
-        ////{
-        ////    gr.GetCTR().AddNewRPr().AddNewRFonts().ascii = setting.TitleSetting.FontName;
-        ////    gr.GetCTR().AddNewRPr().AddNewRFonts().eastAsia = setting.TitleSetting.FontName;
-        ////    gr.GetCTR().AddNewRPr().AddNewRFonts().hint = ST_Hint.eastAsia;
-        ////    gr.GetCTR().AddNewRPr().AddNewSz().val = (ulong)setting.TitleSetting.FontSize;//2号字体
-        ////    gr.GetCTR().AddNewRPr().AddNewSzCs().val = (ulong)setting.TitleSetting.FontSize;
-        ////    gr.GetCTR().AddNewRPr().AddNewB().val = setting.TitleSetting.HasBold; //加粗
-        ////    gr.GetCTR().AddNewRPr().AddNewColor().val = "black";//字体颜色
-        ////    gr.SetText(setting.TitleSetting.Title);
-        ////}
+            DirectoryInfo di = new DirectoryInfo(directoryPath);
+            FileInfo[] fis = di.GetFiles();
+            foreach (var fi in fis)
+            {
+                var doc = new DocInfo();
+                doc.DocName = fi.Name;
+                doc.Sections = new List<SectionInfo>();
+                var SectionNo = new SectionNo("1");
 
-        //////创建文档主要内容
-        ////if (!string.IsNullOrEmpty(setting.MainContentSetting.MainContent))
-        ////{
-        ////    p = docx.Document.body.AddNewP();
-        ////    p.AddNewPPr().AddNewJc().val = ST_Jc.both;
-        ////    gp = new XWPFParagraph(p, docx)
-        ////    {
-        ////        IndentationFirstLine = 2
-        ////    };
+                string data = string.Empty;
+                using (StreamReader sr = new StreamReader(fi.OpenRead(), System.Text.Encoding.GetEncoding("GB2312")))
+                {
+                    data = sr.ReadToEnd();
+                }
+                string[] brandData = data.Split("\r\n");
+                int index = 1;
+                foreach (string b in brandData)
+                {
+                    var line = b.Trim();
+                    if (line.Length > 0)
+                    {
+                        if (index == 1 && line.StartsWith("1"))//找到第一行
+                        {
+                            var section = new SectionInfo();
+                            section.Id = Guid.NewGuid();
+                            section.No = SectionNo.No;
+                            section.Title = line.Substring(section.No.Length).Trim();
+                            section.Seq = index;
+                            section.Level = SectionNo.Level;
+                            doc.Sections.Add(section);
+                            index++;
+                        }
+                        else if (index > 1)
+                        {
+                            var newNo = string.Empty;
+                            bool isMap = false;
+                            foreach (var nextNo in SectionNo.NextNos)
+                            {
+                                if (line.Length < nextNo.Length)//如果长度不够，继续循环
+                                {
+                                    continue;
+                                }
+                                newNo = line.Substring(0, nextNo.Length);
+                                if (newNo == nextNo)//匹配成功 跳出本循环
+                                {
+                                    isMap = true;
+                                    break;
+                                }
+                            }
 
-        ////    //单倍为默认值（240）不需设置，1.5倍=240X1.5=360，2倍=240X2=480
-        ////    p.AddNewPPr().AddNewSpacing().line = "400";//固定20磅
-        ////    p.AddNewPPr().AddNewSpacing().lineRule = ST_LineSpacingRule.exact;
+                            if (isMap)//匹配成功 表示已为下一个章节
+                            {
+                                SectionNo.No = newNo;
+                                var section = new SectionInfo();
+                                section.Id = Guid.NewGuid();
+                                section.No = SectionNo.No;
+                                section.Level = SectionNo.Level;
+                                var tc = line.Substring(section.No.Length).Trim();
+                                if (tc.Length > 0)
+                                {
+                                    if (SectionNo.Level == 1)
+                                    {
+                                        section.Title = tc;
+                                    }
+                                    else
+                                    {
 
-        ////    gr = gp.CreateRun();
-        ////    CT_RPr rpr = gr.GetCTR().AddNewRPr();
-        ////    CT_Fonts rfonts = rpr.AddNewRFonts();
-        ////    rfonts.ascii = setting.MainContentSetting.FontName;
-        ////    rfonts.eastAsia = setting.MainContentSetting.FontName;
-        ////    rpr.AddNewSz().val = (ulong)setting.MainContentSetting.FontSize;//5号字体-21
-        ////    rpr.AddNewSzCs().val = (ulong)setting.MainContentSetting.FontSize;
-        ////    rpr.AddNewB().val = setting.MainContentSetting.HasBold;
+                                        if (tc.Length < SectionNo.TitleMaxLength && tc.LastIndexOfAny(SectionNo.NoTitleEndChars) != (tc.Length - 1))//小于最大title长度 且不包含特殊字符 表示为title
+                                        {
+                                            section.Title = tc;
+                                        }
+                                        else
+                                        {
+                                            section.Context = tc + "\r\n";
+                                        }
+                                    }
+                                }
 
-        ////    gr.SetText(setting.MainContentSetting.MainContent);
-        ////}
+                                section.Seq = index;
+                                doc.Sections.Add(section);
+                                index++;
+                            }
+                            else
+                            {
+                                if (doc.Sections.Count() > 0)
+                                {
+                                    doc.Sections.Last().Context += (line + "\r\n");
+                                }
+                            }
+                        }
+                    }
+                }
 
-        //////开始写入
-        ////docx.Write(ms);
+                docs.Add(doc);
+            }
 
-        ////using (FileStream fs = new FileStream(setting.SavePath, FileMode.Create, FileAccess.Write))
-        ////{
-        ////    byte[] data = ms.ToArray();
-        ////    fs.Write(data, 0, data.Length);
-        ////    fs.Flush(); 
-        ////}
-        ////ms.Close();
-        //var data = await _clauseRepository.GetAll().Where(v => v.DocumentId == id).OrderBy(v=>v.ClauseNo).ToListAsync();
-        //var title = await _entityRepository.GetAll().Where(v => v.Id == id).Select(v => v.Name).FirstOrDefaultAsync();
-        //var newFile2 = $@"{title}.docx";
-        //using (var fs = new FileStream(newFile2, FileMode.Create, FileAccess.Write))
-        //{
-        //    XWPFDocument doc = new XWPFDocument();
-        //    //CT_SectPr m_SectPr = new CT_SectPr();       //实例一个尺寸类的实例
-        //    //m_SectPr.pgSz.w = 16838;        //设置宽度（这里是一个ulong类型）
-        //    //m_SectPr.pgSz.h = 11906;        //设置高度（这里是一个ulong类型）
-        //    //doc.Document.body.sectPr = m_SectPr;
-        //    foreach (var item in data)
-        //    {
-        //        var p0 = doc.CreateParagraph();
-        //        p0.Alignment = ParagraphAlignment.LEFT;
-        //        XWPFRun r0 = p0.CreateRun();
-        //        r0.FontFamily = "黑体";
-        //        r0.FontSize = 10;
-        //        r0.SetTextPosition(15);
-        //        //r0.IsBold = false;
-        //        r0.SetText(item.ClauseNo + ' ' + (item.Title ?? ""));
-        //        var p1 = doc.CreateParagraph();
-        //        p1.Alignment = ParagraphAlignment.LEFT;
-        //        XWPFRun r1 = p1.CreateRun();
-        //        p1.IndentationFirstLine = 600;
-        //        r1.FontFamily = "宋体";
-        //        r1.FontSize = 10;
-        //        r1.SetTextPosition(15);
-        //        r1.SetText(item.Content??"");
-        //    }
-        //    //var p1 = doc.CreateParagraph();
-        //    //p1.Alignment = ParagraphAlignment.LEFT;
-        //    //p1.IndentationFirstLine = 500;
-        //    //XWPFRun r1 = p1.CreateRun();
-        //    //r1.FontFamily = "·ÂËÎ";
-        //    //r1.FontSize = 12;
-        //    //r1.IsBold = true;
-        //    //r1.SetText("This is content, content content content content content content content content content");
-
-        //    doc.Write(fs);
-        //}
-        //return true;
-        //}
+            return docs;
+        }
     }
+    public class SectionNo
+    {
+        public SectionNo(string no)
+        {
+            No = no;
+        }
+
+        public string No { get; set; }
+
+        public string[] NextNos
+        {
+            get
+            {
+                var noList = new List<string>();
+                var prefix = string.Empty;
+                int i = 1;
+                int len = NoInts.Length;
+                foreach (var no in NoInts)
+                {
+                    var newNo = prefix + (no + 1);
+                    noList.Add(newNo);
+                    prefix = prefix + no + ".";
+                    if (i == len)
+                    {
+                        newNo = prefix + 1;
+                        noList.Add(newNo);
+                    }
+                    i++;
+                }
+
+                return noList.OrderByDescending(n => n.Length).ToArray();
+            }
+        }
+
+        public int[] NoInts
+        {
+            get
+            {
+                return Array.ConvertAll(No.Split('.'), n => int.Parse(n));
+            }
+        }
+
+        public int Level
+        {
+            get
+            {
+                return NoInts.Length;
+            }
+        }
+
+        public int TitleMaxLength
+        {
+            get
+            {
+                return 20;
+            }
+        }
+
+        public char[] NoTitleEndChars
+        {
+            get
+            {
+                return new char[] { '：', '；', '，', '。', '？', '！' };
+            }
+        }
+    }
+    public class DocInfo
+    {
+        public string DocName { get; set; }
+
+        public List<SectionInfo> Sections { get; set; }
+    }
+    public class SectionInfo
+    {
+        public Guid? Id
+        {
+            //get
+            //{
+            //    //if (!Id.HasValue)
+            //    //{
+            //    //}
+            //    return Guid.NewGuid();
+            //}
+            get;set;
+        }
+        public string No { get; set; }
+
+        public string Title { get; set; }
+
+        public string Context { get; set; }
+
+        public int Seq { get; set; }
+        public int Level { get; set; }
+        public string PNo
+        {
+            get
+            {
+                if (Level == 1)
+                {
+                    return string.Empty;
+                }
+                return No.Substring(0, No.LastIndexOf('.'));
+            }
+        }
+    }
+    #endregion
 }

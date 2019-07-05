@@ -1,0 +1,13 @@
+<page-header [title]=""></page-header>
+<nz-card>
+    <div nz-row>
+        <div nz-col nzSpan="6">
+            <nz-spin nzSimple [nzSize]="'small'" *ngIf="!nodes || nodes.length == 0"></nz-spin>
+            <nz-tree #detpTree [(ngModel)]="nodes" (nzClick)="activeNode($event)" [nzDefaultExpandAll]="true">
+            </nz-tree>
+        </div>
+        <div nz-col nzSpan="18">
+            <emp-list #empList></emp-list>
+        </div>
+    </div>
+</nz-card>

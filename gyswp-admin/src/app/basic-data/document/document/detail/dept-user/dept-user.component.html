@@ -1,6 +1,6 @@
 <div class="padding-bottom-45">
     <h3 style="text-align: center;">
-        <span>人员选择({{deptName}})</span>
+        <span>部门和人员选择({{deptName}})</span>
     </h3>
     <!-- <div nz-row>
         <div nz-col nzSpan="20" style="margin-top:20px;margin-bottom:20px;">
@@ -14,9 +14,32 @@
         </div>
     </div> -->
     <div nz-row>
-        <div nz-col nzSpan="24">
+        <div nz-col nzSpan="3">
+            已选择：
+        </div>
+        <div nz-col nzSpan="21">
+            <nz-tag *ngFor="let dept of selectedDepts; let i = index;" [nzColor]="'blue'" [nzMode]="'closeable'"
+                (nzAfterClose)="handleDeptClose(dept)">
+                {{ dept.name }}
+            </nz-tag>
+            <nz-tag *ngFor="let user of selectedUsers; let i = index;" [nzMode]="'closeable'"
+                (nzAfterClose)="handleUserClose(user)">
+                {{ user.name }}
+            </nz-tag>
+        </div>
+    </div>
+    <div nz-row>
+        <div nz-col nzSpan="12">
+            <div>
+                <nz-tree #treeCom [nzCheckable]="true" [nzData]="nodes" [nzShowExpand]="true"
+                    (nzClick)="activeNode($event)" [nzCheckedKeys]="checkedDeptKeys" [nzCheckStrictly]="true"
+                    (nzCheckBoxChange)="checkBoxChange($event)">
+                </nz-tree>
+            </div>
+        </div>
+        <div nz-col nzSpan="12">
             <nz-table #nzTable [nzShowPagination]="false" [nzFrontPagination]="false" [nzLoading]="isTableLoading"
-                [nzData]="dataList" [nzScroll]="{ y: '480px' }">
+                [nzData]="dataList" [nzScroll]="{ y: '720px' }">
                 <thead>
                     <tr>
                         <th nzWidth="50px"></th>

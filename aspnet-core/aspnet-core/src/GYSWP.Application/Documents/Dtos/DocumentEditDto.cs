@@ -26,7 +26,7 @@ namespace  GYSWP.Documents.Dtos
 		[Required(ErrorMessage="Name不能为空")]
 		public string Name { get; set; }
 
-
+        public string DeptDesc { get; set; }
         /// <summary>
         /// DeptIds
         /// </summary>
@@ -98,6 +98,6 @@ namespace  GYSWP.Documents.Dtos
         /// <summary>
         /// 作废时间
         /// </summary>
-        public DateTime InvalidTime { get; set; }
+        public DateTime? InvalidTime { get; set; }
     }
 }
