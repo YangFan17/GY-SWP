@@ -1,0 +1,41 @@
+<page-header [title]=""></page-header>
+<nz-card>
+  <div nz-row [nzGutter]="24">
+    <div nz-col nzOffset="20" [nzSpan]="4" class="mb-md" [class.text-right]="'true'">
+      <button nz-button type="button" (click)="create()">
+        <i nz-icon type="form"></i>
+        <span>合理化建议申报</span>
+      </button>
+    </div>
+  </div>
+  <ng-template #totalTemplate let-total>共 {{query.total}} 条</ng-template>
+  <nz-table #nzTable [nzFrontPagination]="false" [nzShowTotal]="totalTemplate" [nzTotal]="query.total"
+    [nzData]="query.data" [(nzPageIndex)]="query.pageIndex" [(nzPageSize)]="query.pageSize" [nzLoading]="isTableLoading"
+    [nzShowSizeChanger]="true" (nzPageIndexChange)="getAdvises()" (nzPageSizeChange)="getAdvises()">
+    <thead>
+      <tr>
+        <th>建议名称</th>
+        <th>现状描述</th>
+        <th>对策建议</th>
+        <th style="text-align: center">是否采纳</th>
+        <th style="text-align: center">申报日期</th>
+        <th style="text-align: center">操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of nzTable.data">
+        <td title="{{item.adviseName}}">{{item.adviseName | lengthLimit:25}}</td>
+        <td title="{{item.currentSituation}}">{{item.currentSituation | lengthLimit:25}}</td>
+        <td title="{{item.solution}}">{{item.solution | lengthLimit:25}}</td>
+        <td style="text-align: center">
+          <nz-badge *ngIf="item.isAdoption==false" nzStatus="error" nzText="否"></nz-badge>
+          <nz-badge *ngIf="item.isAdoption==true" nzStatus="success" nzText="是"></nz-badge>
+        </td>
+        <td style="text-align: center">{{item.creationTime | _date: 'YYYY-MM-DD'}}</td>
+        <td style="text-align: center">
+          <a (click)="goDetail(item.id)">详情</a>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>

@@ -39,6 +39,11 @@ const routes: Routes = [
         data: { preload: true },
       },
       {
+        path: 'advises',
+        loadChildren: './advises/advises.module#AdvisesModule',
+        data: { preload: true },
+      },
+      {
         path: 'config',
         loadChildren: './configs/configs.module#ConfigsModule',
         data: { preload: true },

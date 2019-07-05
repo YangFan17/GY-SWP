@@ -4,6 +4,7 @@ import { AppRouteGuard } from '@shared/auth/auth-route-guard';
 import { InspectComponent } from './inspect/inspect.component';
 import { SuperviseComponent } from './supervise/supervise.component';
 import { StandardrevisionComponent } from './standardrevision/standardrevision.component';
+import { AdviseComponent } from './advise/advise.component'
 
 
 const routes: Routes = [
@@ -19,6 +20,16 @@ const routes: Routes = [
     {
         path: 'standardrevision',
         component: StandardrevisionComponent,
+        canActivate: [AppRouteGuard],
+    },
+    // {
+    //     path: 'standardrevision',
+    //     component: StandardrevisionComponent,
+    //     canActivate: [AppRouteGuard],
+    // },
+    {
+        path: 'adviseReport',
+        component: AdviseComponent,
         canActivate: [AppRouteGuard],
     },
 ];
