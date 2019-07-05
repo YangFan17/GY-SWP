@@ -1,0 +1,35 @@
+<page-header [title]=""></page-header>
+<nz-card>
+  <div nz-row>
+    <ng-template #totalTemplate let-total>共 {{query.total}} 条</ng-template>
+    <nz-table #nzTable [nzFrontPagination]="false" [nzShowTotal]="totalTemplate" [nzTotal]="query.total"
+      [nzData]="query.data" [(nzPageIndex)]="pageNumber" [(nzPageSize)]="pageSize" [nzLoading]="isTableLoading"
+      [nzShowSizeChanger]="true" (nzPageIndexChange)="getAdvises()" (nzPageSizeChange)="getAdvises()">
+      <thead>
+        <tr>
+          <th>建议名称</th>
+          <th>现状描述</th>
+          <th>对策建议</th>
+          <th>是否采纳</th>
+          <th>申报日期</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of nzTable.data">
+          <td title="item.adviseName">{{item.adviseName | lengthLimit:10}}</td>
+          <td title="item.currentSituation">{{item.currentSituation | lengthLimit:10}}</td>
+          <td title="item.solution">{{item.solution | lengthLimit:10}}</td>
+          <td>
+            <nz-badge *ngIf="item.isAdoption==false" nzStatus="error" nzText="item.isAdoption"></nz-badge>
+            <nz-badge *ngIf="item.isAdoption==true" nzStatus="success" nzText="item.isAdoption"></nz-badge>
+          </td>
+          <td>{{item.creationTime | _date: 'YYYY-MM-DD'}}</td>
+          <td>
+            <a (click)="goDetail(item.id)">详情</a>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</nz-card>

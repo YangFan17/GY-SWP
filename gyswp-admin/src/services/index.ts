@@ -7,4 +7,5 @@ export * from './reports/standardrevision';
 export * from './config/data-config';
 export * from './reports/supervise.service';
 export * from './reports/standardrevision';
+export * from './advise/advise.service';
 

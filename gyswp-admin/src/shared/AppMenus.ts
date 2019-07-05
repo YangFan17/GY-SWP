@@ -84,7 +84,7 @@ export class AppMenus {
             text: "合理化建议",
             icon: { type: "icon", value: "form" },
             reuse: false,
-            link: "/app/criterion/criterion",
+            link: "/app/advises/advises",
             group: true,
             children: [
             ]
@@ -109,6 +109,11 @@ export class AppMenus {
                 {
                     text: "监督查询",
                     link: "/app/reports/supervise",
+                    reuse: false
+                },
+                {
+                    text: "合理化建议统计",
+                    link: "/app/reports/adviseReport",
                     reuse: false
                 },
             ]

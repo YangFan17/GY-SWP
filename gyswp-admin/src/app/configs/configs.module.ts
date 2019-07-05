@@ -24,7 +24,6 @@ import { DataConfigServiceProxy } from 'services'
         ModifyConfigComponent,
     ],
     entryComponents: [
-        DataConfigComponent,
         ModifyConfigComponent,
     ],
     providers: [DataConfigServiceProxy],

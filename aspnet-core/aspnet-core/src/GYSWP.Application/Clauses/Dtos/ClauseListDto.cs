@@ -11,18 +11,39 @@ using Abp.AutoMapper;
 namespace GYSWP.Clauses.Dtos
 {
     [AutoMapFrom(typeof(Clause))]
-    public class ClauseListDto: FullAuditedEntityDto<Guid>
+    public class ClauseListDto : FullAuditedEntityDto<Guid>
     {
         //public Guid Id { get; set; }
         /// <summary>
         /// ParentId
         /// </summary>
         public Guid? ParentId { get; set; }
-  
+
 
         public string Title { get; set; }
         [StringLength(2000)]
         public string Content { get; set; }
+
+        public string ContentFormat
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(Content))
+                {
+                    return string.Empty;
+                }
+
+                if (Content.Length <= 50)
+                {
+                    return Content;
+                }
+                else
+                {
+                    return Content.Substring(0, 50) + "....";
+                }
+            }
+        }
+
         /// <summary>
         /// 父Id（root 为 空）
         /// </summary>
@@ -44,6 +65,18 @@ namespace GYSWP.Clauses.Dtos
         public Guid? BLLId { get; set; }
 
         public bool IsConfirm { get; set; }
+
+        public bool IsNew
+        {
+            get
+            {
+                if (LastModificationTime.HasValue && (DateTime.Today - LastModificationTime.Value.Date).Days < 90)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
     }
 
     /// <summary>

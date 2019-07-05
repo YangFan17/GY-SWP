@@ -74,5 +74,7 @@ namespace GYSWP.SelfChekRecords
 
 
         Task<APIResultDto> SelfCheckedClauseAsync(GetSelfChekRecordsInput input);
+
+        Task SelfCheckedClauseWithDDAsync(SelfChekDDInput input);
     }
 }

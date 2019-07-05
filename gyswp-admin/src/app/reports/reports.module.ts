@@ -9,6 +9,7 @@ import { InspectComponent } from './inspect/inspect.component';
 import { BasicDataService } from 'services';
 import { SuperviseComponent } from './supervise/supervise.component';
 import { StandardrevisionComponent } from './standardrevision/standardrevision.component';
+import { AdviseComponent } from './advise/advise.component';
 
 @NgModule({
     imports: [
@@ -24,6 +25,7 @@ import { StandardrevisionComponent } from './standardrevision/standardrevision.c
         InspectComponent,
         SuperviseComponent,
         StandardrevisionComponent,
+        AdviseComponent,
     ],
     entryComponents: [
 
