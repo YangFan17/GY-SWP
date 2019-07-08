@@ -29,7 +29,7 @@ export class AdviseComponent extends AppComponentBase implements OnInit {
   }
 
   getTrees() {
-    this.basicDataService.getDeptDocNzTreeNodes('标准制修订部门').subscribe((data) => {
+    this.basicDataService.getDeptDocNzTreeNodes('合理化建议部门').subscribe((data) => {
       this.nodes = data;
       if (data.length > 0) {
         var selectedNode = data[0].children[0];

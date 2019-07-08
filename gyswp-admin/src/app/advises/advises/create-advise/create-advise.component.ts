@@ -17,9 +17,9 @@ export class CreateAdviseComponent extends ModalComponentBase implements OnInit 
 
   ngOnInit() {
     this.form = this.fb.group({
-      adviseName: [null, Validators.compose([Validators.required, Validators.maxLength(50)])],
-      currentSituation: [null, Validators.compose([Validators.required, Validators.maxLength(1000)])],
-      solution: [null, Validators.compose([Validators.required, Validators.maxLength(1000)])]
+      adviseName: [null, Validators.compose([Validators.required, Validators.maxLength(100)])],
+      currentSituation: [null, Validators.compose([Validators.required, Validators.maxLength(2000)])],
+      solution: [null, Validators.compose([Validators.required, Validators.maxLength(2000)])]
     });
   }
 
