@@ -28,6 +28,7 @@ using GYSWP.EmployeeClauses;
 using GYSWP.Dtos;
 using GYSWP.Employees.DomainService;
 using GYSWP.Documents;
+using Abp.Auditing;
 
 namespace GYSWP.CriterionExamines
 {
@@ -94,7 +95,8 @@ namespace GYSWP.CriterionExamines
         /// <summary>
         /// 通过指定id获取CriterionExamineListDto信息
         /// </summary>
-
+        [AbpAllowAnonymous]
+        [Audited]
         public async Task<CriterionExamineListDto> GetById(EntityDto<Guid> input)
         {
             var entity = await _entityRepository.GetAsync(input.Id);
@@ -598,6 +600,27 @@ namespace GYSWP.CriterionExamines
                     .ToListAsync();
             var entityListDtos = entityList.MapTo<List<CriterionExamineListDto>>();
             return new PagedResultDto<CriterionExamineListDto>(count, entityListDtos);
+        }
+
+        /// <summary>
+        /// 根据钉钉Id获取数据
+        /// </summary>
+        /// <param name="dingId"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        [Audited]
+        public async Task<List<CriterionExamineListDto>> GetPagedExamineByDingIdAsync(GetCriterionExaminesInput input)
+        {
+            Guid[] examineIds = await _examineDetailRepository.GetAll().Where(v => v.EmployeeId ==input.EmployeeId).GroupBy(v => new { v.CriterionExamineId }).Select(v => v.Key.CriterionExamineId).ToArrayAsync();
+            var query = _entityRepository.GetAll().Where(v => examineIds.Contains(v.Id));
+            var count = await query.CountAsync();
+            var entityList = await query
+                    .OrderBy(input.Sorting).AsNoTracking()
+                    .OrderByDescending(aa=>aa.CreationTime)
+                    //.PageBy(input)
+                    .ToListAsync();
+            var entityListDtos = entityList.MapTo<List<CriterionExamineListDto>>();
+            return entityListDtos;
         }
     }
 }

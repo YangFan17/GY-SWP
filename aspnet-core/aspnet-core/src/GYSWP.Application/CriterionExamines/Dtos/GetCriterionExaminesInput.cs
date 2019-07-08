@@ -19,5 +19,10 @@ namespace GYSWP.CriterionExamines.Dtos
             }
         }
 
+        /// <summary>
+        /// 查询条件-员工Id
+        /// </summary>
+        public string EmployeeId { get; set; }
+
     }
 }
