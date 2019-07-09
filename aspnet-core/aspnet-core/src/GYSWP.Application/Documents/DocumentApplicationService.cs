@@ -373,7 +373,9 @@ namespace GYSWP.Documents
         [AbpAllowAnonymous]
         public async Task<bool> GetHasDocPermissionFromScanAsync(Guid id, string userId)
         {
-            return await _entityRepository.GetAll().AnyAsync(v => v.Id == id && (v.IsAllUser == true || v.EmployeeIds.Contains(userId)));
+            string dept = await _employeeRepository.GetAll().Where(v => v.Id == userId).Select(v => v.Department).FirstOrDefaultAsync();
+            long deptId = await _organizationRepository.GetAll().Where(v => "[" + v.Id + "]" == dept).Select(v => v.Id).FirstOrDefaultAsync();
+            return await _entityRepository.GetAll().AnyAsync(v => v.Id == id && v.IsAction == true && v.PublishTime <= DateTime.Today && (v.IsAllUser == true || v.DeptIds.Contains(deptId.ToString()) || v.EmployeeIds.Contains(userId)));
         }
 
         [AbpAllowAnonymous]
@@ -613,7 +615,7 @@ namespace GYSWP.Documents
             //    //}
             //    return Guid.NewGuid();
             //}
-            get;set;
+            get; set;
         }
         public string No { get; set; }
 
