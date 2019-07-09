@@ -5,6 +5,8 @@ import { CriterionExamineComponent } from './criterion-examine/criterion-examine
 import { DeptExamineRecordComponent } from './criterion-examine/dept-examine-record/dept-examine-record.component';
 import { RecordDetailComponent } from './criterion-examine/dept-examine-record/record-detail/record-detail.component';
 import { EmpExamineRecordComponent } from './criterion-examine/emp-list/emp-examine-record/emp-examine-record.component';
+import { TargetExamineComponent } from './target-examine/target-examine.component';
+import { TargetExamineDetailComponent } from './target-examine/target-examine-detail/target-examine-detail.component';
 
 
 const routes: Routes = [
@@ -35,6 +37,26 @@ const routes: Routes = [
         component: EmpExamineRecordComponent,
         canActivate: [AppRouteGuard]
     },
+    {
+        path: 'indicators',
+        component: TargetExamineComponent,
+        // canActivate: [AppRouteGuard, ACLGuard],
+        // data: { guard: 'CityAdmin' },
+        canActivate: [AppRouteGuard],
+        data: { title: '考核指标' },
+    },
+    {
+        path: 'indicator-detail',
+        component: TargetExamineDetailComponent,
+        canActivate: [AppRouteGuard],
+        // data: { guard: 'CityAdmin' },
+    },
+    {
+        path: 'indicator-detail/:id',
+        component: TargetExamineDetailComponent,
+        canActivate: [AppRouteGuard],
+        // data: { guard: 'CityAdmin' },
+    }
 ];
 
 @NgModule({

@@ -34,6 +34,12 @@ export class DocumentDto {
 
     getUsers(): any[] {
         let users = [];
+        if (!this.employeeIds) {
+            this.employeeIds = '';
+        }
+        if (!this.employeeDes) {
+            this.employeeDes = '';
+        }
         let ids = this.employeeIds.split(',');
         let names = this.employeeDes.split(',');
         let i = 0;
@@ -48,6 +54,12 @@ export class DocumentDto {
 
     getDepts(): any[] {
         let depts = [];
+        if (!this.deptIds) {
+            this.deptIds = '';
+        }
+        if (!this.deptDesc) {
+            this.deptDesc = '';
+        }
         let ids = this.deptIds.split(',');
         let names = this.deptDesc.split(',');
         let i = 0;

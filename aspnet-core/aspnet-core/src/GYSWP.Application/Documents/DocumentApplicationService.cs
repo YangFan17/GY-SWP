@@ -401,13 +401,14 @@ namespace GYSWP.Documents
             //Console.WriteLine("文档转换");
             var docs = GetDocsByDirectory($@"{path}");
             foreach (var doc in docs)
-            {
+            {   //0编号 1名称 2发布时间 3类型
+                string[] docInfoArry = doc.DocName.Split("#");
                 Document entity = new Document();
-                entity.Name = doc.DocName;
-                entity.DocNo = "GY-NO";
+                entity.Name = docInfoArry[1];
+                entity.DocNo = docInfoArry[0];
                 entity.IsAllUser = true;
                 entity.IsAction = true;
-                entity.PublishTime = DateTime.Today.AddDays(-1);
+                entity.PublishTime = Convert.ToDateTime(docInfoArry[2]);
                 var id = await _entityRepository.InsertAndGetIdAsync(entity);
                 await CurrentUnitOfWork.SaveChangesAsync();
                 foreach (var item in doc.Sections)
@@ -421,7 +422,6 @@ namespace GYSWP.Documents
                     cla.ParentId = doc.Sections.Where(v => v.No == item.PNo).Select(v => v.Id).FirstOrDefault();
                     var pId = await _clauseRepository.InsertAsync(cla);
                     await CurrentUnitOfWork.SaveChangesAsync();
-
                 }
             }
 

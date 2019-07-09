@@ -1,0 +1,73 @@
+<form nz-form #validateForm="ngForm" (ngSubmit)="save()" *ngIf="indicator">
+    <nz-card [nzBordered]="false" nzTitle="标准文档详情">
+        <div nz-row>
+            <div nz-col [nzSpan]="16">
+                <nz-form-item nz-row>
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>检查指标</nz-form-label>
+                    <nz-form-control [nzSm]="20" nzHasFeedback>
+                        <input nz-input name="title" maxlength="100" #title="ngModel" [(ngModel)]="indicator.title"
+                            [placeholder]="'请填写检查指标'" required>
+                        <nz-form-explain *ngIf="title.control.dirty&&title.control.errors">
+                            <ng-container *ngIf="title.control.hasError('required')">请填写检查指标</ng-container>
+                            <ng-container *ngIf="title.control.hasError('maxlength')">字符长度小于等于200</ng-container>
+                        </nz-form-explain>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item nz-row>
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>指标释义</nz-form-label>
+                    <nz-form-control [nzSm]="20" nzHasFeedback>
+                        <textarea nz-input rows="4" name="paraphrase" #paraphrase="ngModel" maxlength="2000"
+                            [(ngModel)]="indicator.paraphrase" [placeholder]="'请填写指标释义'" required></textarea>
+                        <nz-form-explain *ngIf="paraphrase.control.dirty&&paraphrase.control.errors">
+                            <ng-container *ngIf="paraphrase.control.hasError('required')">请填写指标释义</ng-container>
+                            <ng-container *ngIf="paraphrase.control.hasError('maxlength')">字符长度小于等于2000</ng-container>
+                        </nz-form-explain>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item nz-row>
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>测量方式</nz-form-label>
+                    <nz-form-control [nzSm]="20" nzHasFeedback>
+                        <textarea nz-input rows="4" name="measuringWay" #measuringWay="ngModel" maxlength="2000"
+                            [(ngModel)]="indicator.measuringWay" [placeholder]="'请填写指标释义'" required></textarea>
+                        <nz-form-explain *ngIf="measuringWay.control.dirty&&measuringWay.control.errors">
+                            <ng-container *ngIf="measuringWay.control.hasError('required')">请填写测量方式</ng-container>
+                            <ng-container *ngIf="measuringWay.control.hasError('maxlength')">字符长度小于等于2000</ng-container>
+                        </nz-form-explain>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item nz-row>
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>检查周期</nz-form-label>
+                    <nz-form-control [nzSm]="20">
+                        <nz-radio-group #cycleTimeRadio="ngModel" [(ngModel)]="cycleTime"
+                            (ngModelChange)="cycleTimeRadioChange($event)" [ngModelOptions]="{standalone: true}">
+                            <label nz-radio nzValue="1">年度</label>
+                            <label nz-radio nzValue="2">季度</label>
+                        </nz-radio-group>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item nz-row>
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>考核部门</nz-form-label>
+                    <nz-form-control [nzSm]="20">
+                        <div>
+                            <nz-tag *ngFor="let dept of deptTags; let i = index;" [nzColor]="'blue'"
+                                [nzMode]="'closeable'" (nzAfterClose)="handleDeptClose(dept)">
+                                {{ dept.name }}
+                            </nz-tag>
+                            <nz-tag class="editable-tag" [nzColor]="'#108ee9'" (click)="showDeptModel()">
+                                <i class="anticon anticon-plus"></i> 选择部门
+                            </nz-tag>
+                        </div>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+        <footer-toolbar errorCollect>
+            <button nz-button [nzType]="'default'" (click)="return()">
+                返回
+            </button>
+            <button nz-button [nzType]="'primary'" type="submit" [disabled]="!validateForm.valid || saving">
+                保存
+            </button>
+        </footer-toolbar>
+    </nz-card>
+</form>

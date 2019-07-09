@@ -92,4 +92,17 @@ namespace GYSWP.GYEnums
         条款附件 = 2,
         考核附件 = 3
     }
+
+    public enum IndicatorStatus
+    {
+        未填写 = 1,
+        已达成 = 2,
+        未达成 = 3
+    }
+
+    public enum CycleTime
+    {
+        年度 = 1,
+        季度 = 2,
+    }
 }

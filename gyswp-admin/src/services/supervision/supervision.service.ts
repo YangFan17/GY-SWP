@@ -144,4 +144,36 @@ export class SupervisionService {
             return arry;
         }));
     }
+
+    getTargetExamineDeptTreeAsync(): Observable<NzTreeNode[]> {
+        let url_ = "/api/services/app/Organization/GetTargetExamineDeptTreeAsync";
+        return this._commonhttp.get(url_, {}).pipe(map(data => {
+            let arry = [];
+            let tree = new NzTreeNode(data);
+            arry.push(tree);
+            return arry;
+        }));
+    }
+
+    getIndicatorListAsync(param: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/Indicator/GetPaged";
+        return this._commonhttp.get(url_, param).pipe(map(data => {
+            const result = new PagedResultDto();
+            result.items = data.items;
+            result.totalCount = data.totalCount;
+            return result;
+        }));
+    }
+
+    getTreesAsync(): Observable<NzTreeNode[]> {
+        let url = "/api/services/app/Organization/GetTargetTreesAsync";
+        return this._commonhttp.get(url).pipe(map(data => {
+            let arry = [];
+            data.map(d => {
+                let tree = new NzTreeNode(d);
+                arry.push(tree);
+            });
+            return arry;
+        }));
+    }
 }

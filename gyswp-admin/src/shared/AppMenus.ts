@@ -75,7 +75,7 @@ export class AppMenus {
                 },
                 {
                     text: "考核指标",
-                    link: "/app/supervision/supervision1",
+                    link: "/app/supervision/indicators",
                     reuse: false
                 },
             ]

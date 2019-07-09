@@ -81,9 +81,9 @@ export class DeptUserComponent extends ModalComponentBase implements OnInit {
                     this.orgCheckedKeys.splice(this.orgCheckedKeys.indexOf(keys[0]), 1);
                 }
                 this.selectedDepts.splice(i, 1);
-                console.log(this.orgCheckedKeys);
+                // console.log(this.orgCheckedKeys);
                 const tempKeys = this.orgCheckedKeys.concat();
-                console.log(tempKeys);
+                // console.log(tempKeys);
                 if (tempKeys.length > 0) {
                     this.checkedDeptKeys = tempKeys;
                 } else {

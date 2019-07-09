@@ -20,6 +20,8 @@ using GYSWP.ExamineDetails;
 using GYSWP.ExamineResults;
 using GYSWP.ExamineFeedbacks;
 using GYSWP.Advises;
+using GYSWP.Indicators;
+using GYSWP.IndicatorsDetails;
 
 namespace GYSWP.EntityFrameworkCore
 {
@@ -49,5 +51,7 @@ namespace GYSWP.EntityFrameworkCore
         public virtual DbSet<ExamineResult> ExamineResults { get; set; }
         public virtual DbSet<ExamineFeedback> ExamineFeedbacks { get; set; }
         public virtual DbSet<Advise> Advises { get; set; }
+        public virtual DbSet<Indicator> Indicators { get; set; }
+        public virtual DbSet<IndicatorsDetail> IndicatorsDetails { get; set; }
     }
 }

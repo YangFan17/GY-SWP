@@ -74,5 +74,12 @@ namespace GYSWP.CriterionExamines
         Task<APIResultDto> CreateInternalExamineAsync(CriterionExamineInfoDto input);
         Task<PagedResultDto<CriterionExamineListDto>> GetPagedExamineByCurrentIdAsync(GetCriterionExaminesInput input);
         Task<APIResultDto> CreateExamineByQiGuanAsync(CriterionExamineInfoDto input);
+
+        /// <summary>
+        /// 根据钉钉Id获取数据
+        /// </summary>
+        /// <param name="dingId"></param>
+        /// <returns></returns>
+        Task<List<CriterionExamineListDto>> GetPagedExamineByDingIdAsync(GetCriterionExaminesInput input);
     }
 }

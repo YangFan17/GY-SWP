@@ -14,6 +14,9 @@ import { CheckingResultComponent } from './criterion-examine/checking-result/che
 import { EmpExamineRecordComponent } from './criterion-examine/emp-list/emp-examine-record/emp-examine-record.component';
 import { FeedbackResultComponent } from './criterion-examine/feedback-result/feedback-result.component';
 import { SuperAdminComponent } from './criterion-examine/super-admin/super-admin.component';
+import { TargetExamineComponent } from './target-examine/target-examine.component';
+import { TargetExamineDetailComponent } from './target-examine/target-examine-detail/target-examine-detail.component';
+import { TargetDeptComponent } from './target-examine/target-examine-detail/target-dept/target-dept.component';
 
 @NgModule({
     imports: [
@@ -34,6 +37,9 @@ import { SuperAdminComponent } from './criterion-examine/super-admin/super-admin
         EmpExamineRecordComponent,
         FeedbackResultComponent,
         SuperAdminComponent,
+        TargetExamineComponent,
+        TargetExamineDetailComponent,
+        TargetDeptComponent,
     ],
     entryComponents: [
         CriterionExamineComponent,
@@ -44,6 +50,9 @@ import { SuperAdminComponent } from './criterion-examine/super-admin/super-admin
         EmpExamineRecordComponent,
         FeedbackResultComponent,
         SuperAdminComponent,
+        TargetExamineComponent,
+        TargetExamineDetailComponent,
+        TargetDeptComponent,
     ],
     providers: [SupervisionService]
 })
