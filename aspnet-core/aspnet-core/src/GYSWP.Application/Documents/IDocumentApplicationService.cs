@@ -82,5 +82,12 @@ namespace GYSWP.Documents
         Task<bool> GetHasDocPermissionFromScanAsync(Guid id, string userId);
 
         Task<DocumentListDto> GetDocInfoByScanAsync(Guid id, string userId);
+
+        /// <summary>
+        /// 钉钉上修改Document的公共方法
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        Task<APIResultDto> DingUpdateAsync(DingDocumentEditDto input);
     }
 }

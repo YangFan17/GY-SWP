@@ -32,6 +32,12 @@ using GYSWP.EmployeeClauses;
 using GYSWP.Clauses.Dtos;
 using GYSWP.Categorys.DomainService;
 using System.Text;
+using GYSWP.DingDing;
+using GYSWP.DingDing.Dtos;
+using Senparc.CO2NET.Helpers;
+using Senparc.CO2NET.HttpUtility;
+using GYSWP.Authorization.Users;
+using Abp.Auditing;
 
 namespace GYSWP.Documents
 {
@@ -49,6 +55,8 @@ namespace GYSWP.Documents
         private readonly IRepository<Clause, Guid> _clauseRepository;
         private readonly IRepository<EmployeeClause, Guid> _employeeClauseRepository;
         private readonly ICategoryManager _categoryManager;
+        private readonly IDingDingAppService _dingDingAppService;
+        private readonly UserManager _userManager;
 
         /// <summary>
         /// 构造函数 
@@ -62,8 +70,12 @@ namespace GYSWP.Documents
         , IRepository<Clause, Guid> clauseRepository
         , IRepository<EmployeeClause, Guid> employeeClauseRepository
         , ICategoryManager categoryManager
+        , IDingDingAppService dingDingAppService
+        , UserManager userManager
         )
         {
+            _userManager = userManager;
+            _dingDingAppService = dingDingAppService;
             _entityRepository = entityRepository;
             _entityManager = entityManager;
             _employeeRepository = employeeRepository;
@@ -109,7 +121,8 @@ namespace GYSWP.Documents
         /// <summary>
         /// 通过指定id获取DocumentListDto信息
         /// </summary>
-
+        [AbpAllowAnonymous]
+        [Audited]
         public async Task<DocumentListDto> GetById(EntityDto<Guid> input)
         {
             var entity = await _entityRepository.GetAsync(input.Id);
@@ -290,10 +303,10 @@ namespace GYSWP.Documents
             //当前用户角色
             var roles = await GetUserRolesAsync();
             //如果包含市级管理员 和 系统管理员 全部架构
-            if (roles.Contains(RoleCodes.Admin))
-            {
-                root.children = await getDeptTreeAsync(new long[] { 1 });//顶级部门
-            }
+            //if (roles.Contains(RoleCodes.Admin))
+            //{
+            root.children = await getDeptTreeAsync(new long[] { 1 });//顶级部门
+            //}
             //else if (roles.Contains(RoleCodes.EnterpriseAdmin))//本部门架构
             //{
             //    var user = await GetCurrentUserAsync();
@@ -373,7 +386,9 @@ namespace GYSWP.Documents
         [AbpAllowAnonymous]
         public async Task<bool> GetHasDocPermissionFromScanAsync(Guid id, string userId)
         {
-            return await _entityRepository.GetAll().AnyAsync(v => v.Id == id && (v.IsAllUser == true || v.EmployeeIds.Contains(userId)));
+            string dept = await _employeeRepository.GetAll().Where(v => v.Id == userId).Select(v => v.Department).FirstOrDefaultAsync();
+            long deptId = await _organizationRepository.GetAll().Where(v => "[" + v.Id + "]" == dept).Select(v => v.Id).FirstOrDefaultAsync();
+            return await _entityRepository.GetAll().AnyAsync(v => v.Id == id && v.IsAction == true && v.PublishTime <= DateTime.Today && (v.IsAllUser == true || v.DeptIds.Contains(deptId.ToString()) || v.EmployeeIds.Contains(userId)));
         }
 
         [AbpAllowAnonymous]
@@ -394,6 +409,75 @@ namespace GYSWP.Documents
             result.ClauseList = clauseDtoList;
             return result;
         }
+
+        /// <summary>
+        /// 钉钉上修改Document的公共方法
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        [Audited]
+        public async Task<APIResultDto> DingUpdateAsync(DingDocumentEditDto input)
+        {
+            if (input.Id.HasValue)
+            {
+                Document document = await _entityRepository.GetAsync(input.Id.Value);
+                document.Stamps = input.Stamps;
+                document.DocNo = input.DocNo;
+                await _entityRepository.UpdateAsync(document);
+                if (document.CreatorUserId.HasValue)
+                {
+                    var user = await _userManager.GetUserByIdAsync(document.CreatorUserId.Value);
+                    bool status = DingRemind(user.EmployeeId);
+                    if(status == true)
+                        return new APIResultDto() { Code = 1, Msg = "提交成功" };
+                    else
+                        return new APIResultDto() { Code = 1, Msg = "提交失败" };
+                }
+                else
+                {
+                    return new APIResultDto() { Code = 0, Msg = "未找到该标准的创建用户" };
+                }
+            }
+            else
+            {
+                return new APIResultDto() { Code = 0, Msg = "未查询到所属标准" };
+            }
+        }
+
+        /// <summary>
+        /// 审批回调钉钉
+        /// </summary>
+        /// <param name="employeeId"></param>
+        /// <returns></returns>
+        public bool DingRemind(string employeeId)
+        {
+            var ddConfig = _dingDingAppService.GetDingDingConfigByApp(DingDingAppEnum.标准化工作平台);
+            var assessToken = _dingDingAppService.GetAccessToken(ddConfig.Appkey, ddConfig.Appsecret);
+            var url = string.Format("https://oapi.dingtalk.com/topapi/message/corpconversation/asyncsend_v2?access_token={0}", assessToken);
+            DingMsgs dingMsgs = new DingMsgs();
+            dingMsgs.userid_list = employeeId;
+            dingMsgs.to_all_user = false;
+            dingMsgs.agent_id = ddConfig.AgentID;
+            dingMsgs.msg.msgtype = "text";
+            dingMsgs.msg.text.content = "标准创建审批通过,请前往客户端修改部门和用户";
+            var jsonString = SerializerHelper.GetJsonString(dingMsgs, null);
+            MessageResponseResult response = new MessageResponseResult();
+            using (MemoryStream ms = new MemoryStream())
+            {
+                var bytes = Encoding.UTF8.GetBytes(jsonString);
+                ms.Write(bytes, 0, bytes.Length);
+                ms.Seek(0, SeekOrigin.Begin);
+                response = Post.PostGetJson<MessageResponseResult>(url, null, ms);
+            };
+            //发送失败则自动删除消息中心对应数据
+            if (response.errcode != 0)
+                return false;
+            else
+                return true;
+        }
+
+
         #region 文档导入
         public async Task<bool> documentReadAsync(string path)
         {
@@ -613,7 +697,7 @@ namespace GYSWP.Documents
             //    //}
             //    return Guid.NewGuid();
             //}
-            get;set;
+            get; set;
         }
         public string No { get; set; }
 

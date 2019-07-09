@@ -50,6 +50,8 @@ export class DetailComponent extends AppComponentBase implements OnInit {
     id: any = '';
     codeStyle = 'none';
     attachments = [];
+    isControl: string;
+    isValid: string;
 
     constructor(injector: Injector
         , private actRouter: ActivatedRoute
@@ -81,7 +83,12 @@ export class DetailComponent extends AppComponentBase implements OnInit {
         }
         this.document.publishTime = this.dateFormat(this.document.publishTime);
         this.document.isAllUser = this.isAllUser == '1' ? true : false;
+
+        var control = this.isControl == '5' ? '1' : '2';
+        this.document.stamps = control + ',' + this.isValid;
+
         this.getUserDepts();
+
         this.basicDataService.createOrUpdateDocumentAsync(this.document)
             .finally(() => { this.saving = false; })
             .subscribe(res => {
@@ -101,6 +108,12 @@ export class DetailComponent extends AppComponentBase implements OnInit {
         if (this.id) {
             this.basicDataService.getDocumentByIdAsync(this.id).subscribe(res => {
                 this.document = res;
+
+                if (res.stamps.indexOf(',') != -1) {
+                    this.isControl = res.stamps.split(',')[0] == '1' ? '5' : '6';
+                    this.isValid = res.stamps.split(',')[1];
+                }
+
                 if (res.employeeIds || res.employeeDes) {
                     this.setUserDepts(this.document);
                 }
@@ -169,9 +182,14 @@ export class DetailComponent extends AppComponentBase implements OnInit {
         // });
     }
     uploadDocAttach() {
-
+        console.log(this.actionUrl);
     }
-
+    controlRadioChange(ngmodel: string) {
+        this.isControl = ngmodel;
+    }
+    validRadioChange(ngmodel: string) {
+        this.isValid = ngmodel;
+    }
     //#region 人员选择模块
     allUserRadioChange(ngmodel: string) {
         this.isAllUser = ngmodel;

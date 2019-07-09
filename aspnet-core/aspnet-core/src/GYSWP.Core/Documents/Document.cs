@@ -86,5 +86,11 @@ namespace GYSWP.Documents
         /// 作废时间
         /// </summary>
         public virtual DateTime? InvalidTime { get; set; }
+
+        /// <summary>
+        /// 电子章数组 （以逗号分隔）
+        /// </summary>
+        [StringLength(50)]
+        public virtual string Stamps { get; set; }
     }
 }
