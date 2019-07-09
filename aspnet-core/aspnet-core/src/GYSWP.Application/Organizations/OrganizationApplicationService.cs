@@ -202,7 +202,7 @@ namespace GYSWP.Organizations
         }
 
         /// <summary>
-        /// 按需获取组织架构
+        /// 按需获取组织架构(带人统计)
         /// </summary>
         /// <returns></returns>
         public async Task<List<OrganizationNzTreeNode>> GetTreesAsync()
@@ -706,12 +706,16 @@ namespace GYSWP.Organizations
             return resultId;
         }
 
-        public async Task<OrganizationTreeNodeDto> GetDeptTreeBy1QGAdminAsync()
+        /// <summary>
+        /// 考核指标部门树
+        /// </summary>
+        /// <returns></returns>
+        public async Task<OrganizationTreeNodeDto> GetTargetExamineDeptTreeAsync()
         {
             OrganizationTreeNodeDto result = new OrganizationTreeNodeDto();
             result.Key = 0;
             result.Title = "考核部门";
-            var organization = await _entityRepository.GetAll().Where(v => v.ParentId == 1).Select(v => new OrganizationTreeNodeDto()
+            var organization = await _entityRepository.GetAll().Where(v => v.ParentId == 1 && v.DepartmentName!= "物流中心" &&!v.DepartmentName.Contains("公司")).Select(v => new OrganizationTreeNodeDto()
             {
                 Key = v.Id,
                 Title = v.DepartmentName,
@@ -719,6 +723,35 @@ namespace GYSWP.Organizations
             }).ToListAsync();
             result.Children.AddRange(organization);
             return result;
+        }
+
+        /// <summary>
+        /// 指标考核部门
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<OrganizationNzTreeNode>> GetTargetTreesAsync()
+        {
+            var organizationList = await (from o in _entityRepository.GetAll()
+                                          select new OrganizationListDto()
+                                          {
+                                              Id = o.Id,
+                                              DepartmentName = o.DepartmentName,
+                                              OrgDeptName = o.DepartmentName,
+                                              ParentId = o.ParentId
+                                          }).ToListAsync();
+
+            return GetTargetTrees(0, organizationList);
+        }
+        private List<OrganizationNzTreeNode> GetTargetTrees(long? id, List<OrganizationListDto> organizationList)
+        {
+            List<OrganizationNzTreeNode> treeNodeList = organizationList.Where(o => o.ParentId == id).Select(t => new OrganizationNzTreeNode()
+            {
+                key = t.Id.ToString(),
+                title = t.DepartmentName,
+                deptName = t.OrgDeptName,
+                children = GetTargetTrees(t.Id, organizationList)
+            }).ToList();
+            return treeNodeList;
         }
     }
 }

@@ -14,7 +14,6 @@ import { NzModalRef, NzModalService } from 'ng-zorro-antd';
 export class EmpListComponent extends AppComponentBase implements OnInit {
     dept: any = { id: '', name: '', isCurDept: false };
     loading = false;
-    selectedCategory = { id: '', name: '' };
     empList: Employee[] = [];
     confirmModal: NzModalRef;
     isSelectedAll: boolean = false; // 是否全选

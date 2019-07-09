@@ -16,3 +16,4 @@ export * from './examine-feedback';
 export * from './examine-record';
 export * from './systemdata';
 export * from './advise';
+export * from './indicator';

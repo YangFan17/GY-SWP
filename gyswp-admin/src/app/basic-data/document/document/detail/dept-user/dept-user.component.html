@@ -32,7 +32,7 @@
         <div nz-col nzSpan="12">
             <div>
                 <nz-tree #treeCom [nzCheckable]="true" [nzData]="nodes" [nzShowExpand]="true"
-                    (nzClick)="activeNode($event)" [nzCheckedKeys]="checkedDeptKeys" [nzCheckStrictly]="true"
+                    [nzCheckedKeys]="checkedDeptKeys" [nzCheckStrictly]="true"
                     (nzCheckBoxChange)="checkBoxChange($event)">
                 </nz-tree>
             </div>
