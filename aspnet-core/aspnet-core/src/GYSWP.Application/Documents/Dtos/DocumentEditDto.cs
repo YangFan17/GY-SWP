@@ -99,5 +99,10 @@ namespace  GYSWP.Documents.Dtos
         /// 作废时间
         /// </summary>
         public DateTime? InvalidTime { get; set; }
+        /// <summary>
+        /// 电子章数组 （以逗号分隔）
+        /// </summary>
+        [StringLength(50)]
+        public string Stamps { get; set; }
     }
 }
