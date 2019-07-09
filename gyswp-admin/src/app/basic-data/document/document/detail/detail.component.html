@@ -36,6 +36,23 @@
                         </nz-form-explain>
                     </nz-form-control>
                 </nz-form-item>
+
+                <nz-form-item nz-row>
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>标准状态</nz-form-label>
+                    <nz-form-control [nzSm]="20">
+                        <nz-radio-group #isControls="ngModel" [(ngModel)]="isControl"
+                            (ngModelChange)="controlRadioChange($event)" [ngModelOptions]="{standalone: true}">
+                            <label nz-radio nzValue="5">受控</label>
+                            <label nz-radio nzValue="6">不受控</label>
+                        </nz-radio-group><br />
+                        <nz-radio-group #isValids="ngModel" [(ngModel)]="isValid"
+                            (ngModelChange)="validRadioChange($event)" [ngModelOptions]="{standalone: true}">
+                            <label nz-radio nzValue="3">作废</label>
+                            <label nz-radio nzValue="4">现行有效</label>
+                        </nz-radio-group>
+                    </nz-form-control>
+                </nz-form-item>
+
                 <nz-form-item nz-row>
                     <nz-form-label nz-col [nzSm]="4" nzRequired>可查看人员</nz-form-label>
                     <nz-form-control [nzSm]="20">

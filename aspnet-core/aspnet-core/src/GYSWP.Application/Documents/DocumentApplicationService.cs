@@ -290,10 +290,10 @@ namespace GYSWP.Documents
             //当前用户角色
             var roles = await GetUserRolesAsync();
             //如果包含市级管理员 和 系统管理员 全部架构
-            if (roles.Contains(RoleCodes.Admin))
-            {
+            //if (roles.Contains(RoleCodes.Admin))
+            //{
                 root.children = await getDeptTreeAsync(new long[] { 1 });//顶级部门
-            }
+            //}
             //else if (roles.Contains(RoleCodes.EnterpriseAdmin))//本部门架构
             //{
             //    var user = await GetCurrentUserAsync();
