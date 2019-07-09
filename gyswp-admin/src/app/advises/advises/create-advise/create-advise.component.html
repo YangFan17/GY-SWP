@@ -8,26 +8,26 @@
       <nz-form-control [nzSm]="20">
         <input type="text" nz-input formControlName="adviseName" [(ngModel)]="advise.adviseName"
           placeholder="请输入建议名称" />
-        <nz-form-explain *ngIf="(form.get('adviseName')?.dirty && form.get('adviseName')?.errors)">请输入建议名称且不能超过50个字符
+        <nz-form-explain *ngIf="(form.get('adviseName')?.dirty && form.get('adviseName')?.errors)">请输入建议名称且不能超过100个字符
         </nz-form-explain>
       </nz-form-control>
     </nz-form-item>
     <nz-form-item nz-row>
       <nz-form-label nz-col [nzSm]="4" nzRequired>现状描述</nz-form-label>
       <nz-form-control [nzSm]="20" nzHasFeedback>
-        <textarea nz-input rows="4" formControlName="currentSituation" required maxlength="1000"
-          [(ngModel)]="advise.currentSituation" [placeholder]="'请填写申请原因'"></textarea>
+        <textarea nz-input rows="4" formControlName="currentSituation" required maxlength="2000"
+          [(ngModel)]="advise.currentSituation" [placeholder]="'请填写现状描述'"></textarea>
         <nz-form-explain *ngIf="(form.get('currentSituation')?.dirty && form.get('currentSituation')?.errors)">
-          请输入现状描述且不能超过1000个字符
+          请输入现状描述且不能超过2000个字符
         </nz-form-explain>
       </nz-form-control>
     </nz-form-item>
     <nz-form-item nz-row>
       <nz-form-label nz-col [nzSm]="4" nzRequired>对策建议</nz-form-label>
       <nz-form-control [nzSm]="20" nzHasFeedback>
-        <textarea nz-input rows="8" formControlName="solution" required maxlength="1000" [(ngModel)]="advise.solution"
-          [placeholder]="'请填写申请内容'"></textarea>
-        <nz-form-explain *ngIf="(form.get('solution')?.dirty && form.get('solution')?.errors)">请输入现状描述且不能超过1000个字符
+        <textarea nz-input rows="8" formControlName="solution" required maxlength="2000" [(ngModel)]="advise.solution"
+          [placeholder]="'请填写对策建议'"></textarea>
+        <nz-form-explain *ngIf="(form.get('solution')?.dirty && form.get('solution')?.errors)">请输入对策建议且不能超过2000个字符
         </nz-form-explain>
       </nz-form-control>
     </nz-form-item>

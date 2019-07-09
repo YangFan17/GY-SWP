@@ -77,5 +77,12 @@ namespace GYSWP.ExamineDetails
         Task<ExamineRecordDto> GetExamineDetailByIdAsync(GetExamineDetailsInput input);
         Task<APIResultDto> ChangeStatusByIdAsync(GetExamineDetailsInput input);
         Task<PagedResultDto<ExamineListDto>> GetExamineDetailByEmpIdAsync(GetExamineDetailsInput input);
+
+        /// <summary>
+        /// 根据钉钉用户Id获取相应检查详情
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        Task<List<ExamineRecordDto>> GetExamineDetailByDingIdAsync(GetExamineDetailsInput input);
     }
 }

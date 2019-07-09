@@ -67,5 +67,13 @@ namespace GYSWP.CriterionExamines.Dtos
 		/// DeptName
 		/// </summary>
 		public string DeptName { get; set; }
+
+        public string CreationTimeFormat
+        {
+            get
+            {
+                return CreationTime.ToString("yyyy-MM-dd");
+            }
+        }
     }
 }

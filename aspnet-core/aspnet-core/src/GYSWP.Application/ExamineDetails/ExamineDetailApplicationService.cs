@@ -25,6 +25,7 @@ using GYSWP.Clauses;
 using GYSWP.Documents;
 using GYSWP.Dtos;
 using GYSWP.CriterionExamines;
+using Abp.Auditing;
 
 namespace GYSWP.ExamineDetails
 {
@@ -89,7 +90,6 @@ namespace GYSWP.ExamineDetails
         /// <summary>
         /// 通过指定id获取ExamineDetailListDto信息
         /// </summary>
-
         public async Task<ExamineDetailListDto> GetById(EntityDto<Guid> input)
         {
             var entity = await _entityRepository.GetAsync(input.Id);
@@ -254,7 +254,7 @@ namespace GYSWP.ExamineDetails
                             EmployeeName = q.EmployeeName
                         });
             var count = await list.CountAsync();
-            var entityList = await list.OrderBy(v => v.Status).ThenByDescending(v=>v.Result).ThenBy(v => v.DocumentName).PageBy(input).ToListAsync();
+            var entityList = await list.OrderBy(v => v.Status).ThenByDescending(v => v.Result).ThenBy(v => v.DocumentName).PageBy(input).ToListAsync();
             return new PagedResultDto<ExamineRecordDto>(count, entityList);
         }
 
@@ -263,6 +263,8 @@ namespace GYSWP.ExamineDetails
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
+        [AbpAllowAnonymous]
+        [Audited]
         public async Task<ExamineRecordDto> GetExamineDetailByIdAsync(GetExamineDetailsInput input)
         {
             var query = _entityRepository.GetAll().Where(v => v.Id == input.Id);
@@ -275,7 +277,7 @@ namespace GYSWP.ExamineDetails
                                 {
                                     Id = q.Id,
                                     DocumentName = d.Name,
-                                    ClauseInfo = c.ClauseNo + "\t" + c.Title + "\r\n" + c.Content,
+                                    ClauseInfo = c.ClauseNo + "\t" + (c.Title==null?"":c.Title) + "\r\n" + (c.Content==null?"":c.Content),
                                     Status = q.Status,
                                     Result = q.Result,
                                     EmployeeName = q.EmployeeName
@@ -319,13 +321,45 @@ namespace GYSWP.ExamineDetails
                             EmployeeName = q.EmployeeName,
                             Title = c.Title,
                             CreationTime = c.CreationTime,
-                            CreatorDeptName =c.CreatorDeptName,
+                            CreatorDeptName = c.CreatorDeptName,
                             Type = c.Type,
                             DeptName = c.DeptName
                         });
             var count = await list.CountAsync();
             var entityList = await list.OrderByDescending(v => v.Status).ThenByDescending(v => v.Result).ThenBy(v => v.Title).ThenBy(v => v.DocumentName).PageBy(input).ToListAsync();
             return new PagedResultDto<ExamineListDto>(count, entityList);
+        }
+
+        /// <summary>
+        /// 根据钉钉用户Id获取相应检查详情
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        [Audited]
+        public async Task<List<ExamineRecordDto>> GetExamineDetailByDingIdAsync(GetExamineDetailsInput input)
+        {
+            var query = _entityRepository.GetAll().Where(v => v.EmployeeId == input.EmployeeId && v.CriterionExamineId == input.ExamineId);
+            var doc = _documentRepository.GetAll().Select(v => new { v.Id, v.Name });
+            var clause = _clauseRepository.GetAll();
+            var list = (from q in query
+                        join d in doc on q.DocumentId equals d.Id
+                        join c in clause on q.ClauseId equals c.Id
+                        select new ExamineRecordDto()
+                        {
+                            Id = q.Id,
+                            DocumentName = d.Name,
+                            //ClauseInfo = c.ClauseNo + c.Title != null ? "-" + (c.Title.Length > 15 ? c.Title.Substring(0, 15) + "..." : c.Title) : null + c.Content != null ? "-" + (c.Content.Length > 50 ? c.Content.Substring(0, 50) + "..." : c.Content) : null,
+                            ClauseInfo = c.ClauseNo + (c.Title != null ? (c.Title.Length > 15 ? "-"+c.Title.Substring(0, 15) + "...-" : "-" + c.Title+"-") : "-")
+                            + (c.Content != null ? (c.Content.Length > 15 ? c.Content.Substring(0, 15) + "..." : c.Content) : ""),
+                            Status = q.Status,
+                            Result = q.Result,
+                            EmployeeName = q.EmployeeName,
+                            CreatorEmpName = q.CreatorEmpName
+                        });
+            var count = await list.CountAsync();
+            var entityList = await list.OrderBy(v => v.Status).ThenByDescending(v => v.Result).ThenBy(v => v.DocumentName).PageBy(input).ToListAsync();
+            return entityList;
         }
     }
 }

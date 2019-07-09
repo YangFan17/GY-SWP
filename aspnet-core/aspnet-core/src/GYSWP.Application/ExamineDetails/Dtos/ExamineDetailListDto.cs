@@ -6,9 +6,11 @@ using Abp.Domain.Entities.Auditing;
 using System.ComponentModel.DataAnnotations;
 using GYSWP.ExamineDetails;
 using GYSWP.GYEnums;
+using Abp.AutoMapper;
 
 namespace GYSWP.ExamineDetails.Dtos
 {
+    [AutoMapFrom(typeof(ExamineDetail))]
     public class ExamineDetailListDto : EntityDto<Guid>,IHasCreationTime 
     {
 
@@ -79,6 +81,37 @@ namespace GYSWP.ExamineDetails.Dtos
 		/// CreatorEmpName
 		/// </summary>
 		public string CreatorEmpName { get; set; }
+
+
+
+        /// <summary>
+        /// 考核结果
+        /// </summary>
+        public string ResultName
+        {
+            get { return Result.ToString(); }
+        }
+
+
+
+        /// <summary>
+        /// 条款内容
+        /// </summary>
+        public string ClauseInfo { get; set; }
+
+
+
+        /// <summary>
+        /// 所属标准
+        /// </summary>
+        public string DocumentName { get; set; }
+
+
+
+        /// <summary>
+        /// 当前条款
+        /// </summary>
+        public string ClauseName { get; set; }
     }
     public class ExamineRecordDto : EntityDto<Guid>
     {
@@ -103,6 +136,17 @@ namespace GYSWP.ExamineDetails.Dtos
         [Required(ErrorMessage = "Status不能为空")]
         public ResultStatus Status { get; set; }
         public ExamineStatus Result { get; set; }
+
+        /// <summary>
+        /// CreatorEmpName
+        /// </summary>
+        [StringLength(50)]
+        public string CreatorEmpName { get; set; }
+
+        public string ResultName
+        {
+            get { return Result.ToString(); }
+        }
     }
 
     public class ExamineListDto : EntityDto<Guid>
