@@ -59,6 +59,11 @@ export class AppMenus {
                     link: "/app/criterion/my-examine",
                     reuse: false
                 },
+                {
+                    text: "指标考核",
+                    link: "/app/criterion/my-indicator",
+                    reuse: false
+                }
             ]
         },
         {

@@ -9,6 +9,7 @@ export class IndicatorsDetail {
     statusName: string;
     deptId: number;
     deptName: string;
+    completeTime: Date;
     constructor(data?: any) {
         if (data) {
             for (var property in data) {
@@ -29,6 +30,7 @@ export class IndicatorsDetail {
             this.statusName = data["statusName"];
             this.deptId = data["deptId"];
             this.deptName = data["deptName"];
+            this.completeTime = data["completeTime"];
         }
     }
     toJSON(data?: any) {
@@ -42,6 +44,7 @@ export class IndicatorsDetail {
         data["creationTime"] = this.creationTime;
         data["deptId"] = this.deptId;
         data["deptName"] = this.deptName;
+        data["completeTime"] = this.completeTime;
         return data;
     }
     static fromJS(data: any): IndicatorsDetail {

@@ -17,6 +17,7 @@ import { SuperAdminComponent } from './criterion-examine/super-admin/super-admin
 import { TargetExamineComponent } from './target-examine/target-examine.component';
 import { TargetExamineDetailComponent } from './target-examine/target-examine-detail/target-examine-detail.component';
 import { TargetDeptComponent } from './target-examine/target-examine-detail/target-dept/target-dept.component';
+import { TargetListComponent } from './target-examine/target-examine-detail/target-list/target-list.component';
 
 @NgModule({
     imports: [
@@ -40,6 +41,7 @@ import { TargetDeptComponent } from './target-examine/target-examine-detail/targ
         TargetExamineComponent,
         TargetExamineDetailComponent,
         TargetDeptComponent,
+        TargetListComponent,
     ],
     entryComponents: [
         CriterionExamineComponent,
@@ -53,6 +55,7 @@ import { TargetDeptComponent } from './target-examine/target-examine-detail/targ
         TargetExamineComponent,
         TargetExamineDetailComponent,
         TargetDeptComponent,
+        TargetListComponent,
     ],
     providers: [SupervisionService]
 })

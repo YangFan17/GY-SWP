@@ -7,6 +7,8 @@ import { SelfLearningComponent } from './criterion/self-learning/self-learning.c
 import { DraftDocComponent } from './criterion/draft-doc/draft-doc/draft-doc.component';
 import { MyExamineComponent } from './my-examine/my-examine.component';
 import { ExamineDetailComponent } from './my-examine/examine-detail/examine-detail.component';
+import { MyIndicatorComponent } from './my-indicator/my-indicator.component';
+import { IndicatorDetailComponent } from './my-indicator/indicator-detail/indicator-detail.component';
 
 
 const routes: Routes = [
@@ -51,7 +53,17 @@ const routes: Routes = [
         component: ExamineDetailComponent,
         canActivate: [AppRouteGuard],
     },
-
+    {
+        path: 'my-indicator',
+        component: MyIndicatorComponent,
+        canActivate: [AppRouteGuard],
+        data: { title: '指标考核' },
+    },
+    {
+        path: 'indicator-detail/:id',
+        component: IndicatorDetailComponent,
+        canActivate: [AppRouteGuard],
+    }
 ];
 
 @NgModule({

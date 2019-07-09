@@ -1,0 +1,32 @@
+<div *ngIf="id" nz-row>
+    <nz-table #nzTable [nzData]="indicatorList" [nzShowPagination]="false">
+        <thead>
+            <tr>
+                <th>考核部门</th>
+                <th>预期值</th>
+                <th>实际值</th>
+                <th>指标状态</th>
+                <th>填写人</th>
+                <th>完成时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of nzTable.data">
+                <td>{{item.employeeDeptName}}</td>
+                <td>{{item.expectedValue}}%</td>
+                <td>{{item.actualValue?item.actualValue+'%':'-'}}</td>
+                <td>
+                    <nz-badge *ngIf="item.status == 1" [nzStatus]="'default'" [nzText]="'未填写'"></nz-badge>
+                    <nz-badge *ngIf="item.status == 2" [nzStatus]="'success'" [nzText]="'已达成'"></nz-badge>
+                    <nz-badge *ngIf="item.status == 3" [nzStatus]="'error'" [nzText]="'未达成'"></nz-badge>
+                </td>
+                <td>{{item.employeeName}}</td>
+                <td>{{item.completeTime | date: "yyyy-MM-dd"}}</td>
+                <td>
+                    <a *ngIf="item.status == 3" (click)="resultFeedBack(item.indicatorDetailId)">整改措施</a>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+</div>

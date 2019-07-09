@@ -2,7 +2,7 @@ import { Inject, Optional, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { CommonHttpClient } from "services/common-httpclient";
 import { map } from "rxjs/operators";
-import { ApiResult, DocumentDto, Clause, SelectGroup, ClauseRevision, DocRevision, CriterionExamine, ExamineRecord, Attachment, ExamineResult, ExamineFeedback } from "entities";
+import { ApiResult, DocumentDto, Clause, SelectGroup, ClauseRevision, DocRevision, CriterionExamine, ExamineRecord, Attachment, ExamineResult, ExamineFeedback, Indicators, IndicatorShowDto } from "entities";
 import { PagedResultDto } from "@shared/component-base";
 import { API_BASE_URL } from "@shared/service-proxies/service-proxies";
 @Injectable()
@@ -283,6 +283,30 @@ export class WorkCriterionService {
         let url_ = "/api/services/app/ExamineFeedback/GetExamineFeedbackByIdAsync";
         return this._commonhttp.get(url_, { id: id }).pipe(map(data => {
             return ExamineFeedback.fromJS(data);
+        }));
+    }
+
+    getPagedCurrentIndicatorAsync(param: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/Indicator/GetPagedCurrentIndicatorAsync";
+        return this._commonhttp.get(url_, param).pipe(map(data => {
+            const result = new PagedResultDto();
+            result.items = data.items;
+            result.totalCount = data.totalCount;
+            return result;
+        }));
+    }
+
+    getIndicatorByIdAsync(id: any): Observable<IndicatorShowDto> {
+        let url_ = "/api/services/app/Indicator/GetIndicatorDetailByIdAsync";
+        return this._commonhttp.get(url_, { id: id }).pipe(map(data => {
+            return IndicatorShowDto.fromJS(data);
+        }));
+    }
+
+    changeStatusByIdAsync(input: any): Observable<ApiResult> {
+        let url_ = "/api/services/app/IndicatorsDetail/ChangeStatusByIdAsync";
+        return this._commonhttp.post(url_, input).pipe(map(data => {
+            return ApiResult.fromJS(data);
         }));
     }
 }

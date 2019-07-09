@@ -11,6 +11,7 @@ import { NzModalRef, NzModalService } from 'ng-zorro-antd';
 })
 export class ResultFeedbackComponent extends ModalComponentBase implements OnInit {
     @Input() id: string; //examineDetailId
+    @Input() type: number; //考核类型
     confirmModal: NzModalRef;
     courseTypes = [
         { label: '人', value: '1', checked: false },
@@ -60,7 +61,7 @@ export class ResultFeedbackComponent extends ModalComponentBase implements OnIni
             nzOnOk: () => {
                 this.saving = true;
                 this.examineFeedback.businessId = this.id;
-                this.examineFeedback.type = 1;
+                this.examineFeedback.type = this.type;
                 var filter = this.courseTypes.filter(v => v.checked == true);
                 this.examineFeedback.courseType = filter.map(v => {
                     return v.value;

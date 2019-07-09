@@ -52,7 +52,7 @@ namespace  GYSWP.Indicators.Dtos
 		/// <summary>
 		/// CreatorEmpeeId
 		/// </summary>
-		[Required(ErrorMessage="CreatorEmpeeId不能为空")]
+		//[Required(ErrorMessage="CreatorEmpeeId不能为空")]
 		public string CreatorEmpeeId { get; set; }
 
 
@@ -67,7 +67,7 @@ namespace  GYSWP.Indicators.Dtos
 		/// <summary>
 		/// CreatorDeptId
 		/// </summary>
-		[Required(ErrorMessage="CreatorDeptId不能为空")]
+		//[Required(ErrorMessage="CreatorDeptId不能为空")]
 		public long CreatorDeptId { get; set; }
 
 
@@ -82,15 +82,15 @@ namespace  GYSWP.Indicators.Dtos
 		/// <summary>
 		/// DeptId
 		/// </summary>
-		[Required(ErrorMessage="DeptId不能为空")]
-		public long DeptId { get; set; }
+		//[Required(ErrorMessage="DeptId不能为空")]
+		public string DeptIds { get; set; }
 
 
 
 		/// <summary>
 		/// DeptName
 		/// </summary>
-		public string DeptName { get; set; }
+		public string DeptNames { get; set; }
 
         /// <summary>
         /// 预期值

@@ -37,8 +37,8 @@
         <td>{{item.name}}</td>
         <!-- <td>{{item.emailAddress}}</td> -->
         <td>
-          <nz-badge *ngIf="item.isActive" [nzStatus]="'success'" [nzText]="是"></nz-badge>
-          <nz-badge *ngIf="!item.isActive" [nzStatus]="'default'" [nzText]="否"></nz-badge>
+          <nz-badge *ngIf="item.isActive" [nzStatus]="'success'" [nzText]="'是'"></nz-badge>
+          <nz-badge *ngIf="!item.isActive" [nzStatus]="'default'" [nzText]="'否'"></nz-badge>
         </td>
         <td>{{item.creationTime| _date: 'YYYY-MM-DD'}}</td>
         <td>

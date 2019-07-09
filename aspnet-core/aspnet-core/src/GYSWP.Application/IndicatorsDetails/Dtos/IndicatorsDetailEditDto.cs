@@ -29,7 +29,7 @@ namespace  GYSWP.IndicatorsDetails.Dtos
 		/// ClauseId
 		/// </summary>
 		[Required(ErrorMessage="ClauseId不能为空")]
-		public decimal ActualValue { get; set; }
+		public decimal? ActualValue { get; set; }
 
 
 
@@ -62,6 +62,10 @@ namespace  GYSWP.IndicatorsDetails.Dtos
 		[Required(ErrorMessage="CreationTime不能为空")]
 		public DateTime CreationTime { get; set; }
         /// <summary>
+        /// 完成时间
+        /// </summary>
+        public DateTime? CompleteTime { get; set; }
+        /// <summary>
         /// 被考核部门
         /// </summary>
         [Required]
@@ -72,5 +76,23 @@ namespace  GYSWP.IndicatorsDetails.Dtos
         /// </summary>
         [StringLength(100)]
         public string DeptName { get; set; }
+    }
+
+    public class IndicatorsDetailUpDateDto
+    {
+        /// <summary>
+        /// Id
+        /// </summary>
+        public Guid? Id { get; set; }
+        /// <summary>
+        /// ClauseId
+        /// </summary>
+        [Required(ErrorMessage = "ClauseId不能为空")]
+        public decimal? ActualValue { get; set; }
+        /// <summary>
+        /// Status
+        /// </summary>
+        [Required(ErrorMessage = "Status不能为空")]
+        public IndicatorStatus Status { get; set; }
     }
 }

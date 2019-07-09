@@ -81,7 +81,7 @@ export class ExamineDetailComponent extends PagedListingComponentBase<any>{
 
     resultFeedBack(id: string): void {
         this.modalHelper
-            .open(ResultFeedbackComponent, { id: id }, 950, {
+            .open(ResultFeedbackComponent, { id: id, type: 1 }, 950, {
                 nzMask: true,
                 nzClosable: false,
                 nzMaskClosable: false,

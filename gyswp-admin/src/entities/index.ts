@@ -17,3 +17,4 @@ export * from './examine-record';
 export * from './systemdata';
 export * from './advise';
 export * from './indicator';
+export * from './indicator-dto';

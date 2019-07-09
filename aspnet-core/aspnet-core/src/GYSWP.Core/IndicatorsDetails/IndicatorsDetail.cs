@@ -23,8 +23,7 @@ namespace GYSWP.IndicatorsDetails
         /// <summary>
         /// 实际指标
         /// </summary>
-        [Required]
-        public virtual decimal ActualValue { get; set; }
+        public virtual decimal? ActualValue { get; set; }
 
         /// <summary>
         /// 考核结果（未填写/已达成/未达成）
@@ -35,7 +34,6 @@ namespace GYSWP.IndicatorsDetails
         /// <summary>
         /// 填写人id
         /// </summary>
-        [Required]
         [StringLength(200)]
         public virtual string EmployeeId { get; set; }
 
@@ -62,5 +60,9 @@ namespace GYSWP.IndicatorsDetails
         /// </summary>
         [StringLength(100)]
         public virtual string DeptName { get; set; }
+        /// <summary>
+        /// 完成时间
+        /// </summary>
+        public virtual DateTime? CompleteTime { get; set; }
     }
 }

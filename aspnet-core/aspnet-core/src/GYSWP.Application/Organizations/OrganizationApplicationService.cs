@@ -712,9 +712,11 @@ namespace GYSWP.Organizations
         /// <returns></returns>
         public async Task<OrganizationTreeNodeDto> GetTargetExamineDeptTreeAsync()
         {
-            OrganizationTreeNodeDto result = new OrganizationTreeNodeDto();
-            result.Key = 0;
-            result.Title = "考核部门";
+            OrganizationTreeNodeDto result = new OrganizationTreeNodeDto
+            {
+                Key = 0,
+                Title = "考核部门"
+            };
             var organization = await _entityRepository.GetAll().Where(v => v.ParentId == 1 && v.DepartmentName!= "物流中心" &&!v.DepartmentName.Contains("公司")).Select(v => new OrganizationTreeNodeDto()
             {
                 Key = v.Id,
