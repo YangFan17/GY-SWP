@@ -22,6 +22,9 @@ using GYSWP.ExamineFeedbacks;
 using GYSWP.Advises;
 using GYSWP.Indicators;
 using GYSWP.IndicatorsDetails;
+using GYSWP.EntryExitRegistrations;
+using GYSWP.InspectionRecords;
+using GYSWP.SCInventoryRecords;
 
 namespace GYSWP.EntityFrameworkCore
 {
@@ -53,5 +56,8 @@ namespace GYSWP.EntityFrameworkCore
         public virtual DbSet<Advise> Advises { get; set; }
         public virtual DbSet<Indicator> Indicators { get; set; }
         public virtual DbSet<IndicatorsDetail> IndicatorsDetails { get; set; }
+        public virtual DbSet<EntryExitRegistration> EntryExitRegistrations { get; set; }
+        public virtual DbSet<InspectionRecord> InspectionRecords { get; set; }
+        public virtual DbSet<SCInventoryRecord> SCInventoryRecords { get; set; }
     }
 }
