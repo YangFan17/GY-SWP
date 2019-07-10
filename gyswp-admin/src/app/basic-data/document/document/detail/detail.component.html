@@ -87,12 +87,33 @@
                     </nz-form-control>
                 </nz-form-item>
                 <nz-form-item nz-row>
-                    <nz-form-label nz-col [nzSm]="4" nzFor="attach">标准附件</nz-form-label>
                     <nz-form-control [nzSm]="20">
-                        <nz-upload nzAction="{{actionUrl}}" [nzFileList]="fileList">
-                            <button nz-button type="button" (click)="uploadDocAttach()"><i nz-icon
-                                    nzType="upload"></i><span>上传附件</span></button>
-                        </nz-upload>
+
+                        <nz-form-label nz-col [nzSm]="4" nzFor="attach">标准附件</nz-form-label>
+                        <nz-form-control [nzSm]="20">
+                            <nz-upload nzAction="{{postUrl | hostUrl}}" [nzDisabled]="uploadLoading"
+                                [nzFileList]="fileList" nzMultiple [nzLimit]="1" [nzFilter]="filters"
+                                [nzBeforeUpload]="beforeUpload" (nzChange)="handleChange($event)"
+                                [nzRemove]="deleteAttachment">
+                                <button nz-button type="button" (click)="uploadDocAttach()"><i nz-icon
+                                        nzType="upload"></i><span>上传附件</span></button>
+                            </nz-upload>
+                        </nz-form-control>
+                        <!-- <nz-list class="demo-loadmore-list" [nzDataSource]="attachments" [nzItemLayout]="'horizontal'"
+                            nzHeader="附件列表" [nzRenderItem]="attachment" style="margin-top: 40px;">
+                            <ng-template #attachment let-item>
+                                <nz-list-item [nzActions]="[delete]">
+                                    <ng-template #delete><a style="color:#ff4d4f;"
+                                            (click)="deleteAttachment(item.id)">删除</a>
+                                    </ng-template>
+                                    <nz-list-item-meta style="text-align: left;" [nzDescription]="nzDescription">
+                                    </nz-list-item-meta>
+                                    <ng-template #nzDescription>
+                                        <a href="{{item.fileUrl | hostUrl}}" target="_blank">"{{item.name}}"</a>
+                                    </ng-template>
+                                </nz-list-item>
+                            </ng-template>
+                        </nz-list> -->
                     </nz-form-control>
                 </nz-form-item>
             </div>
