@@ -16,6 +16,7 @@ export class IndicatorShowDto {
     actualValue: number;
     indicatorDetailId: string;
     statusName: string;
+    status: number;
     constructor(data?: any) {
         if (data) {
             for (var property in data) {
@@ -37,6 +38,7 @@ export class IndicatorShowDto {
             this.actualValue = data["actualValue"];
             this.indicatorDetailId = data["indicatorDetailId"];
             this.statusName = data["statusName"];
+            this.status = data["status"];
         }
     }
     toJSON(data?: any) {

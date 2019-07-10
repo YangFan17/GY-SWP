@@ -268,6 +268,10 @@ namespace GYSWP.Indicators
         {
             var user = await GetCurrentUserAsync();
             var detail = _indicatorsDetailRepository.GetAll().Where(v => v.EmployeeId == user.EmployeeId);
+            if(detail.Count() == 0)
+            {
+                return new PagedResultDto<IndicatorShowDto>(0, null);
+            }
             var indicator = _entityRepository.GetAll();
             var query = from i in indicator
                         join d in detail on i.Id equals d.IndicatorsId into g

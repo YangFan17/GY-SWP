@@ -162,9 +162,11 @@ namespace GYSWP.DingDingApproval
                         //value = "[编号]：" + item.ClauseNo + "\n"
                         //+ "[标题]：" + (item.Title.Length > 10 ? item.Title.Substring(0, 10) + "..." : item.Title) + "\n"
                         //+ "[内容]：" + (item.Content.Length > 30 ? item.Content.Substring(0, 30) + "..." : item.Content)
-                        value = "[编号]：" + clause.ClauseNo + "\n"
-    + "[标题]：" + clause.Title + "\n"
-    + "[内容]：" + clause.Content
+                        //                    value = "[编号]：" + clause.ClauseNo + "\n"
+                        //+ "[标题]：" + clause.Title + "\n"
+                        //+ "[内容]：" + clause.Content
+                        value =  clause.ClauseNo + (clause.Title != null ?  ("\t" + clause.Title):"") 
+                        + (clause.Content != null ? ("\r\n" + clause.Content) : "")
                     });
                 }
                 else if (item.RevisionType == GYEnums.RevisionType.修订)
@@ -175,16 +177,23 @@ namespace GYSWP.DingDingApproval
                         //                    value = "[编号]：" + clause.ClauseNo + "\n"
                         //+ "[标题]：" + (clause.Title.Length > 10 ? clause.Title.Substring(0, 10) + "..." : clause.Title) + "\n"
                         //+ "[内容]：" + (clause.Content.Length > 30 ? clause.Content.Substring(0, 30) + "..." : clause.Content)
-                        value = "[编号]：" + clause.ClauseNo + "\n"
-    + "[标题]：" + clause.Title + "\n"
-    + "[内容]：" + clause.Content
+                        //                    value = "[编号]：" + clause.ClauseNo + "\n"
+                        //+ "[标题]：" + clause.Title + "\n"
+                        //+ "[内容]：" + clause.Content
+                        value = clause.ClauseNo + (clause.Title != null ? ("\t" + clause.Title) : "")
+                        + (clause.Content != null ? ("\r\n" + clause.Content) : "")
                     });
                     revisionDetail.Add(new Approval()
                     {
                         name = "当前内容",
-                        value = "[编号]：" + item.ClauseNo + "\n"
-                        + "[标题]：" + (item.Title.Length > 10 ? item.Title.Substring(0, 10) + "..." : item.Title) + "\n"
-                        + "[内容]：" + (item.Content.Length > 30 ? item.Content.Substring(0, 30) + "..." : item.Content)
+                        //value = "[编号]：" + item.ClauseNo + "\n"
+                        //+ "[标题]：" + (item.Title.Length > 10 ? item.Title.Substring(0, 10) + "..." : item.Title) + "\n"
+                        //+ "[内容]：" + (item.Content.Length > 30 ? item.Content.Substring(0, 30) + "..." : item.Content)
+                        //value = "[编号]：" + item.ClauseNo + "\n"
+                        //+ "[标题]：" + item.Title + "\n"
+                        //+ "[内容]：" + item.Content
+                        value = clause.ClauseNo + (clause.Title != null ? ("\t" + clause.Title) : "")
+                        + (clause.Content != null ? ("\r\n" + clause.Content) : "")
                     });
                 }
                 else
@@ -196,9 +205,11 @@ namespace GYSWP.DingDingApproval
                         //+ "[标题]：" + (clause.Title.Length > 10 ? clause.Title.Substring(0, 10) + "..." : clause.Title) + "\n"
                         //+ "[内容]：" + (clause.Content.Length > 30 ? clause.Content.Substring(0, 30) + "..." : clause.Content)
                         //                });
-                        value = "[编号]：" + clause.ClauseNo + "\n"
-    + "[标题]：" + clause.Title + "\n"
-    + "[内容]：" + clause.Content
+                        //                    value = "[编号]：" + clause.ClauseNo + "\n"
+                        //+ "[标题]：" + clause.Title + "\n"
+                        //+ "[内容]：" + clause.Content
+                        value = clause.ClauseNo + (clause.Title != null ? ("\t" + clause.Title) : "")
+                        + (clause.Content != null ? ("\r\n" + clause.Content) : "")
                     });
                     revisionDetail.Add(new Approval()
                     {
@@ -271,9 +282,11 @@ namespace GYSWP.DingDingApproval
                     //value = "[编号]：" + item.ClauseNo + "\n"
                     //+ "[标题]：" + (item.Title.Length > 10 ? item.Title.Substring(0, 10) + "..." : item.Title) + "\n"
                     //+ "[内容]：" + (item.Content.Length > 30 ? item.Content.Substring(0, 30) + "..." : item.Content)
-                    value = "[编号]：" + item.ClauseNo + "\n"
-                    + "[标题]：" + item.Title + "\n"
-                    + "[内容]：" + item.Content
+                    //value = "[编号]：" + item.ClauseNo + "\n"
+                    //+ "[标题]：" + item.Title + "\n"
+                    //+ "[内容]：" + item.Content
+                    value = item.ClauseNo + (item.Title != null ? ("\t" + item.Title) : "")
+                        + (item.Content != null ? ("\r\n" + item.Content) : "")
                 });
                 items.Add(revisionDetail);
             }
@@ -298,5 +311,59 @@ namespace GYSWP.DingDingApproval
                 return new APIResultDto() { Code = 4, Msg = "提交失败", Data = approvalReturn.errmsg };
             }
         }
+
+        /// <summary>
+        /// 发送制定标准（企管编号盖章）钉钉工作通知
+        /// </summary>
+        public async Task<APIResultDto> SendMessageToQGAdminAsync(string docName, Guid docId)
+        {
+            try
+            {
+                //获取消息模板配置
+                //string messageTitle = "您有新的意见反馈";
+                //string messageMediaId = await _systemDataRepository.GetAll().Where(v => v.ModelId == ConfigModel.钉钉配置 && v.Type == ConfigType.标准化工作平台 && v.Code == GYCode.DocMediaId).Select(v => v.Desc).FirstOrDefaultAsync();
+                DingDingAppConfig ddConfig = _dingDingAppService.GetDingDingConfigByApp(DingDingAppEnum.标准化工作平台);
+                string accessToken = _dingDingAppService.GetAccessToken(ddConfig.Appkey, ddConfig.Appsecret);
+                var msgdto = new DingMsgDto();
+                msgdto.userid_list = "1926112826844702";//杨帆
+                msgdto.to_all_user = false;
+                msgdto.agent_id = ddConfig.AgentID;
+                msgdto.msg.msgtype = "link";
+                msgdto.msg.link.title = "您有新制定的标准需要编号";
+                msgdto.msg.link.picUrl = "@lALPDeC2t6v4RPJAQA";
+                msgdto.msg.link.text = $"您有新制定的标准需要编号[{ docName}] " + DateTime.Now.ToString();
+                msgdto.msg.link.messageUrl = "eapp://page/document/document-approval?id=" + docId;
+                var url = string.Format("https://oapi.dingtalk.com/topapi/message/corpconversation/asyncsend_v2?access_token={0}", accessToken);
+                var jsonString = SerializerHelper.GetJsonString(msgdto, null);
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    var bytes = Encoding.UTF8.GetBytes(jsonString);
+                    ms.Write(bytes, 0, bytes.Length);
+                    ms.Seek(0, SeekOrigin.Begin);
+                    var obj = Post.PostGetJson<object>(url, null, ms);
+                };
+                return new APIResultDto() { Code = 0, Msg = "钉钉消息发送成功" };
+            }
+            catch (Exception ex)
+            {
+                Logger.ErrorFormat("SendMessageToEmployeeAsync errormsg{0} Exception{1}", ex.Message, ex);
+                return new APIResultDto() { Code = 901, Msg = "钉钉消息发送失败" };
+            }
+        }
+
+        /// <summary> 
+        /// 上传图片并返回MeadiaId
+        /// </summary>
+        //public object UpdateAndGetAdviseMediaId(string path)
+        //{
+        //    IDingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/media/upload");
+        //    OapiMediaUploadRequest request = new OapiMediaUploadRequest();
+        //    request.Type = "image";
+        //    request.Media = new Top.Api.Util.FileItem($@"{path}");
+        //    DingDingAppConfig ddConfig = _dingDingAppService.GetDingDingConfigByApp(DingDingAppEnum.标准化工作平台);
+        //    string accessToken = _dingDingAppService.GetAccessToken(ddConfig.Appkey, ddConfig.Appsecret);
+        //    OapiMediaUploadResponse response = client.Execute(request, accessToken);
+        //    return response;
+        //}
     }
 }

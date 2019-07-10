@@ -113,4 +113,11 @@ namespace GYSWP.GYEnums
         作废 = 3,
         现行有效 = 4
     }
+
+    public static class GYCode
+    {
+        public static string MessageTitle = "MessageTitle";
+        public static string MediaId = "MediaId";
+        public static string DocMediaId = "DocMediaId";
+    }
 }

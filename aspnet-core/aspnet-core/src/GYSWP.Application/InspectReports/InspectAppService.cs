@@ -25,6 +25,7 @@ namespace GYSWP.InspectReports
             _selfChekRecordRepository = selfChekRecordRepository;
         }
 
+        //[AbpAllowAnonymous]
         public async Task<List<InspectDto>> GetSearchInspectReports(InspectInputDto input)
         {
             var res = await _selfChekRecordRepository.GetSearchInspectReports(input);

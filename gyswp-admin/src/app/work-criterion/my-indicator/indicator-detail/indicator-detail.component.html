@@ -50,7 +50,7 @@
                         </nz-form-text>
                     </nz-form-control>
                 </nz-form-item>
-                <nz-form-item nz-row *ngIf="indicator.status == 1">
+                <nz-form-item nz-row *ngIf="indicator.status === 1">
                     <nz-form-label nz-col [nzSm]="4" nzRequired>实际值</nz-form-label>
                     <nz-form-control [nzSm]="20">
                         <nz-input-group nzSearch [nzSuffix]="suffixIconButton">
@@ -67,7 +67,7 @@
                         </nz-form-explain>
                     </nz-form-control>
                 </nz-form-item>
-                <nz-form-item *ngIf="indicator.status != 1" nz-row style="margin-bottom: 0px;">
+                <nz-form-item *ngIf="indicator.status !== 1" nz-row style="margin-bottom: 0px;">
                     <nz-form-label nz-col [nzSm]="4" nzRequired>预期值</nz-form-label>
                     <nz-form-control [nzSm]="20">
                         <nz-form-text>
@@ -75,7 +75,7 @@
                         </nz-form-text>
                     </nz-form-control>
                 </nz-form-item>
-                <nz-form-item *ngIf="indicator.status != 1" nz-row style="margin-bottom: 0px;">
+                <nz-form-item *ngIf="indicator.status !== 1" nz-row style="margin-bottom: 0px;">
                     <nz-form-label nz-col [nzSm]="4" nzRequired>结果</nz-form-label>
                     <nz-form-control [nzSm]="20">
                         <nz-form-text>
