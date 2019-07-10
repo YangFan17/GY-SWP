@@ -21,8 +21,7 @@ using Abp.Linq.Extensions;
 using GYSWP.IndicatorsDetails;
 using GYSWP.IndicatorsDetails.Dtos;
 using GYSWP.IndicatorsDetails.DomainService;
-
-
+using GYSWP.Dtos;
 
 namespace GYSWP.IndicatorsDetails
 {
@@ -193,19 +192,20 @@ IndicatorsDetailEditDto editDto;
 			await _entityRepository.DeleteAsync(s => input.Contains(s.Id));
 		}
 
+        /// <summary>
+        /// 填写考核指标
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<APIResultDto> ChangeStatusByIdAsync(IndicatorsDetailUpDateDto input)
+        {
 
-		/// <summary>
-		/// 导出IndicatorsDetail为excel表,等待开发。
-		/// </summary>
-		/// <returns></returns>
-		//public async Task<FileDto> GetToExcel()
-		//{
-		//	var users = await UserManager.Users.ToListAsync();
-		//	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
-		//	await FillRoleNames(userListDtos);
-		//	return _userListExcelExporter.ExportToFile(userListDtos);
-		//}
-
+            var entity = await _entityRepository.GetAsync(input.Id.Value);
+            entity.ActualValue = input.ActualValue;
+            entity.Status = input.Status;
+            entity.CompleteTime = DateTime.Now;
+            return new APIResultDto() { Code = 0, Msg = "保存成功", Data = entity.Id };
+        }
     }
 }
 

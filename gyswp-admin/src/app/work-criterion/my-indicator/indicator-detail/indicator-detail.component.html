@@ -1,0 +1,98 @@
+<form nz-form #validateForm="ngForm" *ngIf="indicator">
+    <nz-card [nzBordered]="false" nzTitle="检查指标详情">
+        <div nz-row>
+            <div nz-col [nzSpan]="16">
+                <nz-form-item nz-row style="margin-bottom: 0px;">
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>考核部门</nz-form-label>
+                    <nz-form-control [nzSm]="20">
+                        <nz-form-text>
+                            {{indicator.creatorDeptName}}
+                        </nz-form-text>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item nz-row style="margin-bottom: 0px;">
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>检查指标</nz-form-label>
+                    <nz-form-control [nzSm]="20">
+                        <nz-form-text>
+                            {{indicator.title}}
+                        </nz-form-text>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item nz-row style="margin-bottom: 0px;">
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>指标释义</nz-form-label>
+                    <nz-form-control [nzSm]="20">
+                        <nz-form-text>
+                            {{indicator.paraphrase}}
+                        </nz-form-text>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item nz-row style="margin-bottom: 0px;">
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>测量方式</nz-form-label>
+                    <nz-form-control [nzSm]="20">
+                        <nz-form-text>
+                            {{indicator.measuringWay}}
+                        </nz-form-text>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item nz-row style="margin-bottom: 0px;">
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>检查周期</nz-form-label>
+                    <nz-form-control [nzSm]="20">
+                        <nz-form-text>
+                            {{indicator.cycleTimeName}}
+                        </nz-form-text>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item nz-row style="margin-bottom: 0px;">
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>预期值</nz-form-label>
+                    <nz-form-control [nzSm]="20">
+                        <nz-form-text>
+                            {{indicator.expectedValue}}%
+                        </nz-form-text>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item nz-row *ngIf="indicator.status == 1">
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>实际值</nz-form-label>
+                    <nz-form-control [nzSm]="20">
+                        <nz-input-group nzSearch [nzSuffix]="suffixIconButton">
+                            <input nzSearch nz-input name="actualValue" #actualValue="ngModel"
+                                [(ngModel)]="indicatorDetail.actualValue" [placeholder]="'请填写实际值'"
+                                pattern="^(0|[1-9][0-9]*)(\.[0-9]*)?$" required>
+                            <ng-template #suffixIconButton>
+                                <button nz-button nzType="primary" disabled nzSearch>%</button>
+                            </ng-template>
+                        </nz-input-group>
+                        <nz-form-explain *ngIf="actualValue.control.dirty&&actualValue.control.errors">
+                            <ng-container *ngIf="actualValue.control.hasError('required')">请填写实际值</ng-container>
+                            <ng-container *ngIf="actualValue.control.hasError('pattern')">请输入正确的格式</ng-container>
+                        </nz-form-explain>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item *ngIf="indicator.status != 1" nz-row style="margin-bottom: 0px;">
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>预期值</nz-form-label>
+                    <nz-form-control [nzSm]="20">
+                        <nz-form-text>
+                            {{indicator.actualValue}}%
+                        </nz-form-text>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item *ngIf="indicator.status != 1" nz-row style="margin-bottom: 0px;">
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>结果</nz-form-label>
+                    <nz-form-control [nzSm]="20">
+                        <nz-form-text>
+                            {{indicator.statusName}}
+                        </nz-form-text>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+        <footer-toolbar errorCollect>
+            <button nz-button [nzType]="'default'" (click)="return()">
+                返回
+            </button>
+            <button *ngIf="indicator.status == 1" nz-button (click)="save()" [nzType]="'primary'" type="button"
+                [disabled]="!validateForm.valid || saving">
+                保存
+            </button>
+        </footer-toolbar>
+    </nz-card>
+</form>

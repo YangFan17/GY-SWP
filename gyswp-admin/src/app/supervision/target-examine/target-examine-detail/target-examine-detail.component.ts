@@ -1,9 +1,11 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, Injector, ViewChild } from '@angular/core';
 import { AppComponentBase } from '@shared/component-base';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SupervisionService } from 'services';
 import { Indicators } from 'entities';
 import { TargetDeptComponent } from './target-dept/target-dept.component';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd';
+import { TargetListComponent } from './target-list/target-list.component';
 
 @Component({
     moduleId: module.id,
@@ -11,14 +13,20 @@ import { TargetDeptComponent } from './target-dept/target-dept.component';
     templateUrl: 'target-examine-detail.component.html'
 })
 export class TargetExamineDetailComponent extends AppComponentBase implements OnInit {
+    @ViewChild('targetList') targetList: TargetListComponent;
+
     id: string;
     cycleTime = '1';
     deptTags = [];
+    deptInfo: any[] = []; //选中的部门info
     indicator: Indicators = new Indicators();
+    confirmModal: NzModalRef;
+
     constructor(injector: Injector
         , private actRouter: ActivatedRoute
         , private router: Router
         , private supervisionService: SupervisionService
+        , private modal: NzModalService
     ) {
         super(injector);
         this.id = this.actRouter.snapshot.params['id'];
@@ -34,44 +42,35 @@ export class TargetExamineDetailComponent extends AppComponentBase implements On
         this.cycleTime = ngmodel;
     }
 
-    save() {
-        if (!this.indicator.id) {
-            // // this.document.categoryDesc = this.category.name;
-            // this.document.deptIds = this.dept.id;
-            // this.document.isAction = true;
-        }
-        this.indicator.creationTime = this.dateFormat(this.indicator.creationTime);
-        this.indicator.cycleTime = this.cycleTime == '1' ? 1 : 2;
-        console.log(this.indicator);
-
-        // // this.getUserDepts();
-        // this.supervisionService.createOrUpdateDocumentAsync(this.indicator)
-        //     .finally(() => { this.saving = false; })
-        //     .subscribe(res => {
-        //         this.notify.info('保存成功！', '');
-        //         if (res.data) {
-        //             this.indicator = res.data;
-        //             this.id = this.indicator.id;
-        //         }
-        //     });
+    save(): void {
+        this.confirmModal = this.modal.confirm({
+            nzContent: '发布后将无法修改，是否发布?',
+            nzOnOk: () => {
+                this.indicator.cycleTime = this.cycleTime == '1' ? 1 : 2;
+                this.getDepts();
+                this.supervisionService.createOrUpdateIndicatorAsync(this.indicator, this.deptInfo)
+                    .finally(() => { this.saving = false; })
+                    .subscribe(res => {
+                        this.notify.info('发布成功！', '');
+                        if (res.data) {
+                            this.indicator.id = res.data;
+                            this.id = this.indicator.id;
+                        }
+                    });
+            }
+        });
     }
 
     getById() {
         if (this.id) {
-            // this.basicDataService.getDocumentByIdAsync(this.id).subscribe(res => {
-            //     this.document = res;
-            //     if (res.employeeIds || res.employeeDes) {
-            //         this.setUserDepts(this.document);
-            //     }
-            //     this.isUpdate = true;
-            //     this.isAllUser = res.isAllUser == true ? '1' : '0';
-            //     this.category.id = res.categoryId.toString();
-            //     this.category.name = res.categoryDesc;
-            //     this.qrCode.value = res.id;
-            //     this.codeStyle = 'block';
-            //     this.clause.doc = { id: res.id, name: res.name };
-            //     this.clause.getClauseList();
-            // });
+            this.supervisionService.getIndicatorByIdAsync(this.id).subscribe(res => {
+                this.indicator = res;
+                if (res.deptIds) {
+                    this.setDepts(this.indicator);
+                }
+                this.targetList.id = res.id;
+                this.targetList.getIndicatorListById();
+            });
         }
     }
 
@@ -84,12 +83,9 @@ export class TargetExamineDetailComponent extends AppComponentBase implements On
             })
             .subscribe(isconfirm => {
                 if (isconfirm) {
-                    let empInfo: any[] = [];
                     this.deptTags.forEach(v => {
-                        empInfo.push({ id: v.id, name: v.name });
+                        this.deptInfo.push({ deptId: v.id, deptName: v.name });
                     });
-                    console.log(empInfo);
-
                     // this.setUserDepts(this.document);
                 }
             });
@@ -104,5 +100,28 @@ export class TargetExamineDetailComponent extends AppComponentBase implements On
             }
             i++;
         }
+        this.deptInfo = [];
+        this.deptTags.forEach(v => {
+            this.deptInfo.push({ deptId: v.id, deptName: v.name });
+        });
+    }
+
+    setDepts(entity: Indicators) {
+        this.deptTags = entity.getDepts();
+    }
+
+    getDepts() {
+        let deptIds = '';
+        let deptNames = '';
+        for (let u of this.deptTags) {
+            deptIds += u.id + ',';
+            deptNames += u.name + ',';
+        }
+        this.indicator.deptIds = (deptIds == '' ? '' : deptIds.substr(0, deptIds.length - 1));
+        this.indicator.deptNames = (deptNames == '' ? '' : deptNames.substr(0, deptNames.length - 1));
+    }
+
+    return() {
+        this.router.navigate(['app/supervision/indicators']);
     }
 }

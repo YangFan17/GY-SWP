@@ -4,7 +4,7 @@ import { CommonHttpClient } from "services/common-httpclient";
 import { map } from "rxjs/operators";
 import { API_BASE_URL } from "@shared/service-proxies/service-proxies";
 import { NzTreeNode } from "ng-zorro-antd";
-import { Employee, ApiResult, CriterionExamine, ExamineRecord, ExamineResult, Attachment, ExamineFeedback } from "entities";
+import { Employee, ApiResult, CriterionExamine, ExamineRecord, ExamineResult, Attachment, ExamineFeedback, Indicators, IndicatorShowDto } from "entities";
 import { PagedResultDto } from "@shared/component-base";
 @Injectable()
 export class SupervisionService {
@@ -174,6 +174,28 @@ export class SupervisionService {
                 arry.push(tree);
             });
             return arry;
+        }));
+    }
+
+    createOrUpdateIndicatorAsync(params: any, deptInfo: any[]): Observable<ApiResult> {
+        let url_ = "/api/services/app/Indicator/CreateOrUpdate";
+        let input = { Indicator: params, DeptInfo: deptInfo }
+        return this._commonhttp.post(url_, input).pipe(map(data => {
+            return ApiResult.fromJS(data);
+        }));
+    }
+
+    getIndicatorByIdAsync(id: any): Observable<Indicators> {
+        let url_ = "/api/services/app/Indicator/getById";
+        return this._commonhttp.get(url_, { id: id }).pipe(map(data => {
+            return Indicators.fromJS(data);
+        }));
+    }
+
+    getIndicatorListById(id: string): Observable<any[]> {
+        let url_ = "/api/services/app/Indicator/GetDeptIndicatorDetailByIdAsync";
+        return this._commonhttp.get(url_, { id: id }).pipe(map(data => {
+            return data;
         }));
     }
 }

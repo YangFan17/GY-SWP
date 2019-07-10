@@ -1,5 +1,5 @@
-<form nz-form #validateForm="ngForm" (ngSubmit)="save()" *ngIf="indicator">
-    <nz-card [nzBordered]="false" nzTitle="标准文档详情">
+<form nz-form #validateForm="ngForm" *ngIf="indicator">
+    <nz-card [nzBordered]="false" nzTitle="检查指标详情">
         <div nz-row>
             <div nz-col [nzSpan]="16">
                 <nz-form-item nz-row>
@@ -36,6 +36,23 @@
                     </nz-form-control>
                 </nz-form-item>
                 <nz-form-item nz-row>
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>预期值</nz-form-label>
+                    <nz-form-control [nzSm]="20" nzHasFeedback>
+                        <nz-input-group nzSearch [nzSuffix]="suffixIconButton">
+                            <input nzSearch nz-input name="expectedValue" #expectedValue="ngModel"
+                                [(ngModel)]="indicator.expectedValue" [placeholder]="'请填写预期值'"
+                                pattern="^(0|[1-9][0-9]*)(\.[0-9]*)?$" required>
+                            <ng-template #suffixIconButton>
+                                <button nz-button nzType="primary" disabled nzSearch>%</button>
+                            </ng-template>
+                        </nz-input-group>
+                        <nz-form-explain *ngIf="expectedValue.control.dirty&&expectedValue.control.errors">
+                            <ng-container *ngIf="expectedValue.control.hasError('required')">请填写预期值</ng-container>
+                            <ng-container *ngIf="expectedValue.control.hasError('pattern')">请输入正确的格式</ng-container>
+                        </nz-form-explain>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item nz-row>
                     <nz-form-label nz-col [nzSm]="4" nzRequired>检查周期</nz-form-label>
                     <nz-form-control [nzSm]="20">
                         <nz-radio-group #cycleTimeRadio="ngModel" [(ngModel)]="cycleTime"
@@ -61,12 +78,14 @@
                 </nz-form-item>
             </div>
         </div>
+        <target-list #targetList></target-list>
         <footer-toolbar errorCollect>
             <button nz-button [nzType]="'default'" (click)="return()">
                 返回
             </button>
-            <button nz-button [nzType]="'primary'" type="submit" [disabled]="!validateForm.valid || saving">
-                保存
+            <button *ngIf="!indicator.id" nz-button (click)="save()" [nzType]="'primary'" type="button"
+                [disabled]="!validateForm.valid || saving">
+                发布
             </button>
         </footer-toolbar>
     </nz-card>

@@ -476,6 +476,7 @@ namespace GYSWP.ApplyInfos
                 doc.CategoryDesc = categoryName;
                 doc.IsAction = false;
                 doc.DeptIds = docRevision.DeptId;
+                doc.CreatorUserId = docRevision.CreatorUserId;
                 Guid docId = await _documentRepository.InsertAndGetIdAsync(doc);
                 await CurrentUnitOfWork.SaveChangesAsync();
                 foreach (var item in clauseRevisionList)

@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.Indicators.Dtos;
 using GYSWP.Indicators;
+using GYSWP.Dtos;
 
 namespace GYSWP.Indicators
 {
@@ -55,7 +56,7 @@ namespace GYSWP.Indicators
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task CreateOrUpdate(CreateOrUpdateIndicatorInput input);
+        Task<APIResultDto> CreateOrUpdate(CreateOrUpdateIndicatorInput input);
 
 
         /// <summary>
@@ -70,13 +71,8 @@ namespace GYSWP.Indicators
         /// 批量删除Indicator
         /// </summary>
         Task BatchDelete(List<Guid> input);
-
-
-		/// <summary>
-        /// 导出Indicator为excel表
-        /// </summary>
-        /// <returns></returns>
-		//Task<FileDto> GetToExcel();
-
+        Task<PagedResultDto<IndicatorShowDto>> GetPagedCurrentIndicatorAsync(GetIndicatorsInput input);
+        Task<IndicatorShowDto> GetIndicatorDetailByIdAsync(EntityDto<Guid> input);
+        Task<List<IndicatorReviewDto>> GetDeptIndicatorDetailByIdAsync(EntityDto<Guid> input);
     }
 }

@@ -1,39 +1,21 @@
-export class Indicators {
+export class IndicatorShowDto {
     id: string;
     title: string;
     paraphrase: string;
     measuringWay: string;
-    creationTime: Date;
-    creatorEmpeeId: string;
-    creatorEmpName: string;
-    creatorDeptId: number;
+    // creationTime: Date;
+    // creatorEmpeeId: string;
+    // creatorEmpName: string;
+    // creatorDeptId: number;
     creatorDeptName: string;
-    deptIds: string;
-    deptNames: string;
+    // deptIds: string;
+    // deptNames: string;
     expectedValue: number;
     cycleTime: number;
     cycleTimeName: string;
-
-    getDepts(): any[] {
-        let depts = [];
-        if (!this.deptIds) {
-            this.deptIds = '';
-        }
-        if (!this.deptNames) {
-            this.deptNames = '';
-        }
-        let ids = this.deptIds.split(',');
-        let names = this.deptNames.split(',');
-        let i = 0;
-        for (let id of ids) {
-            if (id) {
-                depts.push({ id: id, name: names[i] });
-            }
-            i++;
-        }
-        return depts;
-    }
-
+    actualValue: number;
+    indicatorDetailId: string;
+    statusName: string;
     constructor(data?: any) {
         if (data) {
             for (var property in data) {
@@ -48,16 +30,13 @@ export class Indicators {
             this.title = data["title"];
             this.paraphrase = data["paraphrase"];
             this.measuringWay = data["measuringWay"];
-            this.creationTime = data["creationTime"];
-            this.creatorEmpeeId = data["creatorEmpeeId"];
-            this.creatorEmpName = data["creatorEmpName"];
-            this.creatorDeptId = data["creatorDeptId"];
             this.creatorDeptName = data["creatorDeptName"];
-            this.deptIds = data["deptIds"];
-            this.deptNames = data["deptNames"];
             this.expectedValue = data["expectedValue"];
             this.cycleTime = data["cycleTime"];
             this.cycleTimeName = data["cycleTimeName"];
+            this.actualValue = data["actualValue"];
+            this.indicatorDetailId = data["indicatorDetailId"];
+            this.statusName = data["statusName"];
         }
     }
     toJSON(data?: any) {
@@ -66,26 +45,22 @@ export class Indicators {
         data["title"] = this.title;
         data["paraphrase"] = this.paraphrase;
         data["measuringWay"] = this.measuringWay;
-        data["creationTime"] = this.creationTime;
-        data["creatorEmpeeId"] = this.creatorEmpeeId;
-        data["creatorEmpName"] = this.creatorEmpName;
-        data["creatorDeptId"] = this.creatorDeptId;
         data["creatorDeptName"] = this.creatorDeptName;
-        data["deptIds"] = this.deptIds;
-        data["deptNames"] = this.deptNames;
         data["expectedValue"] = this.expectedValue;
         data["cycleTime"] = this.cycleTime;
+        data["actualValue"] = this.actualValue;
+        data["indicatorDetailId"] = this.indicatorDetailId;
         return data;
     }
-    static fromJS(data: any): Indicators {
-        let result = new Indicators();
+    static fromJS(data: any): IndicatorShowDto {
+        let result = new IndicatorShowDto();
         result.init(data);
         return result;
     }
-    static fromJSArray(dataArray: any[]): Indicators[] {
+    static fromJSArray(dataArray: any[]): IndicatorShowDto[] {
         let array = [];
         dataArray.forEach(result => {
-            let item = new Indicators();
+            let item = new IndicatorShowDto();
             item.init(result);
             array.push(item);
         });
@@ -93,7 +68,7 @@ export class Indicators {
     }
     clone() {
         const json = this.toJSON();
-        let result = new Indicators();
+        let result = new IndicatorShowDto();
         result.init(json);
         return result;
     }

@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.IndicatorsDetails.Dtos;
 using GYSWP.IndicatorsDetails;
+using GYSWP.Dtos;
 
 namespace GYSWP.IndicatorsDetails
 {
@@ -71,12 +72,6 @@ namespace GYSWP.IndicatorsDetails
         /// </summary>
         Task BatchDelete(List<Guid> input);
 
-
-		/// <summary>
-        /// 导出IndicatorsDetail为excel表
-        /// </summary>
-        /// <returns></returns>
-		//Task<FileDto> GetToExcel();
-
+        Task<APIResultDto> ChangeStatusByIdAsync(IndicatorsDetailUpDateDto input);
     }
 }

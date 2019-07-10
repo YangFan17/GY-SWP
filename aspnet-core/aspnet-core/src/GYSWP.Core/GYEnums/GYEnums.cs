@@ -105,4 +105,12 @@ namespace GYSWP.GYEnums
         年度 = 1,
         季度 = 2,
     }
+
+    public enum Stamps
+    {
+        受控 = 1,
+        非受控 = 2,
+        作废 = 3,
+        现行有效 = 4
+    }
 }

@@ -25,7 +25,7 @@ namespace GYSWP.IndicatorsDetails.Dtos
 		/// ClauseId
 		/// </summary>
 		[Required(ErrorMessage="ClauseId不能为空")]
-		public decimal ActualValue { get; set; }
+		public decimal? ActualValue { get; set; }
 
 
 
@@ -77,5 +77,9 @@ namespace GYSWP.IndicatorsDetails.Dtos
         /// </summary>
         [StringLength(100)]
         public string DeptName { get; set; }
+        /// <summary>
+        /// 完成时间
+        /// </summary>
+        public DateTime? CompleteTime { get; set; }
     }
 }

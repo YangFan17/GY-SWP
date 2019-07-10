@@ -542,7 +542,7 @@ namespace GYSWP.CriterionExamines
                 {
                     int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
                     int random = (int)Math.Ceiling(total * 0.2);
-                    var adminList = await GetUsersInRoleAsync("标准化管理员");
+                    var adminList = await GetUsersInRoleAsync("StandardAdmin");
                     string[] adminIds = adminList.Select(v => v.EmployeeId).ToArray();
                     var examEmp = await _employeeRepository.GetAll().Where(v => adminIds.Contains(v.Id) && v.Department == "[" + input.DeptId + "]").Select(v => new { v.Id, v.Name }).FirstOrDefaultAsync();
                     var empClauseList = await _employeeClauseRepository.GetAll().Where(v => employeeIds.Contains(v.EmployeeId)).OrderBy(v => Guid.NewGuid()).Take(random).ToListAsync();

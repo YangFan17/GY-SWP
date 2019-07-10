@@ -48,10 +48,10 @@
                     <th>测量方式</th>
                     <th>检查周期</th>
                     <th>创建时间</th>
-                    <th>检查对象</th>
-                    <th>指标状态</th>
+                    <!-- <th>检查对象</th> -->
+                    <!-- <th>指标状态</th> -->
                     <th>预期值</th>
-                    <th>实际值</th>
+                    <!-- <th>实际值</th> -->
                     <th>操作</th>
                 </tr>
             </thead>
@@ -62,12 +62,12 @@
                     <td>{{item.measuringWay}}</td>
                     <td>{{item.cycleTimeName}}</td>
                     <td>{{item.creationTime | date: "yyyy-MM-dd"}}</td>
-                    <td>{{item.deptName}}</td>
-                    <nz-badge *ngIf="item.statusName == 1" [nzStatus]="'default'" [nzText]="'未填写'"></nz-badge>
+                    <!-- <td>{{item.deptName}}</td> -->
+                    <!-- <nz-badge *ngIf="item.statusName == 1" [nzStatus]="'default'" [nzText]="'未填写'"></nz-badge>
                     <nz-badge *ngIf="item.statusName == 2" [nzStatus]="'success'" [nzText]="'已达成'"></nz-badge>
-                    <nz-badge *ngIf="item.statusName == 3" [nzStatus]="'error'" [nzText]="'未达成'"></nz-badge>
-                    <td>{{item.expectedValue}}</td>
-                    <td>{{item.actualValue}}</td>
+                    <nz-badge *ngIf="item.statusName == 3" [nzStatus]="'error'" [nzText]="'未达成'"></nz-badge> -->
+                    <td>{{item.expectedValue}}%</td>
+                    <!-- <td>{{item.actualValue}}</td> -->
                     <td>
                         <a (click)="goDetail(item.id)">详情</a>
                     </td>

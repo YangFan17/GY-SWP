@@ -25,6 +25,8 @@ import { MyExamineComponent } from './my-examine/my-examine.component';
 import { ExamineDetailComponent } from './my-examine/examine-detail/examine-detail.component';
 import { ResultDetailComponent } from './my-examine/examine-detail/result-detail/result-detail.component';
 import { ResultFeedbackComponent } from './my-examine/examine-detail/result-feedback/result-feedback.component';
+import { MyIndicatorComponent } from './my-indicator/my-indicator.component';
+import { IndicatorDetailComponent } from './my-indicator/indicator-detail/indicator-detail.component';
 
 @NgModule({
     imports: [
@@ -52,7 +54,9 @@ import { ResultFeedbackComponent } from './my-examine/examine-detail/result-feed
         MyExamineComponent,
         ExamineDetailComponent,
         ResultDetailComponent,
-        ResultFeedbackComponent
+        ResultFeedbackComponent,
+        MyIndicatorComponent,
+        IndicatorDetailComponent,
     ],
     entryComponents: [
         CriterionComponent,
@@ -69,7 +73,9 @@ import { ResultFeedbackComponent } from './my-examine/examine-detail/result-feed
         MyExamineComponent,
         ExamineDetailComponent,
         ResultDetailComponent,
-        ResultFeedbackComponent
+        ResultFeedbackComponent,
+        MyIndicatorComponent,
+        IndicatorDetailComponent,
     ],
     providers: [WorkCriterionService]
 })

@@ -99,10 +99,12 @@ namespace GYSWP.Indicators.Dtos
         /// </summary>
         [Required]
         public CycleTime CycleTime { get; set; }
+        public string CycleTimeName { get { return CycleTime.ToString(); } }
     }
 
-    public class IndicatorShowDto : EntityDto<Guid>, IHasCreationTime
+    public class IndicatorShowDto : EntityDto<Guid>
     {
+        public Guid IndicatorDetailId { get; set; }
         /// <summary>
         /// Title
         /// </summary>
@@ -128,19 +130,38 @@ namespace GYSWP.Indicators.Dtos
         /// </summary>
         public string CreatorDeptName { get; set; }
         /// <summary>
-        /// DeptId
-        /// </summary>
-        public string DeptIds { get; set; }
-        /// <summary>
         /// DeptName
         /// </summary>
-        public string DeptNames { get; set; }
+        public string DeptName { get; set; }
         /// <summary>
         /// 预期值
         /// </summary>
         public decimal ExpectedValue { get; set; }
-        public decimal ActualValue { get; set; }
-        public string StatusName { get; set; }
+        public decimal? ActualValue { get; set; }
+
+        public IndicatorStatus Status { get; set; }
         public string CycleTimeName { get; set; }
+        public string StatusName { get { return Status.ToString(); } }
+    }
+    public class IndicatorReviewDto : EntityDto<Guid>
+    {
+        public Guid IndicatorDetailId { get; set; }
+
+        /// <summary>
+        /// DeptName
+        /// </summary>
+        public string DeptName { get; set; }
+        /// <summary>
+        /// 预期值
+        /// </summary>
+        public decimal ExpectedValue { get; set; }
+        public decimal? ActualValue { get; set; }
+
+        public IndicatorStatus Status { get; set; }
+        public string StatusName { get { return Status.ToString(); } }
+        public DateTime? CompleteTime { get; set; }
+        public string EmployeeName { get; set; }
+        public string EmployeeDeptName { get; set; }
+
     }
 }
