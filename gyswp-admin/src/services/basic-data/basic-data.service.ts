@@ -3,7 +3,7 @@ import { Observer, Observable } from "rxjs";
 import { CommonHttpClient } from "services/common-httpclient";
 import { map } from "rxjs/operators";
 import { NzTreeNode } from "ng-zorro-antd";
-import { ApiResult, DocumentDto, Clause, Employee } from "entities";
+import { ApiResult, DocumentDto, Clause, Employee, Attachment } from "entities";
 import { PagedResultDto } from "@shared/component-base";
 import { API_BASE_URL } from "@shared/service-proxies/service-proxies";
 
@@ -154,6 +154,28 @@ export class BasicDataService {
         let url_ = "/api/services/app/Clause/ClauseRemoveById";
         var param = { id: id };
         return this._commonhttp.post(url_, param).pipe(map(data => {
+            return data;
+        }));
+    }
+
+    uploadAttachment(input: any): Observable<any> {
+        let url_ = "/api/services/app/DocAttachment/CreateOrUpdate";
+        let att = { docAttachment: input };
+        return this._commonhttp.post(url_, att).pipe(map(data => {
+            return data;
+        }));
+    }
+
+    getAttachmentListByIdAsync(params: any): Observable<Attachment[]> {
+        let url_ = "/api/services/app/DocAttachment/GetAttachmentListByIdAsync";
+        return this._commonhttp.get(url_, params).pipe(map(data => {
+            return Attachment.fromJSArray(data);
+        }));
+    }
+
+    deleteAttachmentByIdAsync(id: string): Observable<any> {
+        let url_ = "/api/services/app/DocAttachment/Delete";
+        return this._commonhttp.delete(url_, { id: id }).pipe(map(data => {
             return data;
         }));
     }

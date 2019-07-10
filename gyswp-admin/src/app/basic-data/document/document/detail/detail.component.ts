@@ -1,19 +1,19 @@
-import { Component, OnInit, Injector, ViewChild } from '@angular/core';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd';
+import { Component, OnInit, Injector, ViewChild, Inject } from '@angular/core';
+import { UploadFile, UploadFilter } from 'ng-zorro-antd';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BasicDataService } from 'services';
-import { DocumentDto } from 'entities';
-import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
+import { BasicDataService } from 'services/basic-data/basic-data.service';
+import { DocumentDto, DocAttachment, Attachment } from 'entities';
 import { AppConsts } from '@shared/AppConsts';
 import { ClauseComponent } from '../../clause/clause.component';
 import { AppComponentBase } from '@shared/component-base';
 import { DeptUserComponent } from './dept-user/dept-user.component';
+import { Observable, Observer } from 'rxjs';
 
 @Component({
     moduleId: module.id,
     selector: 'detail',
     templateUrl: 'detail.component.html',
-    styleUrls: ['detail.component.less']
+    styleUrls: ['detail.component.less'],
 })
 export class DetailComponent extends AppComponentBase implements OnInit {
     @ViewChild('clause') clause: ClauseComponent;
@@ -21,7 +21,7 @@ export class DetailComponent extends AppComponentBase implements OnInit {
     userTags = [];
     deptTags = [];
     host = AppConsts.remoteServiceBaseUrl;
-    actionUrl = this.host + '/GYISMSFile/MeetingRoomPost?fileName=room';
+    postUrl: string = '/GYSWPFile/DocFilesPostsAsync';
     qrCode = {
         value: '',
         background: 'white',
@@ -34,24 +34,52 @@ export class DetailComponent extends AppComponentBase implements OnInit {
         size: 230
     };
     fileList = [
-        {
-            uid: 1,
-            name: 'xxx.png',
-            status: 'done',
-            response: 'Server Error 500', // custom error message to show
-            url: 'http://www.baidu.com/xxx.png'
-        }
+        // {
+        //     uid: 1,
+        //     name: 'xxx.png',
+        //     status: 'done',
+        //     response: 'Server Error 500', // custom error message to show
+        //     url: 'http://www.baidu.com/xxx.png'
+        // }
     ];
+    filters: UploadFilter[] = [
+        {
+            name: 'type',
+            fn: (fileList: UploadFile[]) => {
+                const filterFiles = fileList.filter(w => ~['application/pdf'].indexOf(w.type));
+                if (filterFiles.length !== fileList.length) {
+                    this.notify.error(`包含文件格式不正确，只支持 pdf 格式`);
+                    return filterFiles;
+                }
+                return fileList;
+            }
+        },
+        // {
+        //     name: 'async',
+        //     fn: (fileList: UploadFile[]) => {
+        //         return new Observable((observer: Observer<UploadFile[]>) => {
+        //             // doing
+        //             observer.next(fileList);
+        //             observer.complete();
+        //         });
+        //     }
+        // }
+    ];
+
+
     saving: boolean = false;
     document: DocumentDto = new DocumentDto();
     category = { id: '', name: '' };
     dept = { id: '', name: '' };
     isUpdate = false;
+    uploadLoading = false;
     id: any = '';
     codeStyle = 'none';
-    attachments = [];
+    attachments: Attachment[] = [];
+    attachment: DocAttachment = new DocAttachment();
     isControl: string;
     isValid: string;
+    isDelete: boolean;
 
     constructor(injector: Injector
         , private actRouter: ActivatedRoute
@@ -71,7 +99,6 @@ export class DetailComponent extends AppComponentBase implements OnInit {
 
     ngOnInit(): void {
         this.getById();
-        this.getAttachments();
     }
 
     save() {
@@ -126,17 +153,21 @@ export class DetailComponent extends AppComponentBase implements OnInit {
                 this.clause.doc = { id: res.id, name: res.name };
                 this.clause.getClauseList();
             });
+            this.getAttachmentList();
         }
     }
 
     getAttachments() {
-        // if (this.id) {
-        //     var param = { docId: this.id };
-        //     this.attachmentService.getListByDocIdAsync(param).subscribe(res => {
-        //         this.attachments = res;
-        //     });
-        // }
+        if (this.id) {
+            var param = { docId: this.id };
+            this.basicDataService.getAttachmentListByIdAsync(param).subscribe(res => {
+                this.attachments = res;
+                this.fileList = res;
+            });
+        }
     }
+
+
 
     return() {
         this.router.navigate(['app/basic/document']);
@@ -170,7 +201,7 @@ export class DetailComponent extends AppComponentBase implements OnInit {
         //     });
     }
 
-    deleteAttachment(itemid) {
+    deleteAttachment = (file: UploadFile): boolean => {
         // this.confirmModal = this.modal.confirm({
         //     nzContent: '确定是否删除资料文档?',
         //     nzOnOk: () => {
@@ -180,9 +211,77 @@ export class DetailComponent extends AppComponentBase implements OnInit {
         //         });
         //     }
         // });
+
+        this.isDelete = confirm("是否进行删除操作");
+        if (this.isDelete) {
+            this.basicDataService.deleteAttachmentByIdAsync(file.id).subscribe(res => {
+                this.notify.success('删除成功');
+                this.getAttachmentList();
+                return true;
+            })
+        }
+        return false;
     }
+
+
+
+    beforeUpload = (file: UploadFile): boolean => {
+        if (this.uploadLoading) {
+            this.notify.info('正在上传中');
+            return false;
+        }
+        this.uploadLoading = true;
+        return true;
+    }
+
+    handleChange = (info: { file: UploadFile }): void => {
+        if (info.file.status === 'error') {
+            this.notify.error('上传文件异常，请重试');
+            this.uploadLoading = false;
+        }
+        if (this.fileList.length > 0) {
+            this.notify.error('只能上传一个附件,请先删除原有附件');
+            this.uploadLoading = false;
+        }
+        else {
+            if (info.file.status === 'done') {
+                this.uploadLoading = false;
+                var res = info.file.response.result;
+                if (res.code == 0) {
+                    this.attachment.name = res.data.name;
+                    this.attachment.type = 3;
+                    this.attachment.fileSize = res.data.size;
+                    this.attachment.path = res.data.url;
+                    this.attachment.bLL = this.id;
+                    this.saveAttachment();
+                } else {
+                    this.notify.error(res.msg);
+                }
+            }
+        }
+        this.getAttachmentList();
+    }
+    saveAttachment() {
+        this.basicDataService.uploadAttachment(this.attachment).subscribe(res => {
+            this.notify.success('上传文件成功');
+            this.getAttachmentList();
+        })
+    }
+
+
+
+    getAttachmentList() {
+        let params: any = {};
+        params.BllId = this.id;
+
+        this.basicDataService.getAttachmentListByIdAsync(params).subscribe(r => {
+            this.attachments = r;
+            this.fileList = r;
+        })
+    }
+
     uploadDocAttach() {
-        console.log(this.actionUrl);
+
     }
     controlRadioChange(ngmodel: string) {
         this.isControl = ngmodel;

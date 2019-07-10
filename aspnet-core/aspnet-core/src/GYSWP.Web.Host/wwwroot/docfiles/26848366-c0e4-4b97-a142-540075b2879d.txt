@@ -1,0 +1,16 @@
+1.中间件
+	https://www.cnblogs.com/stulzq/p/7760648.html					博客园链接
+2.异步编程
+	https://www.cnblogs.com/mingjiatang/p/5267391.html				博客园链接
+		async/await:异步等待技术:https://www.cnblogs.com/feipeng8848/p/10188871.html
+
+3.身份验证
+	https://www.cnblogs.com/woailibian/p/6579850.html				博客园链接
+		认证与授权:https://www.cnblogs.com/RainingNight/p/oidc-authentication-in-asp-net-core.html#oauth-2.0
+
+4.ef
+5.ABP
+	0.https://aspnetboilerplate.com/Pages/Documents					ABP官网
+	1.https://www.cnblogs.com/farb/p/ABPTheory.html					博客园
+	2.https://github.com/ABPFrameWorkGroup/AbpDocument2Chinese/tree/master/Markdown	GitHub ABP框架
+	3.https://github.com/aspnetboilerplate/aspnetboilerplate 				GitHub ABP源码
