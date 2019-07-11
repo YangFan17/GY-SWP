@@ -66,7 +66,9 @@ export class UsersComponent extends PagedListingComponentBase<UserDto> {
   create(): void {
     this.modalHelper
       .open(CreateUserComponent, {}, 'md', {
-        nzMask: true
+        nzMask: true,
+        nzClosable: false,
+        nzMaskClosable: false,
       })
       .subscribe(isSave => {
         if (isSave) {
@@ -78,7 +80,9 @@ export class UsersComponent extends PagedListingComponentBase<UserDto> {
   edit(item: UserDto): void {
     this.modalHelper
       .open(EditUserComponent, { id: item.id }, 'md', {
-        nzMask: true
+        nzMask: true,
+        nzClosable: false,
+        nzMaskClosable: false,
       })
       .subscribe(isSave => {
         if (isSave) {

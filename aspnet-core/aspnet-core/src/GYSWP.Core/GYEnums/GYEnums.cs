@@ -7,7 +7,8 @@ namespace GYSWP.GYEnums
     public enum ConfigType
     {
         钉钉配置 = 1,
-        标准化工作平台 = 2
+        标准化工作平台 = 2,
+        设备管理 = 3
     }
     public enum ConfigModel
     {
@@ -113,6 +114,21 @@ namespace GYSWP.GYEnums
         作废 = 3,
         现行有效 = 4
     }
+
+    public enum LC_TimeType
+    {
+        入库作业 = 1,
+        在库保管 = 2,
+        出库分拣 = 3,
+        零货出库 = 4
+    }
+
+    public enum LC_TimeStatus
+    {
+        开始 = 1,
+        结束 = 2
+    }
+
 
     public static class GYCode
     {

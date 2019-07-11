@@ -338,9 +338,25 @@ namespace GYSWP.Indicators
         {
             var detail = _indicatorsDetailRepository.GetAll().Where(v => v.IndicatorsId == input.Id);
             var indicator = _entityRepository.GetAll();
+            //var result = from i in indicator
+            //             join d in detail on i.Id equals d.IndicatorsId into g
+            //             from table in g.DefaultIfEmpty()
+            //             select new IndicatorReviewDto()
+            //             {
+            //                 Id = i.Id,
+            //                 //Title = i.Title,
+            //                 //Paraphrase = i.Paraphrase,
+            //                 //MeasuringWay = i.MeasuringWay,
+            //                 //ExpectedValue = i.ExpectedValue,
+            //                 //Status = table.Status,
+            //                 EmployeeName = table.EmployeeName,
+            //                 //CompleteTime = table.CompleteTime,
+            //                 //IndicatorDetailId = table.Id,
+            //                 //ActualValue = table.ActualValue,
+            //                 EmployeeDeptName = table.DeptName,
+            //             };
             var result = from i in indicator
-                         join d in detail on i.Id equals d.IndicatorsId into g
-                         from table in g.DefaultIfEmpty()
+                         join d in detail on i.Id equals d.IndicatorsId
                          select new IndicatorReviewDto()
                          {
                              Id = i.Id,
@@ -348,12 +364,12 @@ namespace GYSWP.Indicators
                              //Paraphrase = i.Paraphrase,
                              //MeasuringWay = i.MeasuringWay,
                              ExpectedValue = i.ExpectedValue,
-                             Status = table.Status,
-                             EmployeeName = table.EmployeeName,
-                             CompleteTime = table.CompleteTime,
-                             IndicatorDetailId = table.Id,
-                             ActualValue = table.ActualValue,
-                             EmployeeDeptName = table.DeptName,
+                             Status = d.Status,
+                             EmployeeName = d.EmployeeName,
+                             CompleteTime = d.CompleteTime,
+                             IndicatorDetailId = d.Id,
+                             ActualValue = d.ActualValue,
+                             EmployeeDeptName = d.DeptName,
                          };
 
             return await result.OrderByDescending(v=>v.Status).ThenByDescending(v=>v.CompleteTime).ToListAsync();

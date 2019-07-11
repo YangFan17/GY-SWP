@@ -20,8 +20,8 @@ namespace GYSWP.Web.Host.Controllers
         private readonly INotificationPublisher _notificationPublisher;
         //private string APPID = "dingoa6hra7f79otenwx0y";
         private string APPID = "dingoanherbetgt7ld5rrh";
-        //private string REDIRECT_URI = "http://gy.intcov.com";
-        private string REDIRECT_URI = "http://localhost:21021";
+        private string REDIRECT_URI = "http://gy.intcov.com";
+        //private string REDIRECT_URI = "http://localhost:21021";
         //private string REDIRECT_URI = "http://yangfan.vaiwan.com";
 
         IDingDingAppService _dingDingAppService;
@@ -39,8 +39,9 @@ namespace GYSWP.Web.Host.Controllers
 
         public IActionResult Index(string code)
         {
-            //return Redirect("/gyswp/index.html");
-            return Redirect("/swagger");
+            return Redirect("/gyswp/index.html");
+            //return Redirect("/swagger");
+            #region ×¢ÊÍ
             //if (!string.IsNullOrEmpty(code))
             //{
             //    //string accessToken = "b759f2aae1813d679fa728b731758160";
@@ -72,9 +73,10 @@ namespace GYSWP.Web.Host.Controllers
             //}
             //return Redirect("/swagger");
             ////return Redirect(string.Format("https://oapi.dingtalk.com/connect/qrconnect?appid={0}&response_type=code&scope=snsapi_login&state=STATE&redirect_uri={1}", APPID, REDIRECT_URI));
+            #endregion
         }
 
-        public IActionResult AuthenticateByScanCodeAsync(string code, string state)
+        public IActionResult AuthenticateByScanCodeAsync(string code,  string state)
         {
             string appSecret = "--HvFZSQx765LkFskrrKhELYQZdSqpxUgDEYktz60D860O45QTNCRYosZ-SXsB3E";
             string accessToken = _dingDingAppService.GetAccessTokenByAppId(APPID, appSecret);
@@ -92,7 +94,7 @@ namespace GYSWP.Web.Host.Controllers
                 {
                     var user = _employeeAppService.GetEmployeeByUnionIdAsync(obj.user_info.unionId).Result;
                     //user.Password = "123qwe";
-                    return Redirect(string.Format("http://localhost:4200/account/login;name={0};flag={1}", user.UserName,"SUCCESS"));
+                    return Redirect(string.Format("http://gy.intcov.com/account/login;name={0};flag={1}", user.UserName,"SUCCESS"));
                 }
                 else
                 {

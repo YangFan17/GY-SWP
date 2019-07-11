@@ -162,11 +162,11 @@ namespace GYSWP.DingDingApproval
                         //value = "[编号]：" + item.ClauseNo + "\n"
                         //+ "[标题]：" + (item.Title.Length > 10 ? item.Title.Substring(0, 10) + "..." : item.Title) + "\n"
                         //+ "[内容]：" + (item.Content.Length > 30 ? item.Content.Substring(0, 30) + "..." : item.Content)
-                        //                    value = "[编号]：" + clause.ClauseNo + "\n"
-                        //+ "[标题]：" + clause.Title + "\n"
-                        //+ "[内容]：" + clause.Content
-                        value =  clause.ClauseNo + (clause.Title != null ?  ("\t" + clause.Title):"") 
-                        + (clause.Content != null ? ("\r\n" + clause.Content) : "")
+                        //                    value = "[编号]：" + item.ClauseNo + "\n"
+                        //+ "[标题]：" + item.Title + "\n"
+                        //+ "[内容]：" + item.Content
+                        value =  item.ClauseNo + (item.Title != null ?  ("\t" + item.Title):"") 
+                        + (item.Content != null ? ("\r\n" + item.Content) : "")
                     });
                 }
                 else if (item.RevisionType == GYEnums.RevisionType.修订)
@@ -192,8 +192,8 @@ namespace GYSWP.DingDingApproval
                         //value = "[编号]：" + item.ClauseNo + "\n"
                         //+ "[标题]：" + item.Title + "\n"
                         //+ "[内容]：" + item.Content
-                        value = clause.ClauseNo + (clause.Title != null ? ("\t" + clause.Title) : "")
-                        + (clause.Content != null ? ("\r\n" + clause.Content) : "")
+                        value = item.ClauseNo + (item.Title != null ? ("\t" + item.Title) : "")
+                        + (item.Content != null ? ("\r\n" + item.Content) : "")
                     });
                 }
                 else
@@ -315,6 +315,7 @@ namespace GYSWP.DingDingApproval
         /// <summary>
         /// 发送制定标准（企管编号盖章）钉钉工作通知
         /// </summary>
+        [AbpAllowAnonymous]
         public async Task<APIResultDto> SendMessageToQGAdminAsync(string docName, Guid docId)
         {
             try
