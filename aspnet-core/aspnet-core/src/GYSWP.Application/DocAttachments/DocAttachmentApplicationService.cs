@@ -204,7 +204,34 @@ DocAttachmentEditDto editDto;
                 .Select(v=>new DocAttachmentDto {
                     Id = v.Id,
                     Name = v.Name,
-                    FileSize = v.FileSize
+                    FileSize = v.FileSize,
+                    Path = v.Path
+                }).ToListAsync();
+            return list;
+        }
+
+        public async Task<List<DocAttachmentDto>> GetClauseAttachmentsByIdAsync(GetDocAttachmentsInput input)
+        {
+            var list = await _entityRepository.GetAll().Where(v => v.Type == GYEnums.AttachmentType.条款附件 && v.BLL == input.BllId)
+                .Select(v => new DocAttachmentDto
+                {
+                    Id = v.Id,
+                    Name = v.Name,
+                    FileSize = v.FileSize,
+                    Path = v.Path
+                }).ToListAsync();
+            return list;
+        }
+
+        public async Task<List<DocAttachmentDto>> GetCriterionAttachmentByIdAsync(GetDocAttachmentsInput input)
+        {
+            var list = await _entityRepository.GetAll().Where(v => v.Type == GYEnums.AttachmentType.标准附件 && v.BLL == input.BllId)
+                .Select(v => new DocAttachmentDto
+                {
+                    Id = v.Id,
+                    Name = v.Name,
+                    FileSize = v.FileSize,
+                    Path = v.Path
                 }).ToListAsync();
             return list;
         }

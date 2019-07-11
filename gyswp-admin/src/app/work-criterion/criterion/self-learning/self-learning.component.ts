@@ -32,6 +32,7 @@ export class SelfLearningComponent extends AppComponentBase implements OnInit {
     applyId: string; // 申请id
     // isSaveApply: boolean = false //是否可提交保存
     isRevisionWaitTime: boolean = false //是否为审批提交后等待阶段
+    docStamps: string;//标准状态
     constructor(injector: Injector
         , private workCriterionService: WorkCriterionService
         , private actRouter: ActivatedRoute
@@ -71,6 +72,20 @@ export class SelfLearningComponent extends AppComponentBase implements OnInit {
             params.id = this.docId;
             this.workCriterionService.getDocInfoAsync(params).subscribe((result) => {
                 this.docInfo = result;
+                this.docStamps = result.stamps;
+                if (result.stamps != null) {
+                    // result.stamps.replace('1', "受控");
+                    // result.stamps.replace('2', "非受控");
+                    // result.stamps.replace('3', "作废");
+                    // result.stamps.replace('4', "现行有效");
+
+                    if (result.stamps.indexOf(',')) {
+                        var res = result.stamps.split(',');
+                        var isControl = res[0] == "1" ? "受控" : "非受控";
+                        var isValid = res[1] == "3" ? "作废" : "现行有效";
+                        this.docStamps = isControl + ',' + isValid;
+                    }
+                }
                 this.getUserOperate();
             });
         }

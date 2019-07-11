@@ -86,6 +86,7 @@ export class Attachment {
     id: string;
     name: string;
     fileSize: number;
+    url: string;
     constructor(data?: any) {
         if (data) {
             for (var property in data) {
@@ -99,6 +100,7 @@ export class Attachment {
             this.id = data["id"];
             this.name = data["name"];
             this.fileSize = data["fileSize"];
+            this.url = data["path"];
         }
     }
     toJSON(data?: any) {
@@ -106,6 +108,7 @@ export class Attachment {
         data["id"] = this.id;
         data["name"] = this.name;
         data["fileSize"] = this.fileSize;
+        data["path"] = this.url;
         return data;
     }
     static fromJS(data: any): Attachment {

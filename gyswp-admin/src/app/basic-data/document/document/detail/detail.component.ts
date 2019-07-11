@@ -1,5 +1,5 @@
 import { Component, OnInit, Injector, ViewChild, Inject } from '@angular/core';
-import { UploadFile, UploadFilter } from 'ng-zorro-antd';
+import { UploadFile, UploadFilter, NzModalService } from 'ng-zorro-antd';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BasicDataService } from 'services/basic-data/basic-data.service';
 import { DocumentDto, DocAttachment, Attachment } from 'entities';
@@ -33,15 +33,7 @@ export class DetailComponent extends AppComponentBase implements OnInit {
         padding: 10,
         size: 230
     };
-    fileList = [
-        // {
-        //     uid: 1,
-        //     name: 'xxx.png',
-        //     status: 'done',
-        //     response: 'Server Error 500', // custom error message to show
-        //     url: 'http://www.baidu.com/xxx.png'
-        // }
-    ];
+    fileList: Attachment[] = [];
     filters: UploadFilter[] = [
         {
             name: 'type',
@@ -53,17 +45,7 @@ export class DetailComponent extends AppComponentBase implements OnInit {
                 }
                 return fileList;
             }
-        },
-        // {
-        //     name: 'async',
-        //     fn: (fileList: UploadFile[]) => {
-        //         return new Observable((observer: Observer<UploadFile[]>) => {
-        //             // doing
-        //             observer.next(fileList);
-        //             observer.complete();
-        //         });
-        //     }
-        // }
+        }
     ];
 
 
@@ -75,7 +57,6 @@ export class DetailComponent extends AppComponentBase implements OnInit {
     uploadLoading = false;
     id: any = '';
     codeStyle = 'none';
-    attachments: Attachment[] = [];
     attachment: DocAttachment = new DocAttachment();
     isControl: string;
     isValid: string;
@@ -85,6 +66,7 @@ export class DetailComponent extends AppComponentBase implements OnInit {
         , private actRouter: ActivatedRoute
         , private router: Router
         , private basicDataService: BasicDataService
+        , private modal: NzModalService
     ) {
         super(injector);
         var cid = this.actRouter.snapshot.params['cid'];
@@ -157,18 +139,6 @@ export class DetailComponent extends AppComponentBase implements OnInit {
         }
     }
 
-    getAttachments() {
-        if (this.id) {
-            var param = { docId: this.id };
-            this.basicDataService.getAttachmentListByIdAsync(param).subscribe(res => {
-                this.attachments = res;
-                this.fileList = res;
-            });
-        }
-    }
-
-
-
     return() {
         this.router.navigate(['app/basic/document']);
     }
@@ -202,25 +172,20 @@ export class DetailComponent extends AppComponentBase implements OnInit {
     }
 
     deleteAttachment = (file: UploadFile): boolean => {
-        // this.confirmModal = this.modal.confirm({
-        //     nzContent: '确定是否删除资料文档?',
-        //     nzOnOk: () => {
-        //         this.attachmentService.delete(itemid).subscribe(() => {
-        //             this.notify.info('删除成功！', '');
-        //             this.getAttachments();
-        //         });
-        //     }
-        // });
-
-        this.isDelete = confirm("是否进行删除操作");
-        if (this.isDelete) {
-            this.basicDataService.deleteAttachmentByIdAsync(file.id).subscribe(res => {
-                this.notify.success('删除成功');
-                this.getAttachmentList();
-                return true;
-            })
-        }
-        return false;
+        this.modal.confirm({
+            nzContent: '确定是否删除资料文档?',
+            nzOnOk: () => {
+                this.basicDataService.deleteAttachmentByIdAsync(file.id).subscribe(() => {
+                    this.notify.info('删除成功！', '');
+                    this.getAttachmentList();
+                    this.isDelete = true;
+                });
+            },
+            nzOnCancel: () => {
+                this.isDelete = false;
+            }
+        });
+        return this.isDelete;
     }
 
 
@@ -239,7 +204,7 @@ export class DetailComponent extends AppComponentBase implements OnInit {
             this.notify.error('上传文件异常，请重试');
             this.uploadLoading = false;
         }
-        if (this.fileList.length > 0) {
+        if (this.fileList.length > 1) {
             this.notify.error('只能上传一个附件,请先删除原有附件');
             this.uploadLoading = false;
         }
@@ -249,9 +214,9 @@ export class DetailComponent extends AppComponentBase implements OnInit {
                 var res = info.file.response.result;
                 if (res.code == 0) {
                     this.attachment.name = res.data.name;
-                    this.attachment.type = 3;
+                    this.attachment.type = 1;
                     this.attachment.fileSize = res.data.size;
-                    this.attachment.path = res.data.url;
+                    this.attachment.path = this.host + res.data.url;
                     this.attachment.bLL = this.id;
                     this.saveAttachment();
                 } else {
@@ -273,10 +238,10 @@ export class DetailComponent extends AppComponentBase implements OnInit {
     getAttachmentList() {
         let params: any = {};
         params.BllId = this.id;
-
-        this.basicDataService.getAttachmentListByIdAsync(params).subscribe(r => {
-            this.attachments = r;
+        this.basicDataService.getCriterionAttachmentById(params).subscribe(r => {
             this.fileList = r;
+            console.log(r);
+            console.log(this.fileList);
         })
     }
 
