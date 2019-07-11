@@ -58,6 +58,8 @@ export class RolesComponent extends PagedListingComponentBase<RoleDto> {
     this.modalHelper
       .open(CreateRoleComponent, {}, 'md', {
         nzMask: true,
+        nzClosable: false,
+        nzMaskClosable: false,
       })
       .subscribe(isSave => {
         if (isSave) {
@@ -70,6 +72,8 @@ export class RolesComponent extends PagedListingComponentBase<RoleDto> {
     this.modalHelper
       .open(EditRoleComponent, { id: item.id }, 'md', {
         nzMask: true,
+        nzClosable: false,
+        nzMaskClosable: false,
       })
       .subscribe(isSave => {
         if (isSave) {

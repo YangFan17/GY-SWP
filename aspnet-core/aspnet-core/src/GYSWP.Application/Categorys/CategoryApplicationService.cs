@@ -290,7 +290,8 @@ namespace GYSWP.Categorys
         {
             var curUser = await GetCurrentUserAsync();
             var deptId = await _employeeRepository.GetAll().Where(v => v.Id == curUser.EmployeeId).Select(v => v.Department).FirstOrDefaultAsync();
-            var entity = await (from c in _entityRepository.GetAll().Where(v => "[" + v.DeptId + "]" == deptId)
+            var zuofeiCategory = await _entityRepository.GetAll().Where(v => "[" + v.DeptId + "]" == deptId && v.Name == "作废标准库").Select(v => new { v.Id }).FirstOrDefaultAsync();
+            var entity = await (from c in _entityRepository.GetAll().Where(v => "[" + v.DeptId + "]" == deptId && v.ParentId != 0 && v.ParentId!= zuofeiCategory.Id)
                                 select new
                                 {
                                     text = c.Name,

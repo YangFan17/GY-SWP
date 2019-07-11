@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using GYSWP.GYEnums;
+using GYSWP.Categorys;
 
 namespace GYSWP.StandardRevisionReports
 {
@@ -24,16 +25,20 @@ namespace GYSWP.StandardRevisionReports
         private readonly IRepository<Document, Guid> _documentRepository;
         private readonly IRepository<DocRevision, Guid> _docRevisionRepository;
         private readonly IRepository<ClauseRevision, Guid> _clauseRevisionRepository;
+        private readonly IRepository<Category> _categoryRepository;
 
         public StandardRevisionAppService(IRepository<Organization, long> organizationRepository
             , IRepository<Document, Guid> documentRepository
             , IRepository<DocRevision, Guid> docRevisionRepository
-            , IRepository<ClauseRevision, Guid> clauseRevisionRepository)
+            , IRepository<ClauseRevision, Guid> clauseRevisionRepository
+            , IRepository<Category> categoryRepository
+            )
         {
             _documentRepository = documentRepository;
             _organizationRepository = organizationRepository;
             _docRevisionRepository = docRevisionRepository;
             _clauseRevisionRepository = clauseRevisionRepository;
+            _categoryRepository = categoryRepository;
         }
 
         public async Task<List<StandardRevisionDto>> GetSearchStandardRevisions(StandardRevisionInputDto input)
@@ -41,10 +46,12 @@ namespace GYSWP.StandardRevisionReports
             List<StandardRevisionDto> list = new List<StandardRevisionDto>();
             StandardRevisionDto standardRevisionDto = new StandardRevisionDto();
             //return null;
-            var dept = await _organizationRepository.GetAsync(input.DeptId);
+            var dept = await _organizationRepository.GetAll().Where(v=>v.Id == input.DeptId).Select(v=>new { v.Id, v.DepartmentName }).FirstOrDefaultAsync();
+            int[] category = await  _categoryRepository.GetAll().Where(v => v.DeptId == input.DeptId).Select(v=>v.Id).ToArrayAsync();
             var clauseRevisions = _clauseRevisionRepository.GetAll().Where(aa => aa.CreationTime >= input.StartTime && aa.CreationTime < input.EndTime);
             var docRevision = _docRevisionRepository.GetAll().Where(aa => aa.DeptId == input.DeptId.ToString() && aa.CreationTime >= input.StartTime && aa.CreationTime < input.EndTime);
-            var documents = _documentRepository.GetAll().Where(aa => aa.DeptIds.Contains(dept.Id.ToString()));
+            //var documents = _documentRepository.GetAll().Where(aa => aa.DeptIds.Contains(dept.Id.ToString()));
+            var documents = _documentRepository.GetAll().Where(aa => category.Contains(aa.CategoryId));
             standardRevisionDto.DeptName = dept.DepartmentName;
             standardRevisionDto.TotalCurrentStandards = await documents.CountAsync(aa => aa.PublishTime < input.EndTime && aa.IsAction == true);
             standardRevisionDto.StandardAbolitionNumber = await documents.CountAsync(aa => aa.IsAction == false && aa.InvalidTime >= input.StartTime && aa.InvalidTime < input.EndTime);

@@ -353,6 +353,7 @@ namespace GYSWP.ApplyInfos
                     doc.CategoryId = categoyrId;
                     doc.IsAction = false;
                     doc.InvalidTime = entity.HandleTime;
+                    doc.Stamps = "1,3";
                 }
                 else
                 {
@@ -468,7 +469,7 @@ namespace GYSWP.ApplyInfos
             {
                 docRevision.Status = GYEnums.RevisionStatus.审核通过;
                 entity.ProcessingStatus = GYEnums.RevisionStatus.审核通过;
-                string categoryName = await _categoryRepository.GetAll().Where(v => v.Id == docRevision.CategoryId).Select(v=>v.Name).FirstOrDefaultAsync();
+                string categoryName = await _categoryRepository.GetAll().Where(v => v.Id == docRevision.CategoryId).Select(v => v.Name).FirstOrDefaultAsync();
                 //先创建标准实体
                 Document doc = new Document();
                 doc.Name = docRevision.Name;
@@ -489,6 +490,7 @@ namespace GYSWP.ApplyInfos
                     clause.Content = item.Content;
                     clause.HasAttchment = item.HasAttchment;
                     clause.BLLId = item.Id;
+                    clause.CreatorUserId = item.CreatorUserId;
                     if (item.ParentId.HasValue)
                     {
                         Guid newId = await _clauseRepository.GetAll().Where(v => v.BLLId == item.ParentId).Select(v => v.Id).FirstOrDefaultAsync();
@@ -497,6 +499,8 @@ namespace GYSWP.ApplyInfos
                     await _clauseRepository.InsertAsync(clause);
                     await CurrentUnitOfWork.SaveChangesAsync();
                 }
+                //发送企管科通知
+                await _approvalAppService.SendMessageToQGAdminAsync(docRevision.Name, docId);
             }
             else
             {

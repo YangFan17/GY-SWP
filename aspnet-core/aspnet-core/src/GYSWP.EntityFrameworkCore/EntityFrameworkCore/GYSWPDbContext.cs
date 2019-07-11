@@ -22,6 +22,12 @@ using GYSWP.ExamineFeedbacks;
 using GYSWP.Advises;
 using GYSWP.Indicators;
 using GYSWP.IndicatorsDetails;
+using GYSWP.LC_ConveyorChecks;
+using GYSWP.LC_ForkliftChecks;
+using GYSWP.LC_InStorageBills;
+using GYSWP.LC_InStorageRecords;
+using GYSWP.LC_QualityRecords;
+using GYSWP.LC_TimeLogs;
 using GYSWP.EntryExitRegistrations;
 using GYSWP.InspectionRecords;
 using GYSWP.SCInventoryRecords;
@@ -59,5 +65,11 @@ namespace GYSWP.EntityFrameworkCore
         public virtual DbSet<EntryExitRegistration> LC_EntryExitRegistrations { get; set; }
         public virtual DbSet<InspectionRecord> LC_InspectionRecords { get; set; }
         public virtual DbSet<SCInventoryRecord> LC_SCInventoryRecords { get; set; }
+        public virtual DbSet<LC_ConveyorCheck> LC_ConveyorChecks { get; set; }
+        public virtual DbSet<LC_ForkliftCheck> LC_ForkliftChecks { get; set; }
+        public virtual DbSet<LC_InStorageBill> LC_InStorageBills { get; set; }
+        public virtual DbSet<LC_InStorageRecord> LC_InStorageRecords { get; set; }
+        public virtual DbSet<LC_QualityRecord> LC_QualityRecords { get; set; }
+        public virtual DbSet<LC_TimeLog> LC_TimeLogs { get; set; }
     }
 }
