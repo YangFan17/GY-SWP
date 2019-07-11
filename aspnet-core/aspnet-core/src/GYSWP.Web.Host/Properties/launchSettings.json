@@ -13,7 +13,6 @@
   },
   "profiles": {
     "IIS Express": {
-      //"commandName": "IISExpress",
       "commandName": "IIS",
       "launchBrowser": true,
       "environmentVariables": {

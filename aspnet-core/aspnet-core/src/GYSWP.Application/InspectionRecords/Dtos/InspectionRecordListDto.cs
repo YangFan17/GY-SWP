@@ -89,10 +89,34 @@ namespace GYSWP.InspectionRecords.Dtos
 
 
 
-		/// <summary>
-		/// CreationTime
-		/// </summary>
-		[Required(ErrorMessage="CreationTime不能为空")]
+        /// <summary>
+        /// EmployeeName
+        /// </summary>
+        [Required(ErrorMessage = "EmployeeName不能为空")]
+        public string EmployeeName { get; set; }
+
+
+
+        /// <summary>
+        /// EmployeeId
+        /// </summary>
+        [Required(ErrorMessage = "EmployeeId不能为空")]
+        public string EmployeeId { get; set; }
+
+
+
+        /// <summary>
+        /// TimeLogId
+        /// </summary>
+        [Required(ErrorMessage = "TimeLogId不能为空")]
+        public Guid TimeLogId { get; set; }
+
+
+
+        /// <summary>
+        /// CreationTime
+        /// </summary>
+        [Required(ErrorMessage="CreationTime不能为空")]
 		public DateTime CreationTime { get; set; }
 
 

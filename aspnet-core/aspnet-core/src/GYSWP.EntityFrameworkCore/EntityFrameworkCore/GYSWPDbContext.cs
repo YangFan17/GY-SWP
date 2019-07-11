@@ -67,6 +67,9 @@ namespace GYSWP.EntityFrameworkCore
         public virtual DbSet<Advise> Advises { get; set; }
         public virtual DbSet<Indicator> Indicators { get; set; }
         public virtual DbSet<IndicatorsDetail> IndicatorsDetails { get; set; }
+        public virtual DbSet<EntryExitRegistration> LC_EntryExitRegistrations { get; set; }
+        public virtual DbSet<InspectionRecord> LC_InspectionRecords { get; set; }
+        public virtual DbSet<SCInventoryRecord> LC_SCInventoryRecords { get; set; }
         public virtual DbSet<LC_ConveyorCheck> LC_ConveyorChecks { get; set; }
         public virtual DbSet<LC_ForkliftCheck> LC_ForkliftChecks { get; set; }
         public virtual DbSet<LC_InStorageBill> LC_InStorageBills { get; set; }

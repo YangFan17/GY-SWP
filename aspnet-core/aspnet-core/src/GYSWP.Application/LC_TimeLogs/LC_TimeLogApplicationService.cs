@@ -121,16 +121,16 @@ LC_TimeLogEditDto editDto;
 		/// <param name="input"></param>
 		/// <returns></returns>
 		
-		public async Task CreateOrUpdate(CreateOrUpdateLC_TimeLogInput input)
+		public async Task<LC_TimeLogEditDto> CreateOrUpdate(CreateOrUpdateLC_TimeLogInput input)
 		{
 
 			if (input.LC_TimeLog.Id.HasValue)
 			{
-				await Update(input.LC_TimeLog);
+				return await Update(input.LC_TimeLog);
 			}
 			else
 			{
-				await Create(input.LC_TimeLog);
+				return await Create(input.LC_TimeLog);
 			}
 		}
 
@@ -155,7 +155,7 @@ LC_TimeLogEditDto editDto;
 		/// 编辑LC_TimeLog
 		/// </summary>
 		
-		protected virtual async Task Update(LC_TimeLogEditDto input)
+		protected virtual async Task<LC_TimeLogEditDto> Update(LC_TimeLogEditDto input)
 		{
 			//TODO:更新前的逻辑判断，是否允许更新
 
@@ -163,8 +163,9 @@ LC_TimeLogEditDto editDto;
 			input.MapTo(entity);
 
 			// ObjectMapper.Map(input, entity);
-		    await _entityRepository.UpdateAsync(entity);
-		}
+		    var item =await _entityRepository.UpdateAsync(entity);
+            return item.MapTo<LC_TimeLogEditDto>();
+        }
 
 
 

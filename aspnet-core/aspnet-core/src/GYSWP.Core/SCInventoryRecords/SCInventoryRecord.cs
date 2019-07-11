@@ -8,7 +8,7 @@ using System.Text;
 
 namespace GYSWP.SCInventoryRecords
 {
-    [Table("SCInventoryRecords")]
+    [Table("LC_SCInventoryRecords")]
     public class SCInventoryRecord : Entity<long>, IHasCreationTime //注意修改主键Id数据类型
     {
         /// <summary>
@@ -41,6 +41,23 @@ namespace GYSWP.SCInventoryRecords
         /// </summary>
         [StringLength(500)]
         public virtual string Remarks { get; set; }
+        /// <summary>
+        /// 员工姓名
+        /// </summary>
+        [StringLength(50)]
+        [Required]
+        public virtual string EmployeeName { get; set; }
+        /// <summary>
+        /// 员工id
+        /// </summary>
+        [StringLength(400)]
+        [Required]
+        public virtual string EmployeeId { get; set; }
+        /// <summary>
+        /// 在库保管Id
+        /// </summary>
+        [Required]
+        public virtual Guid TimeLogId { get; set; }
         /// <summary>
         /// 创建日期
         /// </summary>

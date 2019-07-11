@@ -1,18 +1,13 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using Abp.Application.Services.Dto;
+using Abp.Domain.Entities.Auditing;
 using GYSWP.GYEnums;
 
 namespace GYSWP.LC_TimeLogs.Dtos
 {
-    public class LC_TimeLogEditDto
+    public class LC_TimeLogEditDto : EntityDto<Guid?>, IHasCreationTime
     {
-
-        /// <summary>
-        /// Id
-        /// </summary>
-        public Guid? Id { get; set; }         
-
-
         
 		/// <summary>
 		/// Type

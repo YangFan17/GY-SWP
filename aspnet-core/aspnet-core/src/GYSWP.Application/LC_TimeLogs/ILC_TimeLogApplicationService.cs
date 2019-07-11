@@ -56,7 +56,7 @@ namespace GYSWP.LC_TimeLogs
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task CreateOrUpdate(CreateOrUpdateLC_TimeLogInput input);
+        Task<LC_TimeLogEditDto> CreateOrUpdate(CreateOrUpdateLC_TimeLogInput input);
 
 
         /// <summary>
