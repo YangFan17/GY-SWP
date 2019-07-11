@@ -1,17 +1,17 @@
 import { Component, OnInit, ViewChild, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/component-base';
 import { NzTreeComponent, NzFormatEmitEvent } from 'ng-zorro-antd';
-import { BasicDataService, SuperviseService } from 'services';
+import { BasicDataService } from 'services';
 import { addDays } from 'date-fns';
+import { IndicatorSuperviseService } from 'services/reports/indicator-supervise.service';
 
 
 @Component({
-    selector: 'supervise',
-    templateUrl: 'supervise.component.html',
-    styleUrls: ['supervise.component.less'],
-    providers: [SuperviseService]
+    selector: 'indicator-supervise',
+    templateUrl: 'indicator-supervise.component.html',
+    providers: [IndicatorSuperviseService]
 })
-export class SuperviseComponent extends AppComponentBase implements OnInit {
+export class IndicatorSuperviseComponent extends AppComponentBase implements OnInit {
 
     @ViewChild('detpTree') detpTree: NzTreeComponent;
     nodes: any[];
@@ -23,7 +23,7 @@ export class SuperviseComponent extends AppComponentBase implements OnInit {
 
     constructor(injector: Injector,
         private basicDataService: BasicDataService,
-        private superviseService: SuperviseService
+        private superviseService: IndicatorSuperviseService
     ) {
         super(injector);
     }
@@ -34,13 +34,13 @@ export class SuperviseComponent extends AppComponentBase implements OnInit {
     }
 
     getTrees() {
-        this.basicDataService.getDeptDocNzTreeNodes('监督查询部门').subscribe((data) => {
+        this.basicDataService.getDeptDocNzTreeNodes('指标统计部门').subscribe((data) => {
             this.nodes = data;
             if (data.length > 0) {
                 var selectedNode = data[0].children[0];
                 if (selectedNode && selectedNode.isSelected) {
                     this.selectedDept = { id: selectedNode.key, name: selectedNode.title };
-                    this.getSuperviseData();
+                    this.getIndicatorSuperviseData();
                 }
             }
         });
@@ -49,24 +49,24 @@ export class SuperviseComponent extends AppComponentBase implements OnInit {
     // 选中节点
     activeNode(data: NzFormatEmitEvent): void {
         if (data.node.key == '0' || data.node.key == '-1') {
-            this.selectedDept = { id: '', name: '' };
+            this.selectedDept = { id: '1', name: '' };
         } else {
             this.selectedDept = { id: data.node.key, name: data.node.title };
         }
-        this.getSuperviseData();
+        this.getIndicatorSuperviseData();
     }
 
-    getSuperviseData() {
+    getIndicatorSuperviseData() {
         this.search.deptId = this.selectedDept.id;
         this.isTableLoading = true;
-        this.superviseService.getSuperviseReportData(this.search).subscribe((data) => {
+        this.superviseService.getIndicatorSuperviseReportData(this.search).subscribe((data) => {
             this.dataList = data;
             this.isTableLoading = false;
         });
     }
 
     refreshData() {
-        this.getSuperviseData();
+        this.getIndicatorSuperviseData();
     }
 
     onChange(result: Date): void {

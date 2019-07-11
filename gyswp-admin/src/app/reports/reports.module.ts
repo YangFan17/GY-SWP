@@ -10,6 +10,7 @@ import { BasicDataService } from 'services';
 import { SuperviseComponent } from './supervise/supervise.component';
 import { StandardrevisionComponent } from './standardrevision/standardrevision.component';
 import { AdviseComponent } from './advise/advise.component';
+import { IndicatorSuperviseComponent } from './indicator-supervise/indicator-supervise.component';
 
 @NgModule({
     imports: [
@@ -26,9 +27,14 @@ import { AdviseComponent } from './advise/advise.component';
         SuperviseComponent,
         StandardrevisionComponent,
         AdviseComponent,
+        IndicatorSuperviseComponent
     ],
     entryComponents: [
-
+        InspectComponent,
+        SuperviseComponent,
+        StandardrevisionComponent,
+        AdviseComponent,
+        IndicatorSuperviseComponent
     ],
     providers: [BasicDataService],
 })

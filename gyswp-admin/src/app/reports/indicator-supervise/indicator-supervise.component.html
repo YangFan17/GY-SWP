@@ -1,0 +1,56 @@
+<page-header [title]=""></page-header>
+<nz-card>
+    <div nz-row>
+        <div nz-col nzSpan="4">
+            <nz-spin nzSimple [nzSize]="'small'" *ngIf="!nodes || nodes.length == 0"></nz-spin>
+            <nz-tree #detpTree [(ngModel)]="nodes" (nzClick)="activeNode($event)" [nzDefaultExpandAll]="true">
+            </nz-tree>
+        </div>
+        <div nz-col nzSpan="20">
+            <form nz-form [nzLayout]="'inline'">
+                <div nz-row [nzGutter]="18">
+                    <div nz-col [nzSpan]="8" class="mb-md">
+                        <nz-form-item class="d-flex" style="margin-bottom: 0px;">
+                            <nz-form-label nzFor="month">时间</nz-form-label>
+                            <nz-form-control class="flex-1">
+                                <nz-range-picker name="dateRange" [(ngModel)]="dateRange"
+                                    (ngModelChange)="onChange($event)">
+                                </nz-range-picker>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <div nz-col [nzSpan]="6" class="mb-md right" [class.text-right]="'true'" style="float: right;">
+                        <nz-form-item class="d-flex" style="margin-right: 0px;margin-bottom: 0px;">
+                            <nz-form-control class="flex-1">
+                                <button nz-button type="button" (click)="refreshData()" nzType="primary"
+                                    [nzLoading]="isTableLoading">
+                                    查询</button>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                </div>
+            </form>
+            <nz-table #nzTable [nzFrontPagination]="false" [nzShowPagination]="false" [nzHideOnSinglePage]="'true'"
+                [nzData]="dataList" [nzLoading]="isTableLoading">
+                <thead>
+                    <tr>
+                        <th>部门名称</th>
+                        <th>指标总数</th>
+                        <th>已达成数</th>
+                        <th>未达成数</th>
+                        <th>未填写数</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of nzTable.data">
+                        <td>{{ item.deptName }}</td>
+                        <td>{{ item.indicatorTotal }}</td>
+                        <td>{{ item.notFillNum }}</td>
+                        <td>{{ item.okNum }}</td>
+                        <td>{{ item.notFinishedNum }}</td>
+                    </tr>
+                </tbody>
+            </nz-table>
+        </div>
+    </div>
+</nz-card>

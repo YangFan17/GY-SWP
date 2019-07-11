@@ -12,5 +12,7 @@ namespace GYSWP.SuperviseReports
         Task<Dictionary<Guid, string>> GetSupervisesAsync(DateTime month, long deptId);
 
         Task<List<SuperviseDto>> GetSuperviseReportDataAsync(SuperviseInputDto input);
+
+        Task<List<IndicatorSuperviseDto>> GetIndicatorSuperviseReportDataAsync(IndicatorSuperviseInputDto input);
     }
 }
