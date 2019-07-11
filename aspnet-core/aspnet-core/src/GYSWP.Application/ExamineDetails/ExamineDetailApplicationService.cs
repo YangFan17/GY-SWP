@@ -221,7 +221,9 @@ namespace GYSWP.ExamineDetails
                         {
                             Id = q.Id,
                             DocumentName = d.Name,
-                            ClauseInfo = c.ClauseNo + "-" + (c.Title.Length > 15 ? c.Title.Substring(0, 15) + "..." : c.Title) + "-" + (c.Content.Length > 50 ? c.Content.Substring(0, 50) + "..." : c.Content),
+                            //ClauseInfo = c.ClauseNo + "-" + (c.Title.Length > 15 ? c.Title.Substring(0, 15) + "..." : c.Title) + "-" + (c.Content.Length > 50 ? c.Content.Substring(0, 50) + "..." : c.Content),
+                            ClauseInfo = c.ClauseNo + (c.Title != null ? (c.Title.Length > 15 ? "-" + c.Title.Substring(0, 15) + "...-" : "-" + c.Title + "-") : "-")
+                            + (c.Content != null ? (c.Content.Length > 15 ? c.Content.Substring(0, 15) + "..." : c.Content) : ""),
                             Status = q.Status,
                             Result = q.Result,
                             EmployeeName = q.EmployeeName
@@ -248,7 +250,9 @@ namespace GYSWP.ExamineDetails
                         {
                             Id = q.Id,
                             DocumentName = d.Name,
-                            ClauseInfo = c.ClauseNo + "-" + (c.Title.Length > 15 ? c.Title.Substring(0, 15) + "..." : c.Title) + "-" + (c.Content.Length > 50 ? c.Content.Substring(0, 50) + "..." : c.Content),
+                            //ClauseInfo = c.ClauseNo + "-" + (c.Title.Length > 15 ? c.Title.Substring(0, 15) + "..." : c.Title) + "-" + (c.Content.Length > 50 ? c.Content.Substring(0, 50) + "..." : c.Content),
+                            ClauseInfo = c.ClauseNo + (c.Title != null ? (c.Title.Length > 15 ? "-" + c.Title.Substring(0, 15) + "...-" : "-" + c.Title + "-") : "-")
+                            + (c.Content != null ? (c.Content.Length > 15 ? c.Content.Substring(0, 15) + "..." : c.Content) : ""),
                             Status = q.Status,
                             Result = q.Result,
                             EmployeeName = q.EmployeeName

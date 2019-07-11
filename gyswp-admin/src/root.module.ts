@@ -112,7 +112,7 @@ const I18NSERVICE_PROVIDES = [
         { provide: API_BASE_URL, useFactory: getRemoteServiceBaseUrl },
         { provide: APP_INITIALIZER, useFactory: appInitializerFactory, deps: [Injector, PlatformLocation], multi: true },
         { provide: LOCALE_ID, useFactory: getCurrentLanguage, },
-        { provide: LocationStrategy, useClass: HashLocationStrategy },
+        // { provide: LocationStrategy, useClass: HashLocationStrategy },
         I18NSERVICE_PROVIDES,
     ],
     bootstrap: [RootComponent],

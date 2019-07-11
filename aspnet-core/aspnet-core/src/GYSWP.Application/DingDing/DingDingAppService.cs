@@ -74,6 +74,14 @@ namespace GYSWP.DingDing
                                     .ToList();
                     }
                     break;
+                case DingDingAppEnum.设备管理:
+                    {
+                        configList = _systemDataRepository.GetAll()
+                                    .Where(s => s.ModelId == ConfigModel.钉钉配置)
+                                    .Where(s => s.Type == ConfigType.钉钉配置 || s.Type == ConfigType.设备管理)
+                                    .ToList();
+                    }
+                    break;
             }
             foreach (var item in configList)
             {
@@ -91,8 +99,7 @@ namespace GYSWP.DingDing
                 }
                 else if (item.Code == DingDingConfigCode.AgentID)
                 {
-                    int outAgenId = 0;
-                    if (int.TryParse(item.Desc, out outAgenId))
+                    if (int.TryParse(item.Desc, out int outAgenId))
                     {
                         config.AgentID = outAgenId;
                     }

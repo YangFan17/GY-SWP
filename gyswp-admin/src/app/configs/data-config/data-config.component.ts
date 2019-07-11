@@ -22,7 +22,8 @@ export class DataConfigComponent extends AppComponentBase implements OnInit {
     logisticsTotal: number = 0;
     configDing = [
         { value: 1, text: '钉钉配置', selected: true },
-        { value: 2, text: '标准化工作平台', selected: false }
+        { value: 2, text: '标准化工作平台', selected: false },
+        { value: 3, text: '设备管理', selected: false }
     ]
     loading = false;
     pages: STPage = {
@@ -116,7 +117,9 @@ export class DataConfigComponent extends AppComponentBase implements OnInit {
     //编辑
     editDing(id: any) {
         this.modalHelper.open(ModifyConfigComponent, { id: id, modelId: this.configModelId }, 'md', {
-            nzMask: true
+            nzMask: true,
+            nzClosable: false,
+            nzMaskClosable: false,
         }).subscribe(isSave => {
             if (isSave) {
                 this.getconfigs();
@@ -127,7 +130,9 @@ export class DataConfigComponent extends AppComponentBase implements OnInit {
     //新增
     create() {
         this.modalHelper.open(ModifyConfigComponent, { modelId: this.configModelId }, 'md', {
-            nzMask: true
+            nzMask: true,
+            nzClosable: false,
+            nzMaskClosable: false,
         }).subscribe(isSave => {
             if (isSave) {
                 this.getconfigs();

@@ -487,12 +487,13 @@ namespace GYSWP.Documents
             foreach (var doc in docs)
             {   //0编号 1名称 2发布时间 3类型
                 string[] docInfoArry = doc.DocName.Split("#");
+                DateTime dt = DateTime.ParseExact(docInfoArry[2].Split('.')[0], "yyyyMMdd", System.Globalization.CultureInfo.CurrentCulture);
                 Document entity = new Document();
                 entity.Name = docInfoArry[1];
                 entity.DocNo = docInfoArry[0];
                 entity.IsAllUser = true;
                 entity.IsAction = true;
-                entity.PublishTime = Convert.ToDateTime(docInfoArry[2]);
+                entity.PublishTime = dt;
                 var id = await _entityRepository.InsertAndGetIdAsync(entity);
                 await CurrentUnitOfWork.SaveChangesAsync();
                 foreach (var item in doc.Sections)
