@@ -1,0 +1,102 @@
+
+
+using System;
+using Abp.Application.Services.Dto;
+using Abp.Domain.Entities.Auditing;
+using System.ComponentModel.DataAnnotations;
+using GYSWP.InspectionRecords;
+
+namespace GYSWP.InspectionRecords.Dtos
+{
+    public class InspectionRecordListDto : EntityDto<long>,IHasCreationTime 
+    {
+
+        
+		/// <summary>
+		/// IsDWLAbnormal
+		/// </summary>
+		public bool? IsDWLAbnormal { get; set; }
+
+
+
+		/// <summary>
+		/// IsWallDestruction
+		/// </summary>
+		public bool? IsWallDestruction { get; set; }
+
+
+
+		/// <summary>
+		/// IsRoofWallSeepage
+		/// </summary>
+		public bool? IsRoofWallSeepage { get; set; }
+
+
+
+		/// <summary>
+		/// IsHumitureExceeding
+		/// </summary>
+		public bool? IsHumitureExceeding { get; set; }
+
+
+
+		/// <summary>
+		/// IsFASNormal
+		/// </summary>
+		public bool? IsFASNormal { get; set; }
+
+
+
+		/// <summary>
+		/// IsBurglarAlarmNormal
+		/// </summary>
+		public bool? IsBurglarAlarmNormal { get; set; }
+
+
+
+		/// <summary>
+		/// IsSASSValid
+		/// </summary>
+		public bool? IsSASSValid { get; set; }
+
+
+
+		/// <summary>
+		/// IsCameraShelter
+		/// </summary>
+		public bool? IsCameraShelter { get; set; }
+
+
+
+		/// <summary>
+		/// IsFPDStop
+		/// </summary>
+		public bool? IsFPDStop { get; set; }
+
+
+
+		/// <summary>
+		/// IsEXITStop
+		/// </summary>
+		public bool? IsEXITStop { get; set; }
+
+
+
+		/// <summary>
+		/// SignatureOfPrincipal
+		/// </summary>
+		public string SignatureOfPrincipal { get; set; }
+
+
+
+		/// <summary>
+		/// CreationTime
+		/// </summary>
+		[Required(ErrorMessage="CreationTime不能为空")]
+		public DateTime CreationTime { get; set; }
+
+
+
+
+    }
+}

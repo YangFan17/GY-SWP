@@ -28,6 +28,9 @@ using GYSWP.LC_InStorageBills;
 using GYSWP.LC_InStorageRecords;
 using GYSWP.LC_QualityRecords;
 using GYSWP.LC_TimeLogs;
+using GYSWP.EntryExitRegistrations;
+using GYSWP.InspectionRecords;
+using GYSWP.SCInventoryRecords;
 
 namespace GYSWP.EntityFrameworkCore
 {
@@ -65,6 +68,8 @@ namespace GYSWP.EntityFrameworkCore
         public virtual DbSet<LC_InStorageRecord> LC_InStorageRecords { get; set; }
         public virtual DbSet<LC_QualityRecord> LC_QualityRecords { get; set; }
         public virtual DbSet<LC_TimeLog> LC_TimeLogs { get; set; }
-
+        public virtual DbSet<EntryExitRegistration> EntryExitRegistrations { get; set; }
+        public virtual DbSet<InspectionRecord> InspectionRecords { get; set; }
+        public virtual DbSet<SCInventoryRecord> SCInventoryRecords { get; set; }
     }
 }

@@ -13,6 +13,9 @@ using GYSWP.GYEnums;
 using Abp.Collections.Extensions;
 using System.Linq.Dynamic.Core;
 using Abp.Linq.Extensions;
+using GYSWP.Indicators;
+using GYSWP.IndicatorsDetails;
+using GYSWP.Organizations;
 
 namespace GYSWP.SuperviseReports
 {
@@ -21,13 +24,23 @@ namespace GYSWP.SuperviseReports
         private readonly IRepository<CriterionExamine, Guid> _criterionExaminesRepository;
         private readonly IRepository<ExamineDetail, Guid> _examineDetailsRepository;
         private readonly IRepository<Employee, string> _employeeRepository;
+        private readonly IRepository<Indicator, Guid> _indicatorRepository;
+        private readonly IRepository<IndicatorsDetail, Guid> _indicatorsDetailRepository;
+        private readonly IRepository<Organization, long> _organizationRepository;
+
         public SuperviseAppService(IRepository<CriterionExamine, Guid> criterionExaminesRepository, 
             IRepository<ExamineDetail, Guid> examineDetailsRepository,
-            IRepository<Employee, string> employeeRepository)
+            IRepository<Employee, string> employeeRepository,
+            IRepository<Indicator, Guid> indicatorRepository,
+            IRepository<IndicatorsDetail, Guid> indicatorsDetailRepository,
+            IRepository<Organization, long> organizationRepository)
         {
             _criterionExaminesRepository = criterionExaminesRepository;
             _examineDetailsRepository = examineDetailsRepository;
             _employeeRepository = employeeRepository;
+            _indicatorRepository = indicatorRepository;
+            _indicatorsDetailRepository = indicatorsDetailRepository;
+            _organizationRepository = organizationRepository;
         }
 
         public async Task<Dictionary<Guid, string>> GetSupervisesAsync(DateTime month, long deptId)
@@ -116,5 +129,51 @@ namespace GYSWP.SuperviseReports
             var dataList = await query.WhereIf(!string.IsNullOrEmpty(input.UserName), q => q.UserName.Contains(input.UserName)).AsNoTracking().ToListAsync();
             return dataList;
         }
+
+        public async Task<List<IndicatorSuperviseDto>> GetIndicatorSuperviseReportDataAsync(IndicatorSuperviseInputDto input)
+        {
+            input.EndTime = input.EndTime.AddDays(1);
+            
+            var dept = await _organizationRepository.FirstOrDefaultAsync(input.DeptId);
+
+            var deptIds = GetDeptIds(dept.Id);
+            deptIds.Add(dept.Id);
+
+            var baseQuery = _indicatorsDetailRepository.GetAll().Where(c => deptIds.Contains(c.DeptId) && c.CreationTime >= input.BeginTime && c.CreationTime < input.EndTime);
+            
+            int totalQuery = baseQuery.Count();
+
+            int notFillNum = baseQuery.Where(i => i.Status == IndicatorStatus.未填写).Count();
+
+            int okNum = baseQuery.Where(i => i.Status == IndicatorStatus.已达成).Count();
+
+            int notFinishedNum = baseQuery.Where(i => i.Status == IndicatorStatus.未达成).Count();
+
+            return new List<IndicatorSuperviseDto>()
+            {
+                new IndicatorSuperviseDto
+                {
+                    DeptName = dept.DepartmentName,
+                    IndicatorTotal = totalQuery,
+                    NotFillNum = notFillNum,
+                    OkNum = okNum,
+                    NotFinishedNum = notFinishedNum
+                }
+            };
+        }
+
+        private List<long> GetDeptIds(long id)
+        {
+            var deptIds = _organizationRepository.GetAll().Where(i => i.ParentId == id).Select(i=>i.Id).ToList();
+            if (deptIds == null)
+            {
+                return null;
+            }
+            foreach (var item in deptIds)
+            {
+                GetDeptIds(item);
+            }
+            return deptIds;
+        } 
     }
 }

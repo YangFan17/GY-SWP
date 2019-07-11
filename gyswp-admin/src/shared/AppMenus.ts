@@ -112,8 +112,13 @@ export class AppMenus {
                     reuse: false
                 },
                 {
-                    text: "监督查询",
+                    text: "考核统计",
                     link: "/app/reports/supervise",
+                    reuse: false
+                },
+                {
+                    text: "指标统计",
+                    link: "/app/reports/indicator-supervise",
                     reuse: false
                 },
                 {
