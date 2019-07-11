@@ -21,8 +21,7 @@ using Abp.Linq.Extensions;
 using GYSWP.LC_TimeLogs;
 using GYSWP.LC_TimeLogs.Dtos;
 using GYSWP.LC_TimeLogs.DomainService;
-
-
+using GYSWP.Dtos;
 
 namespace GYSWP.LC_TimeLogs
 {
@@ -193,19 +192,20 @@ LC_TimeLogEditDto editDto;
 			await _entityRepository.DeleteAsync(s => input.Contains(s.Id));
 		}
 
-
-		/// <summary>
-		/// 导出LC_TimeLog为excel表,等待开发。
-		/// </summary>
-		/// <returns></returns>
-		//public async Task<FileDto> GetToExcel()
-		//{
-		//	var users = await UserManager.Users.ToListAsync();
-		//	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
-		//	await FillRoleNames(userListDtos);
-		//	return _userListExcelExporter.ExportToFile(userListDtos);
-		//}
-
+        /// <summary>
+        /// 记录开始入库信息
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<APIResultDto> CreateBeginInStorageAsync(CreateLC_TimeLogsInput input)
+        {
+            LC_TimeLog entity = new LC_TimeLog();
+            entity.EmployeeId = input.EmployeeId;
+            entity.Type = GYEnums.LC_TimeType.入库作业;
+            entity.Status = GYEnums.LC_TimeStatus.开始;
+            entity = await _entityRepository.InsertAsync(entity);
+            return new APIResultDto() { Code = 0, Msg = "保存成功", Data = entity.Id };
+        }
     }
 }
 

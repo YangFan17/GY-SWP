@@ -18,29 +18,28 @@ using Abp.Application.Services;
 using Abp.Application.Services.Dto;
 
 
-using GYSWP.LC_TimeLogs.Dtos;
-using GYSWP.LC_TimeLogs;
-using GYSWP.Dtos;
+using GYSWP.LC_CigaretExchanges.Dtos;
+using GYSWP.LC_CigaretExchanges;
 
-namespace GYSWP.LC_TimeLogs
+namespace GYSWP.LC_CigaretExchanges
 {
     /// <summary>
-    /// LC_TimeLog应用层服务的接口方法
+    /// LC_CigaretExchange应用层服务的接口方法
     ///</summary>
-    public interface ILC_TimeLogAppService : IApplicationService
+    public interface ILC_CigaretExchangeAppService : IApplicationService
     {
         /// <summary>
-		/// 获取LC_TimeLog的分页列表信息
+		/// 获取LC_CigaretExchange的分页列表信息
 		///</summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<PagedResultDto<LC_TimeLogListDto>> GetPaged(GetLC_TimeLogsInput input);
+        Task<PagedResultDto<LC_CigaretExchangeListDto>> GetPaged(GetLC_CigaretExchangesInput input);
 
 
 		/// <summary>
-		/// 通过指定id获取LC_TimeLogListDto信息
+		/// 通过指定id获取LC_CigaretExchangeListDto信息
 		/// </summary>
-		Task<LC_TimeLogListDto> GetById(EntityDto<Guid> input);
+		Task<LC_CigaretExchangeListDto> GetById(EntityDto<Guid> input);
 
 
         /// <summary>
@@ -48,19 +47,19 @@ namespace GYSWP.LC_TimeLogs
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<GetLC_TimeLogForEditOutput> GetForEdit(NullableIdDto<Guid> input);
+        Task<GetLC_CigaretExchangeForEditOutput> GetForEdit(NullableIdDto<Guid> input);
 
 
         /// <summary>
-        /// 添加或者修改LC_TimeLog的公共方法
+        /// 添加或者修改LC_CigaretExchange的公共方法
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task CreateOrUpdate(CreateOrUpdateLC_TimeLogInput input);
+        Task CreateOrUpdate(CreateOrUpdateLC_CigaretExchangeInput input);
 
 
         /// <summary>
-        /// 删除LC_TimeLog信息的方法
+        /// 删除LC_CigaretExchange信息的方法
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -68,9 +67,16 @@ namespace GYSWP.LC_TimeLogs
 
 
         /// <summary>
-        /// 批量删除LC_TimeLog
+        /// 批量删除LC_CigaretExchange
         /// </summary>
         Task BatchDelete(List<Guid> input);
-        Task<APIResultDto> CreateBeginInStorageAsync(CreateLC_TimeLogsInput input);
+
+
+		/// <summary>
+        /// 导出LC_CigaretExchange为excel表
+        /// </summary>
+        /// <returns></returns>
+		//Task<FileDto> GetToExcel();
+
     }
 }

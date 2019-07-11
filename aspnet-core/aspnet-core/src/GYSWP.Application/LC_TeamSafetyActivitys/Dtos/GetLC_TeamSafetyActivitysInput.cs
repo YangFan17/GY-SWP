@@ -1,11 +1,11 @@
 
 using Abp.Runtime.Validation;
 using GYSWP.Dtos;
-using GYSWP.LC_TimeLogs;
+using GYSWP.LC_TeamSafetyActivitys;
 
-namespace GYSWP.LC_TimeLogs.Dtos
+namespace GYSWP.LC_TeamSafetyActivitys.Dtos
 {
-    public class GetLC_TimeLogsInput : PagedSortedAndFilteredInputDto, IShouldNormalize
+    public class GetLC_TeamSafetyActivitysInput : PagedSortedAndFilteredInputDto, IShouldNormalize
     {
 
         /// <summary>
@@ -18,9 +18,6 @@ namespace GYSWP.LC_TimeLogs.Dtos
                 Sorting = "Id";
             }
         }
-    }
-    public class CreateLC_TimeLogsInput
-    {
-     public string EmployeeId { get; set; }
+
     }
 }
