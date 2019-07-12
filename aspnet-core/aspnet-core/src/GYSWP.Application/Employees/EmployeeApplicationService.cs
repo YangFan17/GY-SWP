@@ -400,6 +400,7 @@ namespace GYSWP.Employees
             var userId = _dingDingAppService.GetUserId(assessToken, code);
             //userId = "16550049332052666774";//测试
             userId = "999907390122996178";
+            userId = "5896512826844512";
             if (userId == null)
             {
                 return new DingDingUserDto();

@@ -121,6 +121,7 @@ LC_TimeLogEditDto editDto;
 		/// <param name="input"></param>
 		/// <returns></returns>
 		
+        [AbpAllowAnonymous]
 		public async Task<LC_TimeLogEditDto> CreateOrUpdate(CreateOrUpdateLC_TimeLogInput input)
 		{
 

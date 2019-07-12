@@ -21,8 +21,7 @@ using Abp.Linq.Extensions;
 using GYSWP.LC_OutScanRecords;
 using GYSWP.LC_OutScanRecords.Dtos;
 using GYSWP.LC_OutScanRecords.DomainService;
-
-
+using GYSWP.LC_TimeLogs;
 
 namespace GYSWP.LC_OutScanRecords
 {
@@ -33,6 +32,7 @@ namespace GYSWP.LC_OutScanRecords
     public class LC_OutScanRecordAppService : GYSWPAppServiceBase, ILC_OutScanRecordAppService
     {
         private readonly IRepository<LC_OutScanRecord, Guid> _entityRepository;
+        private readonly IRepository<LC_TimeLog, Guid> _timeLogRepository;
 
         private readonly ILC_OutScanRecordManager _entityManager;
 
@@ -41,11 +41,13 @@ namespace GYSWP.LC_OutScanRecords
         ///</summary>
         public LC_OutScanRecordAppService(
         IRepository<LC_OutScanRecord, Guid> entityRepository
-        ,ILC_OutScanRecordManager entityManager
+            , IRepository<LC_TimeLog, Guid> timeLogRepository
+        , ILC_OutScanRecordManager entityManager
         )
         {
             _entityRepository = entityRepository; 
              _entityManager=entityManager;
+            _timeLogRepository = timeLogRepository;
         }
 
 
@@ -121,7 +123,7 @@ LC_OutScanRecordEditDto editDto;
 		/// </summary>
 		/// <param name="input"></param>
 		/// <returns></returns>
-		
+		[AbpAllowAnonymous]
 		public async Task CreateOrUpdate(CreateOrUpdateLC_OutScanRecordInput input)
 		{
 
@@ -131,8 +133,15 @@ LC_OutScanRecordEditDto editDto;
 			}
 			else
 			{
+       
 				await Create(input.LC_OutScanRecord);
-			}
+                LC_TimeLog timeLog = new LC_TimeLog();
+                timeLog.EmployeeId = input.LC_OutScanRecord.EmployeeId;
+                timeLog.EmployeeName = input.LC_OutScanRecord.EmployeeName;
+                timeLog.Status = GYEnums.LC_TimeStatus.开始;
+                timeLog.Type = GYEnums.LC_TimeType.零货出库;
+                await _timeLogRepository.InsertAndGetIdAsync(timeLog);
+            }
 		}
 
 
