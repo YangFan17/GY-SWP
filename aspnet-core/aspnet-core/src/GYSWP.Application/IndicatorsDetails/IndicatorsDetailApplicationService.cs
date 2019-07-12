@@ -199,7 +199,6 @@ IndicatorsDetailEditDto editDto;
         /// <returns></returns>
         public async Task<APIResultDto> ChangeStatusByIdAsync(IndicatorsDetailUpDateDto input)
         {
-
             var entity = await _entityRepository.GetAsync(input.Id.Value);
             entity.ActualValue = input.ActualValue;
             entity.Status = input.Status;
