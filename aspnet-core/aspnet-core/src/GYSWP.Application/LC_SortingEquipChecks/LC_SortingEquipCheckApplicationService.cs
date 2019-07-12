@@ -21,8 +21,7 @@ using Abp.Linq.Extensions;
 using GYSWP.LC_SortingEquipChecks;
 using GYSWP.LC_SortingEquipChecks.Dtos;
 using GYSWP.LC_SortingEquipChecks.DomainService;
-
-
+using Abp.Auditing;
 
 namespace GYSWP.LC_SortingEquipChecks
 {
@@ -116,13 +115,14 @@ LC_SortingEquipCheckEditDto editDto;
 		}
 
 
-		/// <summary>
-		/// 添加或者修改LC_SortingEquipCheck的公共方法
-		/// </summary>
-		/// <param name="input"></param>
-		/// <returns></returns>
-		
-		public async Task CreateOrUpdate(CreateOrUpdateLC_SortingEquipCheckInput input)
+        /// <summary>
+        /// 添加或者修改LC_SortingEquipCheck的公共方法
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        [Audited]
+        public async Task CreateOrUpdate(CreateOrUpdateLC_SortingEquipCheckInput input)
 		{
 
 			if (input.LC_SortingEquipCheck.Id.HasValue)
