@@ -86,7 +86,7 @@ namespace  GYSWP.SCInventoryRecords.Dtos
         /// <summary>
         /// CreationTime
         /// </summary>
-        //[Required(ErrorMessage="CreationTime不能为空")]
+        [Required(ErrorMessage = "CreationTime不能为空")]
         public DateTime CreationTime { get; set; }
 
 
