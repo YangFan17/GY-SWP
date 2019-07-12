@@ -21,6 +21,7 @@ using Abp.Linq.Extensions;
 using GYSWP.LC_TimeLogs;
 using GYSWP.LC_TimeLogs.Dtos;
 using GYSWP.LC_TimeLogs.DomainService;
+using Abp.Auditing;
 using GYSWP.Dtos;
 
 namespace GYSWP.LC_TimeLogs
@@ -115,14 +116,14 @@ LC_TimeLogEditDto editDto;
 		}
 
 
-		/// <summary>
-		/// 添加或者修改LC_TimeLog的公共方法
-		/// </summary>
-		/// <param name="input"></param>
-		/// <returns></returns>
-		
+        /// <summary>
+        /// 添加或者修改LC_TimeLog的公共方法
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         [AbpAllowAnonymous]
-		public async Task<LC_TimeLogEditDto> CreateOrUpdate(CreateOrUpdateLC_TimeLogInput input)
+        [Audited]
+        public async Task<LC_TimeLogEditDto> CreateOrUpdate(CreateOrUpdateLC_TimeLogInput input)
 		{
 
 			if (input.LC_TimeLog.Id.HasValue)

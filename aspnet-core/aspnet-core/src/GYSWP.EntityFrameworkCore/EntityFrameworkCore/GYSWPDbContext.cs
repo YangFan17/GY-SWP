@@ -36,6 +36,7 @@ using GYSWP.LC_OutScanRecords;
 using GYSWP.LC_SortingEquipChecks;
 using GYSWP.LC_TeamSafetyActivitys;
 using GYSWP.LC_UseOutStorages;
+using GYSWP.LC_ScanRecords;
 
 namespace GYSWP.EntityFrameworkCore
 {
@@ -84,6 +85,6 @@ namespace GYSWP.EntityFrameworkCore
         public virtual DbSet<LC_SortingEquipCheck> LC_SortingEquipChecks { get; set; }
         public virtual DbSet<LC_TeamSafetyActivity> LC_TeamSafetyActivitys { get; set; }
         public virtual DbSet<LC_UseOutStorage> LC_UseOutStorages { get; set; }
-
+        public virtual DbSet<LC_ScanRecord> LC_ScanRecords { get; set; }
     }
 }
