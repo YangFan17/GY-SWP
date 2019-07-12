@@ -31,6 +31,11 @@ using GYSWP.LC_TimeLogs;
 using GYSWP.EntryExitRegistrations;
 using GYSWP.InspectionRecords;
 using GYSWP.SCInventoryRecords;
+using GYSWP.LC_CigaretExchanges;
+using GYSWP.LC_OutScanRecords;
+using GYSWP.LC_SortingEquipChecks;
+using GYSWP.LC_TeamSafetyActivitys;
+using GYSWP.LC_UseOutStorages;
 
 namespace GYSWP.EntityFrameworkCore
 {
@@ -71,5 +76,14 @@ namespace GYSWP.EntityFrameworkCore
         public virtual DbSet<LC_InStorageRecord> LC_InStorageRecords { get; set; }
         public virtual DbSet<LC_QualityRecord> LC_QualityRecords { get; set; }
         public virtual DbSet<LC_TimeLog> LC_TimeLogs { get; set; }
+        public virtual DbSet<EntryExitRegistration> EntryExitRegistrations { get; set; }
+        public virtual DbSet<InspectionRecord> InspectionRecords { get; set; }
+        public virtual DbSet<SCInventoryRecord> SCInventoryRecords { get; set; }
+        public virtual DbSet<LC_CigaretExchange> LC_CigaretExchanges { get; set; }
+        public virtual DbSet<LC_OutScanRecord> LC_OutScanRecords { get; set; }
+        public virtual DbSet<LC_SortingEquipCheck> LC_SortingEquipChecks { get; set; }
+        public virtual DbSet<LC_TeamSafetyActivity> LC_TeamSafetyActivitys { get; set; }
+        public virtual DbSet<LC_UseOutStorage> LC_UseOutStorages { get; set; }
+
     }
 }

@@ -55,5 +55,7 @@ namespace GYSWP.DocAttachments.Dtos
         /// FileSize
         /// </summary>
         public decimal? FileSize { get; set; }
+
+        public string Path { get; set; }
     }
 }

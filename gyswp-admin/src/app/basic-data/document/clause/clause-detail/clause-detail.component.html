@@ -59,6 +59,15 @@
                 </nz-form-explain>
             </nz-form-control>
         </nz-form-item> -->
+        <nz-form-item nz-row>
+            <nz-form-label nz-col [nzSm]="4" nzFor="attach">标准附件</nz-form-label>
+            <nz-form-control [nzSm]="20">
+                <nz-upload nzAction="{{postUrl | hostUrl}}" [nzFileList]="fileList" [nzDisabled]="uploadLoading"
+                    (nzChange)="handleChange($event)" [nzRemove]="deleteAttachment">
+                    <button nz-button type="button"><i nz-icon nzType="upload"></i><span>上传附件</span></button>
+                </nz-upload>
+            </nz-form-control>
+        </nz-form-item>
         <!-- 功能按钮 -->
         <div class="custom-modal-footer" style="text-align: right;">
             <div class="custom-modal-footter-group">

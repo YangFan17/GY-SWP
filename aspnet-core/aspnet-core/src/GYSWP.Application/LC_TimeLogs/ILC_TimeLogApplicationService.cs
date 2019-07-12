@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.LC_TimeLogs.Dtos;
 using GYSWP.LC_TimeLogs;
+using GYSWP.Dtos;
 
 namespace GYSWP.LC_TimeLogs
 {
@@ -70,13 +71,6 @@ namespace GYSWP.LC_TimeLogs
         /// 批量删除LC_TimeLog
         /// </summary>
         Task BatchDelete(List<Guid> input);
-
-
-		/// <summary>
-        /// 导出LC_TimeLog为excel表
-        /// </summary>
-        /// <returns></returns>
-		//Task<FileDto> GetToExcel();
-
+        Task<APIResultDto> CreateBeginInStorageAsync(CreateLC_TimeLogsInput input);
     }
 }

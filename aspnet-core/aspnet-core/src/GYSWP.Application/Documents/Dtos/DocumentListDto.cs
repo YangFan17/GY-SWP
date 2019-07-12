@@ -124,5 +124,10 @@ namespace GYSWP.Documents.Dtos
         public string CategoryDesc { get; set; }
         public DateTime? PublishTime { get; set; }
         public string DeptName { get; set; }
+        /// <summary>
+        /// 电子章数组 （以逗号分隔）
+        /// </summary>
+        [StringLength(50)]
+        public string Stamps { get; set; }
     }
 }

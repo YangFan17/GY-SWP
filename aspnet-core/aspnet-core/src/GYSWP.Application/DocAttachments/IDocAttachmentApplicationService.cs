@@ -71,6 +71,25 @@ namespace GYSWP.DocAttachments
         /// </summary>
         Task BatchDelete(List<Guid> input);
 
+        /// <summary>
+        /// 考核附件
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         Task<List<DocAttachmentDto>> GetAttachmentListByIdAsync(GetDocAttachmentsInput input);
+
+        /// <summary>
+        /// 条款附件
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        Task<List<DocAttachmentDto>> GetClauseAttachmentsByIdAsync(GetDocAttachmentsInput input);
+
+        /// <summary>
+        /// 标准附件
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        Task<List<DocAttachmentDto>> GetCriterionAttachmentByIdAsync(GetDocAttachmentsInput input);
     }
 }

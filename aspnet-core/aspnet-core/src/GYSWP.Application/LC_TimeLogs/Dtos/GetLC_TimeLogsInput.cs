@@ -18,6 +18,9 @@ namespace GYSWP.LC_TimeLogs.Dtos
                 Sorting = "Id";
             }
         }
-
+    }
+    public class CreateLC_TimeLogsInput
+    {
+     public string EmployeeId { get; set; }
     }
 }

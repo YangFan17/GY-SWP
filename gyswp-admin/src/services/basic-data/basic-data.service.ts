@@ -173,6 +173,20 @@ export class BasicDataService {
         }));
     }
 
+    getClauseAttachmentsById(params: any): Observable<Attachment[]> {
+        let url_ = "/api/services/app/DocAttachment/GetClauseAttachmentsByIdAsync";
+        return this._commonhttp.get(url_, params).pipe(map(data => {
+            return Attachment.fromJSArray(data);
+        }));
+    }
+
+    getCriterionAttachmentById(params: any): Observable<Attachment[]> {
+        let url_ = "/api/services/app/DocAttachment/GetCriterionAttachmentByIdAsync";
+        return this._commonhttp.get(url_, params).pipe(map(data => {
+            return Attachment.fromJSArray(data);
+        }));
+    }
+
     deleteAttachmentByIdAsync(id: string): Observable<any> {
         let url_ = "/api/services/app/DocAttachment/Delete";
         return this._commonhttp.delete(url_, { id: id }).pipe(map(data => {
