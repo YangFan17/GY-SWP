@@ -1,21 +1,15 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using Abp.Application.Services.Dto;
 using Abp.Domain.Entities.Auditing;
 using GYSWP.LC_TeamSafetyActivitys;
 
 namespace  GYSWP.LC_TeamSafetyActivitys.Dtos
 {
-    public class LC_TeamSafetyActivityEditDto
+    public class LC_TeamSafetyActivityEditDto : EntityDto<Guid?>, IHasCreationTime
     {
 
-        /// <summary>
-        /// Id
-        /// </summary>
-        public Guid? Id { get; set; }         
-
-
-        
 		/// <summary>
 		/// TimeLogId
 		/// </summary>

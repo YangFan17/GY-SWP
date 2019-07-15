@@ -1,21 +1,15 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using Abp.Application.Services.Dto;
 using Abp.Domain.Entities.Auditing;
 using GYSWP.LC_CigaretExchanges;
 
 namespace  GYSWP.LC_CigaretExchanges.Dtos
 {
-    public class LC_CigaretExchangeEditDto
+    public class LC_CigaretExchangeEditDto : EntityDto<Guid?>, IHasCreationTime
     {
 
-        /// <summary>
-        /// Id
-        /// </summary>
-        public Guid? Id { get; set; }         
-
-
-        
 		/// <summary>
 		/// TimeLogId
 		/// </summary>

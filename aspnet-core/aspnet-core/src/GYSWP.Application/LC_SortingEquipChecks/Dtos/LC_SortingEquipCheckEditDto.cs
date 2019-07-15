@@ -1,21 +1,15 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using Abp.Application.Services.Dto;
 using Abp.Domain.Entities.Auditing;
 using GYSWP.LC_SortingEquipChecks;
 
 namespace  GYSWP.LC_SortingEquipChecks.Dtos
 {
-    public class LC_SortingEquipCheckEditDto
+    public class LC_SortingEquipCheckEditDto : EntityDto<Guid?>, IHasCreationTime
     {
 
-        /// <summary>
-        /// Id
-        /// </summary>
-        public Guid? Id { get; set; }         
-
-
-        
 		/// <summary>
 		/// TimeLogId
 		/// </summary>
