@@ -200,12 +200,29 @@ LC_TimeLogEditDto editDto;
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
+        [AbpAllowAnonymous]
         public async Task<APIResultDto> CreateBeginInStorageAsync(CreateLC_TimeLogsInput input)
         {
             LC_TimeLog entity = new LC_TimeLog();
             entity.EmployeeId = input.EmployeeId;
             entity.Type = GYEnums.LC_TimeType.入库作业;
             entity.Status = GYEnums.LC_TimeStatus.开始;
+            entity = await _entityRepository.InsertAsync(entity);
+            return new APIResultDto() { Code = 0, Msg = "保存成功", Data = entity.Id };
+        }
+
+        /// <summary>
+        /// 扫码出库完成
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public async Task<APIResultDto> CreateScanOverAsync(CreateLC_TimeLogsInput input)
+        {
+            LC_TimeLog entity = new LC_TimeLog();
+            entity.EmployeeId = input.EmployeeId;
+            entity.Type = GYEnums.LC_TimeType.零货出库;
+            entity.Status = GYEnums.LC_TimeStatus.结束;
             entity = await _entityRepository.InsertAsync(entity);
             return new APIResultDto() { Code = 0, Msg = "保存成功", Data = entity.Id };
         }

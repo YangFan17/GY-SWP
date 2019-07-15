@@ -72,5 +72,7 @@ namespace GYSWP.LC_TimeLogs
         /// </summary>
         Task BatchDelete(List<Guid> input);
         Task<APIResultDto> CreateBeginInStorageAsync(CreateLC_TimeLogsInput input);
+
+        Task<APIResultDto> CreateScanOverAsync(CreateLC_TimeLogsInput input);
     }
 }

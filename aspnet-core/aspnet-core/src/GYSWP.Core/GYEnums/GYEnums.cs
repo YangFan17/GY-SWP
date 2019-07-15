@@ -120,9 +120,7 @@ namespace GYSWP.GYEnums
         入库作业 = 1,
         在库保管 = 2,
         出库分拣 = 3,
-        零货出库 = 4,
-        入库扫码 = 5,
-        出库扫码 = 6
+        零货出库 = 4
     }
 
     public enum LC_TimeStatus

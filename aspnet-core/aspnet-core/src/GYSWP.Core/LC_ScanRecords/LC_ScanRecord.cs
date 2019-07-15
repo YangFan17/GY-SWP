@@ -1,5 +1,6 @@
 ﻿using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
+using GYSWP.GYEnums;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -22,13 +23,13 @@ namespace GYSWP.LC_ScanRecords
         /// 类型（入库扫码、出库扫码）
         /// </summary>
         [Required]
-        public virtual int Type { get; set; }
+        public virtual LC_TimeType Type { get; set; }
 
         /// <summary>
         /// 状态（开始、结束）
         /// </summary>
         [Required]
-        public virtual int Status { get; set; }
+        public virtual LC_TimeStatus Status { get; set; }
 
         /// <summary>
         /// 员工id

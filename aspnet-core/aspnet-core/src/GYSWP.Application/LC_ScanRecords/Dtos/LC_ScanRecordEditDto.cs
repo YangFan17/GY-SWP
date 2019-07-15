@@ -19,7 +19,7 @@ namespace  GYSWP.LC_ScanRecords.Dtos
 		/// <summary>
 		/// TimeLogId
 		/// </summary>
-		[Required(ErrorMessage="TimeLogId不能为空")]
+		//[Required(ErrorMessage="TimeLogId不能为空")]
 		public Guid TimeLogId { get; set; }
 
 
@@ -27,7 +27,7 @@ namespace  GYSWP.LC_ScanRecords.Dtos
 		/// <summary>
 		/// Type
 		/// </summary>
-		[Required(ErrorMessage="Type不能为空")]
+		//[Required(ErrorMessage="Type不能为空")]
 		public int Type { get; set; }
 
 
@@ -35,7 +35,7 @@ namespace  GYSWP.LC_ScanRecords.Dtos
 		/// <summary>
 		/// Status
 		/// </summary>
-		[Required(ErrorMessage="Status不能为空")]
+		//[Required(ErrorMessage="Status不能为空")]
 		public int Status { get; set; }
 
 
@@ -58,7 +58,7 @@ namespace  GYSWP.LC_ScanRecords.Dtos
 		/// <summary>
 		/// CreationTime
 		/// </summary>
-		[Required(ErrorMessage="CreationTime不能为空")]
+		//[Required(ErrorMessage="CreationTime不能为空")]
 		public DateTime CreationTime { get; set; }
 
 
