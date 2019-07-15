@@ -21,8 +21,7 @@ using Abp.Linq.Extensions;
 using GYSWP.LC_UseOutStorages;
 using GYSWP.LC_UseOutStorages.Dtos;
 using GYSWP.LC_UseOutStorages.DomainService;
-
-
+using Abp.Auditing;
 
 namespace GYSWP.LC_UseOutStorages
 {
@@ -116,13 +115,14 @@ LC_UseOutStorageEditDto editDto;
 		}
 
 
-		/// <summary>
-		/// 添加或者修改LC_UseOutStorage的公共方法
-		/// </summary>
-		/// <param name="input"></param>
-		/// <returns></returns>
-		
-		public async Task CreateOrUpdate(CreateOrUpdateLC_UseOutStorageInput input)
+        /// <summary>
+        /// 添加或者修改LC_UseOutStorage的公共方法
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        [Audited]
+        public async Task CreateOrUpdate(CreateOrUpdateLC_UseOutStorageInput input)
 		{
 
 			if (input.LC_UseOutStorage.Id.HasValue)

@@ -21,8 +21,9 @@ using Abp.Linq.Extensions;
 using GYSWP.LC_OutScanRecords;
 using GYSWP.LC_OutScanRecords.Dtos;
 using GYSWP.LC_OutScanRecords.DomainService;
-
-
+using GYSWP.LC_TimeLogs;
+using GYSWP.LC_ScanRecords;
+using GYSWP.Dtos;
 
 namespace GYSWP.LC_OutScanRecords
 {
@@ -33,6 +34,8 @@ namespace GYSWP.LC_OutScanRecords
     public class LC_OutScanRecordAppService : GYSWPAppServiceBase, ILC_OutScanRecordAppService
     {
         private readonly IRepository<LC_OutScanRecord, Guid> _entityRepository;
+        private readonly IRepository<LC_TimeLog, Guid> _timeLogRepository;
+        private readonly IRepository<LC_ScanRecord, Guid> _scanRecordRepository;
 
         private readonly ILC_OutScanRecordManager _entityManager;
 
@@ -41,11 +44,15 @@ namespace GYSWP.LC_OutScanRecords
         ///</summary>
         public LC_OutScanRecordAppService(
         IRepository<LC_OutScanRecord, Guid> entityRepository
-        ,ILC_OutScanRecordManager entityManager
+            , IRepository<LC_TimeLog, Guid> timeLogRepository
+            , IRepository<LC_ScanRecord, Guid> scanRecordRepository
+        , ILC_OutScanRecordManager entityManager
         )
         {
             _entityRepository = entityRepository; 
              _entityManager=entityManager;
+            _timeLogRepository = timeLogRepository;
+            _scanRecordRepository = scanRecordRepository;
         }
 
 
@@ -121,8 +128,8 @@ LC_OutScanRecordEditDto editDto;
 		/// </summary>
 		/// <param name="input"></param>
 		/// <returns></returns>
-		
-		public async Task CreateOrUpdate(CreateOrUpdateLC_OutScanRecordInput input)
+		[AbpAllowAnonymous]
+		public async Task<Guid> CreateOrUpdate(CreateOrUpdateLC_OutScanRecordInput input)
 		{
 
 			if (input.LC_OutScanRecord.Id.HasValue)
@@ -131,18 +138,50 @@ LC_OutScanRecordEditDto editDto;
 			}
 			else
 			{
-				await Create(input.LC_OutScanRecord);
-			}
+                //if (string.IsNullOrWhiteSpace(input.LC_OutScanRecord.TimeLogId.ToString()))
+                //{
+                //    await Create(input.LC_OutScanRecord);
+                //    //LC_TimeLog timeLog = new LC_TimeLog();
+                //    //timeLog.EmployeeId = input.LC_OutScanRecord.EmployeeId;
+                //    //timeLog.EmployeeName = input.LC_OutScanRecord.EmployeeName;
+                //    //timeLog.Status = GYEnums.LC_TimeStatus.开始;
+                //    //timeLog.Type = GYEnums.LC_TimeType.零货出库;
+                //    //var timeLogId = await _timeLogRepository.InsertAndGetIdAsync(timeLog);
+                //    //await CurrentUnitOfWork.SaveChangesAsync();
+
+                //    //保存结束后出库扫码结束
+                //    //LC_ScanRecord scanRecord = new LC_ScanRecord();
+                //    //scanRecord.TimeLogId = timeLog.Id;
+                //    //scanRecord.EmployeeId = input.LC_OutScanRecord.EmployeeId;
+                //    //scanRecord.EmployeeName = input.LC_OutScanRecord.EmployeeName;
+                //    //scanRecord.Status = GYEnums.LC_TimeStatus.开始;
+                //    //scanRecord.Type = GYEnums.LC_TimeType.零货出库;
+                //    //await _scanRecordRepository.InsertAsync(scanRecord);
+                //    //return timeLogId;
+                //}
+                //else
+                //{
+                //    LC_TimeLog timeLog = new LC_TimeLog();
+                //    timeLog.EmployeeId = input.LC_OutScanRecord.EmployeeId;
+                //    timeLog.EmployeeName = input.LC_OutScanRecord.EmployeeName;
+                //    timeLog.Status = GYEnums.LC_TimeStatus.结束;
+                //    timeLog.Type = GYEnums.LC_TimeType.零货出库;
+                //    var timeLogId = await _timeLogRepository.InsertAndGetIdAsync(timeLog);
+                //}
+
+            }
+            return Guid.Empty;
 		}
 
 
 		/// <summary>
 		/// 新增LC_OutScanRecord
 		/// </summary>
-		
+		[AbpAllowAnonymous]
 		protected virtual async Task<LC_OutScanRecordEditDto> Create(LC_OutScanRecordEditDto input)
 		{
-			//TODO:新增前的逻辑判断，是否允许新增
+            //TODO:新增前的逻辑判断，是否允许新增
+
 
             // var entity = ObjectMapper.Map <LC_OutScanRecord>(input);
             var entity=input.MapTo<LC_OutScanRecord>();
@@ -193,19 +232,25 @@ LC_OutScanRecordEditDto editDto;
 			await _entityRepository.DeleteAsync(s => input.Contains(s.Id));
 		}
 
+        /// <summary>
+        /// 保存出库扫码记录表及扫码结束信息
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public async Task<APIResultDto> CreateOutSacnRecordAsync(CreateOrUpdateLC_OutScanRecordInput input)
+        {
+            var entity = input.LC_OutScanRecord.MapTo<LC_OutScanRecord>();
+            entity = await _entityRepository.InsertAsync(entity);
 
-		/// <summary>
-		/// 导出LC_OutScanRecord为excel表,等待开发。
-		/// </summary>
-		/// <returns></returns>
-		//public async Task<FileDto> GetToExcel()
-		//{
-		//	var users = await UserManager.Users.ToListAsync();
-		//	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
-		//	await FillRoleNames(userListDtos);
-		//	return _userListExcelExporter.ExportToFile(userListDtos);
-		//}
-
+            LC_ScanRecord scanRecord = new LC_ScanRecord();
+            scanRecord.TimeLogId = input.LC_OutScanRecord.TimeLogId;
+            scanRecord.Status = GYEnums.LC_TimeStatus.结束;
+            scanRecord.Type = GYEnums.LC_ScanRecordType.出库扫码;
+            scanRecord.EmployeeId = input.LC_OutScanRecord.EmployeeId;
+            scanRecord.EmployeeName = input.LC_OutScanRecord.EmployeeName;
+            return new APIResultDto() { Code = 0, Msg = "保存成功", Data = entity.Id };
+        }
     }
 }
 

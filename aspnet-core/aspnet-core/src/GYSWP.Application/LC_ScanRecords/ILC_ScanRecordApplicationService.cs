@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.LC_ScanRecords.Dtos;
 using GYSWP.LC_ScanRecords;
+using GYSWP.Dtos;
 
 namespace GYSWP.LC_ScanRecords
 {
@@ -55,7 +56,7 @@ namespace GYSWP.LC_ScanRecords
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task CreateOrUpdate(CreateOrUpdateLC_ScanRecordInput input);
+        Task<Guid> CreateOrUpdate(CreateOrUpdateLC_ScanRecordInput input);
 
 
         /// <summary>
@@ -70,13 +71,6 @@ namespace GYSWP.LC_ScanRecords
         /// 批量删除LC_ScanRecord
         /// </summary>
         Task BatchDelete(List<Guid> input);
-
-
-		/// <summary>
-        /// 导出LC_ScanRecord为excel表
-        /// </summary>
-        /// <returns></returns>
-		//Task<FileDto> GetToExcel();
-
+        Task<APIResultDto> CreateOutStorageSacnAsync(LC_ScanRecordEditDto input);
     }
 }

@@ -1,21 +1,15 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using Abp.Application.Services.Dto;
 using Abp.Domain.Entities.Auditing;
 using GYSWP.LC_UseOutStorages;
 
 namespace  GYSWP.LC_UseOutStorages.Dtos
 {
-    public class LC_UseOutStorageEditDto
+    public class LC_UseOutStorageEditDto : EntityDto<Guid?>, IHasCreationTime
     {
 
-        /// <summary>
-        /// Id
-        /// </summary>
-        public Guid? Id { get; set; }         
-
-
-        
 		/// <summary>
 		/// TimeLogId
 		/// </summary>

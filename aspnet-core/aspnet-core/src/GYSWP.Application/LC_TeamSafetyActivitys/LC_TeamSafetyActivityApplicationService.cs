@@ -21,8 +21,7 @@ using Abp.Linq.Extensions;
 using GYSWP.LC_TeamSafetyActivitys;
 using GYSWP.LC_TeamSafetyActivitys.Dtos;
 using GYSWP.LC_TeamSafetyActivitys.DomainService;
-
-
+using Abp.Auditing;
 
 namespace GYSWP.LC_TeamSafetyActivitys
 {
@@ -116,13 +115,14 @@ LC_TeamSafetyActivityEditDto editDto;
 		}
 
 
-		/// <summary>
-		/// 添加或者修改LC_TeamSafetyActivity的公共方法
-		/// </summary>
-		/// <param name="input"></param>
-		/// <returns></returns>
-		
-		public async Task CreateOrUpdate(CreateOrUpdateLC_TeamSafetyActivityInput input)
+        /// <summary>
+        /// 添加或者修改LC_TeamSafetyActivity的公共方法
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        [Audited]
+        public async Task CreateOrUpdate(CreateOrUpdateLC_TeamSafetyActivityInput input)
 		{
 
 			if (input.LC_TeamSafetyActivity.Id.HasValue)

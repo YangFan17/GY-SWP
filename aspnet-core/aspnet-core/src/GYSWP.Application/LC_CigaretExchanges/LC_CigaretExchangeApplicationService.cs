@@ -21,8 +21,7 @@ using Abp.Linq.Extensions;
 using GYSWP.LC_CigaretExchanges;
 using GYSWP.LC_CigaretExchanges.Dtos;
 using GYSWP.LC_CigaretExchanges.DomainService;
-
-
+using Abp.Auditing;
 
 namespace GYSWP.LC_CigaretExchanges
 {
@@ -116,13 +115,14 @@ LC_CigaretExchangeEditDto editDto;
 		}
 
 
-		/// <summary>
-		/// 添加或者修改LC_CigaretExchange的公共方法
-		/// </summary>
-		/// <param name="input"></param>
-		/// <returns></returns>
-		
-		public async Task CreateOrUpdate(CreateOrUpdateLC_CigaretExchangeInput input)
+        /// <summary>
+        /// 添加或者修改LC_CigaretExchange的公共方法
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        [Audited]
+        public async Task CreateOrUpdate(CreateOrUpdateLC_CigaretExchangeInput input)
 		{
 
 			if (input.LC_CigaretExchange.Id.HasValue)
