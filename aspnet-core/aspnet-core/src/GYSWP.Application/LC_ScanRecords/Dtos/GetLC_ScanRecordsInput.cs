@@ -1,7 +1,9 @@
 
 using Abp.Runtime.Validation;
 using GYSWP.Dtos;
+using GYSWP.GYEnums;
 using GYSWP.LC_ScanRecords;
+using System;
 
 namespace GYSWP.LC_ScanRecords.Dtos
 {
@@ -19,5 +21,12 @@ namespace GYSWP.LC_ScanRecords.Dtos
             }
         }
 
+    }
+    public class CreateLC_ScanRecordInput
+    {
+        public string EmployeeId { get; set; }
+        public string EmployeeName { get; set; }
+        public Guid TimeLogId { get; set; }
+        public LC_TimeStatus Status { get; set; }
     }
 }

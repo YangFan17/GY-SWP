@@ -21,6 +21,7 @@ namespace GYSWP.LC_TimeLogs.Dtos
     }
     public class CreateLC_TimeLogsInput
     {
-     public string EmployeeId { get; set; }
+        public string EmployeeId { get; set; }
+        public string EmployeeName { get; set; }
     }
 }

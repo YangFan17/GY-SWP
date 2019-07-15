@@ -200,10 +200,12 @@ LC_TimeLogEditDto editDto;
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
+        [AbpAllowAnonymous]
         public async Task<APIResultDto> CreateBeginInStorageAsync(CreateLC_TimeLogsInput input)
         {
             LC_TimeLog entity = new LC_TimeLog();
             entity.EmployeeId = input.EmployeeId;
+            entity.EmployeeName = input.EmployeeName;
             entity.Type = GYEnums.LC_TimeType.入库作业;
             entity.Status = GYEnums.LC_TimeStatus.开始;
             entity = await _entityRepository.InsertAsync(entity);

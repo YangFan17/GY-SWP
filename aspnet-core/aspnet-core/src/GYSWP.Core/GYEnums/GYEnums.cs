@@ -129,6 +129,11 @@ namespace GYSWP.GYEnums
         结束 = 2
     }
 
+    public enum LC_ScanRecordType
+    {
+        入库扫码 = 1,
+        出库扫码 = 2
+    }
 
     public static class GYCode
     {

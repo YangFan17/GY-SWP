@@ -21,8 +21,7 @@ using Abp.Linq.Extensions;
 using GYSWP.LC_ScanRecords;
 using GYSWP.LC_ScanRecords.Dtos;
 using GYSWP.LC_ScanRecords.DomainService;
-
-
+using GYSWP.Dtos;
 
 namespace GYSWP.LC_ScanRecords
 {
@@ -194,18 +193,23 @@ LC_ScanRecordEditDto editDto;
 		}
 
 
-		/// <summary>
-		/// 导出LC_ScanRecord为excel表,等待开发。
-		/// </summary>
-		/// <returns></returns>
-		//public async Task<FileDto> GetToExcel()
-		//{
-		//	var users = await UserManager.Users.ToListAsync();
-		//	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
-		//	await FillRoleNames(userListDtos);
-		//	return _userListExcelExporter.ExportToFile(userListDtos);
-		//}
-
+        /// <summary>
+        /// 入库扫码开始
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public async Task<APIResultDto> CreateInStorageScanAsync(CreateLC_ScanRecordInput input)
+        {
+            LC_ScanRecord entity = new LC_ScanRecord();
+            entity.EmployeeId = input.EmployeeId;
+            entity.EmployeeName = input.EmployeeName;
+            entity.TimeLogId = input.TimeLogId;
+            entity.Type = GYEnums.LC_ScanRecordType.入库扫码;
+            entity.Status = input.Status;
+            entity = await _entityRepository.InsertAsync(entity);
+            return new APIResultDto() { Code = 0, Msg = "保存成功", Data = entity.Id };
+        }
     }
 }
 
