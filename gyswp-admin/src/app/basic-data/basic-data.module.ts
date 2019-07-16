@@ -21,6 +21,7 @@ import { DetailComponent } from './document/document/detail/detail.component';
 import { ClauseComponent } from './document/clause/clause.component';
 import { ClauseDetailComponent } from './document/clause/clause-detail/clause-detail.component';
 import { DeptUserComponent } from './document/document/detail/dept-user/dept-user.component';
+import { UploadTxtComponent } from './document/document/upload-txt/upload-txt.component';
 
 @NgModule({
     imports: [
@@ -44,7 +45,8 @@ import { DeptUserComponent } from './document/document/detail/dept-user/dept-use
         DetailComponent,
         ClauseComponent,
         ClauseDetailComponent,
-        DeptUserComponent
+        DeptUserComponent,
+        UploadTxtComponent
     ],
     entryComponents: [
         OrganizationComponent,
@@ -58,7 +60,8 @@ import { DeptUserComponent } from './document/document/detail/dept-user/dept-use
         DetailComponent,
         ClauseComponent,
         ClauseDetailComponent,
-        DeptUserComponent
+        DeptUserComponent,
+        UploadTxtComponent
     ],
     providers: [BasicDataService]
 })

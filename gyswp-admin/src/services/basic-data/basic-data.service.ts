@@ -193,4 +193,11 @@ export class BasicDataService {
             return data;
         }));
     }
+
+    documentReadAsync(params: any): Observable<ApiResult> {
+        let url_ = "/api/services/app/Document/DocumentReadAsync";
+        return this._commonhttp.post(url_, params).pipe(map(data => {
+            return data;
+        }));
+    }
 }

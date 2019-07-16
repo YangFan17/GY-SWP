@@ -479,38 +479,53 @@ namespace GYSWP.Documents
 
 
         #region 文档导入
-        public async Task<bool> documentReadAsync(string path)
+        public async Task<APIResultDto> DocumentReadAsync(DocumentReadInput input)
         {
-            //Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            //Console.WriteLine("文档转换");
-            var docs = GetDocsByDirectory($@"{path}");
-            foreach (var doc in docs)
-            {   //0编号 1名称 2发布时间 3类型
-                string[] docInfoArry = doc.DocName.Split("#");
-                DateTime dt = DateTime.ParseExact(docInfoArry[2].Split('.')[0], "yyyyMMdd", System.Globalization.CultureInfo.CurrentCulture);
-                Document entity = new Document();
-                entity.Name = docInfoArry[1];
-                entity.DocNo = docInfoArry[0];
-                entity.IsAllUser = true;
-                entity.IsAction = true;
-                entity.PublishTime = dt;
-                var id = await _entityRepository.InsertAndGetIdAsync(entity);
-                await CurrentUnitOfWork.SaveChangesAsync();
-                foreach (var item in doc.Sections)
-                {
-                    Clause cla = new Clause();
-                    cla.Id = item.Id.Value;
-                    cla.DocumentId = id;
-                    cla.ClauseNo = item.No;
-                    cla.Title = item.Title;
-                    cla.Content = item.Context;
-                    cla.ParentId = doc.Sections.Where(v => v.No == item.PNo).Select(v => v.Id).FirstOrDefault();
-                    var pId = await _clauseRepository.InsertAsync(cla);
+            try
+            {
+                var categoryList = await _categoryManager.GetHierarchyCategories(input.CategoryId);
+                string CategoryCode = string.Join(',', categoryList.Select(c => c.Id).ToArray());
+                string CategoryDesc = string.Join(',', categoryList.Select(c => c.Name).ToArray());
+                //Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+                //Console.WriteLine("文档转换");
+                var docs = GetDocsByDirectory($@"{input.Path}");
+                foreach (var doc in docs)
+                {   //0编号 1名称 2发布时间 3类型
+                    string[] docInfoArry = doc.DocName.Split("#");
+                    DateTime dt = DateTime.ParseExact(docInfoArry[2].Split('.')[0], "yyyyMMdd", System.Globalization.CultureInfo.CurrentCulture);
+                    Document entity = new Document();
+                    entity.Name = docInfoArry[1];
+                    entity.DocNo = docInfoArry[0];
+                    entity.CategoryCode = CategoryCode;
+                    entity.CategoryDesc = CategoryDesc;
+                    entity.CategoryId = input.CategoryId;
+                    entity.IsAllUser = true;
+                    entity.IsAction = true;
+                    entity.PublishTime = dt;
+                    var id = await _entityRepository.InsertAndGetIdAsync(entity);
                     await CurrentUnitOfWork.SaveChangesAsync();
+                    foreach (var item in doc.Sections)
+                    {
+                        Clause cla = new Clause();
+                        cla.Id = item.Id.Value;
+                        cla.DocumentId = id;
+                        cla.ClauseNo = item.No;
+                        cla.Title = item.Title;
+                        cla.Content = item.Context;
+                        cla.ParentId = doc.Sections.Where(v => v.No == item.PNo).Select(v => v.Id).FirstOrDefault();
+                        var pId = await _clauseRepository.InsertAsync(cla);
+                        await CurrentUnitOfWork.SaveChangesAsync();
+                    }
                 }
+
+                return new APIResultDto() { Code = 0, Msg = "导入成功" };
+            }
+            catch (Exception ex)
+            {
+                Logger.ErrorFormat("DocumentReadAsync errormsg{0} Exception{1}", ex.Message, ex);
+                return new APIResultDto() { Code = 999, Msg = "导入失败" };
             }
 
-            return true;
         }
         private static List<DocInfo> GetDocsByDirectory(string directoryPath)
         {

@@ -6,6 +6,7 @@ import { AppComponentBase } from '@shared/component-base';
 import { EditCategoryComponent } from '../edit-category/edit-category.component';
 import { CreateCategoryComponent } from '../create-category/create-category.component';
 import { QrCodeCategoryComponent } from '../qr-code-category/qr-code-category.component';
+import { UploadTxtComponent } from '../upload-txt/upload-txt.component';
 
 @Component({
     moduleId: module.id,
@@ -20,6 +21,7 @@ export class CategoryComponent extends AppComponentBase implements OnInit {
 
     @ViewChild('treeCom') treeCom: NzTreeComponent;
     dropdown: NzDropdownContextComponent;
+    showMenu: boolean = false;
     activedNode: NzTreeNode;
     rkeyNode = { key: '', title: '', origin: { parentId: null } };
     nodes = [];
@@ -61,7 +63,11 @@ export class CategoryComponent extends AppComponentBase implements OnInit {
     contextMenu($event: MouseEvent, template: TemplateRef<void>, node): void {
         if (node.title == '技术标准' || node.title == '管理标准' || node.title == '工作标准' || node.title == '外来文件' || node.title == '作废标准库' || node.title == '现行标准库' || node.title == '风险库') {
             // 默认分类无法修改
+            this.showMenu = false;
+            this.dropdown = this.nzDropdownService.create($event, template);
+            this.rkeyNode = node;
         } else {
+            this.showMenu = true;
             this.dropdown = this.nzDropdownService.create($event, template);
             this.rkeyNode = node;
         }
@@ -128,6 +134,22 @@ export class CategoryComponent extends AppComponentBase implements OnInit {
         }
         this.modalHelper
             .open(QrCodeCategoryComponent, { pname: pname, pcode: pcode }, 'md', {
+                nzMask: true,
+                nzClosable: false,
+                nzMaskClosable: false,
+            })
+            .subscribe(isSave => {
+                if (isSave) {
+                }
+            });
+    }
+
+    uploadTxt(): void {
+        if (this.dropdown) {
+            this.dropdown.close();
+        }
+        this.modalHelper
+            .open(UploadTxtComponent, { deptId: this.deptId, categoryId: this.rkeyNode.key, categoryName: this.rkeyNode.title }, 'md', {
                 nzMask: true,
                 nzClosable: false,
                 nzMaskClosable: false,

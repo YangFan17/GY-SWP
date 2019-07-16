@@ -89,5 +89,6 @@ namespace GYSWP.Documents
         /// <param name="input"></param>
         /// <returns></returns>
         Task<APIResultDto> DingUpdateAsync(DingDocumentEditDto input);
+        Task<APIResultDto> DocumentReadAsync(DocumentReadInput input);
     }
 }

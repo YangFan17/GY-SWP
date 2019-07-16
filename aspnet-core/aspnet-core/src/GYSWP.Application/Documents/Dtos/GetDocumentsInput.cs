@@ -34,4 +34,11 @@ namespace GYSWP.Documents.Dtos
         }
 
     }
+
+    public class DocumentReadInput 
+    {
+        public string Path { get; set; }
+
+        public int CategoryId { get; set; }
+    }
 }

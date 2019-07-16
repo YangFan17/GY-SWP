@@ -1,0 +1,31 @@
+<div class="padding-bottom-45">
+    <h3 style="text-align: center;">
+        <span>{{categoryName}}批量上传</span>
+    </h3>
+    <!-- <nz-upload nzAction="{{postUrl | hostUrl}}" [nzDisabled]="uploading" (nzChange)="handleChange($event)" nzDirectory>
+        <button nz-button>批量上传</button>
+    </nz-upload> -->
+
+    <!-- <input nz-input [(ngModel)]="address" [placeholder]="'目标路径'"> -->
+    <div nz-col class="mb-md">
+        <nz-alert nzType="info" nzMessage="请将目标文件夹本地路径粘贴于此处" nzShowIcon></nz-alert>
+    </div>
+    <form nz-form [formGroup]="validateForm" (ngSubmit)="submit()">
+        <nz-form-item>
+            <nz-form-control nzHasFeedback>
+                <input nz-input formControlName="address" [placeholder]="'目标路径'">
+                <nz-form-explain *ngIf="validateForm.get('address').dirty&&validateForm.get('address').errors">
+                    <ng-container *ngIf="validateForm.get('address').hasError('required')">路径不能为空</ng-container>
+                </nz-form-explain>
+            </nz-form-control>
+        </nz-form-item>
+        <!-- 功能按钮 -->
+        <div class="custom-modal-footer" style="text-align: right;">
+            <button nz-button type="button" [disabled]="saving" (click)="close()">
+                取消
+            </button>
+            <button nz-button [nzType]="'primary'" type="button" (click)="submit()" [disabled]="!validateForm.valid">
+                上传 </button>
+        </div>
+    </form>
+</div>

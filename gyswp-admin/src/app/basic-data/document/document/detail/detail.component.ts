@@ -118,7 +118,7 @@ export class DetailComponent extends AppComponentBase implements OnInit {
             this.basicDataService.getDocumentByIdAsync(this.id).subscribe(res => {
                 this.document = res;
 
-                if (res.stamps.indexOf(',') != -1) {
+                if (res.stamps && res.stamps.indexOf(',') != -1) {
                     this.isControl = res.stamps.split(',')[0] == '1' ? '5' : '6';
                     this.isValid = res.stamps.split(',')[1];
                 }

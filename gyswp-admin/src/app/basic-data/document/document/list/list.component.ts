@@ -3,6 +3,7 @@ import { PagedListingComponentBase, PagedRequestDto, PagedResultDto } from '@sha
 import { Router } from '@angular/router';
 import { ApiResult } from 'entities';
 import { BasicDataService } from 'services';
+import { UploadFile } from 'ng-zorro-antd';
 
 @Component({
     moduleId: module.id,
@@ -15,7 +16,7 @@ export class ListComponent extends PagedListingComponentBase<any>{
     dept: any = { id: '', name: '' };
     keyWord: string;
     // loading = false;
-    downloading = false;
+    uploading = false;
     selectedCategory = { id: '', name: '' };
 
     constructor(injector: Injector, private router: Router
@@ -70,22 +71,4 @@ export class ListComponent extends PagedListingComponentBase<any>{
     edit(item) {
         this.router.navigate(['app/basic/doc-detail', { id: item.id, deptId: this.dept.id, deptName: this.dept.name }]);
     }
-
-    // download() {
-    //     this.downloading = true;
-    //     let params: any = {};
-    //     params.KeyWord = this.keyWord;
-    //     params.CategoryId = this.selectedCategory ? this.selectedCategory.id : null;
-    //     params.DeptId = this.dept.id;
-    //     this.basicDataService.download(params).subscribe((result: ApiResult) => {
-    //         this.downloading = false;
-    //         if (result.code == 0) {
-    //             var url = this.basicDataService.baseUrl + result.data;
-    //             document.getElementById('aDocZipUrl').setAttribute('href', url);
-    //             document.getElementById('btnDocZipHref').click();
-    //         } else {
-    //             this.notify.error(result.msg);
-    //         }
-    //     })
-    // }
 }

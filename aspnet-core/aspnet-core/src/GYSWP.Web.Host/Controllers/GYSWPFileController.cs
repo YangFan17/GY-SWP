@@ -8,6 +8,7 @@ using Abp.AspNetCore.Mvc.Controllers;
 using Abp.Auditing;
 using Abp.Authorization;
 using GYSWP.Configuration;
+using GYSWP.Documents;
 using GYSWP.Dtos;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -18,11 +19,14 @@ namespace GYSWP.Web.Host.Controllers
     public class GYSWPFileController : AbpController
     {
         private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IDocumentAppService _documentAppService;
 
         public GYSWPFileController(IHostingEnvironment hostingEnvironment
+            , IDocumentAppService documentAppService
           )
         {
             this._hostingEnvironment = hostingEnvironment;
+            _documentAppService = documentAppService;
         }
 
         [RequestFormSizeLimit(valueCountLimit: 2147483647)]
