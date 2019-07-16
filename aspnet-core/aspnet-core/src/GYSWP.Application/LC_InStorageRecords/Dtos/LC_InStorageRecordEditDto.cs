@@ -1,20 +1,14 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using Abp.Application.Services.Dto;
 using Abp.Domain.Entities.Auditing;
 using GYSWP.LC_InStorageRecords;
 
 namespace  GYSWP.LC_InStorageRecords.Dtos
 {
-    public class LC_InStorageRecordEditDto
+    public class LC_InStorageRecordEditDto : EntityDto<Guid?>, IHasCreationTime
     {
-
-        /// <summary>
-        /// Id
-        /// </summary>
-        public Guid? Id { get; set; }         
-
-
         
 		/// <summary>
 		/// TimeLogId

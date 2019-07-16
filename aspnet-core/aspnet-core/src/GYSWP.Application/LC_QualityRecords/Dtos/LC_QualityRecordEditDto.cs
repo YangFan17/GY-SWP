@@ -1,20 +1,14 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using Abp.Application.Services.Dto;
 using Abp.Domain.Entities.Auditing;
 using GYSWP.LC_QualityRecords;
 
 namespace  GYSWP.LC_QualityRecords.Dtos
 {
-    public class LC_QualityRecordEditDto
+    public class LC_QualityRecordEditDto : EntityDto<Guid?>, IHasCreationTime
     {
-
-        /// <summary>
-        /// Id
-        /// </summary>
-        public Guid? Id { get; set; }         
-
-
         
 		/// <summary>
 		/// TimeLogId

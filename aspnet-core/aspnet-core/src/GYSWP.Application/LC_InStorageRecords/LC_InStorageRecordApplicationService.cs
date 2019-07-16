@@ -116,13 +116,13 @@ LC_InStorageRecordEditDto editDto;
 		}
 
 
-		/// <summary>
-		/// 添加或者修改LC_InStorageRecord的公共方法
-		/// </summary>
-		/// <param name="input"></param>
-		/// <returns></returns>
-		
-		public async Task CreateOrUpdate(CreateOrUpdateLC_InStorageRecordInput input)
+        /// <summary>
+        /// 添加或者修改LC_InStorageRecord的公共方法
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public async Task CreateOrUpdate(CreateOrUpdateLC_InStorageRecordInput input)
 		{
 
 			if (input.LC_InStorageRecord.Id.HasValue)

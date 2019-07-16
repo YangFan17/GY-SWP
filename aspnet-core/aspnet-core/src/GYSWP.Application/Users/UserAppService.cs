@@ -257,6 +257,7 @@ namespace GYSWP.Users
 
         private async Task<UserDto> CreateOrUpdateUsers(long deptId,string accessToken)
         {
+            string[] relesName = await _roleRepository.GetAll().Where(aa => aa.DisplayName == "员工").Select(aa=>aa.Name).ToArrayAsync();
             var url = string.Format("https://oapi.dingtalk.com/user/list?access_token={0}&department_id={1}", accessToken, deptId);
             var user = Senparc.CO2NET.HttpUtility.Get.GetJson<DingUserListDto>(url);
             var entityByDD = user.userlist.Select(e => new SynchroDingUser()
@@ -272,7 +273,8 @@ namespace GYSWP.Users
                 EmployeeId=e.userid,
                 EmployeeName=e.name,
                 UnionId=e.unionid,
-                RoleNames= new string[] { "Employee", "DEPTADMIN" }
+                RoleNames= relesName,
+                PhoneNumber=e.mobile
             }).ToList();
             //int emailCode = 001;
             foreach (var item in entityByDD)
