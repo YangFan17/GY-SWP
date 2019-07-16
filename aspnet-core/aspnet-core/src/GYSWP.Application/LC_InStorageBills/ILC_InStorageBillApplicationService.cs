@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.LC_InStorageBills.Dtos;
 using GYSWP.LC_InStorageBills;
+using GYSWP.Dtos;
 
 namespace GYSWP.LC_InStorageBills
 {
@@ -72,11 +73,13 @@ namespace GYSWP.LC_InStorageBills
         Task BatchDelete(List<Guid> input);
 
 
-		/// <summary>
+        /// <summary>
         /// 导出LC_InStorageBill为excel表
         /// </summary>
         /// <returns></returns>
-		//Task<FileDto> GetToExcel();
+        //Task<FileDto> GetToExcel();
 
+        
+        Task<APIResultDto> CreateCertificateRecordAsync(LC_InStorageBillEditDto input);
     }
 }

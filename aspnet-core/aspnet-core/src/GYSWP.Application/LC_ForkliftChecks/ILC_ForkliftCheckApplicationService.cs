@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.LC_ForkliftChecks.Dtos;
 using GYSWP.LC_ForkliftChecks;
+using GYSWP.Dtos;
 
 namespace GYSWP.LC_ForkliftChecks
 {
@@ -72,11 +73,12 @@ namespace GYSWP.LC_ForkliftChecks
         Task BatchDelete(List<Guid> input);
 
 
-		/// <summary>
+        /// <summary>
         /// 导出LC_ForkliftCheck为excel表
         /// </summary>
         /// <returns></returns>
-		//Task<FileDto> GetToExcel();
+        //Task<FileDto> GetToExcel();
 
+        Task<APIResultDto> CreateForkliftCheckRecordAsync(LC_ForkliftCheckEditDto input);
     }
 }

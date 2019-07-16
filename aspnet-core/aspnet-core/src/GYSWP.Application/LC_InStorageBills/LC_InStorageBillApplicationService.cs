@@ -21,8 +21,7 @@ using Abp.Linq.Extensions;
 using GYSWP.LC_InStorageBills;
 using GYSWP.LC_InStorageBills.Dtos;
 using GYSWP.LC_InStorageBills.DomainService;
-
-
+using GYSWP.Dtos;
 
 namespace GYSWP.LC_InStorageBills
 {
@@ -206,6 +205,14 @@ LC_InStorageBillEditDto editDto;
 		//	return _userListExcelExporter.ExportToFile(userListDtos);
 		//}
 
+        ///    
+            [AbpAllowAnonymous]
+        public async Task<APIResultDto> CreateCertificateRecordAsync(LC_InStorageBillEditDto input)
+        {
+            var entity = input.MapTo<LC_InStorageBill>();
+            entity = await _entityRepository.InsertAsync(entity);
+            return new APIResultDto { Code = 0 };
+        }
     }
 }
 

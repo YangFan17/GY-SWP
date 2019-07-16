@@ -21,8 +21,7 @@ using Abp.Linq.Extensions;
 using GYSWP.LC_ConveyorChecks;
 using GYSWP.LC_ConveyorChecks.Dtos;
 using GYSWP.LC_ConveyorChecks.DomainService;
-
-
+using GYSWP.Dtos;
 
 namespace GYSWP.LC_ConveyorChecks
 {
@@ -194,18 +193,31 @@ LC_ConveyorCheckEditDto editDto;
 		}
 
 
-		/// <summary>
-		/// 导出LC_ConveyorCheck为excel表,等待开发。
-		/// </summary>
-		/// <returns></returns>
-		//public async Task<FileDto> GetToExcel()
-		//{
-		//	var users = await UserManager.Users.ToListAsync();
-		//	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
-		//	await FillRoleNames(userListDtos);
-		//	return _userListExcelExporter.ExportToFile(userListDtos);
-		//}
+        /// <summary>
+        /// 导出LC_ConveyorCheck为excel表,等待开发。
+        /// </summary>
+        /// <returns></returns>
+        //public async Task<FileDto> GetToExcel()
+        //{
+        //	var users = await UserManager.Users.ToListAsync();
+        //	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
+        //	await FillRoleNames(userListDtos);
+        //	return _userListExcelExporter.ExportToFile(userListDtos);
+        //}
 
+
+        [AbpAllowAnonymous]
+        public async Task<APIResultDto> CreateConveyorCheckRecordAsync(LC_ConveyorCheckEditDto input)
+        {
+            var entity = input.MapTo<LC_ConveyorCheck>();
+            
+            entity = await _entityRepository.InsertAsync(entity);
+            return new APIResultDto()
+            {
+                Code = 0,
+                Data = entity
+            };
+        }
     }
 }
 
