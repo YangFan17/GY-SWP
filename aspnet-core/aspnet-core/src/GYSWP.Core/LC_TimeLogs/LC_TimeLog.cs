@@ -44,5 +44,10 @@ namespace GYSWP.LC_TimeLogs
         /// </summary>
         [Required]
         public virtual DateTime CreationTime { get; set; }
+
+        /// <summary>
+        /// 结束时间
+        /// </summary>
+        public virtual DateTime? EndTime { get; set; }
     }
 }
