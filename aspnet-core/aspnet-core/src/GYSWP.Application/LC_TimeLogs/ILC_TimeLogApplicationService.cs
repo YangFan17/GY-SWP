@@ -21,6 +21,7 @@ using Abp.Application.Services.Dto;
 using GYSWP.LC_TimeLogs.Dtos;
 using GYSWP.LC_TimeLogs;
 using GYSWP.Dtos;
+using GYSWP.GYEnums;
 
 namespace GYSWP.LC_TimeLogs
 {
@@ -74,5 +75,13 @@ namespace GYSWP.LC_TimeLogs
         Task<APIResultDto> CreateBeginInStorageAsync(CreateLC_TimeLogsInput input);
 
         Task<APIResultDto> CreateScanOverAsync(CreateLC_TimeLogsInput input);
+
+        /// <summary>
+        /// 根据id修改状态
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        Task<APIResultDto> ModifyStatusById(Guid id, LC_TimeStatus status);
     }
 }
