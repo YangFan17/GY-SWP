@@ -247,6 +247,7 @@ LC_TimeLogEditDto editDto;
             else
             {
                 lC_TimeLog.Status = status;
+                lC_TimeLog.EndTime = DateTime.Now;
                 await _entityRepository.UpdateAsync(lC_TimeLog);
                 return new APIResultDto() { Code = 0, Msg = "修改状态成功" };
             }
