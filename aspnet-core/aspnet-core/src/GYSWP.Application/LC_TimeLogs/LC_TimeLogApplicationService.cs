@@ -23,6 +23,7 @@ using GYSWP.LC_TimeLogs.Dtos;
 using GYSWP.LC_TimeLogs.DomainService;
 using Abp.Auditing;
 using GYSWP.Dtos;
+using GYSWP.GYEnums;
 
 namespace GYSWP.LC_TimeLogs
 {
@@ -226,6 +227,31 @@ LC_TimeLogEditDto editDto;
             entity.Status = GYEnums.LC_TimeStatus.结束;
             entity = await _entityRepository.InsertAsync(entity);
             return new APIResultDto() { Code = 0, Msg = "保存成功", Data = entity.Id };
+        }
+
+        /// <summary>
+        /// 根据id修改状态
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        [Audited]
+        public async Task<APIResultDto> ModifyStatusById(Guid id, LC_TimeStatus status)
+        {
+            LC_TimeLog lC_TimeLog = await _entityRepository.FirstOrDefaultAsync(id);
+            if (lC_TimeLog == null)
+            {
+                return new APIResultDto() { Code = 1, Msg = "未找到当前项" };
+            }
+            else
+            {
+                lC_TimeLog.Status = status;
+                lC_TimeLog.EndTime = DateTime.Now;
+                await _entityRepository.UpdateAsync(lC_TimeLog);
+                return new APIResultDto() { Code = 0, Msg = "修改状态成功" };
+            }
+
         }
     }
 }

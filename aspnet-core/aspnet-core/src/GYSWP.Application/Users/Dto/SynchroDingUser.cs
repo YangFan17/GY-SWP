@@ -39,6 +39,8 @@ namespace GYSWP.Users.Dto
 
         public string UnionId { get; set; }
 
+        public string PhoneNumber { get; set; }
+
         [Required]
         [StringLength(AbpUserBase.MaxPlainPasswordLength)]
         [DisableAuditing]

@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.LC_ConveyorChecks.Dtos;
 using GYSWP.LC_ConveyorChecks;
+using GYSWP.Dtos;
 
 namespace GYSWP.LC_ConveyorChecks
 {
@@ -72,11 +73,12 @@ namespace GYSWP.LC_ConveyorChecks
         Task BatchDelete(List<Guid> input);
 
 
-		/// <summary>
+        /// <summary>
         /// 导出LC_ConveyorCheck为excel表
         /// </summary>
         /// <returns></returns>
-		//Task<FileDto> GetToExcel();
+        //Task<FileDto> GetToExcel();
 
+        Task<APIResultDto> CreateConveyorCheckRecordAsync(LC_ConveyorCheckEditDto input);
     }
 }

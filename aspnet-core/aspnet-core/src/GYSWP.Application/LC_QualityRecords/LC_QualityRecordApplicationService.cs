@@ -116,13 +116,13 @@ LC_QualityRecordEditDto editDto;
 		}
 
 
-		/// <summary>
-		/// 添加或者修改LC_QualityRecord的公共方法
-		/// </summary>
-		/// <param name="input"></param>
-		/// <returns></returns>
-		
-		public async Task CreateOrUpdate(CreateOrUpdateLC_QualityRecordInput input)
+        /// <summary>
+        /// 添加或者修改LC_QualityRecord的公共方法
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public async Task CreateOrUpdate(CreateOrUpdateLC_QualityRecordInput input)
 		{
 
 			if (input.LC_QualityRecord.Id.HasValue)

@@ -36,7 +36,7 @@ export class DataConfigComponent extends AppComponentBase implements OnInit {
     @ViewChild('st')
     st: STComponent;
     configData: STColumn[] = [
-        { title: '配置类型', index: 'modelName' },
+        { title: '所属模块', index: 'modelName' },
         { title: '编码', index: 'code' },
         { title: '配置项', index: 'desc' },
         { title: '备注', index: 'remark' },
