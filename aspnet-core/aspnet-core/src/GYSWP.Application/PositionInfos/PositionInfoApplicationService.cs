@@ -21,8 +21,7 @@ using Abp.Linq.Extensions;
 using GYSWP.PositionInfos;
 using GYSWP.PositionInfos.Dtos;
 using GYSWP.PositionInfos.DomainService;
-
-
+using GYSWP.Dtos;
 
 namespace GYSWP.PositionInfos
 {
@@ -194,18 +193,51 @@ PositionInfoEditDto editDto;
 		}
 
 
-		/// <summary>
-		/// 导出PositionInfo为excel表,等待开发。
-		/// </summary>
-		/// <returns></returns>
-		//public async Task<FileDto> GetToExcel()
-		//{
-		//	var users = await UserManager.Users.ToListAsync();
-		//	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
-		//	await FillRoleNames(userListDtos);
-		//	return _userListExcelExporter.ExportToFile(userListDtos);
-		//}
+        /// <summary>
+        /// 导出PositionInfo为excel表,等待开发。
+        /// </summary>
+        /// <returns></returns>
+        //public async Task<FileDto> GetToExcel()
+        //{
+        //	var users = await UserManager.Users.ToListAsync();
+        //	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
+        //	await FillRoleNames(userListDtos);
+        //	return _userListExcelExporter.ExportToFile(userListDtos);
+        //}
 
+
+        /// <summary>
+        /// 获取当前登录用户的PositionInfo分页列表信息
+        ///</summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+
+        public async Task<List<PositionInfoListDto>> GetPositionListByCurrentUserAsync()
+        {
+            var user = await GetCurrentUserAsync();
+            var query = _entityRepository.GetAll().Where(i => i.EmployeeId == user.EmployeeId).AsNoTracking();
+            var entityList = await query.ToListAsync();
+            if (entityList.Count() <= 0)
+            {
+                return null;
+            }
+            // TODO:根据传入的参数添加过滤条件
+            return entityList.MapTo<List<PositionInfoListDto>>();
+        }
+        
+        public async Task<APIResultDto> CreatePositionInfoAsync(PosInfoInput input)
+        {
+
+            
+            PositionInfo entity = new PositionInfo();
+            entity.Duties = input.Duties;
+            entity = await _entityRepository.InsertAsync(entity);
+            return new APIResultDto
+            {
+                Code = 0,
+                Data = entity.Id
+            };
+        }
     }
 }
 

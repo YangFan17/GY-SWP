@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.PositionInfos.Dtos;
 using GYSWP.PositionInfos;
+using GYSWP.Dtos;
 
 namespace GYSWP.PositionInfos
 {
@@ -72,11 +73,15 @@ namespace GYSWP.PositionInfos
         Task BatchDelete(List<Guid> input);
 
 
-		/// <summary>
+        /// <summary>
         /// 导出PositionInfo为excel表
         /// </summary>
         /// <returns></returns>
-		//Task<FileDto> GetToExcel();
+        //Task<FileDto> GetToExcel();
+
+        Task<List<PositionInfoListDto>> GetPositionListByCurrentUserAsync();
+
+        Task<APIResultDto> CreatePositionInfoAsync(CreateOrUpdatePositionInfoInput input);
 
     }
 }

@@ -1,0 +1,32 @@
+<div class="padding-bottom-45">
+    <div class="modal-header">
+        <div class="modal-title">创建工作职责</div>
+    </div>
+
+    <form nz-form #validateForm="ngForm" *ngIf="positionInfo" (ngSubmit)="save()">
+        <nz-tabset>
+            <nz-tab [nzTitle]="'工作职责'">
+                <nz-form-item nz-row>
+                    <nz-form-label nz-col [nzSm]="4">工作职责</nz-form-label>
+                    <nz-form-control [nzSm]="20" nzHasFeedback>
+                        <textarea nz-input rows="13" name="duties" maxlength="2000" #duties="ngModel"
+                            [(ngModel)]="positionInfo.duties" [placeholder]="'请填写工作职责'"></textarea>
+                        <nz-form-explain *ngIf="duties.control.dirty&&duties.control.errors">
+                            <ng-container *ngIf="duties.control.hasError('maxlength')">字符长度小于等于2000</ng-container>
+                        </nz-form-explain>
+                    </nz-form-control>
+                </nz-form-item>
+            </nz-tab>
+        </nz-tabset>
+
+        <div class="modal-footer">
+            <button nz-button type="button" [disabled]="saving" (click)="close()">
+                取消
+            </button>
+            <button nz-button [nzType]="'primary'" type="submit" [disabled]="!validateForm.valid||saving">
+                保存
+            </button>
+        </div>
+
+    </form>
+</div>
