@@ -18,8 +18,8 @@ export class AdviseComponent extends AppComponentBase implements OnInit {
   dataList: any[];
   search = { month: '', deptId: 1 };
   isTableLoading = false;
-  constructor(injector: Injector,
-    private basicDataService: BasicDataService, private adviseService: AdviseService) {
+  constructor(injector: Injector
+    , private adviseService: AdviseService) {
     super(injector);
   }
 
@@ -29,7 +29,7 @@ export class AdviseComponent extends AppComponentBase implements OnInit {
   }
 
   getTrees() {
-    this.basicDataService.getDeptDocNzTreeNodes('合理化建议部门').subscribe((data) => {
+    this.adviseService.getDeptDocNzTreeNodes('合理化建议部门').subscribe((data) => {
       this.nodes = data;
       if (data.length > 0) {
         var selectedNode = data[0].children[0];

@@ -37,6 +37,8 @@ using GYSWP.LC_SortingEquipChecks;
 using GYSWP.LC_TeamSafetyActivitys;
 using GYSWP.LC_UseOutStorages;
 using GYSWP.LC_ScanRecords;
+using GYSWP.PositionInfos;
+using GYSWP.MainPointsRecords;
 
 namespace GYSWP.EntityFrameworkCore
 {
@@ -68,6 +70,9 @@ namespace GYSWP.EntityFrameworkCore
         public virtual DbSet<Advise> Advises { get; set; }
         public virtual DbSet<Indicator> Indicators { get; set; }
         public virtual DbSet<IndicatorsDetail> IndicatorsDetails { get; set; }
+        public virtual DbSet<PositionInfo> PositionInfos { get; set; }
+        public virtual DbSet<MainPointsRecord> MainPointsRecords { get; set; }
+
         public virtual DbSet<EntryExitRegistration> LC_EntryExitRegistrations { get; set; }
         public virtual DbSet<InspectionRecord> LC_InspectionRecords { get; set; }
         public virtual DbSet<SCInventoryRecord> LC_SCInventoryRecords { get; set; }

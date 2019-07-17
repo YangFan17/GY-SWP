@@ -7,6 +7,7 @@ import { HomeComponent } from '@app/home/home.component';
 import { SharedModule } from '@shared/shared.module';
 import { HttpClientModule } from '@angular/common/http';
 import { G2GroupBarModule } from '../../packages/group-bar';
+import { PositionInfoComponent } from './home/position-info/position-info.component';
 
 @NgModule({
   imports: [
@@ -21,6 +22,7 @@ import { G2GroupBarModule } from '../../packages/group-bar';
   ],
   declarations: [
     HomeComponent,
+    PositionInfoComponent,
   ],
   entryComponents: [
   ],

@@ -21,9 +21,8 @@ export class InspectComponent extends AppComponentBase implements OnInit {
     search = { month: '', deptId: 0, userName: '' };
     isTableLoading = false;
 
-    constructor(injector: Injector,
-        private basicDataService: BasicDataService,
-        private inspectService: InspectService
+    constructor(injector: Injector
+        , private inspectService: InspectService
     ) {
         super(injector);
     }
@@ -34,7 +33,7 @@ export class InspectComponent extends AppComponentBase implements OnInit {
     }
 
     getTrees() {
-        this.basicDataService.getDeptDocNzTreeNodes('自查部门').subscribe((data) => {
+        this.inspectService.getDeptDocNzTreeNodes('自查部门').subscribe((data) => {
             this.nodes = data;
             if (data.length > 0) {
                 var selectedNode = data[0].children[0];

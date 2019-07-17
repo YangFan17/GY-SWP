@@ -1,13 +1,12 @@
 import { Component, OnInit, ViewChild, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/component-base';
 import { NzTreeComponent, NzFormatEmitEvent } from 'ng-zorro-antd';
-import { BasicDataService, StandardRevisionService } from 'services';
+import { StandardRevisionService } from 'services';
 
 @Component({
   moduleId: module.id,
   selector: 'app-standardrevision',
   templateUrl: './standardrevision.component.html',
-  styles: [],
   providers: [StandardRevisionService]
 })
 export class StandardrevisionComponent extends AppComponentBase implements OnInit {
@@ -21,8 +20,8 @@ export class StandardrevisionComponent extends AppComponentBase implements OnIni
   search = { month: '', deptId: 1 };
   isTableLoading = false;
 
-  constructor(injector: Injector,
-    private basicDataService: BasicDataService, private standardRevisionService: StandardRevisionService) {
+  constructor(injector: Injector
+    , private standardRevisionService: StandardRevisionService) {
     super(injector);
   }
 
@@ -32,7 +31,7 @@ export class StandardrevisionComponent extends AppComponentBase implements OnIni
   }
 
   getTrees() {
-    this.basicDataService.getDeptDocNzTreeNodes('标准制修订部门').subscribe((data) => {
+    this.standardRevisionService.getDeptDocNzTreeNodes('标准制修订部门').subscribe((data) => {
       this.nodes = data;
       if (data.length > 0) {
         var selectedNode = data[0].children[0];

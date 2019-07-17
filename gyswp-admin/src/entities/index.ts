@@ -18,3 +18,5 @@ export * from './systemdata';
 export * from './advise';
 export * from './indicator';
 export * from './indicator-dto';
+export * from './position-info';
+export * from './main-points-record';

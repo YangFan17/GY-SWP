@@ -143,6 +143,10 @@ g）核对发布标书与审核后的标书内容是否有实质性的差别；`
   goPre(id: string) {
     this.router.navigate(['app/criterion/pre-doc', id]);
   }
+
+  goEdit() {
+    this.router.navigate(['app/criterion/pre-doc']);
+  }
 }
 export interface TreeNodeInterface {
   id: string;

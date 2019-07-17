@@ -35,7 +35,6 @@ import { IndicatorSuperviseComponent } from './indicator-supervise/indicator-sup
         StandardrevisionComponent,
         AdviseComponent,
         IndicatorSuperviseComponent
-    ],
-    providers: [BasicDataService],
+    ]
 })
 export class ReportsModule { }

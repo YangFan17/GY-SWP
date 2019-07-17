@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/component-base';
 import { NzTreeComponent, NzFormatEmitEvent } from 'ng-zorro-antd';
-import { BasicDataService, SuperviseService } from 'services';
+import { SuperviseService } from 'services';
 import { addDays } from 'date-fns';
 
 
@@ -22,7 +22,6 @@ export class SuperviseComponent extends AppComponentBase implements OnInit {
     isTableLoading = false;
 
     constructor(injector: Injector,
-        private basicDataService: BasicDataService,
         private superviseService: SuperviseService
     ) {
         super(injector);
@@ -34,7 +33,7 @@ export class SuperviseComponent extends AppComponentBase implements OnInit {
     }
 
     getTrees() {
-        this.basicDataService.getDeptDocNzTreeNodes('监督查询部门').subscribe((data) => {
+        this.superviseService.getDeptDocNzTreeNodes('监督查询部门').subscribe((data) => {
             this.nodes = data;
             if (data.length > 0) {
                 var selectedNode = data[0].children[0];

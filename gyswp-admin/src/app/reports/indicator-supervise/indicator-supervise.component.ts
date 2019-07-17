@@ -21,9 +21,8 @@ export class IndicatorSuperviseComponent extends AppComponentBase implements OnI
     search = { beginTime: '', endTime: '', deptId: 0, userName: '' };
     isTableLoading = false;
 
-    constructor(injector: Injector,
-        private basicDataService: BasicDataService,
-        private superviseService: IndicatorSuperviseService
+    constructor(injector: Injector
+        , private superviseService: IndicatorSuperviseService
     ) {
         super(injector);
     }
@@ -34,7 +33,7 @@ export class IndicatorSuperviseComponent extends AppComponentBase implements OnI
     }
 
     getTrees() {
-        this.basicDataService.getDeptDocNzTreeNodes('指标统计部门').subscribe((data) => {
+        this.superviseService.getDeptDocNzTreeNodes('指标统计部门').subscribe((data) => {
             this.nodes = data;
             if (data.length > 0) {
                 var selectedNode = data[0].children[0];
