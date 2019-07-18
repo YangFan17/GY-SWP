@@ -65,10 +65,25 @@ namespace GYSWP.PositionInfos.Dtos
 
     public class MainPointsList
     {
-        public Guid PositionInfoId { get; set; }
+        public Guid DocId { get; set; }
         public string MainPoint { get; set; }
         public string DocName { get; set; }
         public string DocNo { get; set; }
+        public Guid MainPointId { get; set; }
     }
-
+    public class HomePositionTreeList
+    {
+        public HomePositionTreeList()
+        {
+            Children = new List<HomePositionTreeList>();
+        }
+        public Guid Id { get; set; }
+        public Guid? ParentId { get; set; }
+        //public string MainPoint { get; set; }
+        public string DocName { get; set; }
+        public string DocNo { get; set; }
+        public string Duties { get; set; }
+        public string MainPoint { get; set; }
+        public List<HomePositionTreeList> Children { get; set; }
+    }
 }

@@ -5,103 +5,39 @@
   </h1>
 </div>
 <div>
-  <nz-table #groupingTable [nzData]="listOfDisplayData" [nzNoResult]="noResult" [nzShowPagination]="false" nzBordered
-    nzSize="middle" [nzWidthConfig]="widthConfig">
-    <!-- <thead>
-      <tr>
-        <th rowspan="3" nzLeft="0px" style="text-align: center;">岗位概况</th>
-        <th colspan="1" style="text-align: center;">岗位名称</th>
-        <th colspan="1" style="text-align: left;">{{info.a}}</th>
-        <th colspan="1" style="text-align: center;">岗位类型</th>
-        <th colspan="1" style="text-align: left;">{{info.b}}</th>
-      </tr>
-      <tr>
-        <th rowspan="2" style="text-align: center;">隶属关系</th>
-        <th colspan="1" style="text-align: left;">直接上级: {{info.c}}</th>
-        <th rowspan="2" style="text-align: center;">工作联系</th>
-        <th rowspan="2" style="text-align: left;">{{info.f}}</th>
-      </tr>
-      <tr>
-        <th colspan="1" style="text-align: left;">直接下级: {{info.d}}</th>
-      </tr>
-      <tr>
-        <th rowspan="2" style="text-align: center;">工作职责</th>
-        <th colspan="2" style="text-align: center;">适用的标准（外来文件）</th>
-        <th rowspan="2" colspan="2" style="text-align: center;">标准（外来文件）实施要点及记录</th>
-      </tr>
-      <tr>
-        <th style="text-align: center;">名称</th>
-        <th style="text-align: center;">编号</th>
-      </tr>
-    </thead> -->
-    <thead>
-      <tr>
-        <th colspan="4" style="text-align: center;font-weight: bold;font-size: 20px;">{{info.b}}</th>
-      </tr>
-      <tr>
-        <th rowspan="2" style="text-align: center;">工作职责</th>
-        <th colspan="2" style="text-align: center;">适用的标准</th>
-        <th rowspan="2" style="text-align: center;">标准实施要点及记录</th>
-      </tr>
-      <tr>
-        <th style="text-align: center;">名称</th>
-        <th style="text-align: center;">编号</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let item of groupingTable.data">
-        <td>{{item.duties}}</td>
-        <td>{{item.docName}}</td>
-        <td>{{item.docNo}}</td>
-        <!-- <td>
-                <nz-badge *ngIf="item.isPublish" [nzStatus]="'success'" [nzText]="'已发布'"></nz-badge>
-                <nz-badge *ngIf="!item.isPublish" [nzStatus]="'default'" [nzText]="'未发布'"></nz-badge>
-            </td> -->
-        <td>{{item.docContent}}</td>
-      </tr>
-      <!-- <ng-container *ngFor="let data of groupingTable.data">
-        <ng-container *ngFor="let item of mapOfExpandedData[data.id]">
-          <tr *ngIf="(item.parent && item.parent.expand) || !item.parent" [ngClass]="{ 'true': item.checked == true}">
-            <td [nzIndentSize]="item.level * 20" [nzShowExpand]="item.children.length>0" [(nzExpand)]="item.expand"
-              (nzExpandChange)="collapse(mapOfExpandedData[data.id], item, $event)">
-              {{ item.clauseNo }}
-            </td>
-            <td>{{ item.title | lengthLimit:20}}</td>
-            <td> {{ item.clauseNo }}
-
+  <p style="text-align: center;font-weight: bold;font-size: 20px;">{{position}}</p>
+  <nz-list nzBordered [nzDataSource]="listOfMapData" [nzRenderItem]="defaultItem" [nzRenderItem]="item">
+    <ng-template #defaultItem let-item>
+      <nz-list-item style="padding-bottom: 0px;border-bottom-width: 0px;">
+        <nz-list-item-meta [nzTitle]="nzTitle">
+          <ng-template #nzTitle>
+            <p style="color: black;font-weight: bold;">{{item.duties}}</p>
+          </ng-template>
+        </nz-list-item-meta>
+      </nz-list-item>
+      <nz-table #nzTable [nzData]="item.children" [nzNoResult]="noResult" [nzShowPagination]="false" nzBordered>
+        <thead>
+          <tr>
+            <th nzWidth="15%">标准名称</th>
+            <th nzWidth="15%">标准编号</th>
+            <th>标准实施要点及记录</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of nzTable.data">
+            <td><a (click)="goLearn(data.docId)">{{data.docName}}</a></td>
+            <td>
+              {{data.docNo}}
             </td>
             <td>
-              {{ item.content| lengthLimit:50 }}
+              {{data.mainPoint}}
             </td>
           </tr>
-        </ng-container>
-      </ng-container> -->
-    </tbody>
-  </nz-table>
-
-  <button nz-button (click)="goEdit()" nzType="default" nzBlock>修改当前信息</button>
+        </tbody>
+      </nz-table>
+    </ng-template>
+  </nz-list>
 </div>
-<!-- <div>
-  <nz-table #groupingTable2 [nzShowPagination]="false" [nzNoResult]="noResult" nzBordered nzSize="middle"
-    [nzWidthConfig]="widthConfig2">
-    <thead>
-      <tr>
-        <th nzLeft="0px" style="text-align: center;">岗位风险管理要求</th>
-        <th style="text-align: left;">1、安全风险见《危险源辨识和风险分级管控清单》
-          2、廉政风险见《廉政风险管理清单》
-          3、法律风险见《广元市烟草专卖局（公司）法律风险防控体系》
-          4、质量风险见《广元市烟草专卖局（公司）质量风险防控体系》
-        </th>
-      </tr>
-      <tr>
-        <th nzLeft="0px" style="text-align: center;">检查与考核</th>
-        <th style="text-align: left;">1、本标准的执行情况由企管科科长负责检查和考核；
-          2、考核内容为本标准规定的工作职责、安全职责、岗位风险管理以及本岗位适用的标准文件执行情况；
-          3、监督检查情况可与目标绩效考核挂钩。
-        </th>
-      </tr>
-    </thead>
-  </nz-table>
-</div> -->
-<ng-template #noResult let-total>
-</ng-template>
+<div style="text-align: center;margin-top: 24px;">
+  <button style="width: 300px;" nz-button (click)="goEdit()" nzType="default" nzBlock>修改当前信息</button>
+</div>

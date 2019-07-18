@@ -205,34 +205,60 @@ namespace GYSWP.PositionInfos
             await _entityRepository.DeleteAsync(s => input.Contains(s.Id));
         }
 
-        //private List<PositionInfoTreeNodeDto> GetChildren(Guid? id, List<PositionInfoTreeListDto> clauseList)
-        //{
-        //    var list = clauseList.Where(c => c.ParentId == id).Select(c => new PositionInfoTreeNodeDto()
-        //    {
-        //        Id = c.Id,
-        //        ClauseNo = c.ClauseNo,
-        //        Title = c.Title,
-        //        Content = c.Content,
-        //        ParentId = c.ParentId,
-        //        Children = GetChildren(c.Id, clauseList)
-        //    }).ToList();
-        //    return list;
-        //}
+        /// <summary>
+        /// 获取用户职位
+        /// </summary>
+        /// <returns></returns>
+        public async Task<string> GetCurrentPositionAsync()
+        {
+            var user = await GetCurrentUserAsync();
+            string result = await _employeeRepository.GetAll().Where(v => v.Id == user.EmployeeId).Select(v => v.Position).FirstOrDefaultAsync();
+            return result;
+        }
 
-        ///// <summary>
-        ///// 获取条款树形表
-        ///// </summary>
-        ///// <param name="input"></param>
-        ///// <returns></returns>
-        //public async Task<List<PositionInfoTreeNodeDto>> GetClauseTreeAsync(string empId)
-        //{
-        //    var clause = await _entityRepository.GetAll().Where(v => v.EmployeeId == empId).Select(v => new PositionInfoTreeListDto()
-        //    {
-        //        Id = v.Id,
-        //        Duties = v.Duties,
-        //    }).ToListAsync();
-        //    return GetChildren(null, clause);
-        //}
+        /// <summary>
+        /// 获取要点记录
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        private async Task<List<MainPointsList>> GetMainPointsChildrenAsync(Guid id)
+        {
+            var doc = _documentRepository.GetAll().Select(v => new { v.Id, v.Name, v.DocNo });
+            var points = _mainPointsRecordRepository.GetAll().Where(v => v.PositionInfoId == id);
+            var pointsInfo =  await (from po in points
+                              join d in doc on po.DocumentId equals d.Id
+                              select new MainPointsList()
+                              {
+                                  DocName = d.Name,
+                                  DocNo = d.DocNo,
+                                  MainPoint = po.MainPoint,
+                                  MainPointId = po.Id,
+                                  DocId = d.Id
+                              }).ToListAsync();
+            return pointsInfo;
+        }
+
+        /// <summary>
+        /// 获取工作职责
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<List<HomePositionList>> GetPositionTreeByIdAsync()
+        {
+            var user = await GetCurrentUserAsync();
+            var posList = _entityRepository.GetAll().Where(v => v.EmployeeId == user.EmployeeId);
+            var list = await (from p in posList
+                              select new HomePositionList()
+                              {
+                                  Id = p.Id,
+                                  Duties = p.Duties,
+                              }).ToListAsync();
+            foreach (var item in list)
+            {
+                item.Children = await GetMainPointsChildrenAsync(item.Id);
+            }
+            return list;
+        }
 
         #region 工作职责导入方法
         /// <summary>
@@ -247,10 +273,10 @@ namespace GYSWP.PositionInfos
             {
                 var docs = GetPosInfoByDirectory($@"{input}");
                 foreach (var doc in docs)
-                {   
+                {
                     string position = doc.Position.Split('.')[0];
                     var empList = await _employeeRepository.GetAll().Where(v => v.Position == position).Select(v => new { v.Id, v.Name }).ToListAsync();
-                    if(empList.Count == 0)
+                    if (empList.Count == 0)
                     {
                         return new APIResultDto() { Code = 666, Msg = "导入失败,不存在员工" };
                     }
@@ -268,7 +294,7 @@ namespace GYSWP.PositionInfos
                             foreach (var detailItem in posItem.Sections)
                             {
                                 Guid docId = await _documentRepository.GetAll().Where(v => v.Name == detailItem.DocName).Select(v => v.Id).FirstOrDefaultAsync();
-                                if(docId == Guid.Empty)
+                                if (docId == Guid.Empty)
                                 {
                                     return new APIResultDto() { Code = 888, Msg = "导入失败,不存在文档" };
                                 }

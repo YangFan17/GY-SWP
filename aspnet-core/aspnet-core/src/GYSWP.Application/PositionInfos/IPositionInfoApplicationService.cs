@@ -72,5 +72,7 @@ namespace GYSWP.PositionInfos
         /// </summary>
         Task BatchDelete(List<Guid> input);
         Task<APIResultDto> PositionInfoImportAsync(string input);
+        Task<List<HomePositionList>> GetPositionTreeByIdAsync();
+        Task<string> GetCurrentPositionAsync();
     }
 }
