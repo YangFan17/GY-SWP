@@ -9,6 +9,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { G2GroupBarModule } from '../../packages/group-bar';
 import { PositionInfoComponent } from './home/position-info/position-info.component';
 import { CreatePositionInfoComponent } from './home/position-info/create-position-info/create-position-info.component';
+import { AddDocumentComponent } from './home/position-info/add-document/add-document.component';
 
 @NgModule({
   imports: [
@@ -24,10 +25,12 @@ import { CreatePositionInfoComponent } from './home/position-info/create-positio
   declarations: [
     HomeComponent,
     PositionInfoComponent,
-    CreatePositionInfoComponent
+    CreatePositionInfoComponent,
+    AddDocumentComponent
   ],
   entryComponents: [
-    CreatePositionInfoComponent
+    CreatePositionInfoComponent,
+    AddDocumentComponent
   ],
   providers: [],
 })

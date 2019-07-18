@@ -73,15 +73,12 @@ namespace GYSWP.PositionInfos
         Task BatchDelete(List<Guid> input);
 
 
-        /// <summary>
-        /// 导出PositionInfo为excel表
-        /// </summary>
-        /// <returns></returns>
-        //Task<FileDto> GetToExcel();
+        Task<List<PosInfoListOut>> GetPositionListByCurrentUserAsync();
 
-        Task<List<PositionInfoListDto>> GetPositionListByCurrentUserAsync();
+        Task<APIResultDto> CreatePositionInfoAsync(PosInfoInput input);
 
-        Task<APIResultDto> CreatePositionInfoAsync(CreateOrUpdatePositionInfoInput input);
+        Task<List<HomeCategoryOption>> GetHomeCategoryOptionsAsync();
 
+        Task<APIResultDto> PositionInfoImportAsync(string input);
     }
 }

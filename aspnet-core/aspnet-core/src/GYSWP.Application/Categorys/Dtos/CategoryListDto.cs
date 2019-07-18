@@ -38,6 +38,6 @@ namespace GYSWP.Categorys.Dtos
         /// <summary>
         /// 维护部门Id
         /// </summary>
-        public long? DeptId { get; set; }
+        public long DeptId { get; set; }
     }
 }

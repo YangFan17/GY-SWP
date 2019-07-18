@@ -26,17 +26,12 @@ export class CreatePositionInfoComponent extends ModalComponentBase implements O
     }
 
     save(): void {
-        // this.params = { Position: this.position, Duties: this.duties, EmployeeId: this.employeeId, EmployeeName: this.employeeName };
-        // this.positionInfo.employeeId = this.employeeId;
-        // this.positionInfo.employeeName = this.employeeName;
-        // this.positionInfo.position = this.position;
-        // this.positionInfo.duties = this.duties;
-
         this.homeService.createPositionInfo(this.positionInfo)
             .finally(() => { this.saving = false; })
             .subscribe((data) => {
                 if (data.code == 0) {
                     this.notify.info('保存成功');
+                    this.positionInfo.id = data.data;
                     this.close();
                 } else {
                     this.notify.error('保存失败,请重试.');

@@ -22,6 +22,7 @@ using GYSWP.PositionInfos;
 using GYSWP.PositionInfos.Dtos;
 using GYSWP.PositionInfos.DomainService;
 using GYSWP.MainPointsRecords;
+using GYSWP.Dtos;
 
 namespace GYSWP.PositionInfos
 {
@@ -193,17 +194,28 @@ MainPointsRecordEditDto editDto;
 		}
 
 
-		/// <summary>
-		/// 导出MainPointsRecord为excel表,等待开发。
-		/// </summary>
-		/// <returns></returns>
-		//public async Task<FileDto> GetToExcel()
-		//{
-		//	var users = await UserManager.Users.ToListAsync();
-		//	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
-		//	await FillRoleNames(userListDtos);
-		//	return _userListExcelExporter.ExportToFile(userListDtos);
-		//}
+        /// <summary>
+        /// 导出MainPointsRecord为excel表,等待开发。
+        /// </summary>
+        /// <returns></returns>
+        //public async Task<FileDto> GetToExcel()
+        //{
+        //	var users = await UserManager.Users.ToListAsync();
+        //	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
+        //	await FillRoleNames(userListDtos);
+        //	return _userListExcelExporter.ExportToFile(userListDtos);
+        //}
+
+        public async Task<APIResultDto> CreateMainPointRecordAsync(MainPointsRecordEditDto input)
+        {
+            var entity = input.MapTo<MainPointsRecord>();
+            var id = await _entityRepository.InsertAndGetIdAsync(entity);
+            return new APIResultDto
+            {
+                Code = 0,
+                Data = id
+            };
+        }
 
     }
 }

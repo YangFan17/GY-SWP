@@ -3,6 +3,7 @@ import { HomeService } from 'services/home/home.service';
 import { AppComponentBase } from '@shared/app-component-base';
 import { CreatePositionInfoComponent } from './create-position-info/create-position-info.component';
 import { PositionInfo } from 'entities/position-info';
+import { AddDocumentComponent } from './add-document/add-document.component';
 
 @Component({
     moduleId: module.id,
@@ -25,7 +26,6 @@ export class PositionInfoComponent extends AppComponentBase {
     }
 
     getPositionInfoList() {
-        let params: any = {};
         this.homeService.getPositionListByCurrentUser().subscribe((result) => {
             this.listOfMapData = result;
         });
@@ -33,7 +33,7 @@ export class PositionInfoComponent extends AppComponentBase {
 
     create(): void {
         this.modalHelper
-            .open(CreatePositionInfoComponent, { position: this.employee.position, employeeId: this.employee.id, employeeName: this.employee.name }, 'md', {
+            .open(CreatePositionInfoComponent, {}, 'md', {
                 nzMask: true,
                 nzClosable: false,
                 nzMaskClosable: false,
@@ -46,27 +46,17 @@ export class PositionInfoComponent extends AppComponentBase {
     }
 
     showDetail(item?: any, type?: string): void {
-        var id;
-        var pId = '';
-        var pNo = '';
-        if (type == 'child') {
-            pId = item.id;
-            pNo = item.clauseNo;
-        }
-        if (type == 'detail') {
-            id = item.id;
-        }
-        // this.modalHelper
-        //     .open(ClauseDetailComponent, { docId: this.doc.id, docName: this.doc.name, pId: pId, pNo: pNo, id: id }, 950, {
-        //         nzMask: true,
-        //         nzClosable: false,
-        //         nzMaskClosable: false,
-        //     })
-        //     .subscribe(isSave => {
-        //         if (isSave) {
-        //             this.getClauseList();
-        //         }
-        //     });
+        this.modalHelper
+            .open(AddDocumentComponent, { positionInfoId: item.id }, 950, {
+                nzMask: true,
+                nzClosable: false,
+                nzMaskClosable: false,
+            })
+            .subscribe(isSave => {
+                if (isSave) {
+                    this.getPositionInfoList();
+                }
+            });
     }
 
     // deleteClause(item: Clause): void {

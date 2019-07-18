@@ -32,6 +32,7 @@ namespace GYSWP.Categorys
         /// <summary>
         /// 维护部门Id
         /// </summary>
-        public virtual long? DeptId { get; set; }
+        [Required]
+        public virtual long DeptId { get; set; }
     }
 }

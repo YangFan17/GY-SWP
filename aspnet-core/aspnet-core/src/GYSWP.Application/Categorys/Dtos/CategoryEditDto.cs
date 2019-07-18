@@ -43,6 +43,7 @@ namespace  GYSWP.Categorys.Dtos
         /// <summary>
         /// 维护部门Id
         /// </summary>
-        public long? DeptId { get; set; }
+        [Required(ErrorMessage = "DeptId不能为空")]
+        public long DeptId { get; set; }
     }
 }
