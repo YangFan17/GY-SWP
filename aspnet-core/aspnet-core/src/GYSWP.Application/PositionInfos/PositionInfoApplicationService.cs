@@ -161,53 +161,53 @@ namespace GYSWP.PositionInfos
             //TODO:新增前的逻辑判断，是否允许新增
 
             // var entity = ObjectMapper.Map <PositionInfo>(input);
-            var entity=input.MapTo<PositionInfo>();
-			
-
-			entity = await _entityRepository.InsertAsync(entity);
-			return entity.MapTo<PositionInfoEditDto>();
-		}
-
-		/// <summary>
-		/// 编辑PositionInfo
-		/// </summary>
-		
-		protected virtual async Task Update(PositionInfoEditDto input)
-		{
-			//TODO:更新前的逻辑判断，是否允许更新
-
-			var entity = await _entityRepository.GetAsync(input.Id.Value);
-			input.MapTo(entity);
-
-			// ObjectMapper.Map(input, entity);
-		    await _entityRepository.UpdateAsync(entity);
-		}
+            var entity = input.MapTo<PositionInfo>();
 
 
+            entity = await _entityRepository.InsertAsync(entity);
+            return entity.MapTo<PositionInfoEditDto>();
+        }
 
-		/// <summary>
-		/// 删除PositionInfo信息的方法
-		/// </summary>
-		/// <param name="input"></param>
-		/// <returns></returns>
-		
-		public async Task Delete(EntityDto<Guid> input)
-		{
-			//TODO:删除前的逻辑判断，是否允许删除
-			await _entityRepository.DeleteAsync(input.Id);
-		}
+        /// <summary>
+        /// 编辑PositionInfo
+        /// </summary>
+
+        protected virtual async Task Update(PositionInfoEditDto input)
+        {
+            //TODO:更新前的逻辑判断，是否允许更新
+
+            var entity = await _entityRepository.GetAsync(input.Id.Value);
+            input.MapTo(entity);
+
+            // ObjectMapper.Map(input, entity);
+            await _entityRepository.UpdateAsync(entity);
+        }
 
 
 
-		/// <summary>
-		/// 批量删除PositionInfo的方法
-		/// </summary>
-		
-		public async Task BatchDelete(List<Guid> input)
-		{
-			// TODO:批量删除前的逻辑判断，是否允许删除
-			await _entityRepository.DeleteAsync(s => input.Contains(s.Id));
-		}
+        /// <summary>
+        /// 删除PositionInfo信息的方法
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+
+        public async Task Delete(EntityDto<Guid> input)
+        {
+            //TODO:删除前的逻辑判断，是否允许删除
+            await _entityRepository.DeleteAsync(input.Id);
+        }
+
+
+
+        /// <summary>
+        /// 批量删除PositionInfo的方法
+        /// </summary>
+
+        public async Task BatchDelete(List<Guid> input)
+        {
+            // TODO:批量删除前的逻辑判断，是否允许删除
+            await _entityRepository.DeleteAsync(s => input.Contains(s.Id));
+        }
 
         /// <summary>
         /// 获取当前登录用户的PositionInfo分页列表信息
@@ -232,17 +232,17 @@ namespace GYSWP.PositionInfos
             }
             return entityList;
         }
-        
+
         public async Task<APIResultDto> CreatePositionInfoAsync(PosInfoInput input)
         {
-           var user =  await GetCurrentUserAsync();
-           string position = await _employeeRepository.GetAll().Where(v => v.Id == user.EmployeeId).Select(v => v.Position).FirstOrDefaultAsync();
+            var user = await GetCurrentUserAsync();
+            string position = await _employeeRepository.GetAll().Where(v => v.Id == user.EmployeeId).Select(v => v.Position).FirstOrDefaultAsync();
             PositionInfo entity = new PositionInfo();
             entity.Duties = input.Duties;
             entity.EmployeeId = user.EmployeeId;
             entity.EmployeeName = user.EmployeeName;
             entity.Position = position;
-            Guid id  = await _entityRepository.InsertAndGetIdAsync(entity);
+            Guid id = await _entityRepository.InsertAndGetIdAsync(entity);
             return new APIResultDto
             {
                 Code = 0,
@@ -261,7 +261,7 @@ namespace GYSWP.PositionInfos
                                     Id = c.Id,
                                     Title = c.Name
                                 }).OrderBy(v => v.Id).ToListAsync();
-            
+
             entity.ForEach(e => e.Children =
             (from d in _documentRepository
             .GetAll()
@@ -276,34 +276,60 @@ namespace GYSWP.PositionInfos
         }
 
 
-        //private List<PositionInfoTreeNodeDto> GetChildren(Guid? id, List<PositionInfoTreeListDto> clauseList)
-        //{
-        //    var list = clauseList.Where(c => c.ParentId == id).Select(c => new PositionInfoTreeNodeDto()
-        //    {
-        //        Id = c.Id,
-        //        ClauseNo = c.ClauseNo,
-        //        Title = c.Title,
-        //        Content = c.Content,
-        //        ParentId = c.ParentId,
-        //        Children = GetChildren(c.Id, clauseList)
-        //    }).ToList();
-        //    return list;
-        //}
+        /// <summary>
+        /// 获取用户职位
+        /// </summary>
+        /// <returns></returns>
+        public async Task<string> GetCurrentPositionAsync()
+        {
+            var user = await GetCurrentUserAsync();
+            string result = await _employeeRepository.GetAll().Where(v => v.Id == user.EmployeeId).Select(v => v.Position).FirstOrDefaultAsync();
+            return result;
+        }
 
-        ///// <summary>
-        ///// 获取条款树形表
-        ///// </summary>
-        ///// <param name="input"></param>
-        ///// <returns></returns>
-        //public async Task<List<PositionInfoTreeNodeDto>> GetClauseTreeAsync(string empId)
-        //{
-        //    var clause = await _entityRepository.GetAll().Where(v => v.EmployeeId == empId).Select(v => new PositionInfoTreeListDto()
-        //    {
-        //        Id = v.Id,
-        //        Duties = v.Duties,
-        //    }).ToListAsync();
-        //    return GetChildren(null, clause);
-        //}
+        /// <summary>
+        /// 获取要点记录
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        private async Task<List<MainPointsList>> GetMainPointsChildrenAsync(Guid id)
+        {
+            var doc = _documentRepository.GetAll().Select(v => new { v.Id, v.Name, v.DocNo });
+            var points = _mainPointsRecordRepository.GetAll().Where(v => v.PositionInfoId == id);
+            var pointsInfo = await (from po in points
+                                    join d in doc on po.DocumentId equals d.Id
+                                    select new MainPointsList()
+                                    {
+                                        DocName = d.Name,
+                                        DocNo = d.DocNo,
+                                        MainPoint = po.MainPoint,
+                                        MainPointId = po.Id,
+                                        DocId = d.Id
+                                    }).ToListAsync();
+            return pointsInfo;
+        }
+
+        /// <summary>
+        /// 获取工作职责
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<List<HomePositionList>> GetPositionTreeByIdAsync()
+        {
+            var user = await GetCurrentUserAsync();
+            var posList = _entityRepository.GetAll().Where(v => v.EmployeeId == user.EmployeeId);
+            var list = await (from p in posList
+                              select new HomePositionList()
+                              {
+                                  Id = p.Id,
+                                  Duties = p.Duties,
+                              }).ToListAsync();
+            foreach (var item in list)
+            {
+                item.Children = await GetMainPointsChildrenAsync(item.Id);
+            }
+            return list;
+        }
 
         #region 工作职责导入方法
         /// <summary>
@@ -318,10 +344,10 @@ namespace GYSWP.PositionInfos
             {
                 var docs = GetPosInfoByDirectory($@"{input}");
                 foreach (var doc in docs)
-                {   
+                {
                     string position = doc.Position.Split('.')[0];
                     var empList = await _employeeRepository.GetAll().Where(v => v.Position == position).Select(v => new { v.Id, v.Name }).ToListAsync();
-                    if(empList.Count == 0)
+                    if (empList.Count == 0)
                     {
                         return new APIResultDto() { Code = 666, Msg = "导入失败,不存在员工" };
                     }
@@ -339,7 +365,7 @@ namespace GYSWP.PositionInfos
                             foreach (var detailItem in posItem.Sections)
                             {
                                 Guid docId = await _documentRepository.GetAll().Where(v => v.Name == detailItem.DocName).Select(v => v.Id).FirstOrDefaultAsync();
-                                if(docId == Guid.Empty)
+                                if (docId == Guid.Empty)
                                 {
                                     return new APIResultDto() { Code = 888, Msg = "导入失败,不存在文档" };
                                 }

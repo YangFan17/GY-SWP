@@ -80,5 +80,7 @@ namespace GYSWP.PositionInfos
         Task<List<HomeCategoryOption>> GetHomeCategoryOptionsAsync();
 
         Task<APIResultDto> PositionInfoImportAsync(string input);
+        Task<List<HomePositionList>> GetPositionTreeByIdAsync();
+        Task<string> GetCurrentPositionAsync();
     }
 }
