@@ -224,10 +224,15 @@ LC_ScanRecordEditDto editDto;
             entity.TimeLogId = input.TimeLogId;
             entity.Type = GYEnums.LC_ScanRecordType.入库扫码;
             entity.Status = input.Status;
-            entity = await _entityRepository.InsertAsync(entity);
-            return new APIResultDto() { Code = 0, Msg = "保存成功", Data = entity.Id };
+            var id = await _entityRepository.InsertAndGetIdAsync(entity);
+            return new APIResultDto() { Code = 0, Msg = "保存成功", Data = id };
         }
 
+        /// <summary>
+        /// 开始出库扫码
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         [AbpAllowAnonymous]
         public async Task<APIResultDto> CreateOutStorageSacnAsync(LC_ScanRecordEditDto input)
         {

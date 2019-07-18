@@ -49,26 +49,15 @@
                 </nz-form-explain>
             </nz-form-control>
         </nz-form-item>
-        <!-- <nz-form-item nz-row>
-            <nz-form-label nz-col [nzSm]="4">条款内容</nz-form-label>
-            <nz-form-control [nzSm]="20" nzHasFeedback>
-                <textarea nz-input rows="4" name="content" maxlength="2000" #content="ngModel"
-                    [(ngModel)]="clause.content" [placeholder]="'请填写条款内容'"></textarea>
-                <nz-form-explain *ngIf="content.control.dirty&&content.control.errors">
-                    <ng-container *ngIf="content.control.hasError('maxlength')">字符长度小于等于2000</ng-container>
-                </nz-form-explain>
-            </nz-form-control>
-        </nz-form-item> -->
         <nz-form-item nz-row>
             <nz-form-label nz-col [nzSm]="4" nzFor="attach">标准附件</nz-form-label>
             <nz-form-control [nzSm]="20">
-                <nz-upload nzAction="{{postUrl | hostUrl}}" [nzFileList]="fileList" [nzDisabled]="uploadLoading"
-                    (nzChange)="handleChange($event)" [nzRemove]="deleteAttachment">
+                <nz-upload nzAction="{{postUrl | hostUrl}}" [nzFileList]="fileList" (nzChange)="handleChange($event)"
+                    [nzRemove]="deleteAttachment">
                     <button nz-button type="button"><i nz-icon nzType="upload"></i><span>上传附件</span></button>
                 </nz-upload>
             </nz-form-control>
         </nz-form-item>
-        <!-- 功能按钮 -->
         <div class="custom-modal-footer" style="text-align: right;">
             <div class="custom-modal-footter-group">
                 <button nz-button type="button" [disabled]="saving" (click)="close()">

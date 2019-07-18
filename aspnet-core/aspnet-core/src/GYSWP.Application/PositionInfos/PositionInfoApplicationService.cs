@@ -270,8 +270,8 @@ namespace GYSWP.PositionInfos
              {
                  Id = d.Id,
                  Title = d.Name
-             }).OrderBy(v => v.Id).ToList()
-            );
+             }).OrderBy(v => v.Title)
+             .ToList());
             return entity;
         }
 
