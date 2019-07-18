@@ -46,6 +46,29 @@ namespace GYSWP.PositionInfos.Dtos
         public string Duties { get; set; }
         public List<PositionInfoTreeNodeDto> Children = new List<PositionInfoTreeNodeDto>();
     }
+
+    public class PosInfoListOut
+    {
+        public Guid Id { get; set; }
+        public string Duties { get; set; }
+    }
+
+    public class HomeCategoryOption
+    {
+        public int Id { get; set; }
+
+        public string Title { get; set; }
+
+        public List<CategoryDocOption> Children { get; set; }
+    }
+
+    public class CategoryDocOption
+    {
+        public Guid Id { get; set; }
+
+        public string Title { get; set; }
+    }
+    
     public class PositionInfoTreeListDto
     {
         public Guid Id { get; set; }

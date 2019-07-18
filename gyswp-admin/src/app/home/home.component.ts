@@ -51,6 +51,6 @@ export class HomeComponent extends AppComponentBase implements OnInit {
   }
 
   goEdit() {
-    this.router.navigate(['app/criterion/pre-doc']);
+    this.router.navigate(['app/position']);
   }
 }

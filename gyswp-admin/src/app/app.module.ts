@@ -8,6 +8,8 @@ import { SharedModule } from '@shared/shared.module';
 import { HttpClientModule } from '@angular/common/http';
 import { G2GroupBarModule } from '../../packages/group-bar';
 import { PositionInfoComponent } from './home/position-info/position-info.component';
+import { CreatePositionInfoComponent } from './home/position-info/create-position-info/create-position-info.component';
+import { AddDocumentComponent } from './home/position-info/add-document/add-document.component';
 
 @NgModule({
   imports: [
@@ -23,8 +25,12 @@ import { PositionInfoComponent } from './home/position-info/position-info.compon
   declarations: [
     HomeComponent,
     PositionInfoComponent,
+    CreatePositionInfoComponent,
+    AddDocumentComponent
   ],
   entryComponents: [
+    CreatePositionInfoComponent,
+    AddDocumentComponent
   ],
   providers: [],
 })

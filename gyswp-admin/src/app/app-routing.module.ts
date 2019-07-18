@@ -3,6 +3,8 @@ import { Routes, RouterModule } from '@angular/router';
 import { AppRouteGuard } from '@shared/auth/auth-route-guard';
 import { HomeComponent } from '@app/home/home.component';
 import { LayoutDefaultComponent } from '../layout/default/layout-default.component';
+import { PositionInfoComponent } from './home/position-info/position-info.component';
+import { CreatePositionInfoComponent } from './home/position-info/create-position-info/create-position-info.component';
 
 const routes: Routes = [
   {
@@ -53,6 +55,12 @@ const routes: Routes = [
         loadChildren: './reports/reports.module#ReportsModule',
         data: { preload: true },
       },
+      {
+        path: 'position',
+        component: PositionInfoComponent,
+        canActivate: [AppRouteGuard],
+        data: { preload: true }
+      }
     ]
   }
 ];

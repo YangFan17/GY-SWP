@@ -1,0 +1,49 @@
+<form nz-form #validateForm="ngForm" (ngSubmit)="save()" *ngIf="positionInfoId">
+    <nz-card [nzBordered]="false" nzTitle="标准文档详情及要点详情">
+        <div nz-row>
+            <div nz-col [nzSpan]="16">
+                <nz-form-item nz-row style="margin-bottom: 0px;">
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>请选择标准</nz-form-label>
+                    <nz-form-control [nzSm]="20" nzHasFeedback>
+                        <nz-input-group nzSize="large" [nzSuffix]="suffixIcon">
+                            <input placeholder="input here" name="document" nz-input [(ngModel)]="inputValue"
+                                (ngModelChange)="onChange($event)" [nzAutocomplete]="auto" />
+                        </nz-input-group>
+                        <ng-template #suffixIcon>
+                            <i nz-icon nzType="search"></i>
+                        </ng-template>
+                        <nz-autocomplete #auto>
+                            <nz-auto-optgroup *ngFor="let group of optionGroups" [nzLabel]="groupTitle">
+                                <ng-template #groupTitle>
+                                    <span>{{ group.title }}</span>
+                                </ng-template>
+                                <nz-auto-option *ngFor="let option of group.children" [nzLabel]="option.title"
+                                    [nzValue]="option">
+                                    {{ option.title }}
+                                </nz-auto-option>
+                            </nz-auto-optgroup>
+                        </nz-autocomplete>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item nz-row style="margin-bottom: 0px;">
+                    <nz-form-label nz-col [nzSm]="4">实施要点</nz-form-label>
+                    <nz-form-control [nzSm]="20" nzHasFeedback>
+                        <textarea name="mainPoints" nz-input rows="5" placeholder="请填写实施要点" #mainPoints="ngModel"
+                            [(ngModel)]="mainPoint"></textarea>
+                        <nz-form-explain *ngIf="mainPoints.control.dirty&&mainPoints.control.errors">
+                            <ng-container *ngIf="mainPoints.control.hasError('maxlength')">字符长度小于等于2000</ng-container>
+                        </nz-form-explain>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button nz-button type="button" [disabled]="saving" (click)="close()">
+                取消
+            </button>
+            <button nz-button [nzType]="'primary'" type="submit" [disabled]="!validateForm.valid||saving">
+                保存
+            </button>
+        </div>
+    </nz-card>
+</form>

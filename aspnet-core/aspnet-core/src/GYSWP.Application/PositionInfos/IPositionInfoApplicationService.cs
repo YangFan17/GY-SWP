@@ -71,6 +71,14 @@ namespace GYSWP.PositionInfos
         /// 批量删除PositionInfo
         /// </summary>
         Task BatchDelete(List<Guid> input);
+
+
+        Task<List<PosInfoListOut>> GetPositionListByCurrentUserAsync();
+
+        Task<APIResultDto> CreatePositionInfoAsync(PosInfoInput input);
+
+        Task<List<HomeCategoryOption>> GetHomeCategoryOptionsAsync();
+
         Task<APIResultDto> PositionInfoImportAsync(string input);
         Task<List<HomePositionList>> GetPositionTreeByIdAsync();
         Task<string> GetCurrentPositionAsync();

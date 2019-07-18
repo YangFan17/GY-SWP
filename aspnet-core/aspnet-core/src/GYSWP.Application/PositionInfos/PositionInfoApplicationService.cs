@@ -21,12 +21,13 @@ using Abp.Linq.Extensions;
 using GYSWP.PositionInfos;
 using GYSWP.PositionInfos.Dtos;
 using GYSWP.PositionInfos.DomainService;
-using GYSWP.MainPointsRecords;
 using GYSWP.Dtos;
+using GYSWP.MainPointsRecords;
 using System.IO;
 using System.Text.RegularExpressions;
 using GYSWP.Employees;
 using GYSWP.Documents;
+using GYSWP.Categorys;
 
 namespace GYSWP.PositionInfos
 {
@@ -41,6 +42,7 @@ namespace GYSWP.PositionInfos
         private readonly IPositionInfoManager _entityManager;
         private readonly IRepository<Employee, string> _employeeRepository;
         private readonly IRepository<Document, Guid> _documentRepository;
+        private readonly IRepository<Category, int> _categoryRepository;
 
         /// <summary>
         /// 构造函数 
@@ -51,6 +53,7 @@ namespace GYSWP.PositionInfos
         , IRepository<MainPointsRecord, Guid> mainPointsRecordRepository
         , IRepository<Employee, string> employeeRepository
         , IRepository<Document, Guid> documentRepository
+        , IRepository<Category, int> categoryRepository
         )
         {
             _entityRepository = entityRepository;
@@ -58,6 +61,7 @@ namespace GYSWP.PositionInfos
             _mainPointsRecordRepository = mainPointsRecordRepository;
             _employeeRepository = employeeRepository;
             _documentRepository = documentRepository;
+            _categoryRepository = categoryRepository;
         }
 
 
@@ -206,6 +210,73 @@ namespace GYSWP.PositionInfos
         }
 
         /// <summary>
+        /// 获取当前登录用户的PositionInfo分页列表信息
+        ///</summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+
+        public async Task<List<PosInfoListOut>> GetPositionListByCurrentUserAsync()
+        {
+            var user = await GetCurrentUserAsync();
+            var query = from e in _entityRepository.GetAll()
+                        .Where(i => i.EmployeeId == user.EmployeeId)
+                        select new PosInfoListOut
+                        {
+                            Id = e.Id,
+                            Duties = e.Duties
+                        };
+            var entityList = await query.ToListAsync();
+            if (entityList.Count() <= 0)
+            {
+                return null;
+            }
+            return entityList;
+        }
+
+        public async Task<APIResultDto> CreatePositionInfoAsync(PosInfoInput input)
+        {
+            var user = await GetCurrentUserAsync();
+            string position = await _employeeRepository.GetAll().Where(v => v.Id == user.EmployeeId).Select(v => v.Position).FirstOrDefaultAsync();
+            PositionInfo entity = new PositionInfo();
+            entity.Duties = input.Duties;
+            entity.EmployeeId = user.EmployeeId;
+            entity.EmployeeName = user.EmployeeName;
+            entity.Position = position;
+            Guid id = await _entityRepository.InsertAndGetIdAsync(entity);
+            return new APIResultDto
+            {
+                Code = 0,
+                Data = id
+            };
+        }
+
+        public async Task<List<HomeCategoryOption>> GetHomeCategoryOptionsAsync()
+        {
+            var curUser = await GetCurrentUserAsync();
+            var deptId = await _employeeRepository.GetAll().Where(v => v.Id == curUser.EmployeeId).Select(v => v.Department).FirstOrDefaultAsync();
+            var zuofeiCategory = await _categoryRepository.GetAll().Where(v => "[" + v.DeptId + "]" == deptId && v.Name == "作废标准库").Select(v => new { v.Id }).FirstOrDefaultAsync();
+            var entity = await (from c in _categoryRepository.GetAll().Where(v => "[" + v.DeptId + "]" == deptId && v.ParentId != 0 && v.ParentId != zuofeiCategory.Id)
+                                select new HomeCategoryOption
+                                {
+                                    Id = c.Id,
+                                    Title = c.Name
+                                }).OrderBy(v => v.Id).ToListAsync();
+
+            entity.ForEach(e => e.Children =
+            (from d in _documentRepository
+            .GetAll()
+            .Where(d => d.CategoryId == e.Id)
+             select new CategoryDocOption
+             {
+                 Id = d.Id,
+                 Title = d.Name
+             }).OrderBy(v => v.Id).ToList()
+            );
+            return entity;
+        }
+
+
+        /// <summary>
         /// 获取用户职位
         /// </summary>
         /// <returns></returns>
@@ -225,16 +296,16 @@ namespace GYSWP.PositionInfos
         {
             var doc = _documentRepository.GetAll().Select(v => new { v.Id, v.Name, v.DocNo });
             var points = _mainPointsRecordRepository.GetAll().Where(v => v.PositionInfoId == id);
-            var pointsInfo =  await (from po in points
-                              join d in doc on po.DocumentId equals d.Id
-                              select new MainPointsList()
-                              {
-                                  DocName = d.Name,
-                                  DocNo = d.DocNo,
-                                  MainPoint = po.MainPoint,
-                                  MainPointId = po.Id,
-                                  DocId = d.Id
-                              }).ToListAsync();
+            var pointsInfo = await (from po in points
+                                    join d in doc on po.DocumentId equals d.Id
+                                    select new MainPointsList()
+                                    {
+                                        DocName = d.Name,
+                                        DocNo = d.DocNo,
+                                        MainPoint = po.MainPoint,
+                                        MainPointId = po.Id,
+                                        DocId = d.Id
+                                    }).ToListAsync();
             return pointsInfo;
         }
 
