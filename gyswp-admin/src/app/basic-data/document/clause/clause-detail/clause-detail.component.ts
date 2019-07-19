@@ -21,13 +21,8 @@ export class ClauseDetailComponent extends ModalComponentBase {
     title: string = '条款详情';
     clause: Clause = new Clause();
     postUrl: string = '/GYSWPFile/DocFilesPostsAsync';
-    isDelete: boolean;
-    deleteFileId: string;//需要删除的文件id
-    deleteNotice = false;//是否弹出删除消息对话框
     fileList: Attachment[];
     attachment: DocAttachment = new DocAttachment();
-    uploadLoading: boolean;
-    isHasAttachments: boolean;
     host = AppConsts.remoteServiceBaseUrl;
     constructor(injector: Injector
         , private basicDataService: BasicDataService
@@ -37,15 +32,14 @@ export class ClauseDetailComponent extends ModalComponentBase {
     }
     ngOnInit(): void {
         this.getClauseById();
+        this.getAttachmentList();
     }
 
     getClauseById() {
         if (this.id) {
             this.basicDataService.getClauseByIdAsync(this.id).subscribe(res => {
                 this.clause = res;
-                // this.pNo = res.
             })
-            this.getAttachmentList();
         }
     }
 
@@ -72,24 +66,18 @@ export class ClauseDetailComponent extends ModalComponentBase {
 
         this.basicDataService.getClauseAttachmentsById(params).subscribe(r => {
             this.fileList = r;
-            if (this.fileList.length >= 0) {
-                this.isHasAttachments = true;
-            }
-            this.isHasAttachments = false;
         })
     }
 
     handleChange = (info: { file: UploadFile }): void => {
         if (info.file.status === 'error') {
             this.notify.error('上传文件异常，请重试');
-            this.uploadLoading = false;
         }
         else {
             if (info.file.status === 'done') {
-                this.uploadLoading = false;
                 var res = info.file.response.result;
                 if (res.code == 0) {
-                    this.attachment.name = res.data.name;
+                    this.attachment.name = res.data.name + res.data.ext;
                     this.attachment.type = 2;
                     this.attachment.fileSize = res.data.size;
                     this.attachment.path = this.host + res.data.url;
@@ -97,6 +85,7 @@ export class ClauseDetailComponent extends ModalComponentBase {
                     this.saveAttachment();
                 } else {
                     this.notify.error(res.msg);
+                    this.fileList.pop();
                 }
             }
         }
@@ -114,30 +103,12 @@ export class ClauseDetailComponent extends ModalComponentBase {
             nzContent: '确定是否删除资料文档?',
             nzOnOk: () => {
                 this.basicDataService.deleteAttachmentByIdAsync(file.id).subscribe(() => {
-                    this.notify.info('删除成功！', '');
+                    this.notify.success('删除成功！', '');
                     this.getAttachmentList();
-                    this.isDelete = true;
+                    return true;
                 });
-            },
-            nzOnCancel: () => {
-                this.isDelete = false;
             }
         });
-        return this.isDelete;
-    }
-
-    cancel(): void {
-        this.isDelete = false;
-        this.deleteNotice = true;
-    }
-
-    confirm(): void {
-        // this.basicDataService.deleteAttachmentByIdAsync(this.deleteFileId).subscribe(res => {
-        //     this.notify.success('删除成功');
-        //     this.getAttachmentList();
-        //     return true;
-        // })
-        this.isDelete = true;
-        this.deleteNotice = true;
+        return false;
     }
 }

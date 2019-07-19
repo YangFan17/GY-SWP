@@ -7,7 +7,6 @@ import { AppConsts } from '@shared/AppConsts';
 import { ClauseComponent } from '../../clause/clause.component';
 import { AppComponentBase } from '@shared/component-base';
 import { DeptUserComponent } from './dept-user/dept-user.component';
-import { Observable, Observer } from 'rxjs';
 
 @Component({
     moduleId: module.id,
@@ -47,20 +46,15 @@ export class DetailComponent extends AppComponentBase implements OnInit {
             }
         }
     ];
-
-
-    saving: boolean = false;
     document: DocumentDto = new DocumentDto();
     category = { id: '', name: '' };
     dept = { id: '', name: '' };
     isUpdate = false;
-    uploadLoading = false;
     id: any = '';
     codeStyle = 'none';
     attachment: DocAttachment = new DocAttachment();
     isControl: string;
     isValid: string;
-    isDelete: boolean;
 
     constructor(injector: Injector
         , private actRouter: ActivatedRoute
@@ -143,20 +137,6 @@ export class DetailComponent extends AppComponentBase implements OnInit {
         this.router.navigate(['app/basic/document']);
     }
 
-    // delete() {
-    //     this.confirmModal = this.modal.confirm({
-    //         nzContent: '确定是否删除?',
-    //         nzOnOk: () => {
-    //             this.documentService.delete(this.document.id)
-    //                 .finally(() => { this.saving = false; })
-    //                 .subscribe(res => {
-    //                     this.notify.info('删除成功');
-    //                     this.router.navigate(['app/doc/document']);
-    //                 });
-    //         }
-    //     });
-    // }
-
     uploadFile() {
         // let att = { docId: this.document.id };
         // this.modalHelper
@@ -176,44 +156,38 @@ export class DetailComponent extends AppComponentBase implements OnInit {
             nzContent: '确定是否删除资料文档?',
             nzOnOk: () => {
                 this.basicDataService.deleteAttachmentByIdAsync(file.id).subscribe(() => {
-                    this.notify.info('删除成功！', '');
-                    this.getAttachmentList();
-                    this.isDelete = true;
+                    this.notify.success('删除成功！', '');
+                    console.log(this.fileList);
+
+                    //this.getAttachmentList();
+                    // this.fileList.pop();
+                    return true;
                 });
-            },
-            nzOnCancel: () => {
-                this.isDelete = false;
             }
         });
-        return this.isDelete;
-    }
-
-
-
-    beforeUpload = (file: UploadFile): boolean => {
-        if (this.uploadLoading) {
-            this.notify.info('正在上传中');
-            return false;
-        }
-        this.uploadLoading = true;
-        return true;
+        return false;
     }
 
     handleChange = (info: { file: UploadFile }): void => {
         if (info.file.status === 'error') {
             this.notify.error('上传文件异常，请重试');
-            this.uploadLoading = false;
+            this.fileList.pop();
         }
         if (this.fileList.length > 1) {
             this.notify.error('只能上传一个附件,请先删除原有附件');
-            this.uploadLoading = false;
+            this.fileList.pop();
         }
         else {
             if (info.file.status === 'done') {
-                this.uploadLoading = false;
                 var res = info.file.response.result;
                 if (res.code == 0) {
-                    this.attachment.name = res.data.name;
+                    this.fileList.forEach(element => {
+                        if (info.file.uid == element.uid) {
+                            element.url = this.host + res.data.url;
+                        }
+                    });
+                    //return;
+                    this.attachment.name = res.data.name + res.data.ext;
                     this.attachment.type = 1;
                     this.attachment.fileSize = res.data.size;
                     this.attachment.path = this.host + res.data.url;
@@ -221,15 +195,15 @@ export class DetailComponent extends AppComponentBase implements OnInit {
                     this.saveAttachment();
                 } else {
                     this.notify.error(res.msg);
+                    this.fileList.pop();
                 }
             }
         }
-        this.getAttachmentList();
     }
     saveAttachment() {
         this.basicDataService.uploadAttachment(this.attachment).subscribe(res => {
             this.notify.success('上传文件成功');
-            this.getAttachmentList();
+            //this.getAttachmentList();
         })
     }
 
@@ -240,8 +214,6 @@ export class DetailComponent extends AppComponentBase implements OnInit {
         params.BllId = this.id;
         this.basicDataService.getCriterionAttachmentById(params).subscribe(r => {
             this.fileList = r;
-            console.log(r);
-            console.log(this.fileList);
         })
     }
 

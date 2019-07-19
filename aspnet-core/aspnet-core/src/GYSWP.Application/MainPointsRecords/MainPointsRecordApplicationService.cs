@@ -181,8 +181,6 @@ MainPointsRecordEditDto editDto;
 			await _entityRepository.DeleteAsync(input.Id);
 		}
 
-
-
 		/// <summary>
 		/// 批量删除MainPointsRecord的方法
 		/// </summary>
@@ -198,6 +196,7 @@ MainPointsRecordEditDto editDto;
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
+         
         public async Task<APIResultDto> CreateMainPointRecordAsync(MainPointsRecordEditDto input)
         {
             var entity = input.MapTo<MainPointsRecord>();
@@ -208,8 +207,5 @@ MainPointsRecordEditDto editDto;
                 Data = id
             };
         }
-
     }
 }
-
-
