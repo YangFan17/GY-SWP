@@ -83,7 +83,7 @@ export class DocAttachment {
 }
 
 export class Attachment {
-    id: string;
+    uid: string;
     name: string;
     fileSize: number;
     url: string;
@@ -97,7 +97,7 @@ export class Attachment {
     }
     init(data?: any) {
         if (data) {
-            this.id = data["id"];
+            this.uid = data["id"];
             this.name = data["name"];
             this.fileSize = data["fileSize"];
             this.url = data["path"];
@@ -105,7 +105,7 @@ export class Attachment {
     }
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
+        data["id"] = this.uid;
         data["name"] = this.name;
         data["fileSize"] = this.fileSize;
         data["path"] = this.url;

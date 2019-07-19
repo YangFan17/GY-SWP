@@ -157,7 +157,10 @@ export class DetailComponent extends AppComponentBase implements OnInit {
             nzOnOk: () => {
                 this.basicDataService.deleteAttachmentByIdAsync(file.id).subscribe(() => {
                     this.notify.success('删除成功！', '');
-                    this.getAttachmentList();
+                    console.log(this.fileList);
+
+                    //this.getAttachmentList();
+                    // this.fileList.pop();
                     return true;
                 });
             }
@@ -178,6 +181,12 @@ export class DetailComponent extends AppComponentBase implements OnInit {
             if (info.file.status === 'done') {
                 var res = info.file.response.result;
                 if (res.code == 0) {
+                    this.fileList.forEach(element => {
+                        if (info.file.uid == element.uid) {
+                            element.url = this.host + res.data.url;
+                        }
+                    });
+                    //return;
                     this.attachment.name = res.data.name + res.data.ext;
                     this.attachment.type = 1;
                     this.attachment.fileSize = res.data.size;
@@ -194,7 +203,7 @@ export class DetailComponent extends AppComponentBase implements OnInit {
     saveAttachment() {
         this.basicDataService.uploadAttachment(this.attachment).subscribe(res => {
             this.notify.success('上传文件成功');
-            this.getAttachmentList();
+            //this.getAttachmentList();
         })
     }
 
