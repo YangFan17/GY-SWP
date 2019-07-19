@@ -309,4 +309,11 @@ export class WorkCriterionService {
             return ApiResult.fromJS(data);
         }));
     }
+
+    getClauseAttachmentsById(params: any): Observable<Attachment[]> {
+        let url_ = "/api/services/app/DocAttachment/GetClauseAttachmentsByIdAsync";
+        return this._commonhttp.get(url_, params).pipe(map(data => {
+            return Attachment.fromJSArray(data);
+        }));
+    }
 }

@@ -41,8 +41,8 @@
                 <nz-list class="demo-loadmore-list" [nzDataSource]="attachmentList" [nzItemLayout]="'horizontal'"
                     nzHeader="附件列表" [nzRenderItem]="item" style="margin-top: 40px;">
                     <ng-template #item let-item>
-                        <nz-list-item [nzActions]="[delete]">
-                            <ng-template #delete><a style="color:#ff4d4f;" (click)="deleteAttachment(item.id)">删除</a>
+                        <nz-list-item style="padding-top: 2px;padding-bottom: 2px;" [nzActions]="[delete]">
+                            <ng-template #delete><a style="color:#ff4d4f;" (click)="deleteAttachment(item.uid)">删除</a>
                             </ng-template>
                             <nz-list-item-meta style="text-align: left;" [nzDescription]="nzDescription">
                             </nz-list-item-meta>

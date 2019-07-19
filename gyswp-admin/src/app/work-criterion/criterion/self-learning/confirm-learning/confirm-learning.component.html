@@ -37,6 +37,22 @@
                 <textarea readonly nz-input nzAutosize name="content" #content="ngModel" [(ngModel)]="txt"></textarea>
             </nz-form-control>
         </nz-form-item>
+        <nz-form-item nz-row *ngIf="attachmentList.length>0">
+            <nz-form-control [nzSm]="24">
+                <nz-list class="demo-loadmore-list" [nzDataSource]="attachmentList" [nzItemLayout]="'horizontal'"
+                    nzHeader="附件列表" [nzRenderItem]="item" style="margin-top: 40px;">
+                    <ng-template #item let-item>
+                        <nz-list-item style="padding-top: 2px;padding-bottom: 2px;">
+                            <nz-list-item-meta style="text-align: left;" [nzDescription]="nzDescription">
+                            </nz-list-item-meta>
+                            <ng-template #nzDescription>
+                                <a href="{{item.fileUrl | hostUrl}}" target="_blank">"{{item.name}}"</a>
+                            </ng-template>
+                        </nz-list-item>
+                    </ng-template>
+                </nz-list>
+            </nz-form-control>
+        </nz-form-item>
         <!-- 功能按钮 -->
         <div class="custom-modal-footer" style="text-align: right;">
             <div class="custom-modal-footter-group">

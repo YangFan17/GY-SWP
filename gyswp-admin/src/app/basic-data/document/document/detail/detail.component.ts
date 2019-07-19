@@ -152,20 +152,26 @@ export class DetailComponent extends AppComponentBase implements OnInit {
     }
 
     deleteAttachment = (file: UploadFile): boolean => {
-        this.modal.confirm({
-            nzContent: '确定是否删除资料文档?',
-            nzOnOk: () => {
-                this.basicDataService.deleteAttachmentByIdAsync(file.id).subscribe(() => {
-                    this.notify.success('删除成功！', '');
-                    console.log(this.fileList);
-
-                    //this.getAttachmentList();
-                    // this.fileList.pop();
-                    return true;
-                });
-            }
-        });
-        return false;
+        // console.log(file);
+        // console.log(this.fileList);
+        // return true;
+        if (file) {
+            this.modal.confirm({
+                nzContent: '确定是否删除资料文档?',
+                nzOnOk: () => {
+                    this.basicDataService.deleteAttachmentByIdAsync(file.uid).subscribe(() => {
+                        this.notify.success('删除成功！', '');
+                        //this.getAttachmentList();
+                        // this.fileList.pop();
+                        let tflist = JSON.parse(JSON.stringify(this.fileList));
+                        tflist.pop();
+                        this.fileList = tflist;
+                        return true;
+                    });
+                }
+            });
+            return false;
+        }
     }
 
     handleChange = (info: { file: UploadFile }): void => {
@@ -190,7 +196,7 @@ export class DetailComponent extends AppComponentBase implements OnInit {
                     this.attachment.name = res.data.name + res.data.ext;
                     this.attachment.type = 1;
                     this.attachment.fileSize = res.data.size;
-                    this.attachment.path = this.host + res.data.url;
+                    this.attachment.path = res.data.url;
                     this.attachment.bLL = this.id;
                     this.saveAttachment();
                 } else {
@@ -202,12 +208,20 @@ export class DetailComponent extends AppComponentBase implements OnInit {
     }
     saveAttachment() {
         this.basicDataService.uploadAttachment(this.attachment).subscribe(res => {
-            this.notify.success('上传文件成功');
-            //this.getAttachmentList();
+            if (res.code == 0) {
+                const temp: Attachment[] = [];
+                // console.log(this.fileList);
+                // console.log(temp);
+                temp.push(Attachment.fromJS(res.data));
+                this.fileList = temp;
+                // console.log(this.fileList);
+                this.notify.success('上传文件成功');
+                // this.getAttachmentList();  
+            } else {
+                this.notify.error('上传文件异常，请重试');
+            }
         })
     }
-
-
 
     getAttachmentList() {
         let params: any = {};
@@ -217,9 +231,6 @@ export class DetailComponent extends AppComponentBase implements OnInit {
         })
     }
 
-    uploadDocAttach() {
-
-    }
     controlRadioChange(ngmodel: string) {
         this.isControl = ngmodel;
     }

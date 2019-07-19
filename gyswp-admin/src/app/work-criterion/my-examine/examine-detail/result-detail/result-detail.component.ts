@@ -56,16 +56,26 @@ export class ResultDetailComponent extends ModalComponentBase implements OnInit 
 
     saveAttachment() {
         this.workCriterionService.uploadAttachment(this.attachment).subscribe(res => {
-            this.notify.success('上传文件成功');
-            this.getAttachmentList();
+            if (res.code == 0) {
+                this.notify.success('上传文件成功');
+                this.getAttachmentList();
+            } else {
+                this.notify.error('上传文件异常，请重试');
+            }
+
         })
     }
 
-    deleteAttachment(id: string) {
-        this.workCriterionService.deleteAttachmentByIdAsync(id).subscribe(res => {
-            this.notify.success('删除成功');
-            this.getAttachmentList();
-        })
+    deleteAttachment(id: string): void {
+        this.confirmModal = this.modal.confirm({
+            nzContent: `是否删除当前附件?`,
+            nzOnOk: () => {
+                this.workCriterionService.deleteAttachmentByIdAsync(id).subscribe(res => {
+                    this.notify.success('删除成功');
+                    this.getAttachmentList();
+                })
+            }
+        });
     }
 
     submit(): void {

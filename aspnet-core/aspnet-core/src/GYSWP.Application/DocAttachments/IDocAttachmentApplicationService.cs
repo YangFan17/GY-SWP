@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.DocAttachments.Dtos;
 using GYSWP.DocAttachments;
+using GYSWP.Dtos;
 
 namespace GYSWP.DocAttachments
 {
@@ -55,7 +56,7 @@ namespace GYSWP.DocAttachments
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task CreateOrUpdate(CreateOrUpdateDocAttachmentInput input);
+        Task<APIResultDto> CreateOrUpdate(CreateOrUpdateDocAttachmentInput input);
 
 
         /// <summary>

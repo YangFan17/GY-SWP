@@ -103,6 +103,7 @@ export class Attachment {
             this.url = data["path"];
         }
     }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.uid;
@@ -116,6 +117,7 @@ export class Attachment {
         result.init(data);
         return result;
     }
+
     static fromJSArray(dataArray: any[]): Attachment[] {
         let array = [];
         dataArray.forEach(result => {
