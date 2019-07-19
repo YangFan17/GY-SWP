@@ -9,6 +9,7 @@ export class AppMenus {
             text: "主页",// 无本地化显示字符
             //i18n: "HomePage",// 本地化主键(ABP本地化)
             acl: "",// 权限
+            reuse: false,
             icon: { type: "icon", value: "home" },// 图标
             link: "/app/home", // url 地址
             // hide: true,  // 强制隐藏
@@ -18,6 +19,7 @@ export class AppMenus {
             text: "基础数据",
             icon: { type: "icon", value: "dingding" },
             reuse: false,
+            acl: "QiGuanAdmin",// 权限
             link: "/app/basic",
             group: true,
             children: [
@@ -70,6 +72,7 @@ export class AppMenus {
             text: "监督检查",
             icon: { type: "icon", value: "audit" },
             reuse: false,
+            acl: "Admin",// 权限
             link: "/app/supervision",
             group: true,
             children: [
@@ -98,6 +101,7 @@ export class AppMenus {
             text: "数据统计",
             icon: { type: "icon", value: "bar-chart" },
             reuse: false,
+            acl: "QiGuanAdmin",// 权限
             link: "/app/criterion/criterion",
             group: true,
             children: [
@@ -128,20 +132,22 @@ export class AppMenus {
                 },
             ]
         },
-        {
-            text: "设备管理",
-            icon: { type: "icon", value: "control" },
-            reuse: false,
-            link: "/app/criterion/criterion",
-            group: true,
-            children: [
-            ]
-        },
+        // {
+        //     text: "设备管理",
+        //     icon: { type: "icon", value: "control" },
+        //     reuse: false,
+        //     acl: "Admin",// 权限
+        //     link: "/app/criterion/criterion",
+        //     group: true,
+        //     children: [
+        //     ]
+        // },
         {
             text: "配置管理",
             icon: { type: "icon", value: "tool" },
             link: "/app/config",
             group: true,
+            acl: "Admin",// 权限
             children: [
                 {
                     text: "数据配置",
@@ -155,6 +161,7 @@ export class AppMenus {
             icon: { type: "icon", value: "setting" },
             link: "/app/system",
             group: true,
+            acl: "Admin",// 权限
             children: [
                 {
                     text: "用户管理",

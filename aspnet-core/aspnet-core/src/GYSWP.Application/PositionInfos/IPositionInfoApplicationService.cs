@@ -56,7 +56,7 @@ namespace GYSWP.PositionInfos
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task CreateOrUpdate(CreateOrUpdatePositionInfoInput input);
+        Task<APIResultDto> CreateOrUpdate(CreateOrUpdatePositionInfoInput input);
 
 
         /// <summary>

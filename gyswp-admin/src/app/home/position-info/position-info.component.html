@@ -1,35 +1,40 @@
-<nz-card [nzBordered]="false" nzTitle="添加工作职责">
+<page-header title="修改主页信息"></page-header>
+<nz-card [nzBordered]="false" class="info_card_margin">
     <div nz-row>
         <div nz-row [nzGutter]="24">
             <div nz-col [nzSpan]="6" class="mb-md" [class.text-right]="'true'" style="float:right">
                 <button nz-button type="button" (click)="create()" nzType="primary">
                     <i class="anticon anticon-plus"></i>
+                    <span>添加工作职责</span>
                 </button>
             </div>
         </div>
         <nz-table #expandTable [nzData]="listOfMapData" [nzShowPagination]="false">
             <thead>
                 <tr>
-                    <th nzWidth="70%" style="text-align: center">工作职责</th>
-                    <th>操作</th>
+                    <th>工作职责</th>
+                    <th nzWidth="20%">操作</th>
                 </tr>
             </thead>
             <tbody>
-                <ng-container *ngFor="let item of listOfMapData">
-                    <tr *ngIf="item">
-                        <td>
-                            {{ item.duties }}
-                        </td>
-                        <td>
-                            <a (click)="showDetail(item,'detail')">详情</a>
-                            <nz-divider nzType="vertical"></nz-divider>
-                            <a (click)="showDetail(item,'child')">添加工作标准及实施要点</a>
-                            <nz-divider nzType="vertical"></nz-divider>
-                            <a style="color:#ff4d4f;" (click)="deleteClause(item)">删除</a>
-                        </td>
-                    </tr>
-                </ng-container>
+                <tr *ngFor="let item of listOfMapData">
+                    <td>
+                        {{item.duties}}
+                    </td>
+                    <td>
+                        <!-- <a (click)="editPosition(item.id)">维护</a>
+                        <nz-divider nzType="vertical"></nz-divider> -->
+                        <a (click)="showDetail(item.id)">添加实施要点</a>
+                        <!-- <nz-divider nzType="vertical"></nz-divider>
+                            <a style="color:#ff4d4f;" (click)="deleteClause(item)">删除</a> -->
+                    </td>
+                </tr>
             </tbody>
         </nz-table>
     </div>
+    <footer-toolbar>
+        <button nz-button [nzType]="'default'" (click)="return()">
+            返回
+        </button>
+    </footer-toolbar>
 </nz-card>

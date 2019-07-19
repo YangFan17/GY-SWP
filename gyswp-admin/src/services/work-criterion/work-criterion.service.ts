@@ -309,18 +309,4 @@ export class WorkCriterionService {
             return ApiResult.fromJS(data);
         }));
     }
-
-    getPositionTreeByIdAsync(): Observable<any> {
-        let url_ = "/api/services/app/PositionInfo/GetPositionTreeByIdAsync";
-        return this._commonhttp.get(url_).pipe(map(data => {
-            return data;
-        }));
-    }
-
-    getCurrentPositionAsync(): Observable<string> {
-        let url_ = "/api/services/app/PositionInfo/GetCurrentPositionAsync";
-        return this._commonhttp.get(url_).pipe(map(data => {
-            return data;
-        }));
-    }
 }

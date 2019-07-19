@@ -4,6 +4,7 @@ import { AppComponentBase } from '@shared/app-component-base';
 import { CreatePositionInfoComponent } from './create-position-info/create-position-info.component';
 import { PositionInfo } from 'entities/position-info';
 import { AddDocumentComponent } from './add-document/add-document.component';
+import { Router } from '@angular/router';
 
 @Component({
     moduleId: module.id,
@@ -12,12 +13,12 @@ import { AddDocumentComponent } from './add-document/add-document.component';
     providers: [HomeService]
 })
 export class PositionInfoComponent extends AppComponentBase {
-    employee: any = { id: '5896512826844512', name: '赵康辰', position: '科长' };
     listOfMapData: PositionInfo[] = [];
 
     constructor(
-        injector: Injector,
-        private homeService: HomeService
+        injector: Injector
+        , private homeService: HomeService
+        , private router: Router
     ) {
         super(injector);
     }
@@ -45,9 +46,9 @@ export class PositionInfoComponent extends AppComponentBase {
             });
     }
 
-    showDetail(item?: any, type?: string): void {
+    editPosition(id: string): void {
         this.modalHelper
-            .open(AddDocumentComponent, { positionInfoId: item.id }, 950, {
+            .open(CreatePositionInfoComponent, { id: id }, 'md', {
                 nzMask: true,
                 nzClosable: false,
                 nzMaskClosable: false,
@@ -59,19 +60,20 @@ export class PositionInfoComponent extends AppComponentBase {
             });
     }
 
-    // deleteClause(item: Clause): void {
-    //     this.confirmModal = this.modal.confirm({
-    //         nzContent: `是否删除当前条款[条款编号：${item.clauseNo}]?`,
-    //         nzOnOk: () => {
-    //             this.basicDataService.deleteClauseById(item.id).subscribe(res => {
-    //                 if (res.code == 0) {
-    //                     this.notify.info('删除成功！', '');
-    //                     this.getClauseList();
-    //                 } else {
-    //                     this.notify.warn('请确保当前条款下无子项条款后再删除！', '');
-    //                 }
-    //             });
-    //         }
-    //     });
-    // }
+    showDetail(id: string): void {
+        this.modalHelper
+            .open(AddDocumentComponent, { positionInfoId: id }, 'md', {
+                nzMask: true,
+                nzClosable: false,
+                nzMaskClosable: false,
+            })
+            .subscribe(isSave => {
+                if (isSave) {
+                    this.getPositionInfoList();
+                }
+            });
+    }
+    return() {
+        this.router.navigate(['app/home']);
+    }
 }

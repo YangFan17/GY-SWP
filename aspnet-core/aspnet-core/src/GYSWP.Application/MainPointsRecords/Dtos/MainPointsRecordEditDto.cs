@@ -6,7 +6,7 @@ using GYSWP.PositionInfos;
 
 namespace  GYSWP.PositionInfos.Dtos
 {
-    public class MainPointsRecordEditDto
+    public class MainPointsRecordEditDto:IHasCreationTime
     {
 
         /// <summary>
@@ -14,15 +14,11 @@ namespace  GYSWP.PositionInfos.Dtos
         /// </summary>
         public Guid? Id { get; set; }         
 
-
-        
 		/// <summary>
 		/// PositionInfoId
 		/// </summary>
 		[Required(ErrorMessage="PositionInfoId不能为空")]
 		public Guid PositionInfoId { get; set; }
-
-
 
 		/// <summary>
 		/// DocumentId
@@ -30,22 +26,14 @@ namespace  GYSWP.PositionInfos.Dtos
 		[Required(ErrorMessage="DocumentId不能为空")]
 		public Guid DocumentId { get; set; }
 
-
-
 		/// <summary>
 		/// MainPoint
 		/// </summary>
 		public string MainPoint { get; set; }
 
-
-
 		/// <summary>
 		/// CreationTime
 		/// </summary>
 		public DateTime CreationTime { get; set; }
-
-
-
-
     }
 }

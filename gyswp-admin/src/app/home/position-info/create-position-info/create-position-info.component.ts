@@ -10,19 +10,23 @@ import { PositionInfo } from 'entities/position-info';
     providers: [HomeService]
 })
 export class CreatePositionInfoComponent extends ModalComponentBase implements OnInit {
+    @Input() id: string;
     duties: string;//工作职责
     positionInfo: PositionInfo = new PositionInfo();
-    saving: boolean;
-    notify: any;
-
-    constructor(
-        injector: Injector,
+    constructor(injector: Injector,
         private homeService: HomeService
     ) {
         super(injector);
     }
 
     ngOnInit() {
+        if (this.id) {
+            this.positionInfo.id = this.id;
+            console.log(this.id);
+            this.homeService.getPositionInfoById(this.id).subscribe((data) => {
+                this.positionInfo = data;
+            });
+        }
     }
 
     save(): void {
@@ -30,14 +34,13 @@ export class CreatePositionInfoComponent extends ModalComponentBase implements O
             .finally(() => { this.saving = false; })
             .subscribe((data) => {
                 if (data.code == 0) {
-                    this.notify.info('保存成功');
+                    this.notify.success('保存成功');
                     this.positionInfo.id = data.data;
-                    this.close();
+                    this.success(true);
                 } else {
                     this.notify.error('保存失败,请重试.');
+                    this.success(false);
                 }
             });
     }
-
-
 }

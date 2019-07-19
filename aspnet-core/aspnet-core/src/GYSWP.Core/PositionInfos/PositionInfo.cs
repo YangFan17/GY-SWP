@@ -9,7 +9,7 @@ namespace GYSWP.PositionInfos
     /// 岗位职责表
     /// </summary>
     [Table("PositionInfos")]
-    public class PositionInfo : FullAuditedEntity<Guid>
+    public class PositionInfo : FullAuditedEntity<Guid> //注意修改主键Id数据类型
     {
         /// <summary>
         /// 岗位名称

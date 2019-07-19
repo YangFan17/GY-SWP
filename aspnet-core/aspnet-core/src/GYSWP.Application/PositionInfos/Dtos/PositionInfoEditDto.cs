@@ -1,16 +1,15 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
-using Abp.Domain.Entities.Auditing;
-using GYSWP.PositionInfos;
+using Abp.Application.Services.Dto;
 
 namespace  GYSWP.PositionInfos.Dtos
 {
-    public class PositionInfoEditDto: FullAuditedEntity<Guid?>
+    public class PositionInfoEditDto : FullAuditedEntityDto<Guid?>
     {
 
 
-        [Required]
+        //[Required]
         [StringLength(200)]
         public virtual string Position { get; set; }
 
@@ -23,7 +22,7 @@ namespace  GYSWP.PositionInfos.Dtos
         /// <summary>
         /// 员工Id
         /// </summary>
-        [Required]
+        //[Required]
         [StringLength(200)]
         public virtual string EmployeeId { get; set; }
 
