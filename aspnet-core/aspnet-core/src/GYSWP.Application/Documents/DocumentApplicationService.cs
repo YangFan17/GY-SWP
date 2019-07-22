@@ -38,6 +38,7 @@ using Senparc.CO2NET.Helpers;
 using Senparc.CO2NET.HttpUtility;
 using GYSWP.Authorization.Users;
 using Abp.Auditing;
+using GYSWP.DocAttachments;
 
 namespace GYSWP.Documents
 {
@@ -57,6 +58,7 @@ namespace GYSWP.Documents
         private readonly ICategoryManager _categoryManager;
         private readonly IDingDingAppService _dingDingAppService;
         private readonly UserManager _userManager;
+        private readonly IRepository<DocAttachment, Guid> _docAttachmentRepository;
 
         /// <summary>
         /// 构造函数 
@@ -72,6 +74,7 @@ namespace GYSWP.Documents
         , ICategoryManager categoryManager
         , IDingDingAppService dingDingAppService
         , UserManager userManager
+        , IRepository<DocAttachment, Guid> docAttachmentRepository
         )
         {
             _userManager = userManager;
@@ -84,6 +87,7 @@ namespace GYSWP.Documents
             _clauseRepository = clauseRepository;
             _employeeClauseRepository = employeeClauseRepository;
             _categoryManager = categoryManager;
+            _docAttachmentRepository = docAttachmentRepository;
         }
 
 
@@ -184,6 +188,13 @@ namespace GYSWP.Documents
             else
             {
                 var entity = await Create(input.Document);
+                await CurrentUnitOfWork.SaveChangesAsync();
+                foreach (var attItem in input.DocAttachment)
+                {
+                    attItem.BLL = entity.Id.Value;
+                    var docEntity = attItem.MapTo<DocAttachment>();
+                    await _docAttachmentRepository.InsertAsync(docEntity);
+                }
                 return new APIResultDto() { Code = 0, Msg = "保存成功", Data = entity };
             }
         }
@@ -364,7 +375,8 @@ namespace GYSWP.Documents
         public async Task<DocumentTitleDto> GetDocumentTitleAsync(Guid id)
         {
             var query = await _entityRepository.GetAsync(id);
-            string deptName = await _organizationRepository.GetAll().Where(v => v.Id.ToString() == query.DeptIds).Select(v => v.DepartmentName).FirstOrDefaultAsync();
+            long depptId = await _categoryRepository.GetAll().Where(v => v.Id == query.CategoryId).Select(v => v.DeptId).FirstOrDefaultAsync();
+            string deptName = await _organizationRepository.GetAll().Where(v => v.Id == depptId).Select(v => v.DepartmentName).FirstOrDefaultAsync();
             var result = query.MapTo<DocumentTitleDto>();
             result.DeptName = deptName;
             return result;
@@ -429,7 +441,7 @@ namespace GYSWP.Documents
                 {
                     var user = await _userManager.GetUserByIdAsync(document.CreatorUserId.Value);
                     bool status = DingRemind(user.EmployeeId);
-                    if(status == true)
+                    if (status == true)
                         return new APIResultDto() { Code = 1, Msg = "提交成功" };
                     else
                         return new APIResultDto() { Code = 1, Msg = "提交失败" };

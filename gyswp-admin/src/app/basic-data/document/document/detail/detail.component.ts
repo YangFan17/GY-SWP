@@ -33,6 +33,7 @@ export class DetailComponent extends AppComponentBase implements OnInit {
         size: 230
     };
     fileList: Attachment[] = [];
+    newFileList: DocAttachment[] = [];
     filters: UploadFilter[] = [
         {
             name: 'type',
@@ -84,6 +85,9 @@ export class DetailComponent extends AppComponentBase implements OnInit {
             this.document.deptIds = this.dept.id;
             this.document.isAction = true;
         }
+        if (this.id) {
+            this.newFileList = [];
+        }
         this.document.publishTime = this.dateFormat(this.document.publishTime);
         this.document.isAllUser = this.isAllUser == '1' ? true : false;
 
@@ -92,7 +96,7 @@ export class DetailComponent extends AppComponentBase implements OnInit {
 
         this.getUserDepts();
 
-        this.basicDataService.createOrUpdateDocumentAsync(this.document)
+        this.basicDataService.createOrUpdateDocumentAsync(this.document, this.newFileList)
             .finally(() => { this.saving = false; })
             .subscribe(res => {
                 this.notify.info('保存成功！', '');
@@ -137,18 +141,12 @@ export class DetailComponent extends AppComponentBase implements OnInit {
         this.router.navigate(['app/basic/document']);
     }
 
-    uploadFile() {
-        // let att = { docId: this.document.id };
-        // this.modalHelper
-        //     .open(UploadFileComponent, { attachment: att }, 'md', {
-        //         nzMask: true,
-        //         nzClosable: false,
-        //     })
-        //     .subscribe(isSave => {
-        //         if (isSave) {
-        //             this.getAttachments();
-        //         }
-        //     });
+    beforeUpload = (file: UploadFile): boolean => {
+        if (this.fileList.length >= 1) {
+            this.notify.error('只能上传一个附件,请先删除原有附件');
+            return false;
+        }
+        return true;
     }
 
     deleteAttachment = (file: UploadFile): boolean => {
@@ -159,15 +157,22 @@ export class DetailComponent extends AppComponentBase implements OnInit {
             this.modal.confirm({
                 nzContent: '确定是否删除资料文档?',
                 nzOnOk: () => {
-                    this.basicDataService.deleteAttachmentByIdAsync(file.uid).subscribe(() => {
-                        this.notify.success('删除成功！', '');
-                        //this.getAttachmentList();
-                        // this.fileList.pop();
-                        let tflist = JSON.parse(JSON.stringify(this.fileList));
+                    if (this.id) {
+                        this.basicDataService.deleteAttachmentByIdAsync(file.uid).subscribe(() => {
+                            this.notify.success('删除成功！', '');
+                            //this.getAttachmentList();
+                            // this.fileList.pop();
+                            let tflist = JSON.parse(JSON.stringify(this.fileList));
+                            tflist.pop();
+                            this.fileList = tflist;
+                            return true;
+                        });
+                    } else {
+                        let tflist: Attachment[] = Attachment.fromJSArray(JSON.parse(JSON.stringify(this.fileList)));
                         tflist.pop();
+                        this.newFileList = [];
                         this.fileList = tflist;
-                        return true;
-                    });
+                    }
                 }
             });
             return false;
@@ -179,10 +184,7 @@ export class DetailComponent extends AppComponentBase implements OnInit {
             this.notify.error('上传文件异常，请重试');
             this.fileList.pop();
         }
-        if (this.fileList.length > 1) {
-            this.notify.error('只能上传一个附件,请先删除原有附件');
-            this.fileList.pop();
-        }
+
         else {
             if (info.file.status === 'done') {
                 var res = info.file.response.result;
@@ -192,13 +194,30 @@ export class DetailComponent extends AppComponentBase implements OnInit {
                             element.url = this.host + res.data.url;
                         }
                     });
-                    //return;
                     this.attachment.name = res.data.name + res.data.ext;
                     this.attachment.type = 1;
                     this.attachment.fileSize = res.data.size;
                     this.attachment.path = res.data.url;
                     this.attachment.bLL = this.id;
-                    this.saveAttachment();
+                    if (this.id) {
+                        this.saveAttachment();
+                    } else {
+                        const showAttach: Attachment[] = [];
+                        let item: Attachment = new Attachment();
+                        item.uid = info.file.uid;
+                        item.url = this.host + this.attachment.path;
+                        item.name = this.attachment.name;
+                        showAttach.push(item);
+                        this.fileList = showAttach;
+                        // console.log(this.attachmentList);
+                        let tmpItem: DocAttachment = new DocAttachment();
+                        tmpItem.uId = info.file.uid;
+                        tmpItem.name = this.attachment.name;
+                        tmpItem.type = this.attachment.type;
+                        tmpItem.fileSize = this.attachment.fileSize;
+                        tmpItem.path = this.attachment.path;
+                        this.newFileList.push(tmpItem);
+                    }
                 } else {
                     this.notify.error(res.msg);
                     this.fileList.pop();
@@ -210,13 +229,9 @@ export class DetailComponent extends AppComponentBase implements OnInit {
         this.basicDataService.uploadAttachment(this.attachment).subscribe(res => {
             if (res.code == 0) {
                 const temp: Attachment[] = [];
-                // console.log(this.fileList);
-                // console.log(temp);
                 temp.push(Attachment.fromJS(res.data));
                 this.fileList = temp;
-                // console.log(this.fileList);
                 this.notify.success('上传文件成功');
-                // this.getAttachmentList();  
             } else {
                 this.notify.error('上传文件异常，请重试');
             }

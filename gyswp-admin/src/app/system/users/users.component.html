@@ -1,22 +1,39 @@
 <page-header [title]="''"></page-header>
 
 
-<nz-card [nzTitle]="title" [nzExtra]="extraTpl">
+<!-- <nz-card [nzTitle]="title" [nzExtra]="extraTpl"> -->
+<nz-card [nzTitle]="title">
 
   <ng-template #title>
     <button nz-button type="button" (click)="synchroDingUser()" nzType="primary" [nzLoading]="syncDataLoading">
       同步钉钉用户</button>
   </ng-template>
-
-  <ng-template #extraTpl>
+  <div nz-row>
+    <div nz-col nzSpan="12" style="padding-right:10px;">
+      <nz-input-group nzSearch [nzSuffix]="suffixButton">
+        <input type="text" [(ngModel)]="keyWord" nz-input placeholder="姓名">
+      </nz-input-group>
+      <ng-template #suffixButton>
+        <button nz-button nzType="default" [nzLoading]="isTableLoading" (click)="refreshData()" nzSearch>搜索</button>
+      </ng-template>
+    </div>
+    <div nz-col nzSpan="12" style="text-align:right;">
+      <button nz-button (click)="reset()" nzShape="circle">
+        <i class="anticon anticon-reload"></i>
+      </button>
+      <button nz-button (click)="create()" nzShape="circle" nzType="primary">
+        <i class="anticon anticon-plus"></i>
+      </button>
+    </div>
+  </div>
+  <!-- <ng-template #extraTpl>
     <button nz-button (click)="refresh()" nzShape="circle">
       <i class="anticon anticon-reload"></i>
     </button>
     <button nz-button (click)="create()" nzShape="circle" nzType="primary">
       <i class="anticon anticon-plus"></i>
     </button>
-  </ng-template>
-
+  </ng-template> -->
 
   <nz-table #ajaxTable nzShowSizeChanger [nzData]="dataList" [nzTotal]="totalItems" [(nzPageIndex)]="pageNumber"
     [(nzPageSize)]="pageSize" [nzLoading]="isTableLoading" (nzPageIndexChange)="refresh()"
@@ -24,7 +41,7 @@
     <thead>
       <tr>
         <th>账号</th>
-        <th>用户名</th>
+        <th>姓名</th>
         <!-- <th>Email</th> -->
         <th>是否启用</th>
         <th>创建时间</th>

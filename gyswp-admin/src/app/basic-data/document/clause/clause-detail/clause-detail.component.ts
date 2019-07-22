@@ -24,6 +24,7 @@ export class ClauseDetailComponent extends ModalComponentBase {
     // fileList: Attachment[] = [];
     attachmentList: Attachment[] = [];
     attachment: DocAttachment = new DocAttachment();
+    newAttachment: DocAttachment[] = [];
     host = AppConsts.remoteServiceBaseUrl;
     confirmModal: NzModalRef;
 
@@ -52,7 +53,10 @@ export class ClauseDetailComponent extends ModalComponentBase {
             this.clause.parentId = this.pId;
         }
         this.clause.documentId = this.docId;
-        this.basicDataService.createOrUpdateClauseAsync(this.clause)
+        if (this.id) {
+            this.newAttachment = [];
+        }
+        this.basicDataService.createOrUpdateClauseAsync(this.clause, this.newAttachment)
             .finally(() => { this.saving = false; })
             .subscribe(res => {
                 this.notify.info('保存成功！', '');
@@ -89,7 +93,27 @@ export class ClauseDetailComponent extends ModalComponentBase {
                     this.attachment.fileSize = res.data.size;
                     this.attachment.path = res.data.url;
                     this.attachment.bLL = this.id;
-                    this.saveAttachment();
+                    if (this.id) {
+                        this.saveAttachment();
+                    } else {
+                        const showAttach: Attachment[] = [];
+                        showAttach.push(...this.attachmentList);
+                        let item: Attachment = new Attachment();
+                        item.uid = info.file.uid;
+                        item.url = this.host + this.attachment.path;
+                        item.name = this.attachment.name;
+                        showAttach.push(item);
+                        this.attachmentList = showAttach;
+                        // console.log(this.attachmentList);
+                        let tmpItem: DocAttachment = new DocAttachment();
+                        tmpItem.uId = info.file.uid;
+                        tmpItem.name = this.attachment.name;
+                        tmpItem.type = this.attachment.type;
+                        tmpItem.fileSize = this.attachment.fileSize;
+                        tmpItem.path = this.attachment.path;
+                        this.newAttachment.push(tmpItem);
+                        // console.log(this.newAttachment);
+                    }
                 } else {
                     this.notify.error(res.msg);
                     // this.fileList.pop();
@@ -136,10 +160,32 @@ export class ClauseDetailComponent extends ModalComponentBase {
         this.confirmModal = this.modal.confirm({
             nzContent: `是否删除当前附件?`,
             nzOnOk: () => {
-                this.basicDataService.deleteAttachmentByIdAsync(id).subscribe(res => {
-                    this.notify.success('删除成功');
-                    this.getAttachmentList();
-                })
+                if (this.id) {
+                    this.basicDataService.deleteAttachmentByIdAsync(id).subscribe(res => {
+                        this.notify.success('删除成功');
+                        this.getAttachmentList();
+                    });
+                }
+                else {
+                    let tflist: Attachment[] = Attachment.fromJSArray(JSON.parse(JSON.stringify(this.attachmentList)));
+                    let i = 0;
+                    tflist.forEach(v => {
+                        if (v.uid == id) {
+                            tflist.splice(i, 1);
+                            let ii = 0;
+                            this.newAttachment.forEach(vv => {
+                                if (vv.uId == id) {
+                                    this.newAttachment.splice(ii, 1);
+                                    return;
+                                }
+                                ii++;
+                            });
+                            return;
+                        }
+                        i++;
+                    });
+                    this.attachmentList = tflist;
+                }
             }
         });
     }

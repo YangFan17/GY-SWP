@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Abp.Application.Services;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
+using Abp.AutoMapper;
 using Abp.Domain.Entities;
 using Abp.Domain.Repositories;
 using Abp.Extensions;
@@ -23,6 +24,7 @@ using GYSWP.Authorization.Users;
 using GYSWP.DingDing;
 using GYSWP.DingDing.Dtos;
 using GYSWP.Dtos;
+using GYSWP.Employees;
 using GYSWP.Organizations.Dtos;
 using GYSWP.Roles.Dto;
 using GYSWP.Users.Dto;
@@ -43,6 +45,7 @@ namespace GYSWP.Users
         private readonly IAbpSession _abpSession;
         private readonly LogInManager _logInManager;
         private readonly IDingDingAppService _dingDingAppService;
+        private readonly IEmployeeAppService _employeeAppService;
 
         public UserAppService(
             IRepository<User, long> repository,
@@ -52,6 +55,7 @@ namespace GYSWP.Users
             IPasswordHasher<User> passwordHasher,
             IAbpSession abpSession,
             IDingDingAppService dingDingAppService,
+            IEmployeeAppService employeeAppService,
             LogInManager logInManager)
             : base(repository)
         {
@@ -62,6 +66,18 @@ namespace GYSWP.Users
             _passwordHasher = passwordHasher;
             _abpSession = abpSession;
             _logInManager = logInManager;
+            _employeeAppService = employeeAppService;
+        }
+        public override async Task<PagedResultDto<UserDto>> GetAll(PagedUserResultRequestDto input)
+        {
+            var query = base.Repository.GetAll().WhereIf(!string.IsNullOrEmpty(input.Keyword),v => v.Name.Contains(input.Keyword));
+            var count = await query.CountAsync();
+            var entityList = await query
+                    .AsNoTracking()
+                    .PageBy(input)
+                    .ToListAsync();
+            var entityListDtos = entityList.MapTo<List<UserDto>>();
+            return new PagedResultDto<UserDto>(count, entityListDtos);
         }
 
         public override async Task<UserDto> Create(CreateUserDto input)
@@ -237,23 +253,62 @@ namespace GYSWP.Users
         /// <returns></returns>
         public async Task<APIResultDto> SynchroDingUserAsync()
         {
-            DingDingAppConfig ddConfig = _dingDingAppService.GetDingDingConfigByApp(DingDingAppEnum.标准化工作平台);
-            string accessToken = _dingDingAppService.GetAccessToken(ddConfig.Appkey, ddConfig.Appsecret);
-            var depts = Senparc.CO2NET.HttpUtility.Get.GetJson<DingDepartmentDto>(string.Format("https://oapi.dingtalk.com/department/list?access_token={0}", accessToken));
-            var entityByDD = depts.department.Select(o => new OrganizationListDto()
-            {
-                Id = o.id
-            }).ToList();
+            //DingDingAppConfig ddConfig = _dingDingAppService.GetDingDingConfigByApp(DingDingAppEnum.标准化工作平台);
+            //string accessToken = _dingDingAppService.GetAccessToken(ddConfig.Appkey, ddConfig.Appsecret);
+            //var depts = Senparc.CO2NET.HttpUtility.Get.GetJson<DingDepartmentDto>(string.Format("https://oapi.dingtalk.com/department/list?access_token={0}", accessToken));
+            //var entityByDD = depts.department.Select(o => new OrganizationListDto()
+            //{
+            //    Id = o.id
+            //}).ToList();
 
-            foreach (var item in entityByDD)
-            {
-                if (item.Id != 1)
-                    await CreateOrUpdateUsers(item.Id, accessToken);
-            }
-            await CurrentUnitOfWork.SaveChangesAsync();
+            //foreach (var item in entityByDD)
+            //{
+            //    if (item.Id != 1)
+            //        await CreateOrUpdateUsers(item.Id, accessToken);
+            //}
+            //await CurrentUnitOfWork.SaveChangesAsync();
+            await CreateUsersByEmployeeListAsync();
             return new APIResultDto() { Code = 0, Msg = "同步组织架构成功" };
         }
 
+        /// <summary>
+        /// 基于员工表同步账号
+        /// </summary>
+        /// <returns></returns>
+        private async Task<UserDto> CreateUsersByEmployeeListAsync()
+        {
+            string[] relesName = await _roleRepository.GetAll().Where(aa => aa.DisplayName == "员工").Select(aa => aa.Name).ToArrayAsync();
+            var userList = await _employeeAppService.GetAllEmployeeListAsync();
+            var entityByDD = userList.Select(e => new SynchroDingUser()
+            {
+                UserName = GetPinyin(e.Name) + e.Mobile.Substring(7, 4),
+                IsActive = true,
+                EmailAddress = "GYSWP" + GetPinyin(e.Name) + e.Mobile.Substring(7, 4) + "@gy.com",
+                Name = e.Name,
+                Surname = e.Name,
+                Password = "123qwe",
+                EmployeeId = e.Id,
+                EmployeeName = e.Name,
+                UnionId = e.Unionid,
+                RoleNames = relesName,
+                PhoneNumber = e.Mobile
+            }).ToList();
+            foreach (var item in entityByDD)
+            {
+                CheckCreatePermission();
+                var users = ObjectMapper.Map<User>(item);
+                users.TenantId = AbpSession.TenantId;
+                users.IsEmailConfirmed = true;
+                await _userManager.InitializeOptionsAsync(AbpSession.TenantId);
+                CheckErrors(await _userManager.CreateAsync(users, item.Password));
+                if (item.RoleNames != null)
+                {
+                    CheckErrors(await _userManager.SetRoles(users, item.RoleNames));
+                }
+            }
+            await CurrentUnitOfWork.SaveChangesAsync();
+            return null;
+        }
 
         private async Task<UserDto> CreateOrUpdateUsers(long deptId, string accessToken)
         {
@@ -266,7 +321,7 @@ namespace GYSWP.Users
                 IsActive = true,
                 //IsEmailConfirmed = true,
                 //IsLockoutEnabled = true,
-                EmailAddress = "GYSWP" + GetPinyin(e.name) + "@gy.com",
+                EmailAddress = "GYSWP" + GetPinyin(e.name) + e.mobile.Substring(7, 4) + "@gy.com",
                 Name = e.name,
                 Surname = e.name.Substring(0, 1),
                 Password = "123qwe",
@@ -289,7 +344,7 @@ namespace GYSWP.Users
                 users.IsEmailConfirmed = true;
 
                 await _userManager.InitializeOptionsAsync(AbpSession.TenantId);
-
+                await _userManager.CreateAsync(users, item.Password);
                 CheckErrors(await _userManager.CreateAsync(users, item.Password));
 
                 if (item.RoleNames != null)

@@ -10,6 +10,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { CreateUserComponent } from '@app/system/users/create-user/create-user.component';
 import { EditUserComponent } from '@app/system/users/edit-user/edit-user.component';
+import { Parameter } from 'entities';
 
 @Component({
   selector: 'app-users',
@@ -17,11 +18,21 @@ import { EditUserComponent } from '@app/system/users/edit-user/edit-user.compone
   styles: [],
 })
 export class UsersComponent extends PagedListingComponentBase<UserDto> {
+  keyWord: string;
   constructor(injector: Injector, private _userService: UserServiceProxy) {
     super(injector);
   }
 
   syncDataLoading = false;
+
+  reset() {
+    this.keyWord = '';
+    this.refresh();
+  }
+
+  refreshData() {
+    this.refresh();
+  }
 
   protected fetchDataList(
     request: PagedRequestDto,
@@ -29,7 +40,7 @@ export class UsersComponent extends PagedListingComponentBase<UserDto> {
     finishedCallback: Function,
   ): void {
     this._userService
-      .getAll(request.skipCount, request.maxResultCount)
+      .getAll(request.skipCount, request.maxResultCount, this.getParameter())
       .finally(() => {
         finishedCallback();
       })
@@ -37,6 +48,12 @@ export class UsersComponent extends PagedListingComponentBase<UserDto> {
         this.dataList = result.items;
         this.totalItems = result.totalCount;
       });
+  }
+
+  getParameter(): Parameter[] {
+    var arry = [];
+    arry.push(Parameter.fromJS({ key: 'Keyword', value: this.keyWord }));
+    return arry;
   }
 
   protected delete(entity: UserDto): void {

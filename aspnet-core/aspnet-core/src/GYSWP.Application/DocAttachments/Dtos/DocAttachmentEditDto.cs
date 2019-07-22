@@ -7,13 +7,13 @@ using GYSWP.GYEnums;
 
 namespace  GYSWP.DocAttachments.Dtos
 {
-    public class DocAttachmentEditDto : FullAuditedEntity<Guid>
+    public class DocAttachmentEditDto : FullAuditedEntity<Guid?>
     {
 
         /// <summary>
         /// Id
         /// </summary>
-        public Guid? Id { get; set; }         
+        //public Guid? Id { get; set; }         
 
 
         
@@ -58,7 +58,7 @@ namespace  GYSWP.DocAttachments.Dtos
 		/// <summary>
 		/// BLL
 		/// </summary>
-		[Required(ErrorMessage="BLL不能为空")]
+		//[Required(ErrorMessage="BLL不能为空")]
 		public Guid BLL { get; set; }
 
 

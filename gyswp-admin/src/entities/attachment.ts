@@ -1,5 +1,6 @@
 export class DocAttachment {
     id: string;
+    uId: string;
     type: number;
     name: string;
     fileType: number;

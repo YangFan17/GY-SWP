@@ -33,7 +33,7 @@ namespace  GYSWP.Clauses.Dtos
         /// <summary>
         /// 类型（文本、表格）是否含有附件
         /// </summary>
-        [Required]
+        //[Required]
         public bool HasAttchment { get; set; }
 
 

@@ -20,3 +20,4 @@ export * from './indicator';
 export * from './indicator-dto';
 export * from './position-info';
 export * from './main-points-record';
+export * from './parameter';

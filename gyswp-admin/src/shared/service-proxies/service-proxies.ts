@@ -13,7 +13,7 @@ import { Injectable, Inject, Optional, InjectionToken } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angular/common/http';
 
 import * as moment from 'moment';
-import { ApiResult } from 'entities';
+import { ApiResult, Parameter } from 'entities';
 import { CommonHttpClient } from 'services/common-httpclient';
 
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
@@ -1600,12 +1600,19 @@ export class UserServiceProxy {
      * @param maxResultCount (optional) 
      * @return Success
      */
-    getAll(skipCount: number | null | undefined, maxResultCount: number | null | undefined): Observable<PagedResultDtoOfUserDto> {
+    getAll(skipCount: number | null | undefined, maxResultCount: number | null | undefined, parameter: Parameter[]): Observable<PagedResultDtoOfUserDto> {
         let url_ = this.baseUrl + "/api/services/app/User/GetAll?";
         if (skipCount !== undefined)
             url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&";
         if (maxResultCount !== undefined)
             url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&";
+        if (parameter.length > 0) {
+            parameter.forEach(element => {
+                if (element.value !== undefined && element.value !== null) {
+                    url_ += element.key + "=" + encodeURIComponent("" + element.value) + "&";
+                }
+            });
+        }
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: any = {

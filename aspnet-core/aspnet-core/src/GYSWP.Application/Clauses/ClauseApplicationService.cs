@@ -23,6 +23,7 @@ using GYSWP.Clauses.Dtos;
 using GYSWP.Clauses.DomainService;
 using GYSWP.Dtos;
 using GYSWP.EmployeeClauses;
+using GYSWP.DocAttachments;
 
 namespace GYSWP.Clauses
 {
@@ -34,6 +35,7 @@ namespace GYSWP.Clauses
     {
         private readonly IRepository<Clause, Guid> _entityRepository;
         private readonly IRepository<EmployeeClause, Guid> _employeeClauseRepository;
+        private readonly IRepository<DocAttachment, Guid> _docAttachmentRepository;
         private readonly IClauseManager _entityManager;
 
         /// <summary>
@@ -43,11 +45,13 @@ namespace GYSWP.Clauses
         IRepository<Clause, Guid> entityRepository
         , IClauseManager entityManager
         , IRepository<EmployeeClause, Guid> employeeClauseRepository
+        , IRepository<DocAttachment, Guid> docAttachmentRepository
         )
         {
             _entityRepository = entityRepository;
             _entityManager = entityManager;
             _employeeClauseRepository = employeeClauseRepository;
+            _docAttachmentRepository = docAttachmentRepository;
         }
 
 
@@ -191,6 +195,13 @@ namespace GYSWP.Clauses
             else
             {
                 var entity = await Create(input.Clause);
+                await CurrentUnitOfWork.SaveChangesAsync();
+                foreach (var attItem in input.DocAttachment)
+                {
+                    attItem.BLL = entity.Id.Value;
+                    var docEntity = attItem.MapTo<DocAttachment>();
+                    await _docAttachmentRepository.InsertAsync(docEntity);
+                }
                 return new APIResultDto() { Code = 0, Msg = "保存成功", Data = entity.Id };
             }
         }

@@ -113,9 +113,9 @@ export class BasicDataService {
         }));
     }
 
-    createOrUpdateDocumentAsync(input: any): Observable<any> {
+    createOrUpdateDocumentAsync(input: any, attList: any[]): Observable<any> {
         let url_ = "/api/services/app/Document/CreateOrUpdate";
-        let cat = { document: input };
+        let cat = { document: input, docAttachment: attList };
         return this._commonhttp.post(url_, cat).pipe(map(data => {
             return data;
         }));
@@ -128,9 +128,9 @@ export class BasicDataService {
         }));
     }
 
-    createOrUpdateClauseAsync(input: any): Observable<any> {
+    createOrUpdateClauseAsync(input: any, attList: any[]): Observable<any> {
         let url_ = "/api/services/app/Clause/CreateOrUpdate";
-        let cla = { clause: input };
+        let cla = { clause: input, docAttachment: attList };
         return this._commonhttp.post(url_, cla).pipe(map(data => {
             return data;
         }));

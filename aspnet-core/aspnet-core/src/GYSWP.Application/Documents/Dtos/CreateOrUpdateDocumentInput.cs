@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using GYSWP.DocAttachments.Dtos;
 using GYSWP.Documents;
 
 namespace GYSWP.Documents.Dtos
@@ -10,6 +11,6 @@ namespace GYSWP.Documents.Dtos
     {
         [Required]
         public DocumentEditDto Document { get; set; }
-
+        public List<DocAttachmentEditDto> DocAttachment { get; set; }
     }
 }

@@ -408,5 +408,17 @@ namespace GYSWP.Employees
             var query = await _entityRepository.GetAsync(userId);
             return query.MapTo<DingDingUserDto>();
         }
+
+        /// <summary>
+        /// 查询所有员工（同步账号）
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="appId"></param>
+        /// <returns></returns>
+        public async Task<List<Employee>> GetAllEmployeeListAsync()
+        {
+          var list =  await _entityRepository.GetAll().AsNoTracking().ToListAsync();
+            return list;
+        }
     }
 }
