@@ -255,26 +255,26 @@ namespace GYSWP.Users
         }
 
 
-        private async Task<UserDto> CreateOrUpdateUsers(long deptId,string accessToken)
+        private async Task<UserDto> CreateOrUpdateUsers(long deptId, string accessToken)
         {
-            string[] relesName = await _roleRepository.GetAll().Where(aa => aa.DisplayName == "员工").Select(aa=>aa.Name).ToArrayAsync();
+            string[] relesName = await _roleRepository.GetAll().Where(aa => aa.DisplayName == "员工").Select(aa => aa.Name).ToArrayAsync();
             var url = string.Format("https://oapi.dingtalk.com/user/list?access_token={0}&department_id={1}", accessToken, deptId);
             var user = Senparc.CO2NET.HttpUtility.Get.GetJson<DingUserListDto>(url);
             var entityByDD = user.userlist.Select(e => new SynchroDingUser()
             {
-                UserName = GetPinyin(e.name)+e.mobile.Substring(7,4),
+                UserName = GetPinyin(e.name) + e.mobile.Substring(7, 4),
                 IsActive = true,
                 //IsEmailConfirmed = true,
                 //IsLockoutEnabled = true,
                 EmailAddress = "GYSWP" + GetPinyin(e.name) + "@gy.com",
-                Name =e.name,
-                Surname=e.name.Substring(0, 1),
-                Password= "123qwe",
-                EmployeeId=e.userid,
-                EmployeeName=e.name,
-                UnionId=e.unionid,
-                RoleNames= relesName,
-                PhoneNumber=e.mobile
+                Name = e.name,
+                Surname = e.name.Substring(0, 1),
+                Password = "123qwe",
+                EmployeeId = e.userid,
+                EmployeeName = e.name,
+                UnionId = e.unionid,
+                RoleNames = relesName,
+                PhoneNumber = e.mobile
             }).ToList();
             //int emailCode = 001;
             foreach (var item in entityByDD)
@@ -296,11 +296,8 @@ namespace GYSWP.Users
                 {
                     CheckErrors(await _userManager.SetRoles(users, item.RoleNames));
                 }
-
-                CurrentUnitOfWork.SaveChanges();
-
-                return MapToEntityDto(users);
             }
+            await CurrentUnitOfWork.SaveChangesAsync();
             return null;
         }
 
@@ -329,4 +326,3 @@ namespace GYSWP.Users
         }
     }
 }
-

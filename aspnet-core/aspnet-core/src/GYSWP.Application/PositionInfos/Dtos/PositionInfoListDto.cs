@@ -58,6 +58,7 @@ namespace GYSWP.PositionInfos.Dtos
         public int Id { get; set; }
 
         public string Title { get; set; }
+        public bool IsEmpty { get; set; }
 
         public List<CategoryDocOption> Children { get; set; }
     }

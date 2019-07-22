@@ -20,9 +20,16 @@ export class HomeService {
         }));
     }
 
+    getPositionInfoById(id: any): Observable<PositionInfo> {
+        let url_ = "/api/services/app/PositionInfo/getById";
+        return this._commonhttp.get(url_, { id: id }).pipe(map(data => {
+            return PositionInfo.fromJS(data);
+        }));
+    }
+
     createPositionInfo(input: any): Observable<ApiResult> {
-        let url_ = "/api/services/app/PositionInfo/CreatePositionInfoAsync";
-        let posInfo = { PositionInfo: input }
+        let url_ = "/api/services/app/PositionInfo/CreateOrUpdate";
+        let posInfo = { positionInfo: input }
         return this._commonhttp.post(url_, posInfo).pipe(map(data => {
             return ApiResult.fromJS(data);
         }));
@@ -39,6 +46,21 @@ export class HomeService {
         let url_ = "/api/services/app/MainPointsRecord/CreateMainPointRecordAsync";
         return this._commonhttp.post(url_, input).pipe(map(data => {
             return ApiResult.fromJS(data);
+        }));
+    }
+
+
+    getPositionTreeByIdAsync(): Observable<any> {
+        let url_ = "/api/services/app/PositionInfo/GetPositionTreeByIdAsync";
+        return this._commonhttp.get(url_).pipe(map(data => {
+            return data;
+        }));
+    }
+
+    getCurrentPositionAsync(): Observable<string> {
+        let url_ = "/api/services/app/PositionInfo/GetCurrentPositionAsync";
+        return this._commonhttp.get(url_).pipe(map(data => {
+            return data;
         }));
     }
 }

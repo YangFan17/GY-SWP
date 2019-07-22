@@ -2,7 +2,7 @@ import { Clause, Attachment, DocAttachment } from 'entities';
 import { ModalComponentBase } from '@shared/component-base';
 import { BasicDataService } from 'services';
 import { Component, Input, Injector, TemplateRef } from '@angular/core';
-import { UploadFile, NzModalService } from 'ng-zorro-antd';
+import { UploadFile, NzModalService, NzModalRef } from 'ng-zorro-antd';
 import { AppConsts } from '@shared/AppConsts';
 
 @Component({
@@ -21,9 +21,12 @@ export class ClauseDetailComponent extends ModalComponentBase {
     title: string = '条款详情';
     clause: Clause = new Clause();
     postUrl: string = '/GYSWPFile/DocFilesPostsAsync';
-    fileList: Attachment[] = [];
+    // fileList: Attachment[] = [];
+    attachmentList: Attachment[] = [];
     attachment: DocAttachment = new DocAttachment();
     host = AppConsts.remoteServiceBaseUrl;
+    confirmModal: NzModalRef;
+
     constructor(injector: Injector
         , private basicDataService: BasicDataService
         , private modal: NzModalService
@@ -63,9 +66,8 @@ export class ClauseDetailComponent extends ModalComponentBase {
     getAttachmentList() {
         let params: any = {};
         params.BllId = this.id;
-
         this.basicDataService.getClauseAttachmentsById(params).subscribe(r => {
-            this.fileList = r;
+            this.attachmentList = r;
         })
     }
 
@@ -77,20 +79,20 @@ export class ClauseDetailComponent extends ModalComponentBase {
             if (info.file.status === 'done') {
                 var res = info.file.response.result;
                 if (res.code == 0) {
-                    this.fileList.forEach(element => {
-                        if (info.file.uid == element.uid) {
-                            element.url = this.host + res.data.url;
-                        }
-                    });
+                    // this.fileList.forEach(element => {
+                    //     if (info.file.uid == element.uid) {
+                    //         element.url = this.host + res.data.url;
+                    //     }
+                    // });
                     this.attachment.name = res.data.name + res.data.ext;
                     this.attachment.type = 2;
                     this.attachment.fileSize = res.data.size;
-                    this.attachment.path = this.host + res.data.url;
+                    this.attachment.path = res.data.url;
                     this.attachment.bLL = this.id;
                     this.saveAttachment();
                 } else {
                     this.notify.error(res.msg);
-                    this.fileList.pop();
+                    // this.fileList.pop();
                 }
             }
         }
@@ -98,27 +100,47 @@ export class ClauseDetailComponent extends ModalComponentBase {
 
     saveAttachment() {
         this.basicDataService.uploadAttachment(this.attachment).subscribe(res => {
-            this.notify.success('上传文件成功');
-            //this.getAttachmentList();
+            if (res.code == 0) {
+                // this.fileList.pop();
+                // const temp: Attachment[] = this.fileList;
+                // console.log(this.fileList);
+                // console.log(temp);
+                // temp.push(Attachment.fromJS(res.data));
+                // this.fileList = temp;
+                // console.log(this.fileList);
+                this.notify.success('上传文件成功');
+                this.getAttachmentList();
+            } else {
+                this.notify.error('上传文件异常，请重试');
+            }
         })
     }
 
-    deleteAttachment = (file: UploadFile): boolean => {
-        this.modal.confirm({
-            nzContent: '确定是否删除资料文档?',
+    // deleteAttachment = (file: UploadFile): boolean => {
+    //     this.modal.confirm({
+    //         nzContent: '确定是否删除资料文档?',
+    //         nzOnOk: () => {
+    //             this.basicDataService.deleteAttachmentByIdAsync(file.id).subscribe(() => {
+    //                 let tflist = JSON.parse(JSON.stringify(this.fileList));
+    //                 tflist.pop();
+    //                 this.fileList = tflist;
+    //                 this.notify.success('删除成功！', '');
+    //                 // this.getAttachmentList();
+    //                 return true;
+    //             });
+    //         }
+    //     });
+    //     return false;
+    // }
+    deleteAttachment(id: string): void {
+        this.confirmModal = this.modal.confirm({
+            nzContent: `是否删除当前附件?`,
             nzOnOk: () => {
-                this.basicDataService.deleteAttachmentByIdAsync(file.uid).subscribe(() => {
-                    this.notify.success('删除成功！', '');
-                    this.fileList.forEach(element => {
-                        if (file.uid == element.uid) {
-
-                        }
-                    });
-                    //this.getAttachmentList();
-                    return true;
-                });
+                this.basicDataService.deleteAttachmentByIdAsync(id).subscribe(res => {
+                    this.notify.success('删除成功');
+                    this.getAttachmentList();
+                })
             }
         });
-        return false;
     }
 }

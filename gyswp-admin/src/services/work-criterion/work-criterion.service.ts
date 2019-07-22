@@ -310,17 +310,10 @@ export class WorkCriterionService {
         }));
     }
 
-    getPositionTreeByIdAsync(): Observable<any> {
-        let url_ = "/api/services/app/PositionInfo/GetPositionTreeByIdAsync";
-        return this._commonhttp.get(url_).pipe(map(data => {
-            return data;
-        }));
-    }
-
-    getCurrentPositionAsync(): Observable<string> {
-        let url_ = "/api/services/app/PositionInfo/GetCurrentPositionAsync";
-        return this._commonhttp.get(url_).pipe(map(data => {
-            return data;
+    getClauseAttachmentsById(params: any): Observable<Attachment[]> {
+        let url_ = "/api/services/app/DocAttachment/GetClauseAttachmentsByIdAsync";
+        return this._commonhttp.get(url_, params).pipe(map(data => {
+            return Attachment.fromJSArray(data);
         }));
     }
 }

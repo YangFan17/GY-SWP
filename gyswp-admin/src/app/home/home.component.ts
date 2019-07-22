@@ -4,12 +4,13 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { _HttpClient } from '@delon/theme';
 import { Router } from '@angular/router';
 import { WorkCriterionService } from 'services';
+import { HomeService } from 'services/home/home.service';
 
 @Component({
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.less'],
   animations: [appModuleAnimation()],
-  providers: [WorkCriterionService]
+  providers: [HomeService]
 })
 export class HomeComponent extends AppComponentBase implements OnInit {
   position: string;
@@ -17,7 +18,8 @@ export class HomeComponent extends AppComponentBase implements OnInit {
   constructor(
     injector: Injector
     , private router: Router
-    , private workCriterionService: WorkCriterionService
+    , private homeService: HomeService
+
 
   ) {
     super(injector);
@@ -28,18 +30,22 @@ export class HomeComponent extends AppComponentBase implements OnInit {
   }
 
   getPosition() {
-    this.workCriterionService.getCurrentPositionAsync().subscribe((result) => {
+    this.homeService.getCurrentPositionAsync().subscribe((result) => {
       this.position = result;
       this.getClauseList();
     });
   }
 
   getClauseList() {
-    this.workCriterionService.getPositionTreeByIdAsync().subscribe((result) => {
+    this.homeService.getPositionTreeByIdAsync().subscribe((result) => {
       this.listOfMapData = result
       let i = 1;
       this.listOfMapData.forEach(v => {
         v.duties = i + '、工作职责：' + v.duties;
+        // v.children.forEach(item => {
+        //   if (item.mainPoint.indexOf('\r\n') != -1)
+        //     item.mainPoint = item.mainPoint.replace(/(\r\n)|(\n)/g, '<br/>');
+        // });
         i++;
       });
     });

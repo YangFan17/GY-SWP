@@ -99,7 +99,6 @@ namespace GYSWP.PositionInfos
         public async Task<PositionInfoListDto> GetById(EntityDto<Guid> input)
         {
             var entity = await _entityRepository.GetAsync(input.Id);
-
             return entity.MapTo<PositionInfoListDto>();
         }
 
@@ -138,16 +137,24 @@ namespace GYSWP.PositionInfos
         /// <param name="input"></param>
         /// <returns></returns>
 
-        public async Task CreateOrUpdate(CreateOrUpdatePositionInfoInput input)
+        public async Task<APIResultDto> CreateOrUpdate(CreateOrUpdatePositionInfoInput input)
         {
-
             if (input.PositionInfo.Id.HasValue)
             {
                 await Update(input.PositionInfo);
+                return new APIResultDto() { Code = 0, Msg = "保存成功" };
             }
             else
             {
-                await Create(input.PositionInfo);
+                var user = await GetCurrentUserAsync();
+                string position = await _employeeRepository.GetAll().Where(v => v.Id == user.EmployeeId).Select(v => v.Position).FirstOrDefaultAsync();
+                PositionInfo entity = new PositionInfo();
+                entity.Duties = input.PositionInfo.Duties;
+                entity.EmployeeId = user.EmployeeId;
+                entity.EmployeeName = user.EmployeeName;
+                entity.Position = position;
+                await _entityRepository.InsertAsync(entity);
+                return new APIResultDto() { Code = 0, Msg = "保存成功"};
             }
         }
 
@@ -233,6 +240,11 @@ namespace GYSWP.PositionInfos
             return entityList;
         }
 
+        /// <summary>
+        /// 创建工作职责
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public async Task<APIResultDto> CreatePositionInfoAsync(PosInfoInput input)
         {
             var user = await GetCurrentUserAsync();
@@ -250,29 +262,46 @@ namespace GYSWP.PositionInfos
             };
         }
 
+        /// <summary>
+        /// 工作要点下拉列表(排除空类别)
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<HomeCategoryOption>> GetHomeCategoryOptionsAsync()
         {
             var curUser = await GetCurrentUserAsync();
             var deptId = await _employeeRepository.GetAll().Where(v => v.Id == curUser.EmployeeId).Select(v => v.Department).FirstOrDefaultAsync();
             var zuofeiCategory = await _categoryRepository.GetAll().Where(v => "[" + v.DeptId + "]" == deptId && v.Name == "作废标准库").Select(v => new { v.Id }).FirstOrDefaultAsync();
-            var entity = await (from c in _categoryRepository.GetAll().Where(v => "[" + v.DeptId + "]" == deptId && v.ParentId != 0 && v.ParentId != zuofeiCategory.Id)
-                                select new HomeCategoryOption
-                                {
-                                    Id = c.Id,
-                                    Title = c.Name
-                                }).OrderBy(v => v.Id).ToListAsync();
-
-            entity.ForEach(e => e.Children =
-            (from d in _documentRepository
-            .GetAll()
-            .Where(d => d.CategoryId == e.Id)
-             select new CategoryDocOption
-             {
-                 Id = d.Id,
-                 Title = d.Name
-             }).OrderBy(v => v.Title)
-             .ToList());
-            return entity;
+            var groupList = await (from c in _categoryRepository.GetAll().Where(v => "[" + v.DeptId + "]" == deptId && v.ParentId != 0 && v.ParentId != zuofeiCategory.Id)
+                                   select new HomeCategoryOption
+                                   {
+                                       Id = c.Id,
+                                       Title = c.Name
+                                   }).OrderBy(v => v.Id).ToListAsync();
+            foreach (var item in groupList)
+            {
+                item.Children = await _documentRepository.GetAll().Where(v => v.CategoryId == item.Id && v.IsAction == true && v.PublishTime <= DateTime.Today && (v.IsAllUser == true || v.DeptIds.Contains(deptId.ToString()) || v.EmployeeIds.Contains(curUser.EmployeeId))).Select(v =>
+                 new CategoryDocOption
+                 {
+                     Id = v.Id,
+                     Title = v.Name
+                 }).ToListAsync();
+                if(item.Children.Count == 0)
+                {
+                    item.IsEmpty = true;
+                }
+            }
+            var result = groupList.Where(v => v.IsEmpty == false).ToList();
+            //groupList.ForEach(e => e.Children =
+            //(from d in _documentRepository
+            //.GetAll()
+            //.Where(d => d.CategoryId == e.Id)
+            // select new CategoryDocOption
+            // {
+            //     Id = d.Id,
+            //     Title = d.Name
+            // }).OrderBy(v => v.Id).ToList()
+            //);
+            return result;
         }
 
 

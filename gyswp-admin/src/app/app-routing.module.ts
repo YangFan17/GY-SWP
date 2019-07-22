@@ -5,6 +5,7 @@ import { HomeComponent } from '@app/home/home.component';
 import { LayoutDefaultComponent } from '../layout/default/layout-default.component';
 import { PositionInfoComponent } from './home/position-info/position-info.component';
 import { CreatePositionInfoComponent } from './home/position-info/create-position-info/create-position-info.component';
+import { ACLGuard } from '@delon/acl';
 
 const routes: Routes = [
   {
@@ -23,12 +24,16 @@ const routes: Routes = [
       {
         path: 'system',
         loadChildren: './system/system.module#SystemModule',
-        data: { preload: true },
+        // data: { preload: true },
+        canActivate: [ACLGuard],
+        data: { guard: 'Admin' },
       },
       {
         path: 'basic',
         loadChildren: './basic-data/basic-data.module#BasicDataModule',
-        data: { preload: true },
+        canActivate: [ACLGuard],
+
+        data: { guard: 'Admin', preload: true },
       },
       {
         path: 'criterion',
@@ -38,7 +43,9 @@ const routes: Routes = [
       {
         path: 'supervision',
         loadChildren: './supervision/supervision.module#SupervisionModule',
-        data: { preload: true },
+        canActivate: [ACLGuard],
+
+        data: { guard: 'Admin', preload: true },
       },
       {
         path: 'advises',
@@ -48,12 +55,14 @@ const routes: Routes = [
       {
         path: 'config',
         loadChildren: './configs/configs.module#ConfigsModule',
-        data: { preload: true },
+        canActivate: [ACLGuard],
+        data: { guard: 'Admin', preload: true },
       },
       {
         path: 'reports',
         loadChildren: './reports/reports.module#ReportsModule',
-        data: { preload: true },
+        canActivate: [ACLGuard],
+        data: { guard: 'Admin', preload: true },
       },
       {
         path: 'position',

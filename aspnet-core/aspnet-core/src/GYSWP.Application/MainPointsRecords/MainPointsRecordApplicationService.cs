@@ -181,8 +181,6 @@ MainPointsRecordEditDto editDto;
 			await _entityRepository.DeleteAsync(input.Id);
 		}
 
-
-
 		/// <summary>
 		/// 批量删除MainPointsRecord的方法
 		/// </summary>
@@ -192,20 +190,12 @@ MainPointsRecordEditDto editDto;
 			// TODO:批量删除前的逻辑判断，是否允许删除
 			await _entityRepository.DeleteAsync(s => input.Contains(s.Id));
 		}
-
-
+        
         /// <summary>
-        /// 导出MainPointsRecord为excel表,等待开发。
+        /// 新增工作职责信息
         /// </summary>
+        /// <param name="input"></param>
         /// <returns></returns>
-        //public async Task<FileDto> GetToExcel()
-        //{
-        //	var users = await UserManager.Users.ToListAsync();
-        //	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
-        //	await FillRoleNames(userListDtos);
-        //	return _userListExcelExporter.ExportToFile(userListDtos);
-        //}
-
          
         public async Task<APIResultDto> CreateMainPointRecordAsync(MainPointsRecordEditDto input)
         {
@@ -217,8 +207,5 @@ MainPointsRecordEditDto editDto;
                 Data = id
             };
         }
-
     }
 }
-
-

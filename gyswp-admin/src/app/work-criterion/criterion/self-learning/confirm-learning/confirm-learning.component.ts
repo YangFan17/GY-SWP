@@ -1,6 +1,6 @@
 import { Component, Input, Injector } from '@angular/core';
 import { ModalComponentBase } from '@shared/component-base';
-import { Clause } from 'entities';
+import { Clause, Attachment } from 'entities';
 import { WorkCriterionService } from 'services';
 import { interval } from 'rxjs';
 import { take } from 'rxjs/operators';
@@ -20,6 +20,8 @@ export class ConfirmLearningComponent extends ModalComponentBase {
     btnText: string = '确认学习';
     clause: Clause = new Clause();
     txt: string;
+    attachmentList: Attachment[] = [];
+
     constructor(injector: Injector
         , private workCriterionService: WorkCriterionService
     ) {
@@ -50,9 +52,19 @@ export class ConfirmLearningComponent extends ModalComponentBase {
                 this.clause = res;
                 this.txt = this.clause.clauseNo + (this.clause.title ? '\t' + this.clause.title : '') + (this.clause.content ? '\r\n' + this.clause.content : '');
                 this.countDown();
+                this.getAttachmentList();
                 // this.pNo = res.
             })
         }
+    }
+
+    getAttachmentList() {
+        let params: any = {};
+        params.BllId = this.id;
+        this.workCriterionService.getClauseAttachmentsById(params).subscribe(r => {
+            this.attachmentList = r;
+            // console.log(this.attachmentList);
+        })
     }
 
     submit() {
