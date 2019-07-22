@@ -155,7 +155,7 @@ export class DetailComponent extends AppComponentBase implements OnInit {
         this.modal.confirm({
             nzContent: '确定是否删除资料文档?',
             nzOnOk: () => {
-                this.basicDataService.deleteAttachmentByIdAsync(file.id).subscribe(() => {
+                this.basicDataService.deleteAttachmentByIdAsync(file.uid).subscribe(() => {
                     this.notify.success('删除成功！', '');
                     console.log(this.fileList);
 

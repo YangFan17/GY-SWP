@@ -21,7 +21,7 @@ export class ClauseDetailComponent extends ModalComponentBase {
     title: string = '条款详情';
     clause: Clause = new Clause();
     postUrl: string = '/GYSWPFile/DocFilesPostsAsync';
-    fileList: Attachment[];
+    fileList: Attachment[] = [];
     attachment: DocAttachment = new DocAttachment();
     host = AppConsts.remoteServiceBaseUrl;
     constructor(injector: Injector
@@ -77,6 +77,11 @@ export class ClauseDetailComponent extends ModalComponentBase {
             if (info.file.status === 'done') {
                 var res = info.file.response.result;
                 if (res.code == 0) {
+                    this.fileList.forEach(element => {
+                        if (info.file.uid == element.uid) {
+                            element.url = this.host + res.data.url;
+                        }
+                    });
                     this.attachment.name = res.data.name + res.data.ext;
                     this.attachment.type = 2;
                     this.attachment.fileSize = res.data.size;
@@ -94,7 +99,7 @@ export class ClauseDetailComponent extends ModalComponentBase {
     saveAttachment() {
         this.basicDataService.uploadAttachment(this.attachment).subscribe(res => {
             this.notify.success('上传文件成功');
-            this.getAttachmentList();
+            //this.getAttachmentList();
         })
     }
 
@@ -102,9 +107,14 @@ export class ClauseDetailComponent extends ModalComponentBase {
         this.modal.confirm({
             nzContent: '确定是否删除资料文档?',
             nzOnOk: () => {
-                this.basicDataService.deleteAttachmentByIdAsync(file.id).subscribe(() => {
+                this.basicDataService.deleteAttachmentByIdAsync(file.uid).subscribe(() => {
                     this.notify.success('删除成功！', '');
-                    this.getAttachmentList();
+                    this.fileList.forEach(element => {
+                        if (file.uid == element.uid) {
+
+                        }
+                    });
+                    //this.getAttachmentList();
                     return true;
                 });
             }
