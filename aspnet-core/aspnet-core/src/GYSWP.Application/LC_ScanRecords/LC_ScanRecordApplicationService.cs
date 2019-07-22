@@ -250,6 +250,7 @@ LC_ScanRecordEditDto editDto;
             scanRecord.Type = GYEnums.LC_ScanRecordType.出库扫码;
             scanRecord.EmployeeId = input.EmployeeId;
             scanRecord.EmployeeName = input.EmployeeName;
+            await _entityRepository.InsertAsync(scanRecord);
             return new APIResultDto() { Code = 0, Msg = "保存成功", Data = timeLogId };
         }
     }

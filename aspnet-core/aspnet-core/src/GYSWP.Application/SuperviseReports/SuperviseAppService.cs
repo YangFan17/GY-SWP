@@ -165,10 +165,6 @@ namespace GYSWP.SuperviseReports
         private List<long> GetDeptIds(long id)
         {
             var deptIds = _organizationRepository.GetAll().Where(i => i.ParentId == id).Select(i=>i.Id).ToList();
-            if (deptIds == null)
-            {
-                return null;
-            }
             foreach (var item in deptIds)
             {
                 GetDeptIds(item);
