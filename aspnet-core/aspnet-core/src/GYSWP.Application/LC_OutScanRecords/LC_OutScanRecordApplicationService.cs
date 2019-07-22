@@ -249,6 +249,7 @@ LC_OutScanRecordEditDto editDto;
             scanRecord.Type = GYEnums.LC_ScanRecordType.出库扫码;
             scanRecord.EmployeeId = input.LC_OutScanRecord.EmployeeId;
             scanRecord.EmployeeName = input.LC_OutScanRecord.EmployeeName;
+            await _scanRecordRepository.InsertAsync(scanRecord);
             return new APIResultDto() { Code = 0, Msg = "保存成功", Data = entity.Id };
         }
     }
