@@ -1,13 +1,12 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
-using Abp.Domain.Entities.Auditing;
-using GYSWP.DocRevisions;
+using Abp.Application.Services.Dto;
 using GYSWP.GYEnums;
 
 namespace GYSWP.DocRevisions.Dtos
 {
-    public class DocRevisionEditDto : FullAuditedEntity<Guid?>
+    public class DocRevisionEditDto : FullAuditedEntityDto<Guid?>
     {
 		/// <summary>
 		/// Name

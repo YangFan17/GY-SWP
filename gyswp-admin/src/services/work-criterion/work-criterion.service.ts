@@ -23,6 +23,13 @@ export class WorkCriterionService {
         }));
     }
 
+    getDraftDocCategoryAsync(): Observable<SelectGroup[]> {
+        let url_ = "/api/services/app/Category/GetDraftDocCategoryAsync";
+        return this._commonhttp.get(url_).pipe(map(data => {
+            return SelectGroup.fromJSArray(data);
+        }));
+    }
+
     getDocumentListAsync(param: any): Observable<PagedResultDto> {
         let url_ = "/api/services/app/Document/GetPagedWithPermission";
         return this._commonhttp.get(url_, param).pipe(map(data => {

@@ -301,6 +301,25 @@ namespace GYSWP.Categorys
             return result;
         }
 
+        /// <summary>
+        /// 制定标准分类（三种）
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<SelectGroups>> GetDraftDocCategoryAsync()
+        {
+            var curUser = await GetCurrentUserAsync();
+            var deptId = await _employeeRepository.GetAll().Where(v => v.Id == curUser.EmployeeId).Select(v => v.Department).FirstOrDefaultAsync();
+            var zuofeiCategory = await _entityRepository.GetAll().Where(v => "[" + v.DeptId + "]" == deptId && v.Name == "作废标准库").Select(v => new { v.Id }).FirstOrDefaultAsync();
+            var entity = await (from c in _entityRepository.GetAll().Where(v => "[" + v.DeptId + "]" == deptId && (v.Name == "技术标准" || v.Name == "管理标准" || v.Name == "工作标准") && v.ParentId != zuofeiCategory.Id)
+                                select new
+                                {
+                                    text = c.Name,
+                                    value = c.Id,
+                                }).OrderBy(v => v.value).ToListAsync();
+            var result = entity.MapTo<List<SelectGroups>>();
+            return result;
+        }
+
         #region 一键生成默认标准库分类
         /// <summary>
         /// 一键生成默认标准库分类

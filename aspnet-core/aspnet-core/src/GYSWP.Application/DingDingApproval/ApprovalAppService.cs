@@ -165,7 +165,7 @@ namespace GYSWP.DingDingApproval
                         //                    value = "[编号]：" + item.ClauseNo + "\n"
                         //+ "[标题]：" + item.Title + "\n"
                         //+ "[内容]：" + item.Content
-                        value =  item.ClauseNo + (item.Title != null ?  ("\t" + item.Title):"") 
+                        value = item.ClauseNo + (item.Title != null ? ("\t" + item.Title) : "")
                         + (item.Content != null ? ("\r\n" + item.Content) : "")
                     });
                 }
@@ -316,7 +316,7 @@ namespace GYSWP.DingDingApproval
         /// 发送制定标准（企管编号盖章）钉钉工作通知
         /// </summary>
         [AbpAllowAnonymous]
-        public async Task<APIResultDto> SendMessageToQGAdminAsync(string docName, Guid docId)
+        public APIResultDto SendMessageToQGAdminAsync(string docName, Guid docId)
         {
             try
             {
@@ -334,6 +334,43 @@ namespace GYSWP.DingDingApproval
                 msgdto.msg.link.picUrl = "@lALPDeC2t6v4RPJAQA";
                 msgdto.msg.link.text = $"您有新制定的标准需要编号[{ docName}] " + DateTime.Now.ToString();
                 msgdto.msg.link.messageUrl = "eapp://page/document/document-approval?id=" + docId;
+                var url = string.Format("https://oapi.dingtalk.com/topapi/message/corpconversation/asyncsend_v2?access_token={0}", accessToken);
+                var jsonString = SerializerHelper.GetJsonString(msgdto, null);
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    var bytes = Encoding.UTF8.GetBytes(jsonString);
+                    ms.Write(bytes, 0, bytes.Length);
+                    ms.Seek(0, SeekOrigin.Begin);
+                    var obj = Post.PostGetJson<object>(url, null, ms);
+                };
+                return new APIResultDto() { Code = 0, Msg = "钉钉消息发送成功" };
+            }
+            catch (Exception ex)
+            {
+                Logger.ErrorFormat("SendMessageToEmployeeAsync errormsg{0} Exception{1}", ex.Message, ex);
+                return new APIResultDto() { Code = 901, Msg = "钉钉消息发送失败" };
+            }
+        }
+
+        /// <summary>
+        /// 发送（标准化管理员）文档更新提醒通知
+        /// </summary>
+        [AbpAllowAnonymous]
+        public APIResultDto SendMessageToStandardAdminAsync(string docName, string empId)
+        {
+            try
+            {
+                //获取消息模板配置
+                //string messageTitle = "您有新的意见反馈";
+                //string messageMediaId = await _systemDataRepository.GetAll().Where(v => v.ModelId == ConfigModel.钉钉配置 && v.Type == ConfigType.标准化工作平台 && v.Code == GYCode.DocMediaId).Select(v => v.Desc).FirstOrDefaultAsync();
+                DingDingAppConfig ddConfig = _dingDingAppService.GetDingDingConfigByApp(DingDingAppEnum.标准化工作平台);
+                string accessToken = _dingDingAppService.GetAccessToken(ddConfig.Appkey, ddConfig.Appsecret);
+                var msgdto = new DingMsgDto();
+                msgdto.userid_list = empId;
+                msgdto.to_all_user = false;
+                msgdto.agent_id = ddConfig.AgentID;
+                msgdto.msg.msgtype = "text";
+                msgdto.msg.text.content = $"您修订的[{ docName}] 标准审批已通过，请及时更新标准文档附件{DateTime.Now.ToString()}";
                 var url = string.Format("https://oapi.dingtalk.com/topapi/message/corpconversation/asyncsend_v2?access_token={0}", accessToken);
                 var jsonString = SerializerHelper.GetJsonString(msgdto, null);
                 using (MemoryStream ms = new MemoryStream())

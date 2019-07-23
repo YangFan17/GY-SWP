@@ -105,8 +105,14 @@ export class SelfLearningComponent extends AppComponentBase implements OnInit {
                         if (v.checked == true) {
                             this.selfChecked.push(v.id);
                         }
-                        if (v.bllId && v.lastModificationTime) {
-                            let pickDate = moment(v.lastModificationTime);
+                        if (v.bllId) {
+                            let pickDate: moment.Moment;
+                            if (v.lastModificationTime) {
+                                pickDate = moment(v.lastModificationTime);
+                            }
+                            else if (v.creationTime) {
+                                pickDate = moment(v.creationTime);
+                            }
                             let diff = pickDate.diff(moment(), 'days');//相差几天
                             if (diff > 0 - 90) {
                                 v.isNew = true;
@@ -332,5 +338,6 @@ export interface TreeNodeInterface {
     bllId: string;
     isNew: boolean;
     lastModificationTime: Date;
+    creationTime: Date;
     children?: TreeNodeInterface[];
 }

@@ -19,8 +19,8 @@ export class AppMenus {
             text: "基础数据",
             icon: { type: "icon", value: "dingding" },
             reuse: false,
-            acl: "QiGuanAdmin",// 权限
-            link: "/app/basic",
+            acl: ["QiGuanAdmin", "Admin"],// 权限
+            link: "",
             group: true,
             children: [
                 {
@@ -48,7 +48,7 @@ export class AppMenus {
             text: "工作中心",
             icon: { type: "icon", value: "laptop" },
             reuse: false,
-            link: "/app/criterion/criterion",
+            link: "",
             group: true,
             children: [
                 {
@@ -73,7 +73,7 @@ export class AppMenus {
             icon: { type: "icon", value: "audit" },
             reuse: false,
             acl: "Admin",// 权限
-            link: "/app/supervision",
+            link: "",
             group: true,
             children: [
                 {
@@ -102,7 +102,7 @@ export class AppMenus {
             icon: { type: "icon", value: "bar-chart" },
             reuse: false,
             acl: "QiGuanAdmin",// 权限
-            link: "/app/criterion/criterion",
+            link: "",
             group: true,
             children: [
                 {
@@ -145,7 +145,7 @@ export class AppMenus {
         {
             text: "配置管理",
             icon: { type: "icon", value: "tool" },
-            link: "/app/config",
+            link: "",
             group: true,
             acl: "Admin",// 权限
             children: [

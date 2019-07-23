@@ -90,5 +90,6 @@ namespace GYSWP.Documents
         /// <returns></returns>
         Task<APIResultDto> DingUpdateAsync(DingDocumentEditDto input);
         Task<APIResultDto> DocumentReadAsync(DocumentReadInput input);
+        Task<string> GetDocNameById(EntityDto<Guid> input);
     }
 }

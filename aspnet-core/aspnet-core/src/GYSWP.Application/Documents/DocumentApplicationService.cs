@@ -125,13 +125,24 @@ namespace GYSWP.Documents
         /// <summary>
         /// 通过指定id获取DocumentListDto信息
         /// </summary>
-        [AbpAllowAnonymous]
         [Audited]
         public async Task<DocumentListDto> GetById(EntityDto<Guid> input)
         {
             var entity = await _entityRepository.GetAsync(input.Id);
 
             return entity.MapTo<DocumentListDto>();
+        }
+
+        /// <summary>
+        /// 钉钉编号获取标准名称
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public async Task<string> GetDocNameById(EntityDto<Guid> input)
+        {
+            string docName = await _entityRepository.GetAll().Where(v => v.Id == input.Id).Select(v => v.Name).FirstOrDefaultAsync();
+            return docName;
         }
 
         /// <summary>
@@ -214,6 +225,7 @@ namespace GYSWP.Documents
             entity.CategoryCode = string.Join(',', categoryList.Select(c => c.Id).ToArray());
             entity.CategoryDesc = string.Join(',', categoryList.Select(c => c.Name).ToArray());
             entity = await _entityRepository.InsertAsync(entity);
+            await CurrentUnitOfWork.SaveChangesAsync();
             return entity.MapTo<DocumentEditDto>();
         }
 
@@ -230,6 +242,7 @@ namespace GYSWP.Documents
 
             // ObjectMapper.Map(input, entity);
             await _entityRepository.UpdateAsync(entity);
+            await CurrentUnitOfWork.SaveChangesAsync();
             return entity.MapTo<DocumentEditDto>();
         }
 
@@ -436,24 +449,22 @@ namespace GYSWP.Documents
                 Document document = await _entityRepository.GetAsync(input.Id.Value);
                 document.Stamps = input.Stamps;
                 document.DocNo = input.DocNo;
-                await _entityRepository.UpdateAsync(document);
+                document.IsAction = true;
+                //await _entityRepository.UpdateAsync(document);
                 if (document.CreatorUserId.HasValue)
                 {
                     var user = await _userManager.GetUserByIdAsync(document.CreatorUserId.Value);
-                    bool status = DingRemind(user.EmployeeId);
-                    if (status == true)
-                        return new APIResultDto() { Code = 1, Msg = "提交成功" };
-                    else
-                        return new APIResultDto() { Code = 1, Msg = "提交失败" };
+                    DingRemind(user.EmployeeId);
+                    return new APIResultDto() { Code = 0, Msg = "提交成功" };
                 }
                 else
                 {
-                    return new APIResultDto() { Code = 0, Msg = "未找到该标准的创建用户" };
+                    return new APIResultDto() { Code = 1, Msg = "未找到该标准的创建用户" };
                 }
             }
             else
             {
-                return new APIResultDto() { Code = 0, Msg = "未查询到所属标准" };
+                return new APIResultDto() { Code = 2, Msg = "未查询到所属标准" };
             }
         }
 
@@ -462,31 +473,35 @@ namespace GYSWP.Documents
         /// </summary>
         /// <param name="employeeId"></param>
         /// <returns></returns>
-        public bool DingRemind(string employeeId)
+        private APIResultDto DingRemind(string employeeId)
         {
-            var ddConfig = _dingDingAppService.GetDingDingConfigByApp(DingDingAppEnum.标准化工作平台);
-            var assessToken = _dingDingAppService.GetAccessToken(ddConfig.Appkey, ddConfig.Appsecret);
-            var url = string.Format("https://oapi.dingtalk.com/topapi/message/corpconversation/asyncsend_v2?access_token={0}", assessToken);
-            DingMsgs dingMsgs = new DingMsgs();
-            dingMsgs.userid_list = employeeId;
-            dingMsgs.to_all_user = false;
-            dingMsgs.agent_id = ddConfig.AgentID;
-            dingMsgs.msg.msgtype = "text";
-            dingMsgs.msg.text.content = "标准创建审批通过,请前往客户端修改部门和用户";
-            var jsonString = SerializerHelper.GetJsonString(dingMsgs, null);
-            MessageResponseResult response = new MessageResponseResult();
-            using (MemoryStream ms = new MemoryStream())
+            try
             {
-                var bytes = Encoding.UTF8.GetBytes(jsonString);
-                ms.Write(bytes, 0, bytes.Length);
-                ms.Seek(0, SeekOrigin.Begin);
-                response = Post.PostGetJson<MessageResponseResult>(url, null, ms);
-            };
-            //发送失败则自动删除消息中心对应数据
-            if (response.errcode != 0)
-                return false;
-            else
-                return true;
+                var ddConfig = _dingDingAppService.GetDingDingConfigByApp(DingDingAppEnum.标准化工作平台);
+                var assessToken = _dingDingAppService.GetAccessToken(ddConfig.Appkey, ddConfig.Appsecret);
+                var url = string.Format("https://oapi.dingtalk.com/topapi/message/corpconversation/asyncsend_v2?access_token={0}", assessToken);
+                DingMsgs dingMsgs = new DingMsgs();
+                dingMsgs.userid_list = employeeId;
+                dingMsgs.to_all_user = false;
+                dingMsgs.agent_id = ddConfig.AgentID;
+                dingMsgs.msg.msgtype = "text";
+                dingMsgs.msg.text.content = "您制定的标准管理员已编号,请前往标准化工作平台分配部门和用户";
+                var jsonString = SerializerHelper.GetJsonString(dingMsgs, null);
+                MessageResponseResult response = new MessageResponseResult();
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    var bytes = Encoding.UTF8.GetBytes(jsonString);
+                    ms.Write(bytes, 0, bytes.Length);
+                    ms.Seek(0, SeekOrigin.Begin);
+                    response = Post.PostGetJson<MessageResponseResult>(url, null, ms);
+                };
+                return new APIResultDto() { Code = 0, Msg = "钉钉消息发送成功" };
+            }
+            catch (Exception ex)
+            {
+                Logger.ErrorFormat("SendEmpToChooseUserAsync errormsg{0} Exception{1}", ex.Message, ex);
+                return new APIResultDto() { Code = 901, Msg = "钉钉消息发送失败" };
+            }
         }
 
 

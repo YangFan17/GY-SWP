@@ -45,8 +45,7 @@ export class DraftDocComponent extends AppComponentBase implements OnInit {
         });
     }
     getCategoryType() {
-        this.workCriterionService.getCategoryTypeAsync().subscribe((result: SelectGroup[]) => {
-            result = result.filter(v => v.text != '作废标准库');
+        this.workCriterionService.getDraftDocCategoryAsync().subscribe((result: SelectGroup[]) => {
             this.categories.push(...result);
             this.document.categoryId = this.categories[0].value;
             this.getById();

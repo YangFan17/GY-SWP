@@ -219,6 +219,7 @@ namespace GYSWP.Clauses
 
 
             entity = await _entityRepository.InsertAsync(entity);
+            await CurrentUnitOfWork.SaveChangesAsync();
             return entity.MapTo<ClauseEditDto>();
         }
 
@@ -232,9 +233,9 @@ namespace GYSWP.Clauses
 
             var entity = await _entityRepository.GetAsync(input.Id.Value);
             input.MapTo(entity);
-
             // ObjectMapper.Map(input, entity);
             await _entityRepository.UpdateAsync(entity);
+            await CurrentUnitOfWork.SaveChangesAsync();
         }
 
 
@@ -295,6 +296,7 @@ namespace GYSWP.Clauses
                 ParentId = c.ParentId,
                 BLLId = c.BLLId,
                 LastModificationTime = c.LastModificationTime,
+                CreationTime = c.CreationTime,
                 Checked = c.Checked,
                 Children = GetChildrenWithChecked(c.Id, clauseList)
             }).ToList();
@@ -319,6 +321,7 @@ namespace GYSWP.Clauses
                 Content = v.Content,
                 BLLId = v.BLLId,
                 LastModificationTime = v.LastModificationTime,
+                CreationTime =v.CreationTime,
                 ParentId = v.ParentId
             }).OrderBy(v => v.ClauseNo).ToListAsync();
             clause.Sort(Factory.Comparer);

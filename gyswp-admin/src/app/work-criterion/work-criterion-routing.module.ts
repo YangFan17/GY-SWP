@@ -9,6 +9,7 @@ import { MyExamineComponent } from './my-examine/my-examine.component';
 import { ExamineDetailComponent } from './my-examine/examine-detail/examine-detail.component';
 import { MyIndicatorComponent } from './my-indicator/my-indicator.component';
 import { IndicatorDetailComponent } from './my-indicator/indicator-detail/indicator-detail.component';
+import { ACLGuard } from '@delon/acl';
 
 
 const routes: Routes = [
@@ -17,7 +18,7 @@ const routes: Routes = [
         component: CriterionComponent,
         // canActivate: [AppRouteGuard, ACLGuard],
         // data: { guard: 'CityAdmin' },
-        canActivate: [AppRouteGuard],
+        canActivate: [AppRouteGuard, ACLGuard],
         data: { title: '工作标准' },
     },
     {
@@ -31,9 +32,8 @@ const routes: Routes = [
     {
         path: 'self-learning/:id',
         component: SelfLearningComponent,
-        // canActivate: [AppRouteGuard, ACLGuard],
         // data: { guard: 'CityAdmin' },
-        canActivate: [AppRouteGuard],
+        canActivate: [AppRouteGuard, ACLGuard],
         data: { title: '自查学习' },
     },
     {
