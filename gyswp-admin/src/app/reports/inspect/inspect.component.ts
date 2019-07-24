@@ -70,6 +70,12 @@ export class InspectComponent extends AppComponentBase implements OnInit {
         this.getInspectData();
     }
 
+    reset() {
+        this.search.month = '';
+        this.search.userName = '';
+        this.refreshData();
+    }
+
     onChange(result: Date): void {
         this.search.month = this.date.getFullYear() + '-' + (this.date.getMonth() + 1) + '-1';
         //console.log('onChange: ', result);

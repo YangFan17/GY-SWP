@@ -34,7 +34,7 @@
         <nz-form-item>
           <nz-form-control nzHasFeedback>
             <input nz-input name="emailAddress" #emailAddress="ngModel" [(ngModel)]="user.emailAddress"
-              [placeholder]="'Email'" autocomplete="email" required email>
+              [placeholder]="'邮箱'" autocomplete="email" required email>
             <nz-form-explain *ngIf="emailAddress.control.dirty&&emailAddress.control.errors">
               <ng-container *ngIf="emailAddress.control.hasError('required')">不能为空</ng-container>
               <ng-container *ngIf="emailAddress.control.hasError('email')">邮箱格式不对</ng-container>

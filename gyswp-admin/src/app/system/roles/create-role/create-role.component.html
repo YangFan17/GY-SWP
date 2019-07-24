@@ -12,7 +12,7 @@
       <nz-form-control nzHasFeedback>
         <input nz-input name="name" #name="ngModel" [(ngModel)]="role.name" [placeholder]="'角色'" required>
         <nz-form-explain *ngIf="name.control.dirty&&name.control.errors">
-          <ng-container *ngIf="name.control.hasError('required')">不能为空</ng-container>
+          <ng-container *ngIf="name.control.hasError('required')">角色不能为空</ng-container>
         </nz-form-explain>
       </nz-form-control>
     </nz-form-item>
@@ -23,7 +23,7 @@
         <input nz-input name="displayName" #displayName="ngModel" [(ngModel)]="role.displayName" [placeholder]="'角色名称'"
           required>
         <nz-form-explain *ngIf="displayName.control.dirty&&displayName.control.errors">
-          <ng-container *ngIf="displayName.control.hasError('required')">不能为空</ng-container>
+          <ng-container *ngIf="displayName.control.hasError('required')">角色名称不能为空</ng-container>
         </nz-form-explain>
       </nz-form-control>
     </nz-form-item>

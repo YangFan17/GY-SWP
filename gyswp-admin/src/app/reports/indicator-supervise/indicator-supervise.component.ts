@@ -68,6 +68,13 @@ export class IndicatorSuperviseComponent extends AppComponentBase implements OnI
         this.getIndicatorSuperviseData();
     }
 
+    reset() {
+        this.search.beginTime = '';
+        this.search.endTime = '';
+        this.search.userName = '';
+        this.refreshData();
+    }
+
     onChange(result: Date): void {
         this.setSearchTime();
         //console.log('onChange: ', result);

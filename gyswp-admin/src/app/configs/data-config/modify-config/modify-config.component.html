@@ -19,15 +19,15 @@
     <nz-form-item nz-row>
       <nz-form-label nz-col [nzSm]="5" nzRequired nzFor="code">编码</nz-form-label>
       <nz-form-control [nzSm]="19" nzHasFeedback>
-        <input nz-input formControlName="code" [(ngModel)]="systemData.code">
-        <nz-form-explain *ngIf="(form.get('code')?.dirty && form.get('code')?.errors)">请输入编码
+        <input nz-input formControlName="code" [(ngModel)]="systemData.code" [placeholder]="'请输入编码'">
+        <nz-form-explain *ngIf="(form.get('code')?.dirty && form.get('code')?.errors)">编码不能为空
         </nz-form-explain>
       </nz-form-control>
     </nz-form-item>
     <nz-form-item nz-row>
       <nz-form-label [nzSm]="5" [nzXs]="24" nzFor="desc">配置项</nz-form-label>
       <nz-form-control [nzSm]="19" nzHasFeedback>
-        <input nz-input formControlName="desc" [(ngModel)]="systemData.desc">
+        <input nz-input formControlName="desc" [(ngModel)]="systemData.desc" [placeholder]="'请输入配置项'">
         <nz-form-explain *ngIf="(form.get('desc')?.dirty && form.get('desc')?.errors)">字符长度小于等于500
         </nz-form-explain>
       </nz-form-control>
@@ -44,12 +44,12 @@
       <nz-form-label nz-col [nzSm]="5" [nzXs]="24" nzFor="seq">序号</nz-form-label>
       <nz-form-control [nzSm]="19" nzHasFeedback>
         <input nz-input formControlName="seq" [(ngModel)]="systemData.seq">
-        <nz-form-explain *ngIf="(form.get('seq')?.dirty && form.get('seq')?.errors)">请输入数字</nz-form-explain>
+        <nz-form-explain *ngIf="(form.get('seq')?.dirty && form.get('seq')?.errors)">序号只能为数字</nz-form-explain>
       </nz-form-control>
     </nz-form-item>
     <div class="modal-footer">
       <button nz-button type="button" [disabled]="saving" (click)="close()">
-        {{l("取消")}}
+        取消
       </button>
       <button nz-button [nzType]="'primary'" type="submit" [disabled]="!validateForm.valid||saving">
         保存

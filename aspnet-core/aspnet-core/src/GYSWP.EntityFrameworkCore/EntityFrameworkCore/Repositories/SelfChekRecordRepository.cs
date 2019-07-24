@@ -123,7 +123,7 @@ namespace GYSWP.EntityFrameworkCore.Repositories
                         entity.EmployeePosition = dataReader["Position"].ToString();
                         entity.DeptName = dataReader["DepartmentName"].ToString();
                         entity.PostUseNum = (int)dataReader["ECNum"];
-                        entity.SurfaceRate = (decimal)dataReader["SurfaceRate"];
+                        entity.SurfaceRate = (decimal)dataReader["SurfaceRate"]; 
                         entity.ClickRate = (decimal)dataReader["ClickRate"];
                         entity.ClickNum = (int)dataReader["ClickNum"];
                         result.Add(entity);
