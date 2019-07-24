@@ -9,7 +9,7 @@
     <div nz-col nzSpan="20">
       <form nz-form [nzLayout]="'inline'">
         <div nz-row [nzGutter]="18">
-          <div nz-col [nzSpan]="8" class="mb-md">
+          <div nz-col [nzSpan]="6" class="mb-md">
             <nz-form-item class="d-flex" style="margin-bottom: 0px;">
               <nz-form-label nzFor="month">月份</nz-form-label>
               <nz-form-control class="flex-1">
@@ -22,6 +22,7 @@
           <div nz-col [nzSpan]="8" class="mb-md right" [class.text-right]="'true'" style="float: right;">
             <nz-form-item class="d-flex" style="margin-right: 0px;margin-bottom: 0px;">
               <nz-form-control class="flex-1">
+                <button nz-button type="button" (click)="reset()" class="mx-sm">重置</button>
                 <button nz-button type="button" (click)="refreshData()" nzType="primary" [nzLoading]="isTableLoading">
                   查询</button>
               </nz-form-control>

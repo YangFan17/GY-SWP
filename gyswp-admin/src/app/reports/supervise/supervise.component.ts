@@ -68,6 +68,13 @@ export class SuperviseComponent extends AppComponentBase implements OnInit {
         this.getSuperviseData();
     }
 
+    reset() {
+        this.search.beginTime = '';
+        this.search.endTime = '';
+        this.search.userName = '';
+        this.refreshData();
+    }
+
     onChange(result: Date): void {
         this.setSearchTime();
         //console.log('onChange: ', result);
