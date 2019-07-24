@@ -12,7 +12,7 @@ import { AppAuthService } from '@shared/auth/app-auth.service';
 export class SidebarComponent extends AppComponentBase implements OnInit {
   shownLoginName = '';
   emailAddress = '';
-
+  avatar = '';
   constructor(
     injector: Injector,
     private authService: AppAuthService,
@@ -24,6 +24,7 @@ export class SidebarComponent extends AppComponentBase implements OnInit {
   ngOnInit() {
     this.shownLoginName = this.appSession.user.name;
     this.emailAddress = this.appSession.user.emailAddress;
+    this.avatar = this.appSession.user.avatar;
   }
 
   logout() {

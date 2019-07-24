@@ -1,4 +1,4 @@
-import { Component, Inject, Injector, ViewChild } from '@angular/core';
+import { Component, Inject, Injector, ViewChild, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { SettingsService } from '@delon/theme';
 import { AppComponentBase } from '@shared/component-base';
@@ -11,7 +11,7 @@ import { ChangePasswordComponent } from '@layout/default/change-password/change-
   template: `
   <nz-dropdown nzPlacement="bottomRight">
     <div class="alain-default__nav-item d-flex align-items-center px-sm" nz-dropdown>
-      <nz-avatar  nzSize="small" class="mr-sm"  [nzSrc]="'assets/avatar.jpg'" ></nz-avatar>
+      <nz-avatar  nzSize="small" class="mr-sm"  [nzSrc]="avatar" ></nz-avatar>
     </div>
     <div nz-menu class="width-sm">
 
@@ -29,15 +29,19 @@ import { ChangePasswordComponent } from '@layout/default/change-password/change-
 // 修改密码
 // </div>
 // <li nz-menu-divider></li>
-export class HeaderUserComponent extends AppComponentBase {
+export class HeaderUserComponent extends AppComponentBase implements OnInit {
 
   @ViewChild('changePasswordModal') changePasswordModal: ChangePasswordComponent;
+  avatar = '';
 
   constructor(
     injector: Injector,
     private _authService: AppAuthService
   ) {
     super(injector);
+  }
+  ngOnInit(): void {
+    this.avatar = this.appSession.user.avatar;
   }
 
   logout(): void {
