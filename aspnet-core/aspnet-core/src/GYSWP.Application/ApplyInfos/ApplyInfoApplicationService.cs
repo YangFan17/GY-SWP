@@ -28,6 +28,7 @@ using GYSWP.Clauses;
 using GYSWP.Documents;
 using GYSWP.Categorys;
 using GYSWP.DocRevisions;
+using GYSWP.Categorys.DomainService;
 
 namespace GYSWP.ApplyInfos
 {
@@ -45,6 +46,7 @@ namespace GYSWP.ApplyInfos
         private readonly IRepository<Document, Guid> _documentRepository;
         private readonly IRepository<Category> _categoryRepository;
         private readonly IRepository<DocRevision, Guid> _docRevisionRepository;
+        private readonly ICategoryManager _categoryManager;
 
         /// <summary>
         /// 构造函数 
@@ -58,6 +60,7 @@ namespace GYSWP.ApplyInfos
         , IRepository<Document, Guid> documentRepository
         , IRepository<Category> categoryRepository
         , IRepository<DocRevision, Guid> docRevisionRepository
+        , ICategoryManager categoryManager
         )
         {
             _entityRepository = entityRepository;
@@ -68,6 +71,7 @@ namespace GYSWP.ApplyInfos
             _documentRepository = documentRepository;
             _categoryRepository = categoryRepository;
             _docRevisionRepository = docRevisionRepository;
+            _categoryManager = categoryManager;
         }
 
 
@@ -324,7 +328,7 @@ namespace GYSWP.ApplyInfos
         }
 
         /// <summary>
-        /// 制修订申请回调后修改状态
+        /// 【作废】制修订申请回调后修改状态
         /// </summary>
         /// <param name="pIId"></param>
         /// <param name="result"></param>
@@ -349,8 +353,15 @@ namespace GYSWP.ApplyInfos
                     entity.ProcessingCreationTime = entity.HandleTime;
                     entity.RevisionPId = pIId;
                     var doc = await _documentRepository.FirstOrDefaultAsync(v => v.Id == entity.DocumentId);
-                    int categoyrId = await _categoryRepository.GetAll().Where(v => v.DeptId == long.Parse(doc.DeptIds) && v.Name == "作废标准库").Select(v => v.Id).FirstOrDefaultAsync();
-                    doc.CategoryId = categoyrId;
+                    //寻找现行当前分类，分配给作废相同分类，无则放在作废标准一级分类下
+                    var curCate = await _categoryRepository.GetAll().Where(v => v.Id == doc.CategoryId).Select(v => new { v.Name, v.DeptId, v.ParentId }).FirstOrDefaultAsync();
+                    var zuofeiCate = await _categoryRepository.GetAll().Where(v => v.DeptId == curCate.DeptId && v.ParentId != curCate.ParentId).Select(v => v.Id).FirstOrDefaultAsync();
+                    if (zuofeiCate == 0)
+                    {
+                        zuofeiCate = await _categoryRepository.GetAll().Where(v => v.DeptId == curCate.DeptId && v.Name == "作废标准库").Select(v => v.Id).FirstOrDefaultAsync();
+                    }
+                    //int categoyrId = await _categoryRepository.GetAll().Where(v => v.DeptId == long.Parse(doc.DeptIds) && v.Name == "作废标准库").Select(v => v.Id).FirstOrDefaultAsync();
+                    doc.CategoryId = zuofeiCate;
                     doc.IsAction = false;
                     doc.InvalidTime = entity.HandleTime;
                     doc.Stamps = "1,3";
@@ -383,7 +394,7 @@ namespace GYSWP.ApplyInfos
         }
 
         /// <summary>
-        /// 修订审批回调后修改内容、状态
+        /// 【修订】修订审批回调后修改内容、状态
         /// </summary>
         /// <param name="pIId"></param>
         /// <param name="result"></param>
@@ -409,6 +420,7 @@ namespace GYSWP.ApplyInfos
                         clause.DocumentId = item.DocumentId;
                         clause.HasAttchment = item.HasAttchment;
                         clause.BLLId = item.Id;
+                        clause.CreatorUserId = item.CreatorUserId;
                         if (item.ParentId.HasValue)
                         {
                             Guid? clauseId = await _clauseRepository.GetAll().Where(v => v.Id == item.ParentId).Select(v => v.Id).FirstOrDefaultAsync();
@@ -434,12 +446,22 @@ namespace GYSWP.ApplyInfos
                         origin.Content = item.Content;
                         origin.HasAttchment = item.HasAttchment;
                         origin.BLLId = item.Id;
+                        origin.LastModifierUserId = item.LastModifierUserId;
                     }
                     else
                     {
-                        await _clauseRepository.DeleteAsync(v => v.Id == item.ClauseId);
+                        var delete = await _clauseRepository.FirstOrDefaultAsync(v => v.Id == item.ClauseId);
+                        delete.IsDeleted = true;
+                        delete.BLLId = item.Id;
+                        delete.DeleterUserId = item.CreatorUserId;
+                        delete.DeletionTime = DateTime.Now;
+                        //await _clauseRepository.DeleteAsync(v => v.Id == item.ClauseId);
                     }
                 }
+
+                //发送申请人（标准化管理员）修改文档通知
+                string docName = await _documentRepository.GetAll().Where(v => v.Id == entity.DocumentId).Select(v => v.Name).FirstOrDefaultAsync();
+                _approvalAppService.SendMessageToStandardAdminAsync(docName, entity.EmployeeId);
             }
             else
             {
@@ -453,7 +475,7 @@ namespace GYSWP.ApplyInfos
 
 
         /// <summary>
-        /// 审批通过后创建制定标准
+        /// 【制定】审批通过后创建制定标准
         /// </summary>
         /// <param name="pIId"></param>
         /// <param name="result"></param>
@@ -476,7 +498,10 @@ namespace GYSWP.ApplyInfos
                 doc.CategoryId = docRevision.CategoryId;
                 doc.CategoryDesc = categoryName;
                 doc.IsAction = false;
-                doc.DeptIds = docRevision.DeptId;
+                doc.CategoryId = docRevision.CategoryId;
+                var categoryList = await _categoryManager.GetHierarchyCategories(docRevision.CategoryId);
+                doc.CategoryCode = string.Join(',', categoryList.Select(c => c.Id).ToArray());
+                doc.CategoryDesc = string.Join(',', categoryList.Select(c => c.Name).ToArray());
                 doc.CreatorUserId = docRevision.CreatorUserId;
                 Guid docId = await _documentRepository.InsertAndGetIdAsync(doc);
                 await CurrentUnitOfWork.SaveChangesAsync();
@@ -500,7 +525,7 @@ namespace GYSWP.ApplyInfos
                     await CurrentUnitOfWork.SaveChangesAsync();
                 }
                 //发送企管科通知
-                await _approvalAppService.SendMessageToQGAdminAsync(docRevision.Name, docId);
+                _approvalAppService.SendMessageToQGAdminAsync(docRevision.Name, docId);
             }
             else
             {

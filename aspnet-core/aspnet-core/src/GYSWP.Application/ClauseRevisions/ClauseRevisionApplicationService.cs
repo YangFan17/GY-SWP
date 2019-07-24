@@ -231,7 +231,7 @@ namespace GYSWP.ClauseRevisions
                     CreationTime = v.CreationTime,
                     RevisionType = v.RevisionType,
                     Title = v.Title
-                }).OrderBy(v => v.RevisionType).ThenBy(v=>v.ClauseNo).ThenByDescending(v=>v.CreationTime).ToListAsync();
+                }).OrderBy(v => v.RevisionType).ThenBy(v => v.ClauseNo).ThenByDescending(v => v.CreationTime).ToListAsync();
             result.List = list;
             result.Count.Cnumber = await _entityRepository.CountAsync(v => v.DocumentId == input.DocumentId && v.ApplyInfoId == input.ApplyInfoId && v.RevisionType == GYEnums.RevisionType.新增);
             result.Count.Unumber = await _entityRepository.CountAsync(v => v.DocumentId == input.DocumentId && v.ApplyInfoId == input.ApplyInfoId && v.RevisionType == GYEnums.RevisionType.修订);
@@ -344,7 +344,7 @@ namespace GYSWP.ClauseRevisions
                 return new APIResultDto() { Code = 3, Msg = "已修改过条款，无法删除" };
             }
             Guid[] entityIdsList = await _clauseRepository.GetAll().Where(v => v.ParentId == input.Id).Select(v => v.Id).ToArrayAsync();
-            if(entityIdsList.Count() != 0)
+            if (entityIdsList.Count() != 0)
             {
                 foreach (var item in entityIdsList)
                 {
@@ -367,16 +367,35 @@ namespace GYSWP.ClauseRevisions
         public async Task<APIResultDto> ClauseRevisionDeleteById(EntityDto<Guid> id)
         {
             var entity = await _entityRepository.FirstOrDefaultAsync(v => v.Id == id.Id);
-            int childCount = await _entityRepository.GetAll().Where(v => (v.ParentId == entity.ClauseId ||v.ParentId == entity.Id) && v.RevisionType == entity.RevisionType).CountAsync();
-            if (childCount != 0)
+            if (entity.RevisionType == GYEnums.RevisionType.修订)
             {
-                return new APIResultDto() { Code = 1, Msg = "存在子条款" };
+                int addCount = await _clauseRepository.CountAsync(v => v.ParentId == entity.ClauseId);
+                int revisionAddCount = await _entityRepository.CountAsync(v => v.ParentId == entity.ClauseId); 
+                if (addCount != 0 || revisionAddCount != 0)
+                {
+                    return new APIResultDto() { Code = 1, Msg = "存在子条款" };
+                }
             }
-            else
+            else if (entity.RevisionType == GYEnums.RevisionType.新增)
             {
-                await _entityRepository.DeleteAsync(id.Id);
-                return new APIResultDto() { Code = 0, Msg = "删除成功" };
+                int editCount = await _entityRepository.CountAsync(v => v.ParentId == entity.Id);
+                if (editCount != 0)
+                {
+                    return new APIResultDto() { Code = 1, Msg = "存在子条款" };
+                }
             }
+            await _entityRepository.DeleteAsync(id.Id);
+            return new APIResultDto() { Code = 0, Msg = "删除成功" };
+            //int childCount = await _entityRepository.GetAll().Where(v => (v.ParentId == entity.ClauseId ||v.ParentId == entity.Id) && v.RevisionType == entity.RevisionType).CountAsync();
+            //if (childCount != 0)
+            //{
+            //    return new APIResultDto() { Code = 1, Msg = "存在子条款" };
+            //}
+            //else
+            //{
+            //    await _entityRepository.DeleteAsync(id.Id);
+            //    return new APIResultDto() { Code = 0, Msg = "删除成功" };
+            //}
         }
 
         /// <summary>

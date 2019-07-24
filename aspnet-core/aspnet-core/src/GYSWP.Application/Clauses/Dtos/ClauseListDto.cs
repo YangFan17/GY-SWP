@@ -94,6 +94,7 @@ namespace GYSWP.Clauses.Dtos
         public bool Checked { get; set; }
         public Guid? BLLId { get; set; }
         public DateTime? LastModificationTime { get; set; }
+        public DateTime? CreationTime { get; set; }
         //public int Level { get; set; } = 0;
         public List<ClauseTreeNodeDto> Children = new List<ClauseTreeNodeDto>();
     }
@@ -116,5 +117,6 @@ namespace GYSWP.Clauses.Dtos
         public string ClauseNo { get; set; }
         public Guid? BLLId { get; set; }
         public DateTime? LastModificationTime { get; set; }
+        public DateTime? CreationTime { get; set; }
     }
 }

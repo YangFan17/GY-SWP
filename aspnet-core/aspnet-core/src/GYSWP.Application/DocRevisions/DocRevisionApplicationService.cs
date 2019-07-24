@@ -136,6 +136,7 @@ DocRevisionEditDto editDto;
             if (input.DocRevision.Id.HasValue)
             {
                 var entity = await Update(input.DocRevision);
+                await CurrentUnitOfWork.SaveChangesAsync();
                 return new APIResultDto() { Code = 0, Msg = "保存成功", Data = entity };
             }
             else
@@ -167,6 +168,7 @@ DocRevisionEditDto editDto;
 			
 
 			entity = await _entityRepository.InsertAsync(entity);
+            await CurrentUnitOfWork.SaveChangesAsync();
 			return entity.MapTo<DocRevisionEditDto>();
 		}
 
@@ -183,6 +185,7 @@ DocRevisionEditDto editDto;
 
 			// ObjectMapper.Map(input, entity);
 		    await _entityRepository.UpdateAsync(entity);
+            await CurrentUnitOfWork.SaveChangesAsync();
             return entity.MapTo<DocRevisionEditDto>();
         }
 
