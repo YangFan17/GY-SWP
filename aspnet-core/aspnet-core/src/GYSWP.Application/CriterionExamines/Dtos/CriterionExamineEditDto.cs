@@ -17,7 +17,10 @@ namespace GYSWP.CriterionExamines.Dtos
         [Required(ErrorMessage = "Title不能为空")]
         public string Title { get; set; }
 
-
+        /// <summary>
+        /// 是否发布
+        /// </summary>
+        public bool IsPublish { get; set; }
 
         /// <summary>
         /// Type

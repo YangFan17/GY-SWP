@@ -29,6 +29,7 @@ using GYSWP.Dtos;
 using GYSWP.Employees.DomainService;
 using GYSWP.Documents;
 using Abp.Auditing;
+using GYSWP.DingDingApproval;
 
 namespace GYSWP.CriterionExamines
 {
@@ -45,6 +46,7 @@ namespace GYSWP.CriterionExamines
         private readonly IRepository<ExamineDetail, Guid> _examineDetailRepository;
         private readonly IRepository<EmployeeClause, Guid> _employeeClauseRepository;
         private readonly IRepository<Document, Guid> _documentRepository;
+        private readonly IApprovalAppService _approvalAppService;
         private readonly IEmployeeManager _employeeManager;
 
         /// <summary>
@@ -59,6 +61,7 @@ namespace GYSWP.CriterionExamines
         , IRepository<EmployeeClause, Guid> employeeClauseRepository
         , IEmployeeManager employeeManager
         , IRepository<Document, Guid> documentRepository
+        , IApprovalAppService approvalAppService
         )
         {
             _entityRepository = entityRepository;
@@ -69,6 +72,7 @@ namespace GYSWP.CriterionExamines
             _employeeClauseRepository = employeeClauseRepository;
             _employeeManager = employeeManager;
             _documentRepository = documentRepository;
+            _approvalAppService = approvalAppService;
         }
 
 
@@ -81,7 +85,7 @@ namespace GYSWP.CriterionExamines
         public async Task<PagedResultDto<CriterionExamineListDto>> GetPaged(GetCriterionExaminesInput input)
         {
 
-            var query = _entityRepository.GetAll().Where(v => v.DeptId == input.DeptId);
+            var query = _entityRepository.GetAll().Where(v => v.DeptId == input.DeptId && v.IsPublish == true);
             var count = await query.CountAsync();
             var entityList = await query
                     .OrderBy(input.Sorting).AsNoTracking()
@@ -231,13 +235,16 @@ namespace GYSWP.CriterionExamines
                 entity.CreatorEmpName = user.EmployeeName;
                 entity.CreatorDeptId = organization.Id;
                 entity.CreatorDeptName = organization.DepartmentName;
+                DateTime date = DateTime.Now;
                 if (input.Type == GYEnums.CriterionExamineType.内部考核)
                 {
-                    entity.Title = input.DeptName + input.Type.ToString();
+                    //entity.Title = input.DeptName + input.Type.ToString();
+                    entity.Title = organization.DepartmentName + date.Year + "年" + date.Month + "月" + input.Type.ToString();
                 }
                 else
                 {
-                    entity.Title = organization.DepartmentName + input.Type.ToString();
+                    //entity.Title = organization.DepartmentName + input.Type.ToString();
+                    entity.Title = organization.DepartmentName + date.Year + "年" + date.Month + "月考核" + input.DeptName;
                 }
                 Guid exaId = await _entityRepository.InsertAndGetIdAsync(entity);
                 await CurrentUnitOfWork.SaveChangesAsync();
@@ -276,7 +283,7 @@ namespace GYSWP.CriterionExamines
                         }
                     }
                 }
-                return new APIResultDto() { Code = 0, Msg = "考核表创建成功" };
+                return new APIResultDto() { Code = 0, Msg = "考核表创建成功", Data = new { entity.Id, entity.Title } };
             }
             catch (Exception ex)
             {
@@ -301,19 +308,21 @@ namespace GYSWP.CriterionExamines
                 var organization = await _organizationRepository.GetAll().Where(v => "[" + v.Id + "]" == deptId).Select(v => new { v.Id, v.DepartmentName }).FirstOrDefaultAsync();
                 CriterionExamine entity = new CriterionExamine();
                 entity.Type = input.Type;
+                entity.IsPublish = false;
                 entity.DeptId = input.DeptId;
                 entity.DeptName = input.DeptName;
                 entity.CreatorEmpeeId = user.EmployeeId;
                 entity.CreatorEmpName = user.EmployeeName;
                 entity.CreatorDeptId = organization.Id;
                 entity.CreatorDeptName = organization.DepartmentName;
+                DateTime date = DateTime.Now;
                 if (input.Type == GYEnums.CriterionExamineType.外部考核)
                 {
-                    entity.Title = input.DeptName + input.Type.ToString();
+                    entity.Title = organization.DepartmentName + date.Year + "年" + date.Month + "月考核" + input.DeptName;
                 }
                 else
                 {
-                    entity.Title = organization.DepartmentName + input.Type.ToString();
+                    entity.Title = organization.DepartmentName + date.Year + "年" + date.Month + "月" + input.Type.ToString();
                 }
                 Guid exaId = await _entityRepository.InsertAndGetIdAsync(entity);
                 await CurrentUnitOfWork.SaveChangesAsync();
@@ -322,7 +331,7 @@ namespace GYSWP.CriterionExamines
                 #region 公共模块
                 string[] employeeIds = await GetEmployeeIdsByDeptId(input.DeptId);
                 var empClauseGroupList = await _employeeClauseRepository.GetAll().Where(v => employeeIds.Contains(v.EmployeeId)).GroupBy(v => v.DocumentId).Select(v => v.Key).ToListAsync();
-                var doc = _documentRepository.GetAll();
+                var doc = _documentRepository.GetAll().Where(v => v.IsAction == true);
                 var org = _organizationRepository.GetAll();
                 var docCategroyList = (from e in empClauseGroupList
                                        join d in doc on e equals d.Id
@@ -516,7 +525,7 @@ namespace GYSWP.CriterionExamines
                 }
                 #endregion
                 #region 物流中心考核
-                else if(input.DeptId == 59593071) //物流中心
+                else if (input.DeptId == 59593071) //物流中心
                 {
                     int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
                     int random = (int)Math.Ceiling(total * 0.2);
@@ -561,7 +570,7 @@ namespace GYSWP.CriterionExamines
                         await _examineDetailRepository.InsertAsync(edEntity);
                     }
                 }
-                return new APIResultDto() { Code = 0, Msg = "考核表创建成功" };
+                return new APIResultDto() { Code = 0, Msg = "考核表创建成功", Data = new { entity.Id, entity.Title } };
             }
             catch (Exception ex)
             {
@@ -592,7 +601,7 @@ namespace GYSWP.CriterionExamines
         {
             var user = await GetCurrentUserAsync();
             Guid[] examineIds = await _examineDetailRepository.GetAll().Where(v => v.EmployeeId == user.EmployeeId).GroupBy(v => new { v.CriterionExamineId }).Select(v => v.Key.CriterionExamineId).ToArrayAsync();
-            var query = _entityRepository.GetAll().Where(v => examineIds.Contains(v.Id));
+            var query = _entityRepository.GetAll().Where(v => examineIds.Contains(v.Id) && v.IsPublish == true);
             var count = await query.CountAsync();
             var entityList = await query
                     .OrderBy(input.Sorting).AsNoTracking()
@@ -611,16 +620,50 @@ namespace GYSWP.CriterionExamines
         [Audited]
         public async Task<List<CriterionExamineListDto>> GetPagedExamineByDingIdAsync(GetCriterionExaminesInput input)
         {
-            Guid[] examineIds = await _examineDetailRepository.GetAll().Where(v => v.EmployeeId ==input.EmployeeId).GroupBy(v => new { v.CriterionExamineId }).Select(v => v.Key.CriterionExamineId).ToArrayAsync();
+            Guid[] examineIds = await _examineDetailRepository.GetAll().Where(v => v.EmployeeId == input.EmployeeId).GroupBy(v => new { v.CriterionExamineId }).Select(v => v.Key.CriterionExamineId).ToArrayAsync();
             var query = _entityRepository.GetAll().Where(v => examineIds.Contains(v.Id));
             var count = await query.CountAsync();
             var entityList = await query
                     .OrderBy(input.Sorting).AsNoTracking()
-                    .OrderByDescending(aa=>aa.CreationTime)
+                    .OrderByDescending(aa => aa.CreationTime)
                     //.PageBy(input)
                     .ToListAsync();
             var entityListDtos = entityList.MapTo<List<CriterionExamineListDto>>();
             return entityListDtos;
+        }
+
+        /// <summary>
+        /// 发布监督检查并发送通知
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<APIResultDto> PublishCriterionExamineAsync(EntityDto<Guid> input)
+        {
+            var entity = await _entityRepository.GetAsync(input.Id);
+            entity.IsPublish = true;
+            string[] empIds = await _examineDetailRepository.GetAll().Where(v => v.CriterionExamineId == input.Id).Select(v => v.EmployeeId).Distinct().ToArrayAsync();
+            foreach (var empId in empIds)
+            {
+                _approvalAppService.SendCriterionExamineMessageAsync(empId);
+            }
+            return new APIResultDto() { Code = 0, Msg = "考核已发布" };
+        }
+
+        /// <summary>
+        /// 企管科超级管理员考核记录
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<PagedResultDto<CriterionExamineListDto>> GetPagedCriterionRecordByQGAdmin(GetCriterionExaminesInput input)
+        {
+            var query = _entityRepository.GetAll().Where(v => v.CreatorDeptId == 59644078 && v.IsPublish == true);
+            var count = await query.CountAsync();
+            var entityList = await query
+                    .OrderBy(input.Sorting).AsNoTracking()
+                    .PageBy(input)
+                    .ToListAsync();
+            var entityListDtos = entityList.MapTo<List<CriterionExamineListDto>>();
+            return new PagedResultDto<CriterionExamineListDto>(count, entityListDtos);
         }
     }
 }

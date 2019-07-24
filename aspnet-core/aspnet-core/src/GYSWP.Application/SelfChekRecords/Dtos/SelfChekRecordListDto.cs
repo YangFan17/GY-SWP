@@ -27,14 +27,6 @@ namespace GYSWP.SelfChekRecords.Dtos
 		public string EmployeeId { get; set; }
 
 
-
-		/// <summary>
-		/// IsTodayFirst
-		/// </summary>
-		public bool? IsTodayFirst { get; set; }
-
-
-
 		/// <summary>
 		/// CreationTime
 		/// </summary>

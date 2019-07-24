@@ -25,6 +25,7 @@ using GYSWP.IndicatorsDetails;
 using GYSWP.Dtos;
 using GYSWP.Organizations;
 using GYSWP.Employees;
+using GYSWP.DingDingApproval;
 
 namespace GYSWP.Indicators
 {
@@ -39,6 +40,7 @@ namespace GYSWP.Indicators
         private readonly IRepository<IndicatorsDetail, Guid> _indicatorsDetailRepository;
         private readonly IRepository<Organization, long> _organizationRepository;
         private readonly IRepository<Employee, string> _employeeRepository;
+        private readonly IApprovalAppService _approvalAppService;
 
         /// <summary>
         /// 构造函数 
@@ -49,6 +51,7 @@ namespace GYSWP.Indicators
         , IRepository<IndicatorsDetail, Guid> indicatorsDetailRepository
         , IRepository<Organization, long> organizationRepository
         , IRepository<Employee, string> employeeRepository
+                , IApprovalAppService approvalAppService
         )
         {
             _entityRepository = entityRepository;
@@ -56,6 +59,7 @@ namespace GYSWP.Indicators
             _indicatorsDetailRepository = indicatorsDetailRepository;
             _organizationRepository = organizationRepository;
             _employeeRepository = employeeRepository;
+            _approvalAppService = approvalAppService;
         }
 
 
@@ -166,7 +170,7 @@ namespace GYSWP.Indicators
                 await CurrentUnitOfWork.SaveChangesAsync();
                 var adminList = await GetUsersInRoleAsync("StandardAdmin");
                 string[] adminIds = adminList.Select(v => v.EmployeeId).ToArray();
-                foreach (var item in input.DeptInfo)
+                foreach (var item in input.DeptInfo.Where(v=>v.DeptId!=1))//过滤顶级部门
                 {
                     var examEmp = new
                     {
@@ -180,11 +184,11 @@ namespace GYSWP.Indicators
                     {
                         examEmp = await _employeeRepository.GetAll().Where(v => adminIds.Contains(v.Id) && v.Department == "[" + item.DeptId + "]").Select(v => new { v.Id, v.Name }).FirstOrDefaultAsync();
                     }
-                    else if (item.DeptId == 59593071)
+                    else if (item.DeptId == 59593071)//物流中心
                     {
                         examEmp = await _employeeRepository.GetAll().Where(v => v.Department == "[60007074]" && v.Position == "部长").Select(v => new { v.Id, v.Name }).FirstOrDefaultAsync();
                     }
-                    else
+                    else//县局
                     {
                         examEmp = await _employeeRepository.GetAll().Where(v => v.Department == "[" + item.DeptId + "]" && (v.Position == "主任" || v.Position == "科长")).Select(v => new { v.Id, v.Name }).FirstOrDefaultAsync();
                     }
@@ -196,6 +200,11 @@ namespace GYSWP.Indicators
                     detail.EmployeeName = examEmp.Name;
                     detail.Status = GYEnums.IndicatorStatus.未填写;
                     await _indicatorsDetailRepository.InsertAsync(detail);
+                    //发送钉钉通知
+                    if (!string.IsNullOrEmpty(examEmp.Id))
+                    {
+                        _approvalAppService.SendIndicatorMessageAsync(examEmp.Id);
+                    }
                 }
                 return new APIResultDto() { Code = 0, Msg = "保存成功", Data = entity.Id };
             }

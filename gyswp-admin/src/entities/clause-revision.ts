@@ -18,7 +18,6 @@ export class ClauseRevision {
     deletionTime: Date;
     deleterUserId: string;
     documentId: string;
-    hasAttchment: boolean;
     isDeleted: boolean;
     parentId: string;
     constructor(data?: any) {
@@ -50,7 +49,6 @@ export class ClauseRevision {
             this.deletionTime = data["deletionTime"];
             this.deleterUserId = data["deleterUserId"];
             this.documentId = data["documentId"];
-            this.hasAttchment = data["hasAttchment"];
             this.isDeleted = data["isDeleted"];
             this.parentId = data["parentId"];
         }
@@ -74,7 +72,6 @@ export class ClauseRevision {
         data["deletionTime"] = this.deletionTime;
         data["deleterUserId"] = this.deleterUserId;
         data["documentId"] = this.documentId;
-        data["hasAttchment"] = this.hasAttchment;
         data["isDeleted"] = this.isDeleted;
         data["parentId"] = this.parentId;
         return data;

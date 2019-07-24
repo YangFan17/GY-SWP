@@ -288,7 +288,7 @@ namespace GYSWP.Employees
             {
                 if (userInfo.Position == "主任")//主任考核部长
                 {
-                    var query = _entityRepository.GetAll().Where(v => v.Department.Contains(input.DepartId) && v.Position == "部长" && v.Id != user.EmployeeId);
+                    var query = _entityRepository.GetAll().Where(v => v.Department.Contains(input.DepartId) && v.Position.Contains("部长") && v.Id != user.EmployeeId);
                     var employees = await query.OrderBy(v => v.Name).AsNoTracking().ToListAsync();
                     var employeeListDtos = employees.MapTo<List<EmployeeListDto>>();
                     return employeeListDtos;

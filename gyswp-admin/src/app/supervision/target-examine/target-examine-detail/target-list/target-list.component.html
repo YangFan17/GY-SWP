@@ -6,8 +6,8 @@
                 <th>预期值</th>
                 <th>实际值</th>
                 <th>指标状态</th>
-                <th>填写人</th>
-                <th>完成时间</th>
+                <th>负责人</th>
+                <th>填写时间</th>
                 <th>操作</th>
             </tr>
         </thead>
@@ -24,7 +24,7 @@
                 <td>{{item.employeeName}}</td>
                 <td>{{item.completeTime | date: "yyyy-MM-dd"}}</td>
                 <td>
-                    <a *ngIf="item.status == 3" (click)="resultFeedBack(item.indicatorDetailId)">整改措施</a>
+                    <a *ngIf="item.status == 3" (click)="resultFeedBack(item.indicatorDetailId)">查看措施</a>
                 </td>
             </tr>
         </tbody>

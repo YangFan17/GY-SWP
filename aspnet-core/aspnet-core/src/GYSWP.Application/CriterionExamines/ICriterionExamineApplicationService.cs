@@ -81,5 +81,7 @@ namespace GYSWP.CriterionExamines
         /// <param name="dingId"></param>
         /// <returns></returns>
         Task<List<CriterionExamineListDto>> GetPagedExamineByDingIdAsync(GetCriterionExaminesInput input);
+        Task<APIResultDto> PublishCriterionExamineAsync(EntityDto<Guid> input);
+        Task<PagedResultDto<CriterionExamineListDto>> GetPagedCriterionRecordByQGAdmin(GetCriterionExaminesInput input);
     }
 }

@@ -30,8 +30,7 @@ export class CreateAdviseComponent extends ModalComponentBase implements OnInit 
       this.saving = false;
     }).subscribe(() => {
       this.notify.success('保存成功！');
-      this.success();
+      this.success(true);
     });
   }
-
 }

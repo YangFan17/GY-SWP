@@ -55,7 +55,7 @@ namespace GYSWP.SuperviseReports
         public async Task<List<SuperviseDto>> GetSuperviseReportDataAsync(SuperviseInputDto input)
         {
             input.EndTime = input.EndTime.AddDays(1);
-            var baseQuery = _criterionExaminesRepository.GetAll().Where(c => c.DeptId == input.DeptId && c.CreationTime >= input.BeginTime && c.CreationTime < input.EndTime);
+            var baseQuery = _criterionExaminesRepository.GetAll().Where(c => c.DeptId == input.DeptId && c.IsPublish == true && c.CreationTime >= input.BeginTime && c.CreationTime < input.EndTime);
 
             var totalQuery = from cr in baseQuery
                              join ex in _examineDetailsRepository.GetAll()

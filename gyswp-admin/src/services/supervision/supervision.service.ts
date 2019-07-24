@@ -53,8 +53,18 @@ export class SupervisionService {
         }));
     }
 
-    getDeptExamineRecorAsync(param: any): Observable<PagedResultDto> {
+    getDeptExamineRecordAsync(param: any): Observable<PagedResultDto> {
         let url_ = "/api/services/app/CriterionExamine/GetPaged";
+        return this._commonhttp.get(url_, param).pipe(map(data => {
+            const result = new PagedResultDto();
+            result.items = data.items;
+            result.totalCount = data.totalCount;
+            return result;
+        }));
+    }
+
+    getPagedCriterionRecordByQGAdmin(param: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/CriterionExamine/GetPagedCriterionRecordByQGAdmin";
         return this._commonhttp.get(url_, param).pipe(map(data => {
             const result = new PagedResultDto();
             result.items = data.items;
@@ -65,6 +75,16 @@ export class SupervisionService {
 
     getExamineRecordByIdAsync(param: any): Observable<PagedResultDto> {
         let url_ = "/api/services/app/ExamineDetail/GetExamineRecordByIdAsync";
+        return this._commonhttp.get(url_, param).pipe(map(data => {
+            const result = new PagedResultDto();
+            result.items = data.items;
+            result.totalCount = data.totalCount;
+            return result;
+        }));
+    }
+
+    getExamineRecordNoPagedByIdAsync(param: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/ExamineDetail/GetExamineRecordNoPagedByIdAsync";
         return this._commonhttp.get(url_, param).pipe(map(data => {
             const result = new PagedResultDto();
             result.items = data.items;
@@ -195,6 +215,20 @@ export class SupervisionService {
     getIndicatorListById(id: string): Observable<any[]> {
         let url_ = "/api/services/app/Indicator/GetDeptIndicatorDetailByIdAsync";
         return this._commonhttp.get(url_, { id: id }).pipe(map(data => {
+            return data;
+        }));
+    }
+
+    publishCriterionExamineAsync(id: any): Observable<ApiResult> {
+        let url_ = "/api/services/app/CriterionExamine/PublishCriterionExamineAsync";
+        return this._commonhttp.post(url_, { id: id }).pipe(map(data => {
+            return ApiResult.fromJS(data);
+        }));
+    }
+
+    deleteExamineDetailByIdAsync(id: string): Observable<any> {
+        let url_ = "/api/services/app/ExamineDetail/Delete";
+        return this._commonhttp.delete(url_, { id: id }).pipe(map(data => {
             return data;
         }));
     }

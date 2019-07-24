@@ -44,11 +44,6 @@ namespace GYSWP.Documents
         [StringLength(500)]
         public virtual string CategoryDesc { get; set; }
         /// <summary>
-        /// 岗位缩略图
-        /// </summary>
-        [StringLength(50)]
-        public virtual string DocThum { get; set; }
-        /// <summary>
         /// 摘要说明
         /// </summary>
         [StringLength(2000)]
@@ -57,11 +52,7 @@ namespace GYSWP.Documents
         /// 发布日期
         /// </summary>
         public virtual DateTime? PublishTime { get; set; }
-        /// <summary>
-        /// 二维码URL
-        /// </summary>
-        [StringLength(200)]
-        public virtual string QrCodeUrl { get; set; }
+
         /// <summary>
         /// 授权员工名称（以逗号分隔）
         /// </summary>

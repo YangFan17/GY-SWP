@@ -1,4 +1,8 @@
 <div nz-row style="text-align:right;">
+    <button nz-button [acl]="'QiGuanAdmin'" type="button" (click)="qgAdminRecord()" nzType="primary">
+        <i nz-icon type="crown"></i>
+        <span>企管科管理员考核记录</span>
+    </button>
     <button nz-button type="button" (click)="examineRecord()" nzType="primary">
         <i nz-icon type="profile"></i>
         <span>部门考核记录</span>

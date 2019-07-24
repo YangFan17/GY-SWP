@@ -6,7 +6,6 @@ export class Clause {
     clauseNo: string;
     title: string;
     documentId: string;
-    hasAttchment: boolean;
     creationTime: Date;
     creatorUserId: string;
     lastModificationTime: Date;
@@ -32,7 +31,6 @@ export class Clause {
             this.content = data["content"];
             this.clauseNo = data["clauseNo"];
             this.title = data["title"];
-            this.hasAttchment = data["hasAttchment"];
             this.creationTime = data["creationTime"];
             this.creatorUserId = data["creatorUserId"];
             this.lastModificationTime = data["lastModificationTime"];
@@ -52,7 +50,6 @@ export class Clause {
         data["creatorUserId"] = this.creatorUserId;
         data["content"] = this.content;
         data["title"] = this.title;
-        data["hasAttchment"] = this.hasAttchment;
         data["clauseNo"] = this.clauseNo;
         data["lastModificationTime"] = this.lastModificationTime;
         data["lastModifierUserId"] = this.lastModifierUserId;

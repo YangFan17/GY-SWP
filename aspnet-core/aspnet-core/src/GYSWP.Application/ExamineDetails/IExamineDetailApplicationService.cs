@@ -84,5 +84,6 @@ namespace GYSWP.ExamineDetails
         /// <param name="input"></param>
         /// <returns></returns>
         Task<List<ExamineRecordDto>> GetExamineDetailByDingIdAsync(GetExamineDetailsInput input);
+        Task<PagedResultDto<ExamineRecordDto>> GetExamineRecordNoPagedByIdAsync(GetExamineDetailsInput input);
     }
 }

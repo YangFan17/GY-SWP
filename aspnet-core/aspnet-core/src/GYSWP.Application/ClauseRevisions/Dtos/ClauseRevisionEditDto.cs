@@ -71,14 +71,6 @@ namespace  GYSWP.ClauseRevisions.Dtos
 		public string ClauseNo { get; set; }
 
 
-
-		/// <summary>
-		/// HasAttchment
-		/// </summary>
-		public bool HasAttchment { get; set; }
-
-
-
 		/// <summary>
 		/// DocumentId
 		/// </summary>

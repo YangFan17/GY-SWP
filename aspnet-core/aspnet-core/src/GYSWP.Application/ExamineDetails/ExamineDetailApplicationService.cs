@@ -203,6 +203,33 @@ namespace GYSWP.ExamineDetails
             await _entityRepository.DeleteAsync(s => input.Contains(s.Id));
         }
 
+
+        /// <summary>
+        /// 获取临时考核记录列表不分页
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<PagedResultDto<ExamineRecordDto>> GetExamineRecordNoPagedByIdAsync(GetExamineDetailsInput input)
+        {
+            var query = _entityRepository.GetAll().Where(v => v.CriterionExamineId == input.ExamineId);
+            var doc = _documentRepository.GetAll().Select(v => new { v.Id, v.Name });
+            var clause = _clauseRepository.GetAll();
+            var list = (from q in query
+                        join d in doc on q.DocumentId equals d.Id
+                        join c in clause on q.ClauseId equals c.Id
+                        select new ExamineRecordDto()
+                        {
+                            Id = q.Id,
+                            DocumentName = d.Name,
+                            ClauseInfo = c.ClauseNo + (c.Title != null ? (c.Title.Length > 15 ? "-" + c.Title.Substring(0, 15) + "...-" : "-" + c.Title + "-") : "-")
+                            + (c.Content != null ? (c.Content.Length > 15 ? c.Content.Substring(0, 15) + "..." : c.Content) : ""),
+                            EmployeeName = q.EmployeeName
+                        });
+            var count = await list.CountAsync();
+            var entityList = await list.OrderBy(v => v.Status).ThenBy(v => v.EmployeeName).ThenBy(v => v.DocumentName).ToListAsync();
+            return new PagedResultDto<ExamineRecordDto>(count, entityList);
+        }
+
         /// <summary>
         /// 根据id获取考核记录详情
         /// </summary>

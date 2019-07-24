@@ -44,7 +44,6 @@ export class RevisedListDetailComponent extends ModalComponentBase {
             this.clause.parentId = this.pId;
         }
         this.clause.documentId = this.docId;
-        this.clause.hasAttchment = false;
         this.clause.applyInfoId = this.applyId;
         if (this.isDraft) {
             this.clause.revisionType = 4; //制定标准

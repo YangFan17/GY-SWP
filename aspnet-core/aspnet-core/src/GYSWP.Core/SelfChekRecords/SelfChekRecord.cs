@@ -26,11 +26,6 @@ namespace GYSWP.SelfChekRecords
         public virtual string EmployeeId { get; set; }
 
         /// <summary>
-        /// 当天首次点击
-        /// </summary>
-        public virtual bool? IsTodayFirst { get; set; }
-
-        /// <summary>
         /// 创建时间
         /// </summary>
         [Required]

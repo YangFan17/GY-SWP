@@ -14,5 +14,7 @@ namespace GYSWP.DingDingApproval
         Task<APIResultDto> SubmitDraftDocApproval(Guid ApplyInfoId, Guid DocumentId);
         APIResultDto SendMessageToQGAdminAsync(string docName, Guid docId);
         APIResultDto SendMessageToStandardAdminAsync(string docName, string empId);
+        APIResultDto SendIndicatorMessageAsync(string empId);
+        APIResultDto SendCriterionExamineMessageAsync(string empId);
     }
 }
