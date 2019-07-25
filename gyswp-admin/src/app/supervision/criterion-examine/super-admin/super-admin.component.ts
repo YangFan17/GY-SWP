@@ -2,6 +2,7 @@ import { Component, OnInit, Injector, Input } from '@angular/core';
 import { ModalComponentBase } from '@shared/component-base';
 import { SupervisionService } from 'services';
 import { NzFormatEmitEvent, NzModalRef, NzModalService } from 'ng-zorro-antd';
+import { QuestionBankComponent } from '../question-bank/question-bank.component';
 
 @Component({
     moduleId: module.id,
@@ -71,17 +72,46 @@ export class SuperAdminComponent extends ModalComponentBase implements OnInit {
                     params.Type = 2;
                     params.DeptId = data.node.key;
                     params.DeptName = data.node.title;
-                    this.supervisionService.createExamineByQiGuanAsync(params).subscribe(res => {
-                        if (res.code == 0) {
-                            this.notify.info('考核表创建成功', '');
-                            this.modal.closeAll();
-                        }
-                        else {
-                            this.notify.error('考核表创建失败，请重试！', '');
-                        }
-                    });
+                    if (this.type == 1)//企管超级管理员考核
+                    {
+                        this.supervisionService.createExamineByQiGuanAsync(params).subscribe(res => {
+                            if (res.code == 0) {
+                                this.notify.success('考核表创建成功', '');
+                                // this.modal.closeAll();
+                                this.showExamineList(res.data.id, res.data.title);
+                            }
+                            else {
+                                this.notify.error('考核表创建失败，请重试！', '');
+                            }
+                        });
+                    } else {//县局超管考核
+                        this.supervisionService.createInternalExamineAsync(params).subscribe(res => {
+                            if (res.code == 0) {
+                                this.notify.success('考核表创建成功', '');
+                                // this.modal.closeAll();
+                                this.showExamineList(res.data.id, res.data.title);
+                            }
+                            else {
+                                this.notify.error('考核表创建失败，请重试！', '');
+                            }
+                        });
+                    }
                 }
             });
         }
+    }
+
+    showExamineList(id: string, title: string): void {
+        this.modalHelper
+            .open(QuestionBankComponent, { examineId: id, title: title }, 1250, {
+                nzMask: true,
+                nzClosable: false,
+                nzMaskClosable: false,
+            })
+            .subscribe(isSave => {
+                if (isSave) {
+                    this.success(true);
+                }
+            });
     }
 }

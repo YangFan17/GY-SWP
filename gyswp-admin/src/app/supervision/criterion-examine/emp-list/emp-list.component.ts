@@ -4,6 +4,7 @@ import { SupervisionService } from 'services';
 import { Router } from '@angular/router';
 import { Employee } from 'entities';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd';
+import { QuestionBankComponent } from '../question-bank/question-bank.component';
 
 @Component({
     moduleId: module.id,
@@ -117,8 +118,10 @@ export class EmpListComponent extends AppComponentBase implements OnInit {
                 params.EmpInfo = empInfo;
                 this.supervisionService.createInternalExamineAsync(params).finally(() => { this.saving = false; }).subscribe(res => {
                     if (res.code == 0) {
-                        this.notify.info('考核表创建成功', '');
-                        this.modal.closeAll();
+                        // this.notify.info('考核表创建成功', '');
+                        // this.modal.closeAll();
+                        this.notify.success('考核表创建成功', '');
+                        this.showExamineList(res.data.id, res.data.title);
                     }
                     else {
                         this.notify.error('考核表创建失败，请重试！', '');
@@ -129,6 +132,20 @@ export class EmpListComponent extends AppComponentBase implements OnInit {
                 this.saving = false;
             }
         });
+    }
+
+    showExamineList(id: string, title: string): void {
+        this.modalHelper
+            .open(QuestionBankComponent, { examineId: id, title: title }, 1250, {
+                nzMask: true,
+                nzClosable: false,
+                nzMaskClosable: false,
+            })
+            .subscribe(isSave => {
+                if (isSave) {
+                    this.modal.closeAll();
+                }
+            });
     }
 
     empRecord(id: string) {
@@ -142,5 +159,9 @@ export class EmpListComponent extends AppComponentBase implements OnInit {
             this.notify.info('请选择考核部门');
         }
         this.router.navigate(['app/supervision/record', this.dept.id, this.dept.name]);
+    }
+
+    qgAdminRecord() {
+        this.router.navigate(['app/supervision/qgAdmin-record']);
     }
 }

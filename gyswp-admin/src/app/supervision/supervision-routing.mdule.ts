@@ -7,6 +7,7 @@ import { RecordDetailComponent } from './criterion-examine/dept-examine-record/r
 import { EmpExamineRecordComponent } from './criterion-examine/emp-list/emp-examine-record/emp-examine-record.component';
 import { TargetExamineComponent } from './target-examine/target-examine.component';
 import { TargetExamineDetailComponent } from './target-examine/target-examine-detail/target-examine-detail.component';
+import { QgExamineRecordComponent } from './criterion-examine/qg-examine-record/qg-examine-record.component';
 
 
 const routes: Routes = [
@@ -56,6 +57,12 @@ const routes: Routes = [
         component: TargetExamineDetailComponent,
         canActivate: [AppRouteGuard],
         // data: { guard: 'CityAdmin' },
+    },
+    {
+        path: 'qgAdmin-record',
+        component: QgExamineRecordComponent,
+        canActivate: [AppRouteGuard],
+        data: { guard: 'QiGuanAdmin' },
     }
 ];
 

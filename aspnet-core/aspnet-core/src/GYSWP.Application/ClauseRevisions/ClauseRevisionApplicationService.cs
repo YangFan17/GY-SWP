@@ -263,7 +263,6 @@ namespace GYSWP.ClauseRevisions
             {
                 entity.ClauseId = input.Entity.Id.Value;
             }
-            entity.HasAttchment = input.Entity.HasAttchment;
             var result = entity.MapTo<ClauseRevision>();
             await _entityRepository.InsertAsync(result);
             return new APIResultDto() { Code = 0, Msg = "保存成功" };
@@ -292,7 +291,6 @@ namespace GYSWP.ClauseRevisions
             {
                 entity.ClauseId = input.Entity.Id.Value;
             }
-            entity.HasAttchment = input.Entity.HasAttchment;
             var result = entity.MapTo<ClauseRevision>();
             await _entityRepository.InsertAsync(result);
             return new APIResultDto() { Code = 0, Msg = "保存成功" };

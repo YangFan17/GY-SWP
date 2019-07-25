@@ -44,7 +44,6 @@ export class RevisedClauseDetailComponent extends ModalComponentBase {
             this.clause.parentId = this.pId;
         }
         this.clause.documentId = this.docId;
-        this.clause.hasAttchment = false;
         if (this.id) {
             this.type = 2; // 修订
         } else {

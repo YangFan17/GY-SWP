@@ -46,12 +46,6 @@ namespace GYSWP.Documents.Dtos
 
 
         /// <summary>
-        /// DocThum
-        /// </summary>
-        public string DocThum { get; set; }
-
-
-        /// <summary>
         /// Summary
         /// </summary>
         public string Summary { get; set; }
@@ -62,11 +56,6 @@ namespace GYSWP.Documents.Dtos
         /// </summary>
         public DateTime? PublishTime { get; set; }
 
-
-        /// <summary>
-        /// QrCodeUrl
-        /// </summary>
-        public string QrCodeUrl { get; set; }
         /// <summary>
         /// 授权员工名称（以逗号分隔）
         /// </summary>

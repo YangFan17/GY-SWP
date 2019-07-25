@@ -69,7 +69,6 @@ export class ConfirmLearningComponent extends ModalComponentBase {
 
     submit() {
         this.clause.documentId = this.docId;
-        this.clause.hasAttchment = false;
         this.workCriterionService.selfCheckedClauseAsync(this.id, this.docId)
             .finally(() => { this.saving = false; })
             .subscribe(res => {

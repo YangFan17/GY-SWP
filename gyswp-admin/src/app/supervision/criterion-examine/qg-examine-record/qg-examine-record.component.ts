@@ -5,21 +5,16 @@ import { SupervisionService } from 'services';
 
 @Component({
     moduleId: module.id,
-    selector: 'dept-examine-record',
-    templateUrl: 'dept-examine-record.component.html',
-    styleUrls: ['dept-examine-record.component.less']
+    selector: 'qg-examine-record',
+    templateUrl: 'qg-examine-record.component.html'
 })
-export class DeptExamineRecordComponent extends PagedListingComponentBase<any>{
-    deptId: number;
-    deptName: string;
+export class QgExamineRecordComponent extends PagedListingComponentBase<any>{
     constructor(injector: Injector
         , private router: Router
         , private actRouter: ActivatedRoute
         , private supervisionService: SupervisionService
     ) {
         super(injector);
-        this.deptId = this.actRouter.snapshot.params['id'];
-        this.deptName = this.actRouter.snapshot.params['dept'];
     }
 
     refresh(): void {
@@ -38,10 +33,9 @@ export class DeptExamineRecordComponent extends PagedListingComponentBase<any>{
 
     protected fetchDataList(request: PagedRequestDto, pageNumber: number, finishedCallback: Function): void {
         let params: any = {};
-        params.DeptId = this.deptId;
         params.SkipCount = request.skipCount;
         params.MaxResultCount = request.maxResultCount;
-        this.supervisionService.getDeptExamineRecordAsync(params)
+        this.supervisionService.getPagedCriterionRecordByQGAdmin(params)
             .finally(() => {
                 finishedCallback();
             })

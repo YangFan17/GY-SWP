@@ -32,7 +32,7 @@ const routes: Routes = [
         path: 'basic',
         loadChildren: './basic-data/basic-data.module#BasicDataModule',
         canActivate: [ACLGuard],
-        data: { guard: ['QiGuanAdmin', 'Admin'], preload: true },
+        data: { guard: ['QiGuanAdmin', 'Admin'] },
       },
       {
         path: 'criterion',
@@ -42,9 +42,8 @@ const routes: Routes = [
       {
         path: 'supervision',
         loadChildren: './supervision/supervision.module#SupervisionModule',
-        canActivate: [ACLGuard],
-
-        data: { guard: ['Admin', 'QiGuanAdmin', 'CountyAdmin'], preload: true },
+        canActivate: [AppRouteGuard, ACLGuard],
+        data: { guard: ['Admin', 'QiGuanAdmin', 'CountyAdmin'] },
       },
       {
         path: 'advises',
@@ -55,19 +54,17 @@ const routes: Routes = [
         path: 'config',
         loadChildren: './configs/configs.module#ConfigsModule',
         canActivate: [ACLGuard],
-        data: { guard: 'Admin', preload: true },
+        data: { guard: 'Admin' },
       },
       {
         path: 'reports',
         loadChildren: './reports/reports.module#ReportsModule',
         canActivate: [ACLGuard],
-        data: { guard: ['Admin', 'QiGuanAdmin'], preload: true },
+        data: { guard: ['Admin', 'QiGuanAdmin'] },
       },
       {
         path: 'position',
         component: PositionInfoComponent,
-        canActivate: [AppRouteGuard],
-        data: { preload: true }
       }
     ]
   }

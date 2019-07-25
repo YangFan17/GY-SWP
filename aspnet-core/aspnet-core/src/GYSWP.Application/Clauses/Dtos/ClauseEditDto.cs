@@ -30,11 +30,6 @@ namespace  GYSWP.Clauses.Dtos
         /// </summary>
         [Required]
         public string ClauseNo { get; set; }
-        /// <summary>
-        /// 类型（文本、表格）是否含有附件
-        /// </summary>
-        //[Required]
-        public bool HasAttchment { get; set; }
 
 
         /// <summary>

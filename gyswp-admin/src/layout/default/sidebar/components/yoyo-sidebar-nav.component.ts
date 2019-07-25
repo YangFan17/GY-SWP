@@ -80,6 +80,13 @@ export class YoYoSidebarNavComponent implements OnInit, OnDestroy {
         });
     }
 
+    openHandler(menu: Menu): void {
+        for (let m of this.list) {
+            if (m.text != menu.text) {
+                m._open = false;
+            }
+        }
+    }
 
     private get isPad(): boolean {
         return window.innerWidth < 768;

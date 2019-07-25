@@ -72,7 +72,7 @@ export class AppMenus {
             text: "监督检查",
             icon: { type: "icon", value: "audit" },
             reuse: false,
-            acl: "Admin",// 权限
+            acl: ["QiGuanAdmin", "Admin", "CountyAdmin"],// 权限
             link: "",
             group: true,
             children: [

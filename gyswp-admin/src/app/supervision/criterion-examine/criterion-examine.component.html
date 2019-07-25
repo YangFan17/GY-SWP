@@ -2,11 +2,11 @@
 <nz-card>
     <div nz-row>
         <div style="padding-bottom: 10px;border-right-width: 10px;padding-right: 10px; padding-left: 10px;">
-            <button nz-button type="button" (click)="adminExa(1)">
+            <button [acl]="'QiGuanAdmin'" nz-button type="button" (click)="adminExa(1)">
                 <i nz-icon type="audit"></i>
                 <span>企管科管理员考核</span>
             </button>
-            <button nz-button type="button" (click)="adminExa(2)">
+            <button [acl]="'CountyAdmin'" nz-button type="button" (click)="adminExa(2)">
                 <i nz-icon type="audit"></i>
                 <span>县局管理员考核</span>
             </button>

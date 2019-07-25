@@ -17,6 +17,11 @@ namespace GYSWP.CriterionExamines
         [Required]
         public virtual string Title { get; set; }
         /// <summary>
+        /// 是否发布
+        /// </summary>
+        [Required]
+        public virtual bool IsPublish { get; set; }
+        /// <summary>
         /// 考核类型(内部考核，外部考核)
         /// </summary>
         [Required]

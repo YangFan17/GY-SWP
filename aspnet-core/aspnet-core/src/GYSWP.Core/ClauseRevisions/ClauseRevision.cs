@@ -62,11 +62,6 @@ namespace GYSWP.ClauseRevisions
         public virtual string ClauseNo { get; set; }
 
         /// <summary>
-        /// 类型（文本、表格）是否含有附件
-        /// </summary>
-        public virtual bool HasAttchment { get; set; }
-
-        /// <summary>
         /// 所属标准
         /// </summary>
         public virtual Guid? DocumentId { get; set; }

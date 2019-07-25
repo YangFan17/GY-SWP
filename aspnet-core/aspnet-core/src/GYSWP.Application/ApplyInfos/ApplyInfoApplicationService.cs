@@ -355,13 +355,16 @@ namespace GYSWP.ApplyInfos
                     var doc = await _documentRepository.FirstOrDefaultAsync(v => v.Id == entity.DocumentId);
                     //寻找现行当前分类，分配给作废相同分类，无则放在作废标准一级分类下
                     var curCate = await _categoryRepository.GetAll().Where(v => v.Id == doc.CategoryId).Select(v => new { v.Name, v.DeptId, v.ParentId }).FirstOrDefaultAsync();
-                    var zuofeiCate = await _categoryRepository.GetAll().Where(v => v.DeptId == curCate.DeptId && v.ParentId != curCate.ParentId).Select(v => v.Id).FirstOrDefaultAsync();
+                    var zuofeiCate = await _categoryRepository.GetAll().Where(v => v.DeptId == curCate.DeptId && v.ParentId != curCate.ParentId && v.Name == curCate.Name).Select(v => v.Id).FirstOrDefaultAsync();
                     if (zuofeiCate == 0)
                     {
                         zuofeiCate = await _categoryRepository.GetAll().Where(v => v.DeptId == curCate.DeptId && v.Name == "作废标准库").Select(v => v.Id).FirstOrDefaultAsync();
                     }
+                    var categoryList = await _categoryManager.GetHierarchyCategories(zuofeiCate);
                     //int categoyrId = await _categoryRepository.GetAll().Where(v => v.DeptId == long.Parse(doc.DeptIds) && v.Name == "作废标准库").Select(v => v.Id).FirstOrDefaultAsync();
                     doc.CategoryId = zuofeiCate;
+                    doc.CategoryCode = string.Join(',', categoryList.Select(c => c.Id).ToArray());
+                    doc.CategoryDesc = string.Join(',', categoryList.Select(c => c.Name).ToArray());
                     doc.IsAction = false;
                     doc.InvalidTime = entity.HandleTime;
                     doc.Stamps = "1,3";
@@ -418,7 +421,6 @@ namespace GYSWP.ApplyInfos
                         clause.Title = item.Title;
                         clause.Content = item.Content;
                         clause.DocumentId = item.DocumentId;
-                        clause.HasAttchment = item.HasAttchment;
                         clause.BLLId = item.Id;
                         clause.CreatorUserId = item.CreatorUserId;
                         if (item.ParentId.HasValue)
@@ -444,7 +446,6 @@ namespace GYSWP.ApplyInfos
                         origin.ClauseNo = item.ClauseNo;
                         origin.Title = item.Title;
                         origin.Content = item.Content;
-                        origin.HasAttchment = item.HasAttchment;
                         origin.BLLId = item.Id;
                         origin.LastModifierUserId = item.LastModifierUserId;
                     }
@@ -513,7 +514,6 @@ namespace GYSWP.ApplyInfos
                     clause.ClauseNo = item.ClauseNo;
                     clause.Title = item.Title;
                     clause.Content = item.Content;
-                    clause.HasAttchment = item.HasAttchment;
                     clause.BLLId = item.Id;
                     clause.CreatorUserId = item.CreatorUserId;
                     if (item.ParentId.HasValue)

@@ -52,9 +52,11 @@ export class TargetExamineDetailComponent extends AppComponentBase implements On
                     .finally(() => { this.saving = false; })
                     .subscribe(res => {
                         this.notify.info('发布成功！', '');
-                        if (res.data) {
+                        if (res.code == 0) {
                             this.indicator.id = res.data;
                             this.id = this.indicator.id;
+                            this.targetList.id = this.id;
+                            this.targetList.getIndicatorListById();
                         }
                     });
             }

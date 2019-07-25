@@ -16,11 +16,14 @@ namespace GYSWP.CriterionExamines.Dtos
 		/// </summary>
 		[Required(ErrorMessage="Title不能为空")]
 		public string Title { get; set; }
-
-		/// <summary>
-		/// Type
-		/// </summary>
-		[Required(ErrorMessage="Type不能为空")]
+        /// <summary>
+        /// 是否发布
+        /// </summary>
+        public bool IsPublish { get; set; }
+        /// <summary>
+        /// Type
+        /// </summary>
+        [Required(ErrorMessage="Type不能为空")]
 		public CriterionExamineType Type { get; set; }
         public string TypeName
         {
