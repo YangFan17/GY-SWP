@@ -73,6 +73,8 @@ export class InspectComponent extends AppComponentBase implements OnInit {
     reset() {
         this.search.month = '';
         this.search.userName = '';
+        this.date = new Date();
+        this.search.month = this.date.getFullYear() + '-' + (this.date.getMonth() + 1) + '-1';
         this.refreshData();
     }
 
