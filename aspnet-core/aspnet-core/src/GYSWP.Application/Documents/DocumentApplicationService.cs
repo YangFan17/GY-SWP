@@ -326,21 +326,35 @@ namespace GYSWP.Documents
 
             //当前用户角色
             var roles = await GetUserRolesAsync();
-            //如果包含市级管理员 和 系统管理员 全部架构
-            //if (roles.Contains(RoleCodes.Admin))
-            //{
-            root.children = await getDeptTreeAsync(new long[] { 1 });//顶级部门
-            //}
-            //else if (roles.Contains(RoleCodes.EnterpriseAdmin))//本部门架构
-            //{
-            //    var user = await GetCurrentUserAsync();
-            //    if (!string.IsNullOrEmpty(user.EmployeeId))
-            //    {
-            //        var employee = await _employeeRepository.GetAsync(user.EmployeeId);
-            //        var depts = employee.Department.Substring(1, employee.Department.Length - 2).Split("][");//多部门拆分
-            //        root.children = await getDeptTreeAsync(Array.ConvertAll(depts, d => long.Parse(d)));
-            //    }
-            //}
+            ////如果包含市级管理员 和 系统管理员 全部架构
+            ////if (roles.Contains(RoleCodes.Admin))
+            ////{
+            //root.children = await getDeptTreeAsync(new long[] { 1 });//顶级部门
+            ////}
+            ////else if (roles.Contains(RoleCodes.EnterpriseAdmin))//本部门架构
+            ////{
+            ////    var user = await GetCurrentUserAsync();
+            ////    if (!string.IsNullOrEmpty(user.EmployeeId))
+            ////    {
+            ////        var employee = await _employeeRepository.GetAsync(user.EmployeeId);
+            ////        var depts = employee.Department.Substring(1, employee.Department.Length - 2).Split("][");//多部门拆分
+            ////        root.children = await getDeptTreeAsync(Array.ConvertAll(depts, d => long.Parse(d)));
+            ////    }
+            ////}
+            if (roles.Contains(RoleCodes.Admin)||roles.Contains(RoleCodes.QiGuanAdmin))
+            {
+                root.children = await getDeptTreeAsync(new long[] { 1 });//顶级部门
+            }
+            else//本部门架构
+            {
+                var user = await GetCurrentUserAsync();
+                if (!string.IsNullOrEmpty(user.EmployeeId))
+                {
+                    var employee = await _employeeRepository.GetAsync(user.EmployeeId);
+                    var depts = employee.Department.Substring(1, employee.Department.Length - 2).Split("][");//多部门拆分
+                    root.children = await getDeptTreeAsync(Array.ConvertAll(depts, d => long.Parse(d)));
+                }
+            }
             if (root.children.Count == 0)
             {
                 root.children.Add(new DocNzTreeNode()

@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { DocumentComponent } from './document/document/document.component';
 import { DetailComponent } from './document/document/detail/detail.component';
+import { ACLGuard } from '@delon/acl';
 
 
 const routes: Routes = [
@@ -12,7 +13,7 @@ const routes: Routes = [
         component: OrganizationComponent,
         // canActivate: [AppRouteGuard, ACLGuard],
         // data: { guard: 'CityAdmin' },
-        canActivate: [AppRouteGuard],
+        canActivate: [AppRouteGuard, ACLGuard],
         data: { title: '组织架构' },
     },
     // {
@@ -31,12 +32,12 @@ const routes: Routes = [
     {
         path: 'doc-detail',
         component: DetailComponent,
-        canActivate: [AppRouteGuard],
+        canActivate: [AppRouteGuard, ACLGuard],
     },
     {
         path: 'doc-detail/:id',
         component: DetailComponent,
-        canActivate: [AppRouteGuard],
+        canActivate: [AppRouteGuard, ACLGuard],
     },
 ];
 

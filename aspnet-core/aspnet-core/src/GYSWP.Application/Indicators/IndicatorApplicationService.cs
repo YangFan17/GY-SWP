@@ -282,9 +282,26 @@ namespace GYSWP.Indicators
                 return new PagedResultDto<IndicatorShowDto>(0, null);
             }
             var indicator = _entityRepository.GetAll();
-            var query = from i in indicator
-                        join d in detail on i.Id equals d.IndicatorsId into g
-                        from table in g.DefaultIfEmpty()
+            //var query = from i in indicator
+            //            join d in detail on i.Id equals d.IndicatorsId into g
+            //            from table in g.DefaultIfEmpty()
+            //            select new IndicatorShowDto()
+            //            {
+            //                Id = i.Id,
+            //                CreationTime = i.CreationTime,
+            //                CreatorEmpName = i.CreatorEmpName,
+            //                Title = i.Title,
+            //                Paraphrase = i.Paraphrase,
+            //                MeasuringWay = i.MeasuringWay,
+            //                ExpectedValue = i.ExpectedValue,
+            //                CycleTimeName = i.CycleTime.ToString(),
+            //                DeptName = table.DeptName,
+            //                Status = table.Status,
+            //                CreatorDeptName = i.CreatorDeptName,
+            //                IndicatorDetailId = table.Id
+            //            };
+            var query = from d in detail
+                        join i in indicator on d.IndicatorsId equals i.Id 
                         select new IndicatorShowDto()
                         {
                             Id = i.Id,
@@ -295,10 +312,10 @@ namespace GYSWP.Indicators
                             MeasuringWay = i.MeasuringWay,
                             ExpectedValue = i.ExpectedValue,
                             CycleTimeName = i.CycleTime.ToString(),
-                            DeptName = table.DeptName,
-                            Status = table.Status,
+                            DeptName = d.DeptName,
+                            Status = d.Status,
                             CreatorDeptName = i.CreatorDeptName,
-                            IndicatorDetailId = table.Id
+                            IndicatorDetailId = d.Id
                         };
 
             var count = await query.CountAsync();
@@ -318,22 +335,37 @@ namespace GYSWP.Indicators
         {
             var detail = _indicatorsDetailRepository.GetAll().Where(v => v.Id == input.Id);
             var indicator = _entityRepository.GetAll();
-            var result = from i in indicator
-                        join d in detail on i.Id equals d.IndicatorsId into g
-                        from table in g.DefaultIfEmpty()
-                        select new IndicatorShowDto()
-                        {
-                            Id = i.Id,
-                            Title = i.Title,
-                            Paraphrase = i.Paraphrase,
-                            MeasuringWay = i.MeasuringWay,
-                            ExpectedValue = i.ExpectedValue,
-                            CycleTimeName = i.CycleTime.ToString(),
-                            Status = table.Status,
-                            CreatorDeptName = i.CreatorDeptName,
-                            IndicatorDetailId = table.Id,
-                            ActualValue = table.ActualValue
-                        };
+            //var result = from i in indicator
+            //            join d in detail on i.Id equals d.IndicatorsId into g
+            //            from table in g.DefaultIfEmpty()
+            //            select new IndicatorShowDto()
+            //            {
+            //                Id = i.Id,
+            //                Title = i.Title,
+            //                Paraphrase = i.Paraphrase,
+            //                MeasuringWay = i.MeasuringWay,
+            //                ExpectedValue = i.ExpectedValue,
+            //                CycleTimeName = i.CycleTime.ToString(),
+            //                Status = table.Status,
+            //                CreatorDeptName = i.CreatorDeptName,
+            //                IndicatorDetailId = table.Id,
+            //                ActualValue = table.ActualValue
+            //            };
+            var result = from d in detail
+                         join i in indicator on d.IndicatorsId equals i.Id 
+                         select new IndicatorShowDto()
+                         {
+                             Id = i.Id,
+                             Title = i.Title,
+                             Paraphrase = i.Paraphrase,
+                             MeasuringWay = i.MeasuringWay,
+                             ExpectedValue = i.ExpectedValue,
+                             CycleTimeName = i.CycleTime.ToString(),
+                             Status = d.Status,
+                             CreatorDeptName = i.CreatorDeptName,
+                             IndicatorDetailId = d.Id,
+                             ActualValue = d.ActualValue
+                         };
 
             return await result.FirstOrDefaultAsync();
         }

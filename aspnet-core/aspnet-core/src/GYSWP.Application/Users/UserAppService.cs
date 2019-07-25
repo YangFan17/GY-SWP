@@ -192,26 +192,31 @@ namespace GYSWP.Users
             identityResult.CheckErrors(LocalizationManager);
         }
 
-        public async Task<bool> ChangePassword(ChangePasswordDto input)
+        public async Task<APIResultDto> ChangePassword(ChangePasswordDto input)
+        //public async Task<bool> ChangePassword(ChangePasswordDto input)
         {
             if (_abpSession.UserId == null)
             {
-                throw new UserFriendlyException("Please log in before attemping to change password.");
+                //throw new UserFriendlyException("请先登录");
+                return new APIResultDto { Code = 901, Msg = "请先登录" };
             }
             long userId = _abpSession.UserId.Value;
             var user = await _userManager.GetUserByIdAsync(userId);
             var loginAsync = await _logInManager.LoginAsync(user.UserName, input.CurrentPassword, shouldLockout: false);
             if (loginAsync.Result != AbpLoginResultType.Success)
             {
-                throw new UserFriendlyException("Your 'Existing Password' did not match the one on record.  Please try again or contact an administrator for assistance in resetting your password.");
+                //throw new UserFriendlyException("当前密码错误，请重试");
+                return new APIResultDto { Code = 902, Msg = "当前密码错误，请重试" };
             }
             if (!new Regex(AccountAppService.PasswordRegex).IsMatch(input.NewPassword))
             {
-                throw new UserFriendlyException("Passwords must be at least 8 characters, contain a lowercase, uppercase, and number.");
+                //throw new UserFriendlyException("密码必须至少为8个字符，包含小写，大写字母和数字");
+                return new APIResultDto { Code = 903, Msg = "密码必须至少为8个字符，包含小写，大写字母和数字" };
             }
             user.Password = _passwordHasher.HashPassword(user, input.NewPassword);
             CurrentUnitOfWork.SaveChanges();
-            return true;
+            //return true;
+            return new APIResultDto { Code = 0, Msg = "密码修改成功" };
         }
 
         public async Task<bool> ResetPassword(ResetPasswordDto input)

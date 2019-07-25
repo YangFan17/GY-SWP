@@ -21,20 +21,20 @@ namespace GYSWP.Authorization
                     return new Exception("Don't call this method with a success result!");
                 case AbpLoginResultType.InvalidUserNameOrEmailAddress:
                 case AbpLoginResultType.InvalidPassword:
-                    return new UserFriendlyException(L("LoginFailed"), L("InvalidUserNameOrPassword"));
+                    return new UserFriendlyException("登录失败!", "用户名或密码无效");
                 case AbpLoginResultType.InvalidTenancyName:
-                    return new UserFriendlyException(L("LoginFailed"), L("ThereIsNoTenantDefinedWithName{0}", tenancyName));
+                    return new UserFriendlyException("登录失败!", L("ThereIsNoTenantDefinedWithName{0}", tenancyName));
                 case AbpLoginResultType.TenantIsNotActive:
-                    return new UserFriendlyException(L("LoginFailed"), L("TenantIsNotActive", tenancyName));
+                    return new UserFriendlyException("登录失败!", L("TenantIsNotActive", tenancyName));
                 case AbpLoginResultType.UserIsNotActive:
-                    return new UserFriendlyException(L("LoginFailed"), L("UserIsNotActiveAndCanNotLogin", usernameOrEmailAddress));
+                    return new UserFriendlyException("登录失败!", L("UserIsNotActiveAndCanNotLogin", usernameOrEmailAddress));
                 case AbpLoginResultType.UserEmailIsNotConfirmed:
-                    return new UserFriendlyException(L("LoginFailed"), L("UserEmailIsNotConfirmedAndCanNotLogin"));
+                    return new UserFriendlyException("登录失败!", L("UserEmailIsNotConfirmedAndCanNotLogin"));
                 case AbpLoginResultType.LockedOut:
-                    return new UserFriendlyException(L("LoginFailed"), L("UserLockedOutMessage"));
+                    return new UserFriendlyException("登录失败!", "当前账号被锁定");
                 default: // Can not fall to default actually. But other result types can be added in the future and we may forget to handle it
                     Logger.Warn("Unhandled login fail reason: " + result);
-                    return new UserFriendlyException(L("LoginFailed"));
+                    return new UserFriendlyException("登录失败!");
             }
         }
 
@@ -46,7 +46,7 @@ namespace GYSWP.Authorization
                     throw new Exception("Don't call this method with a success result!");
                 case AbpLoginResultType.InvalidUserNameOrEmailAddress:
                 case AbpLoginResultType.InvalidPassword:
-                    return L("InvalidUserNameOrPassword");
+                    return "用户名或密码无效";
                 case AbpLoginResultType.InvalidTenancyName:
                     return L("ThereIsNoTenantDefinedWithName{0}", tenancyName);
                 case AbpLoginResultType.TenantIsNotActive:
@@ -57,7 +57,7 @@ namespace GYSWP.Authorization
                     return L("UserEmailIsNotConfirmedAndCanNotLogin");
                 default: // Can not fall to default actually. But other result types can be added in the future and we may forget to handle it
                     Logger.Warn("Unhandled login fail reason: " + result);
-                    return L("LoginFailed");
+                    return "登录失败!";
             }
         }
     }

@@ -19,13 +19,14 @@ export class AppMenus {
             text: "基础数据",
             icon: { type: "icon", value: "dingding" },
             reuse: false,
-            acl: ["QiGuanAdmin", "Admin"],// 权限
+            acl: ["QiGuanAdmin", "Admin", "StandardAdmin"],// 权限
             link: "",
             group: true,
             children: [
                 {
                     text: "组织架构",
                     link: "/app/basic/organization",
+                    acl: ["QiGuanAdmin", "Admin"],// 权限
                     reuse: false
                 },
                 {

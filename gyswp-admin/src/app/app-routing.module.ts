@@ -32,7 +32,7 @@ const routes: Routes = [
         path: 'basic',
         loadChildren: './basic-data/basic-data.module#BasicDataModule',
         canActivate: [ACLGuard],
-        data: { guard: ['QiGuanAdmin', 'Admin'] },
+        data: { guard: ['QiGuanAdmin', 'Admin', 'StandardAdmin'] },
       },
       {
         path: 'criterion',

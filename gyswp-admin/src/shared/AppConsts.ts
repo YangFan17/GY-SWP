@@ -18,7 +18,7 @@ export class AppConsts {
   };
 
   static readonly localization = {
-    defaultLocalizationSourceName: 'GYSWP',
+    defaultLocalizationSourceName: 'GYSWP-zh-Hans',
   };
 
   static readonly authorization = {

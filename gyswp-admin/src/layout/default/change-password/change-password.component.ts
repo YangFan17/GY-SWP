@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms'
 import { CommonService } from 'services';
 import { MessageService } from 'abp-ng2-module/dist/src/message/message.service';
 import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
+import { ApiResult } from 'entities';
 
 //import * as _ from "lodash";
 
@@ -56,15 +57,16 @@ export class ChangePasswordComponent implements OnInit {
         for (const i in this.validateForm.controls) {
             this.validateForm.controls[i].markAsDirty();
         }
-        this.isConfirmLoading = true
+        this.isConfirmLoading = true;
         if (this.validateForm.valid) {
-            this._commonService.changePassword(this.orgPassword, this.newPassword).subscribe((isSuccess: boolean) => {
-                if (isSuccess === true) {
-                    this.notify.success('修改密码成功');
+            this._commonService.changePassword(this.orgPassword, this.newPassword).subscribe((res: ApiResult) => {
+                this.isConfirmLoading = false;
+                if (res.code == 0) {
+                    this.notify.success('修改密码成功', '');
                     this.close();
                     this.modalSave.emit(null);
                 } else {
-                    this.message.error('修改密码失败');
+                    this.message.error(res.msg, '');
                     //this.close();
                     //this.modalSave.emit(null);
                 }

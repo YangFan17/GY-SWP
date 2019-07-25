@@ -2,7 +2,7 @@
 {
     public class GYSWPConsts
     {
-        public const string LocalizationSourceName = "GYSWP";
+        public const string LocalizationSourceName = "GYSWP-zh-Hans";
 
         public const string ConnectionStringName = "Default";
 
@@ -16,19 +16,24 @@
         /// </summary>
         public const string Admin = "Admin";
 
-        ///// <summary>
-        ///// 市级管理员
-        ///// </summary>
-        //public const string CityAdmin = "CityAdmin";
+        /// <summary>
+        /// 员工
+        /// </summary>
+        public const string Employee = "Employee";
 
-        ///// <summary>
-        ///// 区县管理员
-        ///// </summary>
-        //public const string DistrictAdmin = "DistrictAdmin";
+        /// <summary>
+        /// 标准化管理员
+        /// </summary>
+        public const string StandardAdmin = "StandardAdmin";
 
-        ///// <summary>
-        ///// 企管人员
-        ///// </summary>
-        //public const string EnterpriseAdmin = "EnterpriseAdmin";
+        /// <summary>
+        /// 企管科管理员
+        /// </summary>
+        public const string QiGuanAdmin = "QiGuanAdmin";
+
+        /// <summary>
+        /// 县局管理员
+        /// </summary>
+        public const string CountyAdmin = "CountyAdmin";
     }
 }

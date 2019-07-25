@@ -71,8 +71,8 @@ namespace GYSWP.Controllers
         {
             var loginResult = await GetLoginResultAsync(
                 model.UserNameOrEmailAddress,
-                //model.Password,
-                "123qwe",
+                model.Password,
+                //"123qwe",
                 GetTenancyNameOrNull()
             );
 
