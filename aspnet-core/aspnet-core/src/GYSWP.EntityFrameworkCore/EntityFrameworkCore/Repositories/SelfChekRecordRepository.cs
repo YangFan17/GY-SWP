@@ -77,7 +77,9 @@ namespace GYSWP.EntityFrameworkCore.Repositories
                         ,A.Position
                         ,A.ECNum
                         ,ISNULL(B.ClickRate, 0) AS ClickRate
-                        ,CASE WHEN A.ECNum = 0 THEN 0 ELSE C.SNum/(A.ECNum*1.00) END AS SurfaceRate
+                        ,CASE WHEN (A.ECNum = 0) THEN 0 
+                        WHEN C.SNum/(A.ECNum*1.00) = NULL THEN 0
+						ELSE 0 END AS SurfaceRate
                         ,ISNULL(D.ClickNum,0) AS ClickNum 
                         FROM(SELECT o.Id AS DeptId, em.Id, em.Name, em.Position, o.DepartmentName, COUNT(ec.Id) AS ECNum 
 	                        FROM [dbo].[Employees] em
@@ -123,7 +125,7 @@ namespace GYSWP.EntityFrameworkCore.Repositories
                         entity.EmployeePosition = dataReader["Position"].ToString();
                         entity.DeptName = dataReader["DepartmentName"].ToString();
                         entity.PostUseNum = (int)dataReader["ECNum"];
-                        entity.SurfaceRate = (decimal)dataReader["SurfaceRate"]; 
+                        entity.SurfaceRate = (decimal)dataReader["SurfaceRate"];
                         entity.ClickRate = (decimal)dataReader["ClickRate"];
                         entity.ClickNum = (int)dataReader["ClickNum"];
                         result.Add(entity);
