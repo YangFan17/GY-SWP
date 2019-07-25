@@ -248,5 +248,23 @@ namespace GYSWP.DocAttachments
         //        }).FirstOrDefaultAsync();
         //    return entity;
         //}
+
+        /// <summary>
+        /// 获取预览文件路径
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<APIResultDto> GetPreviewDocByIdAsync(EntityDto<Guid> input)
+        {
+            string path = await _entityRepository.GetAll().Where(v => v.Type == GYEnums.AttachmentType.标准附件 && v.BLL == input.Id).Select(v => v.Path).FirstOrDefaultAsync();
+            if (!string.IsNullOrEmpty(path))
+            {
+                return new APIResultDto { Code = 0, Data = path };
+            }
+            else
+            {
+                return new APIResultDto { Code = 999, Msg = "暂无数据" };
+            }
+        }
     }
 }

@@ -323,4 +323,11 @@ export class WorkCriterionService {
             return Attachment.fromJSArray(data);
         }));
     }
+
+    getPreviewDocByIdAsync(id: string): Observable<ApiResult> {
+        let url_ = "/api/services/app/DocAttachment/GetPreviewDocByIdAsync";
+        return this._commonhttp.get(url_, { id: id }).pipe(map(data => {
+            return ApiResult.fromJS(data);
+        }));
+    }
 }

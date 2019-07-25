@@ -116,7 +116,7 @@ export class AppMenus {
                     reuse: false
                 },
                 {
-                    text: "考核统计",
+                    text: "标准统计",
                     link: "/app/reports/supervise",
                     reuse: false
                 },
