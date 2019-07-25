@@ -68,7 +68,8 @@ export class AdviseComponent extends AppComponentBase implements OnInit {
   }
 
   reset() {
-    this.search.month = '';
+    this.search.month = this.date.getFullYear() + '-' + (this.date.getMonth() + 1) + '-1';
+    this.date = new Date();
     this.refreshData();
   }
 

@@ -70,7 +70,8 @@ export class StandardrevisionComponent extends AppComponentBase implements OnIni
   }
 
   reset() {
-    this.search.month = '';
+    this.date = new Date();
+    this.search.month = this.date.getFullYear() + '-' + (this.date.getMonth() + 1) + '-1';
     this.refreshData();
   }
 
