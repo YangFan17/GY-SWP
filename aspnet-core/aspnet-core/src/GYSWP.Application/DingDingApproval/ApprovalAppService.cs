@@ -312,6 +312,47 @@ namespace GYSWP.DingDingApproval
             }
         }
 
+        [AbpAllowAnonymous]
+        public async Task<APIResultDto> SubmitAdviceApproval(string AdviseName, string EmployeeName, DateTime CreationTime, string CurrentSituation, string Solution)
+        {
+            //string accessToken = "5febf1152a49339ab414ce9cb11dfa66";
+            DingDingAppConfig ddConfig = _dingDingAppService.GetDingDingConfigByApp(DingDingAppEnum.标准化工作平台);
+            string accessToken = _dingDingAppService.GetAccessToken(ddConfig.Appkey, ddConfig.Appsecret);
+            //var user = await GetCurrentUserAsync();
+            var dept = await _employeeRepository.GetAll().Where(v => v.Id == "1926112826844702").Select(v => v.Department).FirstOrDefaultAsync();
+            var deptId = dept.Replace('[', ' ').Replace(']', ' ').Trim();
+            var url = string.Format("https://oapi.dingtalk.com/topapi/processinstance/create?access_token={0}", accessToken);
+            SubmitApprovalEntity request = new SubmitApprovalEntity();
+            request.process_code = "PROC-A0FDBDA5-BBC6-4004-B72B-88AFC92DC427";
+            request.originator_user_id = "1926112826844702";
+            request.agent_id = ddConfig.AgentID;
+            request.dept_id = Convert.ToInt32(deptId);
+            List<Approval> approvalList = new List<Approval>();
+            approvalList.Add(new Approval() { name = "建议名称", value = AdviseName });
+            approvalList.Add(new Approval() { name = "建议人", value = EmployeeName });
+            approvalList.Add(new Approval() { name = "申报日期", value = CreationTime.ToString("yyyy-MM-dd HH:mm") });
+            approvalList.Add(new Approval() { name = "现状描述", value = CurrentSituation });
+            approvalList.Add(new Approval() { name = "对策建议", value = Solution });
+            request.form_component_values = approvalList;
+            ApprovalReturn approvalReturn = new ApprovalReturn();
+            var jsonString = SerializerHelper.GetJsonString(request, null);
+            using (MemoryStream ms = new MemoryStream())
+            {
+                var bytes = Encoding.UTF8.GetBytes(jsonString);
+                ms.Write(bytes, 0, bytes.Length);
+                ms.Seek(0, SeekOrigin.Begin);
+                approvalReturn = Post.PostGetJson<ApprovalReturn>(url, null, ms);
+            };
+            if (approvalReturn.errcode == 0)
+            {
+                return new APIResultDto() { Code = 0, Msg = "提交成功", Data = approvalReturn.process_instance_id };
+            }
+            else
+            {
+                return new APIResultDto() { Code = 4, Msg = "提交失败", Data = approvalReturn.errmsg };
+            }
+        }
+
         /// <summary>
         /// 发送制定标准（企管编号盖章）钉钉工作通知
         /// </summary>
