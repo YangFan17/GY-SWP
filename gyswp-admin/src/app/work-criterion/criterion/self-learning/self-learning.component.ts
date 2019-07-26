@@ -222,7 +222,7 @@ export class SelfLearningComponent extends AppComponentBase implements OnInit {
             .finally(() => { this.saving = false; })
             .subscribe(res => {
                 if (res.code == 0) {
-                    this.notify.info('保存成功！', '');
+                    this.notify.success('保存成功！', '');
                     this.isConfirm = true;
                 }
             });
@@ -309,7 +309,7 @@ export class SelfLearningComponent extends AppComponentBase implements OnInit {
                 nzOnOk: () => {
                     this.workCriterionService.deleteClauseById(item.id, this.docId, this.applyId).subscribe(res => {
                         if (res.code == 0) {
-                            this.notify.info('删除申请提交成功！', '');
+                            this.notify.success('删除申请提交成功！', '');
                         } else if (res.code == 2) {
                             this.notify.warn('重复删除，请前往‘已修订列表’进行确认！', '');
                         } else if (res.code == 3) {

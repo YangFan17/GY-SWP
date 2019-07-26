@@ -36,7 +36,7 @@ export class DocApplicationComponent extends ModalComponentBase implements OnIni
             .finally(() => { this.saving = false; })
             .subscribe(res => {
                 if (res.code == 0) {
-                    this.notify.info('申请已提交！', '');
+                    this.notify.success('申请已提交！', '');
                     this.success(true);
                 } else {
                     this.notify.error('申请异常，请重试！', '');

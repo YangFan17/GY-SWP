@@ -45,7 +45,7 @@ export class RolesComponent extends PagedListingComponentBase<RoleDto> {
           this.rolesService
             .delete(entity.id)
             .finally(() => {
-              this.notify.info('Deleted Role: ' + entity.displayName);
+              this.notify.success('Deleted Role: ' + entity.displayName);
               this.refresh();
             })
             .subscribe(() => { });

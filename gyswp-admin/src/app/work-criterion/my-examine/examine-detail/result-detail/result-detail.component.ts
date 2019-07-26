@@ -89,7 +89,7 @@ export class ResultDetailComponent extends ModalComponentBase implements OnInit 
                     .subscribe(res => {
                         if (res.code == 0) {
                             this.examineResult.id = res.data;
-                            this.notify.info('保存成功！', '');
+                            this.notify.success('保存成功！', '');
                             this.success(true);
                         } else {
                             this.notify.error('保存失败，请重试！', '');

@@ -53,7 +53,7 @@ export class RevisedListDetailComponent extends ModalComponentBase {
         this.workCriterionService.createOrUpdateRevisionAsync(this.clause)
             .finally(() => { this.saving = false; })
             .subscribe(res => {
-                this.notify.info('保存成功！', '');
+                this.notify.success('保存成功！', '');
                 if (res.code == 0) {
                     this.clause.id = res.data;
                     this.success(true);

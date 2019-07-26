@@ -48,7 +48,7 @@ export class IndicatorDetailComponent extends AppComponentBase implements OnInit
                 this.workCriterionService.changeStatusByIdAsync(input)
                     .finally(() => { this.saving = false; })
                     .subscribe(res => {
-                        this.notify.info('保存成功！', '');
+                        this.notify.success('保存成功！', '');
                         if (res.code == 0) {
                             this.return();
                         }

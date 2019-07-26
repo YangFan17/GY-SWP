@@ -62,7 +62,7 @@ export class ListComponent extends PagedListingComponentBase<any>{
 
     create() {
         if (!this.selectedCategory || !this.selectedCategory.id) {
-            this.notify.info('请先选择分类');
+            this.notify.success('请先选择分类');
             return;
         }
         this.router.navigate(['app/basic/doc-detail', { cid: this.selectedCategory.id, cname: this.selectedCategory.name, deptId: this.dept.id, deptName: this.dept.name }]);

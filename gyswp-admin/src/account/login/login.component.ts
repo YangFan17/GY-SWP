@@ -32,7 +32,7 @@ export class LoginComponent extends AppComponentBase implements OnInit {
   }
   ngOnInit(): void {
     this.titleSrvice.setTitle('标准化工作平台');
-    this.qrcode();
+    // this.qrcode();
   }
 
   get multiTenancySideIsTeanant(): boolean {

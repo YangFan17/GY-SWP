@@ -75,7 +75,7 @@ export class DraftDocComponent extends AppComponentBase implements OnInit {
         this.workCriterionService.createOrUpdateDocRevisionAsync(this.document)
             .finally(() => { this.saving = false; })
             .subscribe(res => {
-                this.notify.info('保存成功！', '');
+                this.notify.success('保存成功！', '');
                 if (res.data) {
                     this.document = res.data;
                     this.document.categoryId = res.data.categoryId.toString();
@@ -93,7 +93,7 @@ export class DraftDocComponent extends AppComponentBase implements OnInit {
                 nzOnOk: () => {
                     this.workCriterionService.saveDraftDoc(this.applyId, this.id).finally(() => { this.saving = false; }).subscribe(res => {
                         if (res.code == 0) {
-                            this.notify.info('制订申请提交成功！', '');
+                            this.notify.success('制订申请提交成功！', '');
                             this.modal.closeAll();
                             this.return();
                         }

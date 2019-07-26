@@ -63,7 +63,7 @@ export class UsersComponent extends PagedListingComponentBase<UserDto> {
       (result: boolean) => {
         if (result) {
           this._userService.delete(entity.id).subscribe(() => {
-            this.notify.info('已删除用户: ' + entity.name);
+            this.notify.success('已删除用户: ' + entity.name);
             this.refresh();
           });
         }
@@ -74,7 +74,7 @@ export class UsersComponent extends PagedListingComponentBase<UserDto> {
   synchroDingUser(): void {
     this.syncDataLoading = true;
     this._userService.synchroDingUser().subscribe(() => {
-      this.notify.info('同步成功！', '');
+      this.notify.success('同步成功！', '');
       this.syncDataLoading = false;
       this.refresh();
     });

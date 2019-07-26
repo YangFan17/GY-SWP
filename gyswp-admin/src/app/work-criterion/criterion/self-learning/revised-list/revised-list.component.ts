@@ -76,7 +76,7 @@ export class RevisedListComponent extends ModalComponentBase {
                 nzOnOk: () => {
                     this.workCriterionService.removeRevisionById(id).subscribe(res => {
                         if (res.code == 0) {
-                            this.notify.info('移除成功！', '');
+                            this.notify.success('移除成功！', '');
                             this.getClauseRevisionListById();
                         }
                         else {
@@ -95,7 +95,7 @@ export class RevisedListComponent extends ModalComponentBase {
                 nzOnOk: () => {
                     this.workCriterionService.saveRevised(this.applyId, this.docId).finally(() => { this.saving = false; }).subscribe(res => {
                         if (res.code == 0) {
-                            this.notify.info('制修订申请提交成功！', '');
+                            this.notify.success('制修订申请提交成功！', '');
                             this.success(true);
                         }
                         else {

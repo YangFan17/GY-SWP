@@ -46,7 +46,7 @@ export class TenantRegisterComponent extends AppComponentBase
         }),
       )
       .subscribe(result => {
-        this.notify.info(this.l('SavedSuccessfully'));
+        this.notify.success(this.l('SavedSuccessfully'));
 
         this.saving = true;
         abp.multiTenancy.setTenantIdCookie(result.id);

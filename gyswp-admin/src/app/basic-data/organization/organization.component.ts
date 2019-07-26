@@ -90,7 +90,7 @@ export class OrganizationComponent extends AppComponentBase implements OnInit {
     syncData() {
         this.syncDataLoading = true;
         this.basicDataService.synchronousOrganizationAsync().subscribe(() => {
-            this.notify.info('同步成功！', '');
+            this.notify.success('同步成功！', '');
             this.syncDataLoading = false;
             this.getTrees();
             this.employeeList.refreshData(null);

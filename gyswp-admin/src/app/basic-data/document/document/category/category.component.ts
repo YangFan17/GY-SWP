@@ -181,7 +181,7 @@ export class CategoryComponent extends AppComponentBase implements OnInit {
                         this.dropdown.close();
                     }
                     if (res.code == 0) {
-                        this.notify.info('删除成功！', '');
+                        this.notify.success('删除成功！', '');
                         this.getTreeAsync();
                     } else {
                         this.notify.info('请确保当前分类下无子类或文件后再删除！', '');

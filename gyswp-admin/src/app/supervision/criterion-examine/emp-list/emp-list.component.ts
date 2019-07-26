@@ -156,7 +156,7 @@ export class EmpListComponent extends AppComponentBase implements OnInit {
 
     examineRecord() {
         if (!this.dept.id) {
-            this.notify.info('请选择考核部门');
+            this.notify.success('请选择考核部门');
         }
         this.router.navigate(['app/supervision/record', this.dept.id, this.dept.name]);
     }

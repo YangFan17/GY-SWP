@@ -42,7 +42,7 @@ export class EditCategoryComponent extends ModalFormComponentBase<Category> impl
         this.basicDataService.createOrUpdateCategory(this.category)
             .finally(() => { this.saving = false; })
             .subscribe(res => {
-                this.notify.info(this.l('SavedSuccessfully'), '');
+                this.notify.success('保存成功', '');
                 this.success(true);
             });
     }

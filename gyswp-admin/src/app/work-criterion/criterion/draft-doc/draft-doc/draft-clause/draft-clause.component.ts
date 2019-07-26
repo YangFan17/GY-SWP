@@ -111,7 +111,7 @@ export class DraftClauseComponent extends AppComponentBase implements OnInit {
             nzOnOk: () => {
                 this.workCriterionService.removeDraftRevisionById(item.id).subscribe(res => {
                     if (res.code == 0) {
-                        this.notify.info('删除成功！', '');
+                        this.notify.success('删除成功！', '');
                         this.getClauseList();
                     } else {
                         this.notify.warn('请确保当前条款下无子项条款后再删除！', '');

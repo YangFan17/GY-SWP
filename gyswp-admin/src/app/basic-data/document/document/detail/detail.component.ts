@@ -99,7 +99,7 @@ export class DetailComponent extends AppComponentBase implements OnInit {
         this.basicDataService.createOrUpdateDocumentAsync(this.document, this.newFileList)
             .finally(() => { this.saving = false; })
             .subscribe(res => {
-                this.notify.info('保存成功！', '');
+                this.notify.success('保存成功！', '');
                 if (res.data) {
                     this.document = res.data;
                     this.id = this.document.id;

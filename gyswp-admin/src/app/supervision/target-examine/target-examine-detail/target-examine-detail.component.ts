@@ -51,7 +51,7 @@ export class TargetExamineDetailComponent extends AppComponentBase implements On
                 this.supervisionService.createOrUpdateIndicatorAsync(this.indicator, this.deptInfo)
                     .finally(() => { this.saving = false; })
                     .subscribe(res => {
-                        this.notify.info('发布成功！', '');
+                        this.notify.success('发布成功！', '');
                         if (res.code == 0) {
                             this.indicator.id = res.data;
                             this.id = this.indicator.id;

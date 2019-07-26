@@ -73,10 +73,10 @@ export class ConfirmLearningComponent extends ModalComponentBase {
             .finally(() => { this.saving = false; })
             .subscribe(res => {
                 if (res.code == 0) {
-                    this.notify.info('已学习！', '');
+                    this.notify.success('已学习！', '');
                     this.success(true);
                 } else {
-                    this.notify.info('请重试', '');
+                    this.notify.error('请重试', '');
                     this.success(true);
                 }
             });

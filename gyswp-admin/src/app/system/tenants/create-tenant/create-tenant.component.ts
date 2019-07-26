@@ -34,7 +34,7 @@ export class CreateTenantComponent
         this.saving = false;
       })
       .subscribe(() => {
-        this.notify.info(this.l('SavedSuccessfully'));
+        this.notify.success(this.l('SavedSuccessfully'));
         this.success();
       });
   }

@@ -54,7 +54,7 @@ export class CreateRoleComponent extends ModalComponentBase implements OnInit {
         this.saving = false;
       })
       .subscribe(() => {
-        this.notify.info('保存成功');
+        this.notify.success('保存成功');
         this.success();
       });
   }

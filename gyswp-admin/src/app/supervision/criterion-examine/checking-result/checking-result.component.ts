@@ -60,7 +60,7 @@ export class CheckingResultComponent extends ModalComponentBase implements OnIni
             .finally(() => { this.saving = false; })
             .subscribe(res => {
                 if (res.code == 0) {
-                    this.notify.info('保存成功！', '');
+                    this.notify.success('保存成功！', '');
                     this.success(true);
                 } else {
                     this.notify.error('保存失败，请重试！', '');

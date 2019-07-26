@@ -69,7 +69,7 @@ export class EditRoleComponent extends ModalComponentBase implements OnInit {
         this.saving = false;
       })
       .subscribe(() => {
-        this.notify.info(this.l('SavedSuccessfully'));
+        this.notify.success(this.l('SavedSuccessfully'));
         this.success();
       });
   }
