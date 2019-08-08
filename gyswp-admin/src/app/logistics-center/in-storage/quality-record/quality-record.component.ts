@@ -5,14 +5,13 @@ import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     moduleId: module.id,
-    selector: 'in-storage-record',
-    templateUrl: 'in-storage-record.component.html'
+    selector: 'quality-record',
+    templateUrl: 'quality-record.component.html'
 })
-export class InStorageRecordComponent extends PagedListingComponentBase<any>{
+export class QualityRecordComponent extends PagedListingComponentBase<any>{
     exportLoading = false;
     search = { beginTime: '', endTime: '' };
     timeFormat = 'yyyy-MM-dd';
-    // dateRange = [addDays(new Date(), -1 * (new Date()).getDay() + 1), new Date()];
     dateRange: Date[] = [];
     constructor(injector: Injector
         , private logisticService: LogisticService
@@ -35,7 +34,6 @@ export class InStorageRecordComponent extends PagedListingComponentBase<any>{
         this.search.beginTime = null;
         this.search.endTime = null;
         this.dateRange = [];
-        // this.dateRange = [addDays(new Date(), -1 * (new Date()).getDay() + 1), new Date()]
         this.refreshData();
     }
 
@@ -46,7 +44,7 @@ export class InStorageRecordComponent extends PagedListingComponentBase<any>{
         params.SkipCount = request.skipCount;
         params.MaxResultCount = request.maxResultCount;
         this.isTableLoading = false;
-        this.logisticService.getPagedInStorageRecordAsync(params)
+        this.logisticService.getPagedQualityRecordAsync(params)
             .finally(() => {
                 finishedCallback();
             })
@@ -76,7 +74,7 @@ export class InStorageRecordComponent extends PagedListingComponentBase<any>{
         let params: any = {};
         params.BeginTime = this.search.beginTime;
         params.EndTime = this.search.endTime;
-        this.logisticService.exportInstoreRecord(params).subscribe((data => {
+        this.logisticService.exportQualityRecord(params).subscribe((data => {
             if (data.code == 0) {
                 var url = AppConsts.remoteServiceBaseUrl + data.data;
                 document.getElementById('exportUrl').setAttribute('href', url);

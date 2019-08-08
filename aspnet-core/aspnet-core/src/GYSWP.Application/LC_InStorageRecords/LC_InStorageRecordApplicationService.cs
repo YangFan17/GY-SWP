@@ -21,8 +21,12 @@ using Abp.Linq.Extensions;
 using GYSWP.LC_InStorageRecords;
 using GYSWP.LC_InStorageRecords.Dtos;
 using GYSWP.LC_InStorageRecords.DomainService;
-
-
+using GYSWP.Dtos;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using GYSWP.Helpers;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 
 namespace GYSWP.LC_InStorageRecords
 {
@@ -33,7 +37,7 @@ namespace GYSWP.LC_InStorageRecords
     public class LC_InStorageRecordAppService : GYSWPAppServiceBase, ILC_InStorageRecordAppService
     {
         private readonly IRepository<LC_InStorageRecord, Guid> _entityRepository;
-
+        private readonly IHostingEnvironment _hostingEnvironment;
         private readonly ILC_InStorageRecordManager _entityManager;
 
         /// <summary>
@@ -41,11 +45,13 @@ namespace GYSWP.LC_InStorageRecords
         ///</summary>
         public LC_InStorageRecordAppService(
         IRepository<LC_InStorageRecord, Guid> entityRepository
-        ,ILC_InStorageRecordManager entityManager
+        , IHostingEnvironment hostingEnvironment
+        , ILC_InStorageRecordManager entityManager
         )
         {
             _entityRepository = entityRepository; 
              _entityManager=entityManager;
+            _hostingEnvironment = hostingEnvironment;
         }
 
 
@@ -54,7 +60,7 @@ namespace GYSWP.LC_InStorageRecords
         ///</summary>
         /// <param name="input"></param>
         /// <returns></returns>
-		 
+
         public async Task<PagedResultDto<LC_InStorageRecordListDto>> GetPaged(GetLC_InStorageRecordsInput input)
 		{
             var query = _entityRepository.GetAll().WhereIf(input.BeginTime.HasValue, c => c.CreationTime >= input.BeginTime && c.CreationTime < input.EndTime.Value.ToDayEnd());
@@ -64,7 +70,7 @@ namespace GYSWP.LC_InStorageRecords
             var count = await query.CountAsync();
 
 			var entityList = await query
-					.OrderBy(input.Sorting).AsNoTracking()
+					.OrderByDescending(v=>v.CreationTime).AsNoTracking()
 					.PageBy(input)
 					.ToListAsync();
 
@@ -193,18 +199,85 @@ LC_InStorageRecordEditDto editDto;
 		}
 
 
-		/// <summary>
-		/// 导出LC_InStorageRecord为excel表,等待开发。
-		/// </summary>
-		/// <returns></returns>
-		//public async Task<FileDto> GetToExcel()
-		//{
-		//	var users = await UserManager.Users.ToListAsync();
-		//	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
-		//	await FillRoleNames(userListDtos);
-		//	return _userListExcelExporter.ExportToFile(userListDtos);
-		//}
+        /// <summary>
+        /// 导出入库记录明细表
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<APIResultDto> ExportInStorageRecord(GetLC_InStorageRecordsInput input)
+        {
+            try
+            {
+                var exportData = await GetInStorageRecordForExcel(input);
+                var result = new APIResultDto();
+                result.Code = 0;
+                result.Data = CreateInStorageRecordExcel("入库记录.xlsx", exportData);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Logger.ErrorFormat("ExportInStorageRecord errormsg{0} Exception{1}", ex.Message, ex);
+                return new APIResultDto() { Code = 901, Msg = "网络忙...请待会儿再试！" };
 
+            }
+        }
+
+        private async Task<List<LC_InStorageRecordListDto>> GetInStorageRecordForExcel(GetLC_InStorageRecordsInput input)
+        {
+            var query = _entityRepository.GetAll().WhereIf(input.BeginTime.HasValue, c => c.CreationTime >= input.BeginTime && c.CreationTime < input.EndTime.Value.ToDayEnd());
+            var entityList = await query
+                   .OrderByDescending(v => v.CreationTime).AsNoTracking()
+                    .ToListAsync();
+            var entityListDtos = entityList.MapTo<List<LC_InStorageRecordListDto>>();
+            return entityListDtos;
+        }
+
+        /// <summary>
+        /// 创建入库记录表
+        /// </summary>
+        /// <param name="fileName">表名</param>
+        /// <param name="data">表数据</param>
+        /// <returns></returns>
+        private string CreateInStorageRecordExcel(string fileName, List<LC_InStorageRecordListDto> data)
+        {
+            var fullPath = ExcelHelper.GetSavePath(_hostingEnvironment.WebRootPath) + fileName;
+            using (var fs = new FileStream(fullPath, FileMode.Create, FileAccess.Write))
+            {
+                IWorkbook workbook = new XSSFWorkbook();
+                ISheet sheet = workbook.CreateSheet("InStorageRecord");
+                var rowIndex = 0;
+                IRow titleRow = sheet.CreateRow(rowIndex);
+                string[] titles = { "品名规格", "车号", "发货单位", "单据号", "应收数量", "实收数量", "差损情况", "质量", "收货人", "备注", "创建人", "创建时间" };
+                var fontTitle = workbook.CreateFont();
+                fontTitle.IsBold = true;
+                for (int i = 0; i < titles.Length; i++)
+                {
+                    var cell = titleRow.CreateCell(i);
+                    cell.CellStyle.SetFont(fontTitle);
+                    cell.SetCellValue(titles[i]);
+                }
+                var font = workbook.CreateFont();
+                foreach (var item in data)
+                {
+                    rowIndex++;
+                    IRow row = sheet.CreateRow(rowIndex);
+                    ExcelHelper.SetCell(row.CreateCell(0), font, item.Name);
+                    ExcelHelper.SetCell(row.CreateCell(1), font, item.CarNo );
+                    ExcelHelper.SetCell(row.CreateCell(2), font, item.DeliveryUnit);
+                    ExcelHelper.SetCell(row.CreateCell(3), font, item.BillNo);
+                    ExcelHelper.SetCell(row.CreateCell(4), font, item.ReceivableAmount.ToString());
+                    ExcelHelper.SetCell(row.CreateCell(5), font, item.ActualAmount.ToString());
+                    ExcelHelper.SetCell(row.CreateCell(6), font, item.DiffContent);
+                    ExcelHelper.SetCell(row.CreateCell(7), font, item.Quality);
+                    ExcelHelper.SetCell(row.CreateCell(8), font, item.ReceiverName);
+                    ExcelHelper.SetCell(row.CreateCell(9), font, item.Remark);
+                    ExcelHelper.SetCell(row.CreateCell(10), font, item.EmployeeName);
+                    ExcelHelper.SetCell(row.CreateCell(11), font, item.CreationTime.ToString("yyyy-MM-dd hh:mm:ss"));
+                }
+                workbook.Write(fs);
+            }
+            return "/files/downloadtemp/" + fileName;
+        }
     }
 }
 
