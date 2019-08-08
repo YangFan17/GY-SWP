@@ -151,11 +151,12 @@ export class CategoryComponent extends AppComponentBase implements OnInit {
         this.modalHelper
             .open(UploadTxtComponent, { deptId: this.deptId, categoryId: this.rkeyNode.key, categoryName: this.rkeyNode.title }, 'md', {
                 nzMask: true,
-                nzClosable: false,
+                nzClosable: true,
                 nzMaskClosable: false,
             })
             .subscribe(isSave => {
                 if (isSave) {
+                    // this.getTreeAsync(this.deptId);
                 }
             });
     }

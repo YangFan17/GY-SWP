@@ -57,12 +57,11 @@ namespace GYSWP.LC_InStorageRecords
 		 
         public async Task<PagedResultDto<LC_InStorageRecordListDto>> GetPaged(GetLC_InStorageRecordsInput input)
 		{
+            var query = _entityRepository.GetAll().WhereIf(input.BeginTime.HasValue, c => c.CreationTime >= input.BeginTime && c.CreationTime < input.EndTime.Value.ToDayEnd());
+            // TODO:根据传入的参数添加过滤条件
 
-		    var query = _entityRepository.GetAll();
-			// TODO:根据传入的参数添加过滤条件
-            
 
-			var count = await query.CountAsync();
+            var count = await query.CountAsync();
 
 			var entityList = await query
 					.OrderBy(input.Sorting).AsNoTracking()

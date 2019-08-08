@@ -520,6 +520,7 @@ namespace GYSWP.Documents
 
 
         #region 文档导入
+        [AbpAllowAnonymous]
         public async Task<APIResultDto> DocumentReadAsync(DocumentReadInput input)
         {
             try

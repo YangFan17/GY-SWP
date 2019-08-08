@@ -47,7 +47,7 @@
                 </button>
             </div>
         </div>
-        <nz-table #expandTable [nzData]="listOfMapData" [nzShowPagination]="false">
+        <nz-table #expandTable [nzData]="listOfMapData" [nzShowPagination]="false" [nzFrontPagination]="false">
             <thead>
                 <tr>
                     <th *ngIf="!isConfirm && !editMode && !isRevisionWaitTime" nzWidth="50px">

@@ -116,6 +116,7 @@ namespace GYSWP.Clauses
                 Content =v.Content,
                 ParentId =v.ParentId
             }).OrderBy(v=>v.ClauseNo).ToListAsync();
+            clause.Sort(Factory.Comparer);
             return GetChildren(null, clause);
         }
 

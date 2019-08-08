@@ -11,49 +11,53 @@ import { Validators } from '@angular/forms';
     templateUrl: 'upload-txt.component.html'
 })
 export class UploadTxtComponent extends ModalFormComponentBase<any> implements OnInit {
-    postUrl: string = '/GYSWPFile/DocumentReadAsync';
     @Input() categoryId: any;
     @Input() deptId: any;
     @Input() categoryName: any;
     uploading = false;
     address: string;
+    postUrl: string = '';
     constructor(
         injector: Injector
         , private basicDataService: BasicDataService
     ) {
         super(injector);
+        this.postUrl = '/GYSWPFile/DocFilesTxTPostsAsync?categoryId=' + this.categoryId;
     }
 
     ngOnInit() {
-        this.validateForm = this.formBuilder.group({
-            address: ['', [Validators.required]]
-        });
+        this.postUrl = '/GYSWPFile/DocFilesTxTPostsAsync?categoryId=' + this.categoryId;
+        // this.validateForm = this.formBuilder.group({
+        //     address: ['', [Validators.required]]
+        // });
         // this.setFormValues(this.address);
     }
 
-    // handleChange = (info: { file: UploadFile }): void => {
-    //     this.uploading = true;
-    //     if (info.file.status === 'error') {
-    //         this.notify.error('上传文件异常，请重试');
-    //         this.uploading = false;
-    //     }
-    //     if (info.file.status === 'done') {
-    //         this.uploading = false;
-    //         var res = info.file.response.result;
-    //         if (res.code == 0) {
-    //             this.notify.success('上传文件成功');
-    //         } else {
-    //             this.notify.error(res.msg);
-    //         }
-    //     }
-    // }
+    handleChange = (info: { file: UploadFile }): void => {
+        this.uploading = true;
+        if (info.file.status === 'error') {
+            this.notify.error('上传文件异常，请重试');
+            this.uploading = false;
+        }
+        if (info.file.status === 'done') {
+            this.uploading = false;
+            var res = info.file.response.result;
+            if (res.code == 0) {
+                this.notify.success('上传文件成功');
+                // this.success(true);
+                this.modalRef.close();
+            } else {
+                this.notify.error(res.msg);
+            }
+        }
+    }
 
     protected submitExecute(finisheCallback: Function): void {
         let params: any = {};
         params.path = this.address;
         params.categoryId = this.categoryId;
         // params.deptId = this.deptId;
-        console.log(params);
+        // console.log(params);
         this.basicDataService.documentReadAsync(params)
             .finally(() => { this.saving = false; })
             .subscribe(res => {

@@ -39,6 +39,7 @@ using GYSWP.LC_UseOutStorages;
 using GYSWP.LC_ScanRecords;
 using GYSWP.PositionInfos;
 using GYSWP.MainPointsRecords;
+using GYSWP.LC_MildewSummers;
 
 namespace GYSWP.EntityFrameworkCore
 {
@@ -91,5 +92,6 @@ namespace GYSWP.EntityFrameworkCore
         public virtual DbSet<LC_TeamSafetyActivity> LC_TeamSafetyActivitys { get; set; }
         public virtual DbSet<LC_UseOutStorage> LC_UseOutStorages { get; set; }
         public virtual DbSet<LC_ScanRecord> LC_ScanRecords { get; set; }
+        public virtual DbSet<LC_MildewSummer> LC_MildewSummers { get; set; }
     }
 }

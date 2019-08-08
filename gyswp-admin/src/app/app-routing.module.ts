@@ -63,6 +63,12 @@ const routes: Routes = [
         data: { guard: ['Admin', 'QiGuanAdmin'] },
       },
       {
+        path: 'logistic',
+        loadChildren: './logistics-center/logistics-center.module#LogisticsCenterModule',
+        canActivate: [ACLGuard],
+        data: { guard: ['Admin'] },
+      },
+      {
         path: 'position',
         component: PositionInfoComponent,
       }

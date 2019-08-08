@@ -133,16 +133,36 @@ export class AppMenus {
                 },
             ]
         },
-        // {
-        //     text: "设备管理",
-        //     icon: { type: "icon", value: "control" },
-        //     reuse: false,
-        //     acl: "Admin",// 权限
-        //     link: "/app/criterion/criterion",
-        //     group: true,
-        //     children: [
-        //     ]
-        // },
+        {
+            text: "物流中心",
+            icon: { type: "icon", value: "control" },
+            reuse: false,
+            acl: "",// 权限
+            link: "",
+            group: true,
+            children: [
+                {
+                    text: "入库作业",
+                    link: "/app/logistic/in-storage",
+                    reuse: false
+                },
+                {
+                    text: "在库保管",
+                    link: "/app/logistic/indicator-supervise",
+                    reuse: false
+                },
+                {
+                    text: "出库分拣",
+                    link: "/app/logistic/adviseReport",
+                    reuse: false
+                },
+                {
+                    text: "领货出库",
+                    link: "/app/logistic/out-in-storage",
+                    reuse: false
+                }
+            ]
+        },
         {
             text: "配置管理",
             icon: { type: "icon", value: "tool" },
