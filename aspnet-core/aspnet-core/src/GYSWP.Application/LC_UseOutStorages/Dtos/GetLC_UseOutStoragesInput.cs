@@ -2,12 +2,14 @@
 using Abp.Runtime.Validation;
 using GYSWP.Dtos;
 using GYSWP.LC_UseOutStorages;
+using System;
 
 namespace GYSWP.LC_UseOutStorages.Dtos
 {
     public class GetLC_UseOutStoragesInput : PagedSortedAndFilteredInputDto, IShouldNormalize
     {
-
+        public DateTime? BeginTime { get; set; }
+        public DateTime? EndTime { get; set; }
         /// <summary>
         /// 正常化排序使用
         /// </summary>

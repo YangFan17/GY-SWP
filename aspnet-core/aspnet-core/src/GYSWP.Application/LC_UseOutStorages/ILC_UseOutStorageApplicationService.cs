@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.LC_UseOutStorages.Dtos;
 using GYSWP.LC_UseOutStorages;
+using GYSWP.Dtos;
 
 namespace GYSWP.LC_UseOutStorages
 {
@@ -72,11 +73,11 @@ namespace GYSWP.LC_UseOutStorages
         Task BatchDelete(List<Guid> input);
 
 
-		/// <summary>
+        /// <summary>
         /// 导出LC_UseOutStorage为excel表
         /// </summary>
         /// <returns></returns>
-		//Task<FileDto> GetToExcel();
-
+        //Task<FileDto> GetToExcel();
+        Task<APIResultDto> ExportUseOutStorage(GetLC_UseOutStoragesInput input);
     }
 }

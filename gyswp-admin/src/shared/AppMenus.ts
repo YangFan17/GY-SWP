@@ -148,17 +148,17 @@ export class AppMenus {
                 },
                 {
                     text: "在库保管",
-                    link: "/app/logistic/indicator-supervise",
+                    link: "/app/logistic/storage-custody",
                     reuse: false
                 },
                 {
                     text: "出库分拣",
-                    link: "/app/logistic/adviseReport",
+                    link: "/app/logistic/out-storage-classify",
                     reuse: false
                 },
                 {
                     text: "领货出库",
-                    link: "/app/logistic/out-in-storage",
+                    link: "/app/logistic/out-storage",
                     reuse: false
                 }
             ]

@@ -24,6 +24,11 @@ using GYSWP.LC_OutScanRecords.DomainService;
 using GYSWP.LC_TimeLogs;
 using GYSWP.LC_ScanRecords;
 using GYSWP.Dtos;
+using GYSWP.Helpers;
+using Microsoft.AspNetCore.Hosting;
+using NPOI.XSSF.UserModel;
+using System.IO;
+using NPOI.SS.UserModel;
 
 namespace GYSWP.LC_OutScanRecords
 {
@@ -36,6 +41,7 @@ namespace GYSWP.LC_OutScanRecords
         private readonly IRepository<LC_OutScanRecord, Guid> _entityRepository;
         private readonly IRepository<LC_TimeLog, Guid> _timeLogRepository;
         private readonly IRepository<LC_ScanRecord, Guid> _scanRecordRepository;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
         private readonly ILC_OutScanRecordManager _entityManager;
 
@@ -46,6 +52,7 @@ namespace GYSWP.LC_OutScanRecords
         IRepository<LC_OutScanRecord, Guid> entityRepository
             , IRepository<LC_TimeLog, Guid> timeLogRepository
             , IRepository<LC_ScanRecord, Guid> scanRecordRepository
+            , IHostingEnvironment hostingEnvironment
         , ILC_OutScanRecordManager entityManager
         )
         {
@@ -53,6 +60,7 @@ namespace GYSWP.LC_OutScanRecords
              _entityManager=entityManager;
             _timeLogRepository = timeLogRepository;
             _scanRecordRepository = scanRecordRepository;
+            _hostingEnvironment = hostingEnvironment;
         }
 
 
@@ -65,14 +73,14 @@ namespace GYSWP.LC_OutScanRecords
         public async Task<PagedResultDto<LC_OutScanRecordListDto>> GetPaged(GetLC_OutScanRecordsInput input)
 		{
 
-		    var query = _entityRepository.GetAll();
-			// TODO:根据传入的参数添加过滤条件
-            
+		    var query = _entityRepository.GetAll().WhereIf(input.BeginTime.HasValue, c => c.CreationTime >= input.BeginTime && c.CreationTime < input.EndTime.Value.ToDayEnd());
+            // TODO:根据传入的参数添加过滤条件
 
-			var count = await query.CountAsync();
+
+            var count = await query.CountAsync();
 
 			var entityList = await query
-					.OrderBy(input.Sorting).AsNoTracking()
+                    .OrderByDescending(v => v.CreationTime).AsNoTracking()
 					.PageBy(input)
 					.ToListAsync();
 
@@ -251,6 +259,83 @@ LC_OutScanRecordEditDto editDto;
             scanRecord.EmployeeName = input.LC_OutScanRecord.EmployeeName;
             await _scanRecordRepository.InsertAsync(scanRecord);
             return new APIResultDto() { Code = 0, Msg = "保存成功", Data = entity.Id };
+        }
+
+
+
+        /// <summary>
+        /// 导出卷烟出库扫码记录表
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<APIResultDto> ExportOutScanRecord(GetLC_OutScanRecordsInput input)
+        {
+            try
+            {
+                var exportData = await GetOutScanRecordsForExcel(input);
+                var result = new APIResultDto();
+                result.Code = 0;
+                result.Data = CreateOutScanRecordsExcel("卷烟出库扫码记录表.xlsx", exportData);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Logger.ErrorFormat("ExportOutScanRecord errormsg{0} Exception{1}", ex.Message, ex);
+                return new APIResultDto() { Code = 901, Msg = "网络忙...请待会儿再试！" };
+
+            }
+        }
+
+        private async Task<List<LC_OutScanRecordListDto>> GetOutScanRecordsForExcel(GetLC_OutScanRecordsInput input)
+        {
+            var query = _entityRepository.GetAll().WhereIf(input.BeginTime.HasValue, c => c.CreationTime >= input.BeginTime && c.CreationTime < input.EndTime.Value.ToDayEnd());
+            var entityList = await query
+                   .OrderByDescending(v => v.CreationTime).AsNoTracking()
+                    .ToListAsync();
+            var entityListDtos = entityList.MapTo<List<LC_OutScanRecordListDto>>();
+            return entityListDtos;
+        }
+
+        /// <summary>
+        /// 卷烟出库扫码记录表
+        /// </summary>
+        /// <param name="fileName">表名</param>
+        /// <param name="data">表数据</param>
+        /// <returns></returns>
+        private string CreateOutScanRecordsExcel(string fileName, List<LC_OutScanRecordListDto> data)
+        {
+            var fullPath = ExcelHelper.GetSavePath(_hostingEnvironment.WebRootPath) + fileName;
+            using (var fs = new FileStream(fullPath, FileMode.Create, FileAccess.Write))
+            {
+                IWorkbook workbook = new XSSFWorkbook();
+                ISheet sheet = workbook.CreateSheet("OutStorageScanRecord");
+                var rowIndex = 0;
+                IRow titleRow = sheet.CreateRow(rowIndex);
+                string[] titles = { "出库订单数", "应扫码数", "实际扫码数", "零条未扫码数", "备注", "创建人", "创建时间" };
+                var fontTitle = workbook.CreateFont();
+                fontTitle.IsBold = true;
+                for (int i = 0; i < titles.Length; i++)
+                {
+                    var cell = titleRow.CreateCell(i);
+                    cell.CellStyle.SetFont(fontTitle);
+                    cell.SetCellValue(titles[i]);
+                }
+                var font = workbook.CreateFont();
+                foreach (var item in data)
+                {
+                    rowIndex++;
+                    IRow row = sheet.CreateRow(rowIndex);
+                    ExcelHelper.SetCell(row.CreateCell(0), font, item.OrderNum?.ToString());
+                    ExcelHelper.SetCell(row.CreateCell(1), font, item.ExpectedScanNum?.ToString());
+                    ExcelHelper.SetCell(row.CreateCell(2), font, item.AcutalScanNum?.ToString());
+                    ExcelHelper.SetCell(row.CreateCell(3), font, item.AloneNotScanNum?.ToString());
+                    ExcelHelper.SetCell(row.CreateCell(4), font, item.Remark);
+                    ExcelHelper.SetCell(row.CreateCell(5), font, item.EmployeeName);
+                    ExcelHelper.SetCell(row.CreateCell(6), font, item.CreationTime.ToString("yyyy-MM-dd hh:mm:ss"));
+                }
+                workbook.Write(fs);
+            }
+            return "/files/downloadtemp/" + fileName;
         }
     }
 }

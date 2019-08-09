@@ -11,6 +11,12 @@ import { LogisticService } from 'services';
 import { QualityRecordComponent } from './in-storage/quality-record/quality-record.component';
 import { InStorageBillComponent } from './in-storage/in-storage-bill/in-storage-bill.component';
 import { InStorageScanComponent } from './in-storage/in-storage-scan/in-storage-scan.component';
+import { OutStorageComponent } from './out-storage/out-storage.component';
+import { OutScanRecordComponent } from './out-storage/out-scan-record/out-scan-record.component';
+import { OutStorageClassifyComponent } from './out-storage-classify/out-storage-classify.component';
+import { StorageCustodyComponent } from './storage-custody/storage-custody.component';
+import { UseOutStorageComponent } from './out-storage-classify/use-out-storage/use-out-storage.component';
+import { CigaretExchangeComponent } from './out-storage-classify/cigaret-exchange/cigaret-exchange.component';
 
 @NgModule({
     imports: [
@@ -28,6 +34,15 @@ import { InStorageScanComponent } from './in-storage/in-storage-scan/in-storage-
         QualityRecordComponent,
         InStorageBillComponent,
         InStorageScanComponent,
+        //在库报管
+        StorageCustodyComponent,
+        //出库分拣
+        OutStorageClassifyComponent,
+        UseOutStorageComponent,
+        CigaretExchangeComponent,
+        //领货出库
+        OutStorageComponent,
+        OutScanRecordComponent,
     ],
     entryComponents: [
         InStorageComponent,
@@ -35,6 +50,15 @@ import { InStorageScanComponent } from './in-storage/in-storage-scan/in-storage-
         QualityRecordComponent,
         InStorageBillComponent,
         InStorageScanComponent,
+        //在库报管
+        StorageCustodyComponent,
+        //出库分拣
+        OutStorageClassifyComponent,
+        UseOutStorageComponent,
+        CigaretExchangeComponent,
+        //领货出库
+        OutStorageComponent,
+        OutScanRecordComponent,
     ],
     providers: [LogisticService]
 })

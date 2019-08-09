@@ -61,6 +61,7 @@ export class LogisticService {
             return result;
         }));
     }
+
     exportInstoreRecord(param: any): Observable<ApiResult> {
         var _url = '/api/services/app/LC_InStorageRecord/ExportInStorageRecord';
         return this._commonhttp.post(_url, param).pipe(map(data => {
@@ -70,6 +71,64 @@ export class LogisticService {
 
     exportQualityRecord(param: any): Observable<ApiResult> {
         var _url = '/api/services/app/LC_QualityRecord/ExportQualityRecord';
+        return this._commonhttp.post(_url, param).pipe(map(data => {
+            return ApiResult.fromJS(data);
+        }));
+    }
+
+    ///在库保管
+    //
+
+    ///出库分拣
+    //卷烟分拣领用出库单
+    getPagedUseOutStorageAsync(param: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/LC_UseOutStorage/GetPaged";
+        return this._commonhttp.get(url_, param).pipe(map(data => {
+            const result = new PagedResultDto();
+            result.items = data.items;
+            result.totalCount = data.totalCount;
+            return result;
+        }));
+    }
+    //导出卷烟分拣领用出库单
+    exportUseOutStorage(param: any): Observable<ApiResult> {
+        var _url = '/api/services/app/LC_UseOutStorage/ExportUseOutStorage';
+        return this._commonhttp.post(_url, param).pipe(map(data => {
+            return ApiResult.fromJS(data);
+        }));
+    }
+    //残损卷烟调换
+    getPagedCigaretExchangeAsync(param: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/LC_CigaretExchange/GetPaged";
+        return this._commonhttp.get(url_, param).pipe(map(data => {
+            const result = new PagedResultDto();
+            result.items = data.items;
+            result.totalCount = data.totalCount;
+            return result;
+        }));
+    }
+    //导出残损卷烟调换表
+    exportCigaretExchange(param: any): Observable<ApiResult> {
+        var _url = '/api/services/app/LC_CigaretExchange/ExportCigaretExchange';
+        return this._commonhttp.post(_url, param).pipe(map(data => {
+            return ApiResult.fromJS(data);
+        }));
+    }
+
+    ///出库扫码
+    //分页获取出库扫码记录
+    getPagedOutStorageScanAsync(param: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/LC_OutScanRecord/GetPaged";
+        return this._commonhttp.get(url_, param).pipe(map(data => {
+            const result = new PagedResultDto();
+            result.items = data.items;
+            result.totalCount = data.totalCount;
+            return result;
+        }));
+    }
+    //导出出库扫码记录表
+    exportOutScanRecord(param: any): Observable<ApiResult> {
+        var _url = '/api/services/app/LC_OutScanRecord/ExportOutScanRecord';
         return this._commonhttp.post(_url, param).pipe(map(data => {
             return ApiResult.fromJS(data);
         }));
