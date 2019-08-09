@@ -8,6 +8,9 @@ import { LogisticsCenterRoutingModule } from './logistics-center-routing.module'
 import { InStorageComponent } from './in-storage/in-storage.component';
 import { InStorageRecordComponent } from './in-storage/in-storage-record/in-storage-record.component';
 import { LogisticService } from 'services';
+import { QualityRecordComponent } from './in-storage/quality-record/quality-record.component';
+import { InStorageBillComponent } from './in-storage/in-storage-bill/in-storage-bill.component';
+import { InStorageScanComponent } from './in-storage/in-storage-scan/in-storage-scan.component';
 
 @NgModule({
     imports: [
@@ -22,10 +25,16 @@ import { LogisticService } from 'services';
     declarations: [
         InStorageComponent,
         InStorageRecordComponent,
+        QualityRecordComponent,
+        InStorageBillComponent,
+        InStorageScanComponent,
     ],
     entryComponents: [
         InStorageComponent,
         InStorageRecordComponent,
+        QualityRecordComponent,
+        InStorageBillComponent,
+        InStorageScanComponent,
     ],
     providers: [LogisticService]
 })

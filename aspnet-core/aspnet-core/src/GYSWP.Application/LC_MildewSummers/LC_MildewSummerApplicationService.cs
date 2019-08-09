@@ -21,8 +21,7 @@ using Abp.Linq.Extensions;
 using GYSWP.LC_MildewSummers;
 using GYSWP.LC_MildewSummers.Dtos;
 using GYSWP.LC_MildewSummers.DomainService;
-
-
+using Abp.Auditing;
 
 namespace GYSWP.LC_MildewSummers
 {
@@ -122,7 +121,9 @@ LC_MildewSummerEditDto editDto;
 		/// <param name="input"></param>
 		/// <returns></returns>
 		
-		public async Task CreateOrUpdate(CreateOrUpdateLC_MildewSummerInput input)
+        [AbpAllowAnonymous]
+        [Audited]
+        public async Task CreateOrUpdate(CreateOrUpdateLC_MildewSummerInput input)
 		{
 
 			if (input.LC_MildewSummer.Id.HasValue)

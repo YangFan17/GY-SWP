@@ -1,0 +1,53 @@
+<div nz-row>
+    <form nz-form (ngSubmit)="refreshData()" [nzLayout]="'inline'">
+        <div nz-row [nzGutter]="18">
+            <div nz-col [nzSpan]="6" class="mb-md">
+                <nz-form-item class="d-flex" style="margin-bottom: 0px;">
+                    <nz-form-label nzFor="month">时间范围</nz-form-label>
+                    <nz-form-control class="flex-1">
+                        <nz-range-picker name="dateRange" [(ngModel)]="dateRange" [nzFormat]="timeFormat"
+                            (ngModelChange)="changeTime($event)">
+                        </nz-range-picker>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="6" class="mb-md right" [class.text-right]="'true'" style="float: right;">
+                <nz-form-item class="d-flex" style="margin-right: 0px;margin-bottom: 0px;">
+                    <nz-form-control class="flex-1">
+                        <button nz-button type="button" (click)="reset()" class="mx-sm">重置</button>
+                        <button nz-button type="button" (click)="refreshData()" nzType="primary"
+                            [nzLoading]="isTableLoading">
+                            查询</button>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+    </form>
+    <ng-template #totalTemplate let-total>共 {{totalItems}} 条</ng-template>
+    <nz-table #nzTable [nzFrontPagination]="false" [nzShowTotal]="totalTemplate" [nzTotal]="totalItems"
+        [nzData]="dataList" [(nzPageIndex)]="pageNumber" [(nzPageSize)]="pageSize" [nzLoading]="isTableLoading"
+        [nzShowSizeChanger]="true" (nzPageIndexChange)="refresh()" (nzPageSizeChange)="refresh()">
+        <thead>
+            <tr>
+                <th>《烟草专卖品准运证》</th>
+                <th>《电子交易专用合同（卷烟）》</th>
+                <th>增值税发票</th>
+                <th>货车辆密封装置</th>
+                <th>车载电子锁</th>
+                <th>员工姓名</th>
+                <th>创建时间</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of nzTable.data">
+                <td>{{item.isYczmBill == true ? "有" : "无"}}</td>
+                <td>{{item.isJyhtBill == true ? "有" : "无"}}</td>
+                <td>{{item.isZzsBill == true ? "有" : "无"}}</td>
+                <td>{{item.isCarSeal == true ? "正常" : "异常"}}</td>
+                <td>{{item.isCarElcLock == true ? "正常" : "异常"}}</td>
+                <td>{{item.employeeName}}</td>
+                <td>{{item.creationTime |_date}}</td>
+            </tr>
+        </tbody>
+    </nz-table>
+</div>

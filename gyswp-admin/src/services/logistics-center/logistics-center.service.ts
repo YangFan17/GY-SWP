@@ -46,4 +46,34 @@ export class LogisticService {
             return result;
         }));
     }
+
+    getPagedQualityRecordAsync(param: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/LC_QualityRecord/GetPaged";
+        return this._commonhttp.get(url_, param).pipe(map(data => {
+            const result = new PagedResultDto();
+            result.items = data.items;
+            result.totalCount = data.totalCount;
+            return result;
+        }));
+    }
+
+    getPagedInStorageBillAsync(param: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/LC_InStorageBill/GetPaged";
+        return this._commonhttp.get(url_, param).pipe(map(data => {
+            const result = new PagedResultDto();
+            result.items = data.items;
+            result.totalCount = data.totalCount;
+            return result;
+        }));
+    }
+
+    getPagedInStorageScanAsync(param: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/LC_ScanRecord/GetPaged";
+        return this._commonhttp.get(url_, param).pipe(map(data => {
+            const result = new PagedResultDto();
+            result.items = data.items;
+            result.totalCount = data.totalCount;
+            return result;
+        }));
+    }
 }

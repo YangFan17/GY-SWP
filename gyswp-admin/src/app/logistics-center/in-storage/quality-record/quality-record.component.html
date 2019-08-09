@@ -1,0 +1,63 @@
+<div nz-row>
+    <form nz-form (ngSubmit)="refreshData()" [nzLayout]="'inline'">
+        <div nz-row [nzGutter]="18">
+            <div nz-col [nzSpan]="6" class="mb-md">
+                <nz-form-item class="d-flex" style="margin-bottom: 0px;">
+                    <nz-form-label nzFor="month">时间范围</nz-form-label>
+                    <nz-form-control class="flex-1">
+                        <nz-range-picker name="dateRange" [(ngModel)]="dateRange" [nzFormat]="timeFormat"
+                            (ngModelChange)="changeTime($event)">
+                        </nz-range-picker>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="6" class="mb-md right" [class.text-right]="'true'" style="float: right;">
+                <nz-form-item class="d-flex" style="margin-right: 0px;margin-bottom: 0px;">
+                    <nz-form-control class="flex-1">
+                        <button nz-button type="button" (click)="reset()" class="mx-sm">重置</button>
+                        <button nz-button type="button" (click)="refreshData()" nzType="primary"
+                            [nzLoading]="isTableLoading">
+                            查询</button>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+    </form>
+    <ng-template #totalTemplate let-total>共 {{totalItems}} 条</ng-template>
+    <nz-table #nzTable [nzFrontPagination]="false" [nzShowTotal]="totalTemplate" [nzTotal]="totalItems"
+        [nzData]="dataList" [(nzPageIndex)]="pageNumber" [(nzPageSize)]="pageSize" [nzLoading]="isTableLoading"
+        [nzShowSizeChanger]="true" (nzPageIndexChange)="refresh()" (nzPageSizeChange)="refresh()">
+        <thead>
+            <tr>
+                <th>卷烟名称</th>
+                <th>批发价格</th>
+                <th>出售数量</th>
+                <th>车牌号码</th>
+                <th>赔偿金额</th>
+                <th>承运人</th>
+                <th>保管员</th>
+                <th>交接日期</th>
+                <th>金额</th>
+                <th>经手人</th>
+                <th>员工姓名</th>
+                <th>创建时间</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of nzTable.data">
+                <td>{{item.name}}</td>
+                <td>{{item.wholesaleAmount}}</td>
+                <td>{{item.saleQuantity}}</td>
+                <td>{{item.carNo}}</td>
+                <td>{{item.compensationAmount}}</td>
+                <td>{{item.carrierName}}</td>
+                <td>{{item.clerkName}}</td>
+                <td>{{item.handoverTime}}</td>
+                <td>{{item.amount}}</td>
+                <td>{{item.handManName}}</td>
+                <td>{{item.employeeName}}</td>
+                <td>{{item.creationTime |_date}}</td>
+            </tr>
+        </tbody>
+    </nz-table>
+</div>

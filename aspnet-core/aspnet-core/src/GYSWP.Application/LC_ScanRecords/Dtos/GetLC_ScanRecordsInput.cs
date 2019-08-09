@@ -21,6 +21,8 @@ namespace GYSWP.LC_ScanRecords.Dtos
             }
         }
 
+        public LC_ScanRecordType? Type { get; set; }
+
     }
     public class CreateLC_ScanRecordInput
     {

@@ -60,7 +60,7 @@ namespace GYSWP.LC_ScanRecords
         public async Task<PagedResultDto<LC_ScanRecordListDto>> GetPaged(GetLC_ScanRecordsInput input)
 		{
 
-		    var query = _entityRepository.GetAll();
+		    var query = _entityRepository.GetAll().WhereIf(input.Type.HasValue,i=>i.Type == input.Type);
 			// TODO:根据传入的参数添加过滤条件
             
 
