@@ -1,19 +1,19 @@
 import { Component, Injector } from '@angular/core';
 import { PagedListingComponentBase, PagedRequestDto, PagedResultDto } from '@shared/component-base';
 import { Router } from '@angular/router';
-import { LogisticService } from 'services';
 import { addDays } from 'date-fns';
+import { LogisticService } from 'services';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     moduleId: module.id,
     selector: 'quality-record',
-    templateUrl: 'quality-record.component.html',
-    styleUrls: ['quality-record.component.scss']
+    templateUrl: 'quality-record.component.html'
 })
 export class QualityRecordComponent extends PagedListingComponentBase<any>{
+    exportLoading = false;
     search = { beginTime: '', endTime: '' };
     timeFormat = 'yyyy-MM-dd';
-    // dateRange = [addDays(new Date(), -1 * (new Date()).getDay() + 1), new Date()];
     dateRange: Date[] = [];
     constructor(injector: Injector
         , private logisticService: LogisticService
@@ -36,7 +36,6 @@ export class QualityRecordComponent extends PagedListingComponentBase<any>{
         this.search.beginTime = null;
         this.search.endTime = null;
         this.dateRange = [];
-        // this.dateRange = [addDays(new Date(), -1 * (new Date()).getDay() + 1), new Date()]
         this.refreshData();
     }
 
@@ -70,5 +69,22 @@ export class QualityRecordComponent extends PagedListingComponentBase<any>{
     setSearchTime() {
         this.search.beginTime = this.dateRange[0].getFullYear() + '-' + (this.dateRange[0].getMonth() + 1) + '-' + this.dateRange[0].getDate();
         this.search.endTime = this.dateRange[1].getFullYear() + '-' + (this.dateRange[1].getMonth() + 1) + '-' + this.dateRange[1].getDate();
+    }
+
+    export() {
+        this.exportLoading = true;
+        let params: any = {};
+        params.BeginTime = this.search.beginTime;
+        params.EndTime = this.search.endTime;
+        this.logisticService.exportQualityRecord(params).subscribe((data => {
+            if (data.code == 0) {
+                var url = AppConsts.remoteServiceBaseUrl + data.data;
+                document.getElementById('exportUrl').setAttribute('href', url);
+                document.getElementById('btnExportHref').click();
+            } else {
+                this.notify.error(data.msg);
+            }
+            this.exportLoading = false;
+        }));
     }
 }

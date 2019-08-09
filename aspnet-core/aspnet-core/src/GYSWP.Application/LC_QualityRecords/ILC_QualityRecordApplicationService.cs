@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.LC_QualityRecords.Dtos;
 using GYSWP.LC_QualityRecords;
+using GYSWP.Dtos;
 
 namespace GYSWP.LC_QualityRecords
 {
@@ -70,13 +71,6 @@ namespace GYSWP.LC_QualityRecords
         /// 批量删除LC_QualityRecord
         /// </summary>
         Task BatchDelete(List<Guid> input);
-
-
-		/// <summary>
-        /// 导出LC_QualityRecord为excel表
-        /// </summary>
-        /// <returns></returns>
-		//Task<FileDto> GetToExcel();
-
+        Task<APIResultDto> ExportQualityRecord(GetLC_QualityRecordsInput input);
     }
 }

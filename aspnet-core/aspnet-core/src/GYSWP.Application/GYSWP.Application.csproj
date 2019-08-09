@@ -11,6 +11,7 @@
     <RootNamespace>GYSWP</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="DotNetCore.NPOI" Version="1.2.1" />
     <PackageReference Include="PinYinConverterCore" Version="1.0.2" />
     <PackageReference Include="Senparc.CO2NET" Version="0.3.0.2" />
   </ItemGroup>

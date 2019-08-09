@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.LC_InStorageRecords.Dtos;
 using GYSWP.LC_InStorageRecords;
+using GYSWP.Dtos;
 
 namespace GYSWP.LC_InStorageRecords
 {
@@ -70,13 +71,6 @@ namespace GYSWP.LC_InStorageRecords
         /// 批量删除LC_InStorageRecord
         /// </summary>
         Task BatchDelete(List<Guid> input);
-
-
-		/// <summary>
-        /// 导出LC_InStorageRecord为excel表
-        /// </summary>
-        /// <returns></returns>
-		//Task<FileDto> GetToExcel();
-
+        Task<APIResultDto> ExportInStorageRecord(GetLC_InStorageRecordsInput input);
     }
 }

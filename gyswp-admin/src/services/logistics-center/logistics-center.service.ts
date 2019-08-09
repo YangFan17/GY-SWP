@@ -18,25 +18,7 @@ export class LogisticService {
         this.baseUrl = baseUrl ? baseUrl : "";
     }
 
-    getSearchInspectReports(input: any): Observable<any> {
-        let url_ = "/api/services/app/Inspect/GetSearchInspectReports";
-        return this._commonhttp.get(url_, input).pipe(map(data => {
-            return data;
-        }));
-    }
-
-    getDeptDocNzTreeNodes(root: any): Observable<NzTreeNode[]> {
-        let url_ = "/api/services/app/Document/GetDeptDocNzTreeNodesAsync";
-        return this._commonhttp.get(url_, { rootName: root }).pipe(map(data => {
-            let arry = [];
-            data.map(d => {
-                let tree = new NzTreeNode(d);
-                arry.push(tree);
-            });
-            return arry;
-        }));
-    }
-
+    //分页获取入库记录
     getPagedInStorageRecordAsync(param: any): Observable<PagedResultDto> {
         let url_ = "/api/services/app/LC_InStorageRecord/GetPaged";
         return this._commonhttp.get(url_, param).pipe(map(data => {
@@ -47,6 +29,7 @@ export class LogisticService {
         }));
     }
 
+    //分页获取入库验收质量记录
     getPagedQualityRecordAsync(param: any): Observable<PagedResultDto> {
         let url_ = "/api/services/app/LC_QualityRecord/GetPaged";
         return this._commonhttp.get(url_, param).pipe(map(data => {
@@ -57,6 +40,7 @@ export class LogisticService {
         }));
     }
 
+    //分页获取到货凭证记录
     getPagedInStorageBillAsync(param: any): Observable<PagedResultDto> {
         let url_ = "/api/services/app/LC_InStorageBill/GetPaged";
         return this._commonhttp.get(url_, param).pipe(map(data => {
@@ -67,6 +51,7 @@ export class LogisticService {
         }));
     }
 
+    //分页获取入库扫码记录
     getPagedInStorageScanAsync(param: any): Observable<PagedResultDto> {
         let url_ = "/api/services/app/LC_ScanRecord/GetPaged";
         return this._commonhttp.get(url_, param).pipe(map(data => {
@@ -74,6 +59,19 @@ export class LogisticService {
             result.items = data.items;
             result.totalCount = data.totalCount;
             return result;
+        }));
+    }
+    exportInstoreRecord(param: any): Observable<ApiResult> {
+        var _url = '/api/services/app/LC_InStorageRecord/ExportInStorageRecord';
+        return this._commonhttp.post(_url, param).pipe(map(data => {
+            return ApiResult.fromJS(data);
+        }));
+    }
+
+    exportQualityRecord(param: any): Observable<ApiResult> {
+        var _url = '/api/services/app/LC_QualityRecord/ExportQualityRecord';
+        return this._commonhttp.post(_url, param).pipe(map(data => {
+            return ApiResult.fromJS(data);
         }));
     }
 }
