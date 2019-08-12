@@ -232,7 +232,7 @@ namespace GYSWP.LC_ConveyorChecks
                 var exportData = await GetConveyorChecksForExcel(input);
                 var result = new APIResultDto();
                 result.Code = 0;
-                result.Data = CreateConveyorChecksExcel("伸缩式输送机检查表.xlsx", exportData);
+                result.Data = CreateConveyorChecksExcel("伸缩式输送机运行记录.xlsx", exportData);
                 return result;
             }
             catch (Exception ex)

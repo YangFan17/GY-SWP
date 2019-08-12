@@ -5,10 +5,10 @@ import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     moduleId: module.id,
-    selector: 'daily-check',
-    templateUrl: 'daily-check.component.html'
+    selector: 'forklift-check',
+    templateUrl: 'forklift-check.component.html'
 })
-export class DailyCheckComponent extends PagedListingComponentBase<any>{
+export class ForkliftCheckComponent extends PagedListingComponentBase<any>{
     exportLoading = false;
     search = { beginTime: '', endTime: '' };
     timeFormat = 'yyyy-MM-dd';
@@ -45,8 +45,8 @@ export class DailyCheckComponent extends PagedListingComponentBase<any>{
         params.EndTime = this.search.endTime;
         params.SkipCount = request.skipCount;
         params.MaxResultCount = request.maxResultCount;
-        this.isTableLoading = false;
-        this.logisticService.getPagedConveyorCheckAsync(params)
+        this.isTableLoading = true;
+        this.logisticService.getPagedForkliftCheckAsync(params)
             .finally(() => {
                 finishedCallback();
             })
@@ -76,7 +76,7 @@ export class DailyCheckComponent extends PagedListingComponentBase<any>{
         let params: any = {};
         params.BeginTime = this.search.beginTime;
         params.EndTime = this.search.endTime;
-        this.logisticService.exportConveyorChecksRecord(params).subscribe((data => {
+        this.logisticService.exportForkliftCheckRecord(params).subscribe((data => {
             if (data.code == 0) {
                 var url = AppConsts.remoteServiceBaseUrl + data.data;
                 document.getElementById('exportUrl').setAttribute('href', url);

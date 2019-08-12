@@ -1,0 +1,107 @@
+<div nz-row>
+    <form nz-form (ngSubmit)="refreshData()" [nzLayout]="'inline'">
+        <div nz-row [nzGutter]="24">
+            <div nz-col [nzSpan]="6" class="mb-md">
+                <nz-form-item class="d-flex" style="margin-bottom: 0px;">
+                    <nz-form-label nzFor="month">时间范围</nz-form-label>
+                    <nz-form-control class="flex-1">
+                        <nz-range-picker name="dateRange" [(ngModel)]="dateRange" [nzFormat]="timeFormat"
+                            (ngModelChange)="changeTime($event)">
+                        </nz-range-picker>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="8" class="mb-md right" [class.text-right]="'true'" style="float: right;">
+                <nz-form-item class="d-flex" style="margin-right: 0px;margin-bottom: 0px;">
+                    <nz-form-control class="flex-1">
+                        <button nz-button type="button" (click)="refreshData()" nzType="primary"
+                            [nzLoading]="isTableLoading">
+                            查询</button>
+                        <button nz-button type="button" (click)="reset()" class="mx-sm">重置</button>
+                        <a style="display: none;" id="exportUrl" href="#">
+                            <button type="button" id="btnExportHref">隐藏下载</button>
+                        </a>
+                        <button nz-button type="button" (click)="export()" [nzLoading]="exportLoading">
+                            <i class="anticon anticon-download"></i>
+                            <span>导出</span>
+                        </button>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+    </form>
+    <ng-template #totalTemplate let-total>共 {{totalItems}} 条</ng-template>
+    <nz-table #nzTable nzSize="middle" nzBordered
+        [nzWidthConfig]="[null,null,null,null,null,null,null,null,null,null,null,null,'100px','100px','100px','100px']"
+        [nzFrontPagination]="false" [nzShowTotal]="totalTemplate" [nzTotal]="totalItems" [nzData]="dataList"
+        [(nzPageIndex)]="pageNumber" [(nzPageSize)]="pageSize" [nzLoading]="isTableLoading" [nzShowSizeChanger]="true"
+        (nzPageIndexChange)="refresh()" (nzPageSizeChange)="refresh()">
+        <thead>
+            <tr>
+                <th colspan="10" nzLeft="0px">班组安全活动</th>
+                <th colspan="13">作业安全管理</th>
+            </tr>
+            <tr>
+                <th rowspan="2">岗前安全例会</th>
+                <th colspan="8">岗前安全确认</th>
+                <th rowspan="2">员工安全建议</th>
+                <th colspan="6">分拣作业日志</th>
+                <th colspan="5">安全巡查记录</th>
+                <th rowspan="2">现场安全监管</th>
+                <th rowspan="2">岗位安全责任人</th>
+            </tr>
+            <tr>
+                <!-- <th>创建时间</th>
+                <th>创建人</th> -->
+                <th>劳动保护用品穿戴是否整齐</th>
+                <th>人员身体状态有无异常</th>
+                <th>通道机、立式机各烟仓条烟处于位置</th>
+                <th>叉车通道是否畅通</th>
+                <th>安全出口是否堵塞</th>
+                <th>消防设施是否堵塞</th>
+                <th>安全标识是否清晰</th>
+                <th>安全标识有无脱落</th>
+                <th>常规烟分拣量：条</th>
+                <th>异型烟分拣量：条</th>
+                <th>分拣开始时间</th>
+                <th>分拣结束时间</th>
+                <th>正常停机时间</th>
+                <th>故障停机时间</th>
+                <th>有无危险源、风险点</th>
+                <th>有无非工作人员出入场</th>
+                <th>有无违章作业现象</th>
+                <th>分拣结束，电源、气源是否关闭</th>
+                <th>车间门窗是否关闭</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of nzTable.data">
+                <!-- <td>{{item.creationTime | _date}}</td>
+                <td>{{item.employeeName}}</td> -->
+                <td>{{item.safetyMeeting}}</td>
+                <td>{{item.isSafeEquipOk == 1?'是':'否'}}</td>
+                <td>{{item.isEmpHealth == 1?'有':'无'}}</td>
+                <td>{{item.isTdjOrLsjOk == 1?'正常':'异常'}}</td>
+                <td>{{item.isAisleOk == 1?'是':'否'}}</td>
+                <td>{{item.isExitBad == 1?'是':'否'}}</td>
+                <td>{{item.isFireEquipBad == 1?'是':'否'}}</td>
+                <td>{{item.isSafeMarkClean == 1?'是':'否'}}</td>
+                <td>{{item.isSafeMarkFall == 1?'有':'无'}}</td>
+                <td>{{item.empSafeAdvice}}</td>
+                <td>{{item.commonCigaretNum}}</td>
+                <td>{{item.shapedCigaretNum}}</td>
+                <td>{{item.beginSortTime| _date}}</td>
+                <td>{{item.endSortTime| _date}}</td>
+                <td>{{item.normalStopTime| _date}}</td>
+                <td>{{item.abnormalStopTime| _date}}</td>
+                <td>{{item.isNotDanger == 1?'有':'无'}}</td>
+                <td>{{item.isOtherAdmittance == 1?'有':'无'}}</td>
+                <td>{{item.isViolation == 1?'有':'无'}}</td>
+                <td>{{item.isElcOrGasShut == 1?'是':'否'}}</td>
+                <td>{{item.isCloseWindow == 1?'是':'否'}}</td>
+                <td>{{item.safeSupervision}}</td>
+                <td>{{item.responsibleName}}</td>
+            </tr>
+        </tbody>
+    </nz-table>
+</div>

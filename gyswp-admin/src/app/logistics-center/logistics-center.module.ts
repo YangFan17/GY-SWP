@@ -17,11 +17,14 @@ import { OutStorageClassifyComponent } from './out-storage-classify/out-storage-
 import { StorageCustodyComponent } from './storage-custody/storage-custody.component';
 import { UseOutStorageComponent } from './out-storage-classify/use-out-storage/use-out-storage.component';
 import { CigaretExchangeComponent } from './out-storage-classify/cigaret-exchange/cigaret-exchange.component';
-import { DailyCheckComponent } from './in-storage/daily-check/daily-check.component';
 import { EntryExitRegistrationComponent } from './storage-custody/entry-exit-registration/entry-exit-registration.component';
 import { InventoryRecordComponent } from './storage-custody/inventory-record/inventory-record.component';
 import { InspectionRecordComponent } from './storage-custody/inspection-record/inspection-record.component';
 import { MildewSummerComponent } from './storage-custody/mildew-summer/mildew-summer.component';
+import { ConveyorCheckComponent } from './in-storage/conveyor-check/conveyor-check.component';
+import { ForkliftCheckComponent } from './in-storage/forklift-check/forklift-check.component';
+import { SortingEquipCheckComponent } from './out-storage-classify/sorting-equip-check/sorting-equip-check.component';
+import { TeamSafetyActivityComponent } from './out-storage-classify/team-safety-activity/team-safety-activity.component';
 
 @NgModule({
     imports: [
@@ -39,6 +42,8 @@ import { MildewSummerComponent } from './storage-custody/mildew-summer/mildew-su
         QualityRecordComponent,
         InStorageBillComponent,
         InStorageScanComponent,
+        ConveyorCheckComponent,
+        ForkliftCheckComponent,
         //在库报管
         StorageCustodyComponent,
         EntryExitRegistrationComponent,
@@ -49,10 +54,11 @@ import { MildewSummerComponent } from './storage-custody/mildew-summer/mildew-su
         OutStorageClassifyComponent,
         UseOutStorageComponent,
         CigaretExchangeComponent,
+        SortingEquipCheckComponent,
+        TeamSafetyActivityComponent,
         //领货出库
         OutStorageComponent,
         OutScanRecordComponent,
-        DailyCheckComponent,
     ],
     entryComponents: [
         InStorageComponent,
@@ -60,6 +66,8 @@ import { MildewSummerComponent } from './storage-custody/mildew-summer/mildew-su
         QualityRecordComponent,
         InStorageBillComponent,
         InStorageScanComponent,
+        ConveyorCheckComponent,
+        ForkliftCheckComponent,
         //在库报管
         StorageCustodyComponent,
         EntryExitRegistrationComponent,
@@ -70,10 +78,12 @@ import { MildewSummerComponent } from './storage-custody/mildew-summer/mildew-su
         OutStorageClassifyComponent,
         UseOutStorageComponent,
         CigaretExchangeComponent,
+        SortingEquipCheckComponent,
+        TeamSafetyActivityComponent,
         //领货出库
         OutStorageComponent,
         OutScanRecordComponent,
-        DailyCheckComponent,
+
     ],
     providers: [LogisticService]
 })

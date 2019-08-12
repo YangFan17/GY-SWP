@@ -80,5 +80,6 @@ namespace GYSWP.LC_ForkliftChecks
         //Task<FileDto> GetToExcel();
 
         Task<APIResultDto> CreateForkliftCheckRecordAsync(LC_ForkliftCheckEditDto input);
+        Task<APIResultDto> ExportForkliftCheckRecord(GetLC_ForkliftChecksInput input);
     }
 }

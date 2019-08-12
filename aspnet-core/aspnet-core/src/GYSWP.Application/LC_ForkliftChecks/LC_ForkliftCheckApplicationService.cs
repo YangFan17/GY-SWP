@@ -22,6 +22,11 @@ using GYSWP.LC_ForkliftChecks;
 using GYSWP.LC_ForkliftChecks.Dtos;
 using GYSWP.LC_ForkliftChecks.DomainService;
 using GYSWP.Dtos;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using GYSWP.Helpers;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 
 namespace GYSWP.LC_ForkliftChecks
 {
@@ -32,7 +37,7 @@ namespace GYSWP.LC_ForkliftChecks
     public class LC_ForkliftCheckAppService : GYSWPAppServiceBase, ILC_ForkliftCheckAppService
     {
         private readonly IRepository<LC_ForkliftCheck, Guid> _entityRepository;
-
+        private readonly IHostingEnvironment _hostingEnvironment;
         private readonly ILC_ForkliftCheckManager _entityManager;
 
         /// <summary>
@@ -40,11 +45,13 @@ namespace GYSWP.LC_ForkliftChecks
         ///</summary>
         public LC_ForkliftCheckAppService(
         IRepository<LC_ForkliftCheck, Guid> entityRepository
-        ,ILC_ForkliftCheckManager entityManager
+        , IHostingEnvironment hostingEnvironment
+        , ILC_ForkliftCheckManager entityManager
         )
         {
             _entityRepository = entityRepository; 
              _entityManager=entityManager;
+            _hostingEnvironment = hostingEnvironment;
         }
 
 
@@ -53,24 +60,16 @@ namespace GYSWP.LC_ForkliftChecks
         ///</summary>
         /// <param name="input"></param>
         /// <returns></returns>
-		 
+
         public async Task<PagedResultDto<LC_ForkliftCheckListDto>> GetPaged(GetLC_ForkliftChecksInput input)
 		{
-
-		    var query = _entityRepository.GetAll();
-			// TODO:根据传入的参数添加过滤条件
-            
-
-			var count = await query.CountAsync();
-
+		    var query = _entityRepository.GetAll().WhereIf(input.BeginTime.HasValue, c => c.CreationTime >= input.BeginTime && c.CreationTime < input.EndTime.Value.ToDayEnd());
+            var count = await query.CountAsync();
 			var entityList = await query
 					.OrderBy(input.Sorting).AsNoTracking()
 					.PageBy(input)
 					.ToListAsync();
-
-			// var entityListDtos = ObjectMapper.Map<List<LC_ForkliftCheckListDto>>(entityList);
 			var entityListDtos =entityList.MapTo<List<LC_ForkliftCheckListDto>>();
-
 			return new PagedResultDto<LC_ForkliftCheckListDto>(count,entityListDtos);
 		}
 
@@ -216,6 +215,97 @@ LC_ForkliftCheckEditDto editDto;
                 Code = 0,
                 Data = entity
             };
+        }
+
+        /// <summary>
+        /// 导出叉车运行记录
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<APIResultDto> ExportForkliftCheckRecord(GetLC_ForkliftChecksInput input)
+        {
+            try
+            {
+                var exportData = await GetForkliftCheckForExcel(input);
+                var result = new APIResultDto();
+                result.Code = 0;
+                result.Data = CreateForkliftCheckExcel("叉车运行记录.xlsx", exportData);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Logger.ErrorFormat("ExportForkliftCheckRecord errormsg{0} Exception{1}", ex.Message, ex);
+                return new APIResultDto() { Code = 901, Msg = "网络忙...请待会儿再试！" };
+
+            }
+        }
+
+        private async Task<List<LC_ForkliftCheckListDto>> GetForkliftCheckForExcel(GetLC_ForkliftChecksInput input)
+        {
+            var query = _entityRepository.GetAll().WhereIf(input.BeginTime.HasValue, c => c.CreationTime >= input.BeginTime && c.CreationTime < input.EndTime.Value.ToDayEnd());
+            var entityList = await query
+                   .OrderByDescending(v => v.CreationTime).AsNoTracking()
+                    .ToListAsync();
+            var entityListDtos = entityList.MapTo<List<LC_ForkliftCheckListDto>>();
+            return entityListDtos;
+        }
+
+        /// <summary>
+        /// 创建叉车运行记录
+        /// </summary>
+        /// <param name="fileName">表名</param>
+        /// <param name="data">表数据</param>
+        /// <returns></returns>
+        private string CreateForkliftCheckExcel(string fileName, List<LC_ForkliftCheckListDto> data)
+        {
+            var fullPath = ExcelHelper.GetSavePath(_hostingEnvironment.WebRootPath) + fileName;
+            using (var fs = new FileStream(fullPath, FileMode.Create, FileAccess.Write))
+            {
+                IWorkbook workbook = new XSSFWorkbook();
+                ISheet sheet = workbook.CreateSheet("ForkliftCheck");
+                var rowIndex = 0;
+                IRow titleRow = sheet.CreateRow(rowIndex);
+                string[] titles = { "设备编号", "责任人", "监管人", "运行时间", "开机时间", "停机时间", "各部位润滑是否正常", "蓄电池接线有无腐蚀、松动", "转向、制动是否灵活", "车灯、喇叭是否正常", "电量是否充足", "货叉升降是否正常", "电量是否满足", "刹车、喇叭有无异常", "货叉升降有无异常", "运行声音有无异响", "停放是否规范到位", "制动是否拉紧、电源是否关闭", "是否需要补充电量", "各部位是否进行清洁", "故障描述和处理","创建人", "创建时间" };
+                var fontTitle = workbook.CreateFont();
+                fontTitle.IsBold = true;
+                for (int i = 0; i < titles.Length; i++)
+                {
+                    var cell = titleRow.CreateCell(i);
+                    cell.CellStyle.SetFont(fontTitle);
+                    cell.SetCellValue(titles[i]);
+                }
+                var font = workbook.CreateFont();
+                foreach (var item in data)
+                {
+                    rowIndex++;
+                    IRow row = sheet.CreateRow(rowIndex);
+                    ExcelHelper.SetCell(row.CreateCell(0), font, item.EquiNo);
+                    ExcelHelper.SetCell(row.CreateCell(1), font, item.ResponsibleName);
+                    ExcelHelper.SetCell(row.CreateCell(2), font, item.SupervisorName);
+                    ExcelHelper.SetCell(row.CreateCell(3), font, item.RunTime.HasValue == true ? (item.RunTime.Value.ToString("yyyy-MM-dd hh:mm:ss")) : "");
+                    ExcelHelper.SetCell(row.CreateCell(4), font, item.BeginTime.HasValue == true ? (item.BeginTime.Value.ToString("yyyy-MM-dd hh:mm:ss")) : "");
+                    ExcelHelper.SetCell(row.CreateCell(5), font, item.EndTime.HasValue == true ? (item.EndTime.Value.ToString("yyyy-MM-dd hh:mm:ss")) : "");
+                    ExcelHelper.SetCell(row.CreateCell(6), font, item.IslubricatingOk == true ? "是" : "否");
+                    ExcelHelper.SetCell(row.CreateCell(7), font, item.IsBatteryBad == true ? "有" : "无");
+                    ExcelHelper.SetCell(row.CreateCell(8), font, item.IsTurnOrBreakOk == true ? "是" : "否");
+                    ExcelHelper.SetCell(row.CreateCell(9), font, item.IsLightOrHornOk == true ? "是" : "否");
+                    ExcelHelper.SetCell(row.CreateCell(10), font, item.IsFullCharged == true ? "是" : "否");
+                    ExcelHelper.SetCell(row.CreateCell(11), font, item.IsForkLifhOk == true ? "是" : "否");
+                    ExcelHelper.SetCell(row.CreateCell(12), font, item.IsRunFullCharged == true ? "有" : "无");
+                    ExcelHelper.SetCell(row.CreateCell(13), font, item.IsRunTurnOrBreakOk == true ? "有" : "无");
+                    ExcelHelper.SetCell(row.CreateCell(14), font, item.IsRunLightOrHornOk == true ? "有" : "无");
+                    ExcelHelper.SetCell(row.CreateCell(15), font, item.IsRunSoundOk == true ? "是" : "否");
+                    ExcelHelper.SetCell(row.CreateCell(16), font, item.IsParkStandard == true ? "有" : "无");
+                    ExcelHelper.SetCell(row.CreateCell(17), font, item.IsShutPower == true ? "是" : "否");
+                    ExcelHelper.SetCell(row.CreateCell(18), font, item.IsNeedCharge == true ? "是" : "否");
+                    ExcelHelper.SetCell(row.CreateCell(19), font, item.IsClean == true ? "是" : "否");
+                    ExcelHelper.SetCell(row.CreateCell(20), font, item.Troubleshooting);
+                    ExcelHelper.SetCell(row.CreateCell(21), font, item.EmployeeName);
+                    ExcelHelper.SetCell(row.CreateCell(22), font, item.CreationTime.ToString("yyyy-MM-dd hh:mm:ss"));
+                }
+                workbook.Write(fs);
+            }
+            return "/files/downloadtemp/" + fileName;
         }
     }
 }

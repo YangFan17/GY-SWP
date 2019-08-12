@@ -217,4 +217,55 @@ export class LogisticService {
             return ApiResult.fromJS(data);
         }));
     }
+
+    getPagedForkliftCheckAsync(param: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/LC_ForkliftCheck/GetPaged";
+        return this._commonhttp.get(url_, param).pipe(map(data => {
+            const result = new PagedResultDto();
+            result.items = data.items;
+            result.totalCount = data.totalCount;
+            return result;
+        }));
+    }
+
+    exportForkliftCheckRecord(param: any): Observable<ApiResult> {
+        var _url = '/api/services/app/LC_ForkliftCheck/ExportForkliftCheckRecord';
+        return this._commonhttp.post(_url, param).pipe(map(data => {
+            return ApiResult.fromJS(data);
+        }));
+    }
+
+    getPagedSortingEquipCheckAsync(param: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/LC_SortingEquipCheck/GetPaged";
+        return this._commonhttp.get(url_, param).pipe(map(data => {
+            const result = new PagedResultDto();
+            result.items = data.items;
+            result.totalCount = data.totalCount;
+            return result;
+        }));
+    }
+
+    exportSortingEquipCheck(param: any): Observable<ApiResult> {
+        var _url = '/api/services/app/LC_SortingEquipCheck/ExportSortingEquipCheck';
+        return this._commonhttp.post(_url, param).pipe(map(data => {
+            return ApiResult.fromJS(data);
+        }));
+    }
+
+    getPagedTeamSafetyActivityAsync(param: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/LC_TeamSafetyActivity/GetPaged";
+        return this._commonhttp.get(url_, param).pipe(map(data => {
+            const result = new PagedResultDto();
+            result.items = data.items;
+            result.totalCount = data.totalCount;
+            return result;
+        }));
+    }
+
+    exportTeamSafetyActivity(param: any): Observable<ApiResult> {
+        var _url = '/api/services/app/LC_TeamSafetyActivity/ExportTeamSafetyActivity';
+        return this._commonhttp.post(_url, param).pipe(map(data => {
+            return ApiResult.fromJS(data);
+        }));
+    }
 }

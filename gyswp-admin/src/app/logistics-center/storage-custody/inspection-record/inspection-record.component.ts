@@ -47,7 +47,7 @@ export class InspectionRecordComponent extends PagedListingComponentBase<any>{
         params.EndTime = this.search.endTime;
         params.SkipCount = request.skipCount;
         params.MaxResultCount = request.maxResultCount;
-        this.isTableLoading = false;
+        this.isTableLoading = true;
         this.logisticService.getPagedInspectionRecordAsync(params)
             .finally(() => {
                 finishedCallback();

@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.LC_TeamSafetyActivitys.Dtos;
 using GYSWP.LC_TeamSafetyActivitys;
+using GYSWP.Dtos;
 
 namespace GYSWP.LC_TeamSafetyActivitys
 {
@@ -70,13 +71,6 @@ namespace GYSWP.LC_TeamSafetyActivitys
         /// 批量删除LC_TeamSafetyActivity
         /// </summary>
         Task BatchDelete(List<Guid> input);
-
-
-		/// <summary>
-        /// 导出LC_TeamSafetyActivity为excel表
-        /// </summary>
-        /// <returns></returns>
-		//Task<FileDto> GetToExcel();
-
+        Task<APIResultDto> ExportTeamSafetyActivity(GetLC_TeamSafetyActivitysInput input);
     }
 }

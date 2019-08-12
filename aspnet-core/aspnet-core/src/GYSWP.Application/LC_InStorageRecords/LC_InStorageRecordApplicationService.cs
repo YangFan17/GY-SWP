@@ -211,7 +211,7 @@ LC_InStorageRecordEditDto editDto;
                 var exportData = await GetInStorageRecordForExcel(input);
                 var result = new APIResultDto();
                 result.Code = 0;
-                result.Data = CreateInStorageRecordExcel("入库记录.xlsx", exportData);
+                result.Data = CreateInStorageRecordExcel("卷烟入库记录.xlsx", exportData);
                 return result;
             }
             catch (Exception ex)

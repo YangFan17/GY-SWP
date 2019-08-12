@@ -1,19 +1,18 @@
 import { Component, Injector } from '@angular/core';
 import { PagedListingComponentBase, PagedRequestDto, PagedResultDto } from '@shared/component-base';
-import { Router } from '@angular/router';
-import { addDays } from 'date-fns';
 import { LogisticService } from 'services';
 import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     moduleId: module.id,
-    selector: 'quality-record',
-    templateUrl: 'quality-record.component.html'
+    selector: 'team-safety-activity',
+    templateUrl: 'team-safety-activity.component.html'
 })
-export class QualityRecordComponent extends PagedListingComponentBase<any>{
+export class TeamSafetyActivityComponent extends PagedListingComponentBase<any>{
     exportLoading = false;
     search = { beginTime: '', endTime: '' };
     timeFormat = 'yyyy-MM-dd';
+    // dateRange = [addDays(new Date(), -1 * (new Date()).getDay() + 1), new Date()];
     dateRange: Date[] = [];
     constructor(injector: Injector
         , private logisticService: LogisticService
@@ -36,6 +35,7 @@ export class QualityRecordComponent extends PagedListingComponentBase<any>{
         this.search.beginTime = null;
         this.search.endTime = null;
         this.dateRange = [];
+        // this.dateRange = [addDays(new Date(), -1 * (new Date()).getDay() + 1), new Date()]
         this.refreshData();
     }
 
@@ -46,7 +46,7 @@ export class QualityRecordComponent extends PagedListingComponentBase<any>{
         params.SkipCount = request.skipCount;
         params.MaxResultCount = request.maxResultCount;
         this.isTableLoading = true;
-        this.logisticService.getPagedQualityRecordAsync(params)
+        this.logisticService.getPagedTeamSafetyActivityAsync(params)
             .finally(() => {
                 finishedCallback();
             })
@@ -76,7 +76,7 @@ export class QualityRecordComponent extends PagedListingComponentBase<any>{
         let params: any = {};
         params.BeginTime = this.search.beginTime;
         params.EndTime = this.search.endTime;
-        this.logisticService.exportQualityRecord(params).subscribe((data => {
+        this.logisticService.exportTeamSafetyActivity(params).subscribe((data => {
             if (data.code == 0) {
                 var url = AppConsts.remoteServiceBaseUrl + data.data;
                 document.getElementById('exportUrl').setAttribute('href', url);

@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.LC_SortingEquipChecks.Dtos;
 using GYSWP.LC_SortingEquipChecks;
+using GYSWP.Dtos;
 
 namespace GYSWP.LC_SortingEquipChecks
 {
@@ -70,13 +71,6 @@ namespace GYSWP.LC_SortingEquipChecks
         /// 批量删除LC_SortingEquipCheck
         /// </summary>
         Task BatchDelete(List<Guid> input);
-
-
-		/// <summary>
-        /// 导出LC_SortingEquipCheck为excel表
-        /// </summary>
-        /// <returns></returns>
-		//Task<FileDto> GetToExcel();
-
+        Task<APIResultDto> ExportSortingEquipCheck(GetLC_SortingEquipChecksInput input);
     }
 }

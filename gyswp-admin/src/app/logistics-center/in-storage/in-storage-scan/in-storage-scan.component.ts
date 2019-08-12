@@ -45,7 +45,7 @@ export class InStorageScanComponent extends PagedListingComponentBase<any>{
         params.EndTime = this.search.endTime;
         params.SkipCount = request.skipCount;
         params.MaxResultCount = request.maxResultCount;
-        this.isTableLoading = false;
+        this.isTableLoading = true;
         this.logisticService.getPagedInStorageScanAsync(params)
             .finally(() => {
                 finishedCallback();

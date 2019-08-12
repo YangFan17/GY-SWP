@@ -47,7 +47,7 @@ export class EntryExitRegistrationComponent extends PagedListingComponentBase<an
         params.EndTime = this.search.endTime;
         params.SkipCount = request.skipCount;
         params.MaxResultCount = request.maxResultCount;
-        this.isTableLoading = false;
+        this.isTableLoading = true;
         this.logisticService.getPagedEntryExitRegistrationAsync(params)
             .finally(() => {
                 finishedCallback();

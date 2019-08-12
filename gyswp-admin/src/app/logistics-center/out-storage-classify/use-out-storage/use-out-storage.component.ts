@@ -47,7 +47,7 @@ export class UseOutStorageComponent extends PagedListingComponentBase<any>{
         params.EndTime = this.search.endTime;
         params.SkipCount = request.skipCount;
         params.MaxResultCount = request.maxResultCount;
-        this.isTableLoading = false;
+        this.isTableLoading = true;
         this.logisticService.getPagedUseOutStorageAsync(params)
             .finally(() => {
                 finishedCallback();
