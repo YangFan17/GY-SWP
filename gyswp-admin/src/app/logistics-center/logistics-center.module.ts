@@ -17,6 +17,7 @@ import { OutStorageClassifyComponent } from './out-storage-classify/out-storage-
 import { StorageCustodyComponent } from './storage-custody/storage-custody.component';
 import { UseOutStorageComponent } from './out-storage-classify/use-out-storage/use-out-storage.component';
 import { CigaretExchangeComponent } from './out-storage-classify/cigaret-exchange/cigaret-exchange.component';
+import { DailyCheckComponent } from './in-storage/daily-check/daily-check.component';
 
 @NgModule({
     imports: [
@@ -43,6 +44,7 @@ import { CigaretExchangeComponent } from './out-storage-classify/cigaret-exchang
         //领货出库
         OutStorageComponent,
         OutScanRecordComponent,
+        DailyCheckComponent,
     ],
     entryComponents: [
         InStorageComponent,
@@ -59,6 +61,7 @@ import { CigaretExchangeComponent } from './out-storage-classify/cigaret-exchang
         //领货出库
         OutStorageComponent,
         OutScanRecordComponent,
+        DailyCheckComponent,
     ],
     providers: [LogisticService]
 })

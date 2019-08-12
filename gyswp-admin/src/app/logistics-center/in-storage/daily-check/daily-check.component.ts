@@ -1,16 +1,16 @@
 import { Component, Injector } from '@angular/core';
 import { PagedListingComponentBase, PagedRequestDto, PagedResultDto } from '@shared/component-base';
-import { Router } from '@angular/router';
 import { LogisticService } from 'services';
-import { addDays } from 'date-fns';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     moduleId: module.id,
-    selector: 'in-storage-scan',
-    templateUrl: 'in-storage-scan.component.html'
+    selector: 'daily-check',
+    templateUrl: 'daily-check.component.html'
 })
-export class InStorageScanComponent extends PagedListingComponentBase<any>{
-    search = { beginTime: '', endTime: '', type: 1 };
+export class DailyCheckComponent extends PagedListingComponentBase<any>{
+    exportLoading = false;
+    search = { beginTime: '', endTime: '' };
     timeFormat = 'yyyy-MM-dd';
     // dateRange = [addDays(new Date(), -1 * (new Date()).getDay() + 1), new Date()];
     dateRange: Date[] = [];
@@ -46,7 +46,7 @@ export class InStorageScanComponent extends PagedListingComponentBase<any>{
         params.SkipCount = request.skipCount;
         params.MaxResultCount = request.maxResultCount;
         this.isTableLoading = false;
-        this.logisticService.getPagedInStorageScanAsync(params)
+        this.logisticService.getPagedConveyorCheckAsync(params)
             .finally(() => {
                 finishedCallback();
             })
@@ -69,5 +69,22 @@ export class InStorageScanComponent extends PagedListingComponentBase<any>{
     setSearchTime() {
         this.search.beginTime = this.dateRange[0].getFullYear() + '-' + (this.dateRange[0].getMonth() + 1) + '-' + this.dateRange[0].getDate();
         this.search.endTime = this.dateRange[1].getFullYear() + '-' + (this.dateRange[1].getMonth() + 1) + '-' + this.dateRange[1].getDate();
+    }
+
+    export() {
+        this.exportLoading = true;
+        let params: any = {};
+        params.BeginTime = this.search.beginTime;
+        params.EndTime = this.search.endTime;
+        this.logisticService.exportConveyorChecksRecord(params).subscribe((data => {
+            if (data.code == 0) {
+                var url = AppConsts.remoteServiceBaseUrl + data.data;
+                document.getElementById('exportUrl').setAttribute('href', url);
+                document.getElementById('btnExportHref').click();
+            } else {
+                this.notify.error(data.msg);
+            }
+            this.exportLoading = false;
+        }));
     }
 }

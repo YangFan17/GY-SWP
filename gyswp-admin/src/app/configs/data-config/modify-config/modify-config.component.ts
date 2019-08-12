@@ -16,7 +16,7 @@ export class ModifyConfigComponent extends ModalComponentBase implements OnInit 
   form: FormGroup;
   configType = [
     { value: 1, text: '钉钉配置', selected: true },
-    { value: 2, text: '标准化工作平台', selected: false },
+    { value: 2, text: '企业标准库管理系统', selected: false },
     { value: 3, text: '设备管理', selected: false }
   ]
   constructor(injector: Injector, private dataConfigServiceProxy: DataConfigServiceProxy

@@ -133,4 +133,21 @@ export class LogisticService {
             return ApiResult.fromJS(data);
         }));
     }
+
+    getPagedConveyorCheckAsync(param: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/LC_ConveyorCheck/GetPaged";
+        return this._commonhttp.get(url_, param).pipe(map(data => {
+            const result = new PagedResultDto();
+            result.items = data.items;
+            result.totalCount = data.totalCount;
+            return result;
+        }));
+    }
+
+    exportConveyorChecksRecord(param: any): Observable<ApiResult> {
+        var _url = '/api/services/app/LC_ConveyorCheck/ExportConveyorChecksRecord';
+        return this._commonhttp.post(_url, param).pipe(map(data => {
+            return ApiResult.fromJS(data);
+        }));
+    }
 }

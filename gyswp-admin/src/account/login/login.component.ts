@@ -31,7 +31,7 @@ export class LoginComponent extends AppComponentBase implements OnInit {
     }
   }
   ngOnInit(): void {
-    this.titleSrvice.setTitle('标准化工作平台');
+    this.titleSrvice.setTitle('企业标准库管理系统');
     // this.qrcode();
   }
 

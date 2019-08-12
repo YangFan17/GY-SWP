@@ -36,7 +36,7 @@
         </thead>
         <tbody>
             <tr *ngFor="let item of nzTable.data">
-                <td>{{item.status == 1 ? "开始" : "结束"}}</td>
+                <td>{{item.status == 2 ? "已结束" : "进行中"}}</td>
                 <td>{{item.employeeName}}</td>
                 <td>{{item.creationTime |_date}}</td>
             </tr>

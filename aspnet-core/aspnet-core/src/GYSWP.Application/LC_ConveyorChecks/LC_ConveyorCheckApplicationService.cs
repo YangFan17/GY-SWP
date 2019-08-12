@@ -22,6 +22,11 @@ using GYSWP.LC_ConveyorChecks;
 using GYSWP.LC_ConveyorChecks.Dtos;
 using GYSWP.LC_ConveyorChecks.DomainService;
 using GYSWP.Dtos;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using GYSWP.Helpers;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 
 namespace GYSWP.LC_ConveyorChecks
 {
@@ -32,7 +37,7 @@ namespace GYSWP.LC_ConveyorChecks
     public class LC_ConveyorCheckAppService : GYSWPAppServiceBase, ILC_ConveyorCheckAppService
     {
         private readonly IRepository<LC_ConveyorCheck, Guid> _entityRepository;
-
+        private readonly IHostingEnvironment _hostingEnvironment;
         private readonly ILC_ConveyorCheckManager _entityManager;
 
         /// <summary>
@@ -40,11 +45,13 @@ namespace GYSWP.LC_ConveyorChecks
         ///</summary>
         public LC_ConveyorCheckAppService(
         IRepository<LC_ConveyorCheck, Guid> entityRepository
-        ,ILC_ConveyorCheckManager entityManager
+        , IHostingEnvironment hostingEnvironment
+        , ILC_ConveyorCheckManager entityManager
         )
         {
-            _entityRepository = entityRepository; 
-             _entityManager=entityManager;
+            _entityRepository = entityRepository;
+            _entityManager = entityManager;
+            _hostingEnvironment = hostingEnvironment;
         }
 
 
@@ -53,144 +60,137 @@ namespace GYSWP.LC_ConveyorChecks
         ///</summary>
         /// <param name="input"></param>
         /// <returns></returns>
-		 
+
         public async Task<PagedResultDto<LC_ConveyorCheckListDto>> GetPaged(GetLC_ConveyorChecksInput input)
-		{
+        {
 
-		    var query = _entityRepository.GetAll();
-			// TODO:根据传入的参数添加过滤条件
-            
-
-			var count = await query.CountAsync();
-
-			var entityList = await query
-					.OrderBy(input.Sorting).AsNoTracking()
-					.PageBy(input)
-					.ToListAsync();
-
-			// var entityListDtos = ObjectMapper.Map<List<LC_ConveyorCheckListDto>>(entityList);
-			var entityListDtos =entityList.MapTo<List<LC_ConveyorCheckListDto>>();
-
-			return new PagedResultDto<LC_ConveyorCheckListDto>(count,entityListDtos);
-		}
+            var query = _entityRepository.GetAll().WhereIf(input.BeginTime.HasValue, c => c.CreationTime >= input.BeginTime && c.CreationTime < input.EndTime.Value.ToDayEnd());
+            var count = await query.CountAsync();
+            var entityList = await query
+                    .OrderByDescending(v => v.CreationTime).AsNoTracking()
+                    .PageBy(input)
+                    .ToListAsync();
+            var entityListDtos = entityList.MapTo<List<LC_ConveyorCheckListDto>>();
+            return new PagedResultDto<LC_ConveyorCheckListDto>(count, entityListDtos);
+        }
 
 
-		/// <summary>
-		/// 通过指定id获取LC_ConveyorCheckListDto信息
-		/// </summary>
-		 
-		public async Task<LC_ConveyorCheckListDto> GetById(EntityDto<Guid> input)
-		{
-			var entity = await _entityRepository.GetAsync(input.Id);
+        /// <summary>
+        /// 通过指定id获取LC_ConveyorCheckListDto信息
+        /// </summary>
 
-		    return entity.MapTo<LC_ConveyorCheckListDto>();
-		}
+        public async Task<LC_ConveyorCheckListDto> GetById(EntityDto<Guid> input)
+        {
+            var entity = await _entityRepository.GetAsync(input.Id);
 
-		/// <summary>
-		/// 获取编辑 LC_ConveyorCheck
-		/// </summary>
-		/// <param name="input"></param>
-		/// <returns></returns>
-		
-		public async Task<GetLC_ConveyorCheckForEditOutput> GetForEdit(NullableIdDto<Guid> input)
-		{
-			var output = new GetLC_ConveyorCheckForEditOutput();
-LC_ConveyorCheckEditDto editDto;
+            return entity.MapTo<LC_ConveyorCheckListDto>();
+        }
 
-			if (input.Id.HasValue)
-			{
-				var entity = await _entityRepository.GetAsync(input.Id.Value);
+        /// <summary>
+        /// 获取编辑 LC_ConveyorCheck
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
 
-				editDto = entity.MapTo<LC_ConveyorCheckEditDto>();
+        public async Task<GetLC_ConveyorCheckForEditOutput> GetForEdit(NullableIdDto<Guid> input)
+        {
+            var output = new GetLC_ConveyorCheckForEditOutput();
+            LC_ConveyorCheckEditDto editDto;
 
-				//lC_ConveyorCheckEditDto = ObjectMapper.Map<List<lC_ConveyorCheckEditDto>>(entity);
-			}
-			else
-			{
-				editDto = new LC_ConveyorCheckEditDto();
-			}
+            if (input.Id.HasValue)
+            {
+                var entity = await _entityRepository.GetAsync(input.Id.Value);
 
-			output.LC_ConveyorCheck = editDto;
-			return output;
-		}
+                editDto = entity.MapTo<LC_ConveyorCheckEditDto>();
 
+                //lC_ConveyorCheckEditDto = ObjectMapper.Map<List<lC_ConveyorCheckEditDto>>(entity);
+            }
+            else
+            {
+                editDto = new LC_ConveyorCheckEditDto();
+            }
 
-		/// <summary>
-		/// 添加或者修改LC_ConveyorCheck的公共方法
-		/// </summary>
-		/// <param name="input"></param>
-		/// <returns></returns>
-		
-		public async Task CreateOrUpdate(CreateOrUpdateLC_ConveyorCheckInput input)
-		{
-
-			if (input.LC_ConveyorCheck.Id.HasValue)
-			{
-				await Update(input.LC_ConveyorCheck);
-			}
-			else
-			{
-				await Create(input.LC_ConveyorCheck);
-			}
-		}
+            output.LC_ConveyorCheck = editDto;
+            return output;
+        }
 
 
-		/// <summary>
-		/// 新增LC_ConveyorCheck
-		/// </summary>
-		
-		protected virtual async Task<LC_ConveyorCheckEditDto> Create(LC_ConveyorCheckEditDto input)
-		{
-			//TODO:新增前的逻辑判断，是否允许新增
+        /// <summary>
+        /// 添加或者修改LC_ConveyorCheck的公共方法
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+
+        public async Task CreateOrUpdate(CreateOrUpdateLC_ConveyorCheckInput input)
+        {
+
+            if (input.LC_ConveyorCheck.Id.HasValue)
+            {
+                await Update(input.LC_ConveyorCheck);
+            }
+            else
+            {
+                await Create(input.LC_ConveyorCheck);
+            }
+        }
+
+
+        /// <summary>
+        /// 新增LC_ConveyorCheck
+        /// </summary>
+
+        protected virtual async Task<LC_ConveyorCheckEditDto> Create(LC_ConveyorCheckEditDto input)
+        {
+            //TODO:新增前的逻辑判断，是否允许新增
 
             // var entity = ObjectMapper.Map <LC_ConveyorCheck>(input);
-            var entity=input.MapTo<LC_ConveyorCheck>();
-			
-
-			entity = await _entityRepository.InsertAsync(entity);
-			return entity.MapTo<LC_ConveyorCheckEditDto>();
-		}
-
-		/// <summary>
-		/// 编辑LC_ConveyorCheck
-		/// </summary>
-		
-		protected virtual async Task Update(LC_ConveyorCheckEditDto input)
-		{
-			//TODO:更新前的逻辑判断，是否允许更新
-
-			var entity = await _entityRepository.GetAsync(input.Id.Value);
-			input.MapTo(entity);
-
-			// ObjectMapper.Map(input, entity);
-		    await _entityRepository.UpdateAsync(entity);
-		}
+            var entity = input.MapTo<LC_ConveyorCheck>();
 
 
+            entity = await _entityRepository.InsertAsync(entity);
+            return entity.MapTo<LC_ConveyorCheckEditDto>();
+        }
 
-		/// <summary>
-		/// 删除LC_ConveyorCheck信息的方法
-		/// </summary>
-		/// <param name="input"></param>
-		/// <returns></returns>
-		
-		public async Task Delete(EntityDto<Guid> input)
-		{
-			//TODO:删除前的逻辑判断，是否允许删除
-			await _entityRepository.DeleteAsync(input.Id);
-		}
+        /// <summary>
+        /// 编辑LC_ConveyorCheck
+        /// </summary>
+
+        protected virtual async Task Update(LC_ConveyorCheckEditDto input)
+        {
+            //TODO:更新前的逻辑判断，是否允许更新
+
+            var entity = await _entityRepository.GetAsync(input.Id.Value);
+            input.MapTo(entity);
+
+            // ObjectMapper.Map(input, entity);
+            await _entityRepository.UpdateAsync(entity);
+        }
 
 
 
-		/// <summary>
-		/// 批量删除LC_ConveyorCheck的方法
-		/// </summary>
-		
-		public async Task BatchDelete(List<Guid> input)
-		{
-			// TODO:批量删除前的逻辑判断，是否允许删除
-			await _entityRepository.DeleteAsync(s => input.Contains(s.Id));
-		}
+        /// <summary>
+        /// 删除LC_ConveyorCheck信息的方法
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+
+        public async Task Delete(EntityDto<Guid> input)
+        {
+            //TODO:删除前的逻辑判断，是否允许删除
+            await _entityRepository.DeleteAsync(input.Id);
+        }
+
+
+
+        /// <summary>
+        /// 批量删除LC_ConveyorCheck的方法
+        /// </summary>
+
+        public async Task BatchDelete(List<Guid> input)
+        {
+            // TODO:批量删除前的逻辑判断，是否允许删除
+            await _entityRepository.DeleteAsync(s => input.Contains(s.Id));
+        }
 
 
         /// <summary>
@@ -210,13 +210,103 @@ LC_ConveyorCheckEditDto editDto;
         public async Task<APIResultDto> CreateConveyorCheckRecordAsync(LC_ConveyorCheckEditDto input)
         {
             var entity = input.MapTo<LC_ConveyorCheck>();
-            
+
             entity = await _entityRepository.InsertAsync(entity);
             return new APIResultDto()
             {
                 Code = 0,
                 Data = entity
             };
+        }
+
+
+        /// <summary>
+        /// 导出伸缩式输送机检查表
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<APIResultDto> ExportConveyorChecksRecord(GetLC_ConveyorChecksInput input)
+        {
+            try
+            {
+                var exportData = await GetConveyorChecksForExcel(input);
+                var result = new APIResultDto();
+                result.Code = 0;
+                result.Data = CreateConveyorChecksExcel("伸缩式输送机检查表.xlsx", exportData);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Logger.ErrorFormat("ExportConveyorChecksRecord errormsg{0} Exception{1}", ex.Message, ex);
+                return new APIResultDto() { Code = 901, Msg = "网络忙...请待会儿再试！" };
+
+            }
+        }
+
+        private async Task<List<LC_ConveyorCheckListDto>> GetConveyorChecksForExcel(GetLC_ConveyorChecksInput input)
+        {
+            var query = _entityRepository.GetAll().WhereIf(input.BeginTime.HasValue, c => c.CreationTime >= input.BeginTime && c.CreationTime < input.EndTime.Value.ToDayEnd());
+            var entityList = await query
+                   .OrderByDescending(v => v.CreationTime).AsNoTracking()
+                    .ToListAsync();
+            var entityListDtos = entityList.MapTo<List<LC_ConveyorCheckListDto>>();
+            return entityListDtos;
+        }
+
+        /// <summary>
+        /// 创建入库记录表
+        /// </summary>
+        /// <param name="fileName">表名</param>
+        /// <param name="data">表数据</param>
+        /// <returns></returns>
+        private string CreateConveyorChecksExcel(string fileName, List<LC_ConveyorCheckListDto> data)
+        {
+            var fullPath = ExcelHelper.GetSavePath(_hostingEnvironment.WebRootPath) + fileName;
+            using (var fs = new FileStream(fullPath, FileMode.Create, FileAccess.Write))
+            {
+                IWorkbook workbook = new XSSFWorkbook();
+                ISheet sheet = workbook.CreateSheet("ConveyorCheck");
+                var rowIndex = 0;
+                IRow titleRow = sheet.CreateRow(rowIndex);
+                string[] titles = { "设备编号", "责任人", "监管人", "运行时间", "开机时间", "停机时间", "设备表面有无异物", "固定支架是否完好", "设备螺栓是否紧固", "控制按钮是否正常", "电源线路是否老化、裸露", "皮带是否跑偏", "轴承运转是否正常", "运行声音有无异响", "电机运行是否正常", "电源是否断电", "传输皮带有无划伤、断裂", "设备是否进行清洁", "故障描述和处理", "创建人", "创建时间" };
+                var fontTitle = workbook.CreateFont();
+                fontTitle.IsBold = true;
+                for (int i = 0; i < titles.Length; i++)
+                {
+                    var cell = titleRow.CreateCell(i);
+                    cell.CellStyle.SetFont(fontTitle);
+                    cell.SetCellValue(titles[i]);
+                }
+                var font = workbook.CreateFont();
+                foreach (var item in data)
+                {
+                    rowIndex++;
+                    IRow row = sheet.CreateRow(rowIndex);
+                    ExcelHelper.SetCell(row.CreateCell(0), font, item.EquiNo);
+                    ExcelHelper.SetCell(row.CreateCell(1), font, item.ResponsibleName);
+                    ExcelHelper.SetCell(row.CreateCell(2), font, item.SupervisorName);
+                    ExcelHelper.SetCell(row.CreateCell(3), font, item.RunTime.HasValue == true?( item.RunTime.Value.ToString("yyyy-MM-dd hh:mm:ss")):"");
+                    ExcelHelper.SetCell(row.CreateCell(4), font, item.BeginTime.HasValue == true ? (item.BeginTime.Value.ToString("yyyy-MM-dd hh:mm:ss")) : "");
+                    ExcelHelper.SetCell(row.CreateCell(5), font, item.EndTime.HasValue == true ? (item.EndTime.Value.ToString("yyyy-MM-dd hh:mm:ss")) : "");
+                    ExcelHelper.SetCell(row.CreateCell(6), font, item.IsEquiFaceClean == true ? "有" : "无");
+                    ExcelHelper.SetCell(row.CreateCell(7), font, item.IsSteadyOk == true ? "是" : "否");
+                    ExcelHelper.SetCell(row.CreateCell(8), font, item.IsScrewOk == true ? "是" : "否");
+                    ExcelHelper.SetCell(row.CreateCell(9), font, item.IsButtonOk == true ? "是" : "否");
+                    ExcelHelper.SetCell(row.CreateCell(10), font, item.IsElcLineBad == true ? "是" : "否");
+                    ExcelHelper.SetCell(row.CreateCell(11), font, item.IsBeltSlant == true ? "是" : "否");
+                    ExcelHelper.SetCell(row.CreateCell(12), font, item.IsBearingOk == true ? "是" : "否");
+                    ExcelHelper.SetCell(row.CreateCell(13), font, item.IsSoundOk == true ? "有" : "无");
+                    ExcelHelper.SetCell(row.CreateCell(14), font, item.IsMotor == true ? "是" : "否");
+                    ExcelHelper.SetCell(row.CreateCell(15), font, item.IsShutPower == true ? "是" : "否");
+                    ExcelHelper.SetCell(row.CreateCell(16), font, item.IsBeltBad == true ? "有" : "无");
+                    ExcelHelper.SetCell(row.CreateCell(17), font, item.IsClean == true ? "是" : "否");
+                    ExcelHelper.SetCell(row.CreateCell(18), font, item.Troubleshooting);
+                    ExcelHelper.SetCell(row.CreateCell(19), font, item.EmployeeName);
+                    ExcelHelper.SetCell(row.CreateCell(20), font, item.CreationTime.ToString("yyyy-MM-dd hh:mm:ss"));
+                }
+                workbook.Write(fs);
+            }
+            return "/files/downloadtemp/" + fileName;
         }
     }
 }

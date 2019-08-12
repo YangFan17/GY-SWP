@@ -22,7 +22,7 @@ export class DataConfigComponent extends AppComponentBase implements OnInit {
     logisticsTotal: number = 0;
     configDing = [
         { value: 1, text: '钉钉配置', selected: true },
-        { value: 2, text: '标准化工作平台', selected: false },
+        { value: 2, text: '企业标准库管理系统', selected: false },
         { value: 3, text: '设备管理', selected: false }
     ]
     loading = false;
@@ -64,7 +64,7 @@ export class DataConfigComponent extends AppComponentBase implements OnInit {
         this.getconfigs();
     }
 
-    getconfigs() {  //modelId:1-标准化工作平台,2-物流中心,3-钉钉配置  type:1-钉钉配置,2-标准化工作平台
+    getconfigs() {  //modelId:1-企业标准库管理系统,2-物流中心,3-钉钉配置  type:1-钉钉配置,2-企业标准库管理系统
         this.loading = true;
         let params: any = {};
         params.SkipCount = (this.st.pi - 1) * this.st.ps;

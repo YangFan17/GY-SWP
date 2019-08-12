@@ -80,5 +80,6 @@ namespace GYSWP.LC_ConveyorChecks
         //Task<FileDto> GetToExcel();
 
         Task<APIResultDto> CreateConveyorCheckRecordAsync(LC_ConveyorCheckEditDto input);
+        Task<APIResultDto> ExportConveyorChecksRecord(GetLC_ConveyorChecksInput input);
     }
 }

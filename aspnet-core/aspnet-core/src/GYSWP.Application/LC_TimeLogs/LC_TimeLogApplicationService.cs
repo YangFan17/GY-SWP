@@ -223,7 +223,7 @@ LC_TimeLogEditDto editDto;
         {
             LC_TimeLog entity = new LC_TimeLog();
             entity.EmployeeId = input.EmployeeId;
-            entity.Type = GYEnums.LC_TimeType.零货出库;
+            entity.Type = GYEnums.LC_TimeType.领货出库;
             entity.Status = GYEnums.LC_TimeStatus.结束;
             entity = await _entityRepository.InsertAsync(entity);
             return new APIResultDto() { Code = 0, Msg = "保存成功", Data = entity.Id };

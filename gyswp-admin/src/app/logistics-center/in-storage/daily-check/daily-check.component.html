@@ -1,0 +1,88 @@
+<div nz-row>
+    <form nz-form (ngSubmit)="refreshData()" [nzLayout]="'inline'">
+        <div nz-row [nzGutter]="24">
+            <div nz-col [nzSpan]="6" class="mb-md">
+                <nz-form-item class="d-flex" style="margin-bottom: 0px;">
+                    <nz-form-label nzFor="month">时间范围</nz-form-label>
+                    <nz-form-control class="flex-1">
+                        <nz-range-picker name="dateRange" [(ngModel)]="dateRange" [nzFormat]="timeFormat"
+                            (ngModelChange)="changeTime($event)">
+                        </nz-range-picker>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="8" class="mb-md right" [class.text-right]="'true'" style="float: right;">
+                <nz-form-item class="d-flex" style="margin-right: 0px;margin-bottom: 0px;">
+                    <nz-form-control class="flex-1">
+                        <button nz-button type="button" (click)="refreshData()" nzType="primary"
+                            [nzLoading]="isTableLoading">
+                            查询</button>
+                        <button nz-button type="button" (click)="reset()" class="mx-sm">重置</button>
+                        <a style="display: none;" id="exportUrl" href="#">
+                            <button type="button" id="btnExportHref">隐藏下载</button>
+                        </a>
+                        <button nz-button type="button" (click)="export()" [nzLoading]="exportLoading">
+                            <i class="anticon anticon-download"></i>
+                            <span>导出</span>
+                        </button>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+    </form>
+    <ng-template #totalTemplate let-total>共 {{totalItems}} 条</ng-template>
+    <nz-table #nzTable [nzFrontPagination]="false" [nzShowTotal]="totalTemplate" [nzTotal]="totalItems"
+        [nzData]="dataList" [(nzPageIndex)]="pageNumber" [(nzPageSize)]="pageSize" [nzLoading]="isTableLoading"
+        [nzShowSizeChanger]="true" (nzPageIndexChange)="refresh()" (nzPageSizeChange)="refresh()">
+        <thead>
+            <tr>
+                <th style="width: 100px;">设备编号</th>
+                <th style="width: 100px;">责任人</th>
+                <th style="width: 100px;">监管人</th>
+                <th style="width: 100px;">运行时间</th>
+                <th style="width: 100px;">开机时间</th>
+                <th style="width: 100px;">停机时间</th>
+                <th>设备表面有无异物</th>
+                <th>固定支架是否完好</th>
+                <th>设备螺栓是否紧固</th>
+                <th>控制按钮是否正常</th>
+                <th>电源线路是否老化、裸露</th>
+                <th>皮带是否跑偏</th>
+                <th>轴承运转是否正常</th>
+                <th>运行声音有无异响</th>
+                <th>电机运行是否正常</th>
+                <th>电源是否断电</th>
+                <th>传输皮带有无划伤、断裂</th>
+                <th>设备是否进行清洁</th>
+                <th>故障描述和处理</th>
+                <th style="width: 100px;">创建人</th>
+                <th style="width: 100px;">创建时间</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of nzTable.data">
+                <td>{{item.equiNo}}</td>
+                <td>{{item.responsibleName}}</td>
+                <td>{{item.supervisorName}}</td>
+                <td>{{item.runTime | _date}}</td>
+                <td>{{item.beginTime | _date}}</td>
+                <td>{{item.endTime | _date}}</td>
+                <td>{{item.isEquiFaceClean == 1?'有':'无'}}</td>
+                <td>{{item.isSteadyOk == 1?'是':'否'}}</td>
+                <td>{{item.isScrewOk == 1?'是':'否'}}</td>
+                <td>{{item.isButtonOk == 1?'是':'否'}}</td>
+                <td>{{item.isElcLineBad == 1?'是':'否'}}</td>
+                <td>{{item.isBeltSlant == 1?'是':'否'}}</td>
+                <td>{{item.isBearingOk == 1?'是':'否'}}</td>
+                <td>{{item.isSoundOk == 1?'有':'无'}}</td>
+                <td>{{item.isMotor == 1?'是':'否'}}</td>
+                <td>{{item.isShutPower == 1?'是':'否'}}</td>
+                <td>{{item.isBeltBad == 1?'有':'无'}}</td>
+                <td>{{item.isClean == 1?'是':'否'}}</td>
+                <td>{{item.troubleshooting == 1?'是':'否'}}</td>
+                <td>{{item.employeeName}}</td>
+                <td>{{item.creationTime | _date}}</td>
+            </tr>
+        </tbody>
+    </nz-table>
+</div>
