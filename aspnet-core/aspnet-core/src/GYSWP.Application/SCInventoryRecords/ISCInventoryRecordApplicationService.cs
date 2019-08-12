@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.SCInventoryRecords.Dtos;
 using GYSWP.SCInventoryRecords;
+using GYSWP.Dtos;
 
 namespace GYSWP.SCInventoryRecords
 {
@@ -72,11 +73,12 @@ namespace GYSWP.SCInventoryRecords
         Task BatchDeleteAsync(List<long> input);
 
 
-		/// <summary>
+        /// <summary>
         /// 导出SCInventoryRecord为excel表
         /// </summary>
         /// <returns></returns>
-		//Task<FileDto> GetToExcel();
+        //Task<FileDto> GetToExcel();
 
+        Task<APIResultDto> ExportSCInventoryRecord(GetSCInventoryRecordsInput input);
     }
 }

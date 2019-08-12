@@ -1,0 +1,70 @@
+<div nz-row>
+    <form nz-form (ngSubmit)="refreshData()" [nzLayout]="'inline'">
+        <div nz-row [nzGutter]="24">
+            <div nz-col [nzSpan]="7" class="mb-md">
+                <nz-form-item class="d-flex" style="margin-bottom: 0px;">
+                    <nz-form-label nzFor="month">时间范围</nz-form-label>
+                    <nz-form-control class="flex-1">
+                        <nz-range-picker name="dateRange" [(ngModel)]="dateRange" [nzFormat]="timeFormat"
+                            (ngModelChange)="changeTime($event)">
+                        </nz-range-picker>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="8" class="mb-md right" [class.text-right]="'true'" style="float: right;">
+                <nz-form-item class="d-flex" style="margin-right: 0px;margin-bottom: 0px;">
+                    <nz-form-control class="flex-1">
+                        <button nz-button type="button" (click)="refreshData()" nzType="primary"
+                            [nzLoading]="isTableLoading">
+                            查询</button>
+                        <button nz-button type="button" (click)="reset()" class="mx-sm">重置</button>
+                        <a style="display: none;" id="exportUrl" href="#">
+                            <button type="button" id="btnExportHref">隐藏下载</button>
+                        </a>
+                        <button nz-button type="button" (click)="export()" [nzLoading]="exportLoading">
+                            <i class="anticon anticon-download"></i>
+                            <span>导出</span>
+                        </button>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+    </form>
+    <ng-template #totalTemplate let-total>共 {{totalItems}} 条</ng-template>
+    <nz-table #nzTable [nzFrontPagination]="false" [nzShowTotal]="totalTemplate" [nzTotal]="totalItems"
+        [nzData]="dataList" [(nzPageIndex)]="pageNumber" [(nzPageSize)]="pageSize" [nzLoading]="isTableLoading"
+        [nzShowSizeChanger]="true" (nzPageIndexChange)="refresh()" (nzPageSizeChange)="refresh()">
+        <thead>
+            <tr>
+                <th>门窗、锁有无异常</th>
+                <th>墙体有无破坏</th>
+                <th>屋顶、墙面是否渗水</th>
+                <th>温湿度是否超标</th>
+                <th>消防控制系统工作是否正常</th>
+                <th>防盗报警器工作是否正常</th>
+                <th>防盗报警设密是否灵敏有效</th>
+                <th>监控摄像头有无遮挡</th>
+                <th>消防设施有无阻拦</th>
+                <th>安全出口有无阻拦</th>
+                <th>创建人</th>
+                <th>创建时间</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of nzTable.data">
+                <td>{{item.isDWLAbnormal == true ? "有" : "无"}}</td>
+                <td>{{item.isWallDestruction == true ? "有" : "无"}}</td>
+                <td>{{item.isRoofWallSeepage == true ? "是" : "否"}}</td>
+                <td>{{item.isHumitureExceeding == true ? "是" : "否"}}</td>
+                <td>{{item.isFASNormal == true ? "是" : "否"}}</td>
+                <td>{{item.isBurglarAlarmNormal == true ? "是" : "否"}}</td>
+                <td>{{item.isSASSValid == true ? "是" : "否"}}</td>
+                <td>{{item.isCameraShelter == true ? "有" : "无"}}</td>
+                <td>{{item.isFPDStop == true ? "有" : "无"}}</td>
+                <td>{{item.isEXITStop == true ? "有" : "无"}}</td>
+                <td>{{item.employeeName }}</td>
+                <td>{{item.creationTime |_date }}</td>
+            </tr>
+        </tbody>
+    </nz-table>
+</div>

@@ -66,14 +66,14 @@ namespace GYSWP.LC_CigaretExchanges
         public async Task<PagedResultDto<LC_CigaretExchangeListDto>> GetPaged(GetLC_CigaretExchangesInput input)
 		{
 
-		    var query = _entityRepository.GetAll();
-			// TODO:根据传入的参数添加过滤条件
-            
+		    var query = _entityRepository.GetAll().WhereIf(input.BeginTime.HasValue, c => c.CreationTime >= input.BeginTime && c.CreationTime < input.EndTime.Value.ToDayEnd());
+            // TODO:根据传入的参数添加过滤条件
 
-			var count = await query.CountAsync();
+
+            var count = await query.CountAsync();
 
 			var entityList = await query
-					.OrderBy(input.Sorting).AsNoTracking()
+					.OrderByDescending(v => v.CreationTime).AsNoTracking()
 					.PageBy(input)
 					.ToListAsync();
 
@@ -281,8 +281,8 @@ LC_CigaretExchangeEditDto editDto;
                     ExcelHelper.SetCell(row.CreateCell(2), font, item.Unit);
                     ExcelHelper.SetCell(row.CreateCell(3), font, item.Num?.ToString());
                     ExcelHelper.SetCell(row.CreateCell(4), font, item.Reason);
-                    ExcelHelper.SetCell(row.CreateCell(10), font, item.EmployeeName);
-                    ExcelHelper.SetCell(row.CreateCell(11), font, item.CreationTime.ToString("yyyy-MM-dd hh:mm:ss"));
+                    ExcelHelper.SetCell(row.CreateCell(5), font, item.EmployeeName);
+                    ExcelHelper.SetCell(row.CreateCell(6), font, item.CreationTime.ToString("yyyy-MM-dd HH:mm:ss"));
                 }
                 workbook.Write(fs);
             }

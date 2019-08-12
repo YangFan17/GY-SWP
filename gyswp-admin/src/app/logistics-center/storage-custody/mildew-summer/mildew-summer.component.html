@@ -1,0 +1,101 @@
+<div nz-row>
+    <form nz-form (ngSubmit)="refreshData()" [nzLayout]="'inline'">
+        <div nz-row [nzGutter]="24">
+            <div nz-col [nzSpan]="7" class="mb-md">
+                <nz-form-item class="d-flex" style="margin-bottom: 0px;">
+                    <nz-form-label nzFor="month">时间范围</nz-form-label>
+                    <nz-form-control class="flex-1">
+                        <nz-range-picker name="dateRange" [(ngModel)]="dateRange" [nzFormat]="timeFormat"
+                            (ngModelChange)="changeTime($event)">
+                        </nz-range-picker>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="8" class="mb-md right" [class.text-right]="'true'" style="float: right;">
+                <nz-form-item class="d-flex" style="margin-right: 0px;margin-bottom: 0px;">
+                    <nz-form-control class="flex-1">
+                        <button nz-button type="button" (click)="refreshData()" nzType="primary"
+                            [nzLoading]="isTableLoading">
+                            查询</button>
+                        <button nz-button type="button" (click)="reset()" class="mx-sm">重置</button>
+                        <a style="display: none;" id="exportUrl" href="#">
+                            <button type="button" id="btnExportHref">隐藏下载</button>
+                        </a>
+                        <button nz-button type="button" (click)="export()" [nzLoading]="exportLoading">
+                            <i class="anticon anticon-download"></i>
+                            <span>导出</span>
+                        </button>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+    </form>
+    <ng-template #totalTemplate let-total>共 {{totalItems}} 条</ng-template>
+
+    <nz-table #nzTable [nzData]="dataList" [nzFrontPagination]="false" [nzShowTotal]="totalTemplate"
+        [nzTotal]="totalItems" nzBordered nzSize="middle"
+        [nzWidthConfig]="['70px','70px','70px','70px','70px','70px','70px','70px','70px','70px','70px','70px','70px','70px','70px','70px','70px','70px','70px']"
+        [(nzPageIndex)]="pageNumber" [(nzPageSize)]="pageSize" [nzLoading]="isTableLoading" [nzShowSizeChanger]="true"
+        (nzPageIndexChange)="refresh()" (nzPageSizeChange)="refresh()">
+        <thead>
+            <tr>
+                <th rowspan="3" nzLeft="0px">日期</th>
+                <th colspan="9">上午</th>
+                <th colspan="9">下午</th>
+                <th rowspan="3">创建人</th>
+            </tr>
+            <tr>
+                <th colspan="3">开机前</th>
+                <th colspan="3">开机中</th>
+                <th colspan="3">停机后</th>
+                <th colspan="3">开机前</th>
+                <th colspan="3">开机中</th>
+                <th colspan="3">停机后</th>
+            </tr>
+            <tr>
+                <th>开机时间</th>
+                <th>温度(℃)</th>
+                <th>湿度(%)</th>
+                <th>观察时间</th>
+                <th>温度(℃)</th>
+                <th>湿度(%)</th>
+                <th>停机时间</th>
+                <th>温度(℃)</th>
+                <th>湿度(%)</th>
+                <th>开机时间</th>
+                <th>温度(℃)</th>
+                <th>湿度(%)</th>
+                <th>观察时间</th>
+                <th>温度(℃)</th>
+                <th>湿度(%)</th>
+                <th>停机时间</th>
+                <th>温度(℃)</th>
+                <th>湿度(%)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of nzTable.data">
+                <td>{{item.creationTime | date:"yyyy/MM/dd"}}</td>
+                <td>{{item.amBootTime | _date}}</td>
+                <td>{{item.amBootBeforeTmp}}</td>
+                <td>{{item.amBootBeforeHum}}</td>
+                <td>{{item.amObservedTime | _date}}</td>
+                <td>{{item.amBootingTmp}}</td>
+                <td>{{item.amBootingHum}}</td>
+                <td>{{item.amBootAfterTime | _date}}</td>
+                <td>{{item.amBootAfterTmp}}</td>
+                <td>{{item.amBootAfterHum}}</td>
+                <td>{{item.pmBootingTime | _date}}</td>
+                <td>{{item.pmBootBeforeTmp}}</td>
+                <td>{{item.pmBootBeforeHum}}</td>
+                <td>{{item.pmObservedTime | _date}}</td>
+                <td>{{item.pmBootingTmp}}</td>
+                <td>{{item.pmBootingHum}}</td>
+                <td>{{item.pmBootAfterTime | _date}}</td>
+                <td>{{item.pmBootAfterTmp}}</td>
+                <td>{{item.pmBootAfterHum}}</td>
+                <td>{{item.employeeName}}</td>
+            </tr>
+        </tbody>
+    </nz-table>
+</div>

@@ -261,11 +261,11 @@ namespace GYSWP.LC_QualityRecords
                     ExcelHelper.SetCell(row.CreateCell(4), font, item.CompensationAmount.ToString());
                     ExcelHelper.SetCell(row.CreateCell(5), font, item.CarrierName);
                     ExcelHelper.SetCell(row.CreateCell(6), font, item.ClerkName);
-                    ExcelHelper.SetCell(row.CreateCell(7), font, item.HandoverTime.Value.ToString("yyyy-MM-dd hh:mm:ss"));
+                    ExcelHelper.SetCell(row.CreateCell(7), font, item.HandoverTime.Value.ToString("yyyy-MM-dd HH:mm:ss"));
                     ExcelHelper.SetCell(row.CreateCell(8), font, item.Amount.ToString());
                     ExcelHelper.SetCell(row.CreateCell(9), font, item.HandManName);
                     ExcelHelper.SetCell(row.CreateCell(10), font, item.EmployeeName);
-                    ExcelHelper.SetCell(row.CreateCell(11), font, item.CreationTime.ToString("yyyy-MM-dd hh:mm:ss"));
+                    ExcelHelper.SetCell(row.CreateCell(11), font, item.CreationTime.ToString("yyyy-MM-dd HH:mm:ss"));
                 }
                 workbook.Write(fs);
             }

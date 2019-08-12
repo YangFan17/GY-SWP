@@ -13,8 +13,7 @@ export class StorageCustodyComponent extends PagedListingComponentBase<any>{
         { value: 1, text: '卷烟仓库人员出入登记', selected: true },
         { value: 2, text: '巡查记录', selected: false },
         { value: 3, text: '防霉度夏', selected: false },
-        { value: 4, text: '卷烟仓储预警报告表', selected: false },
-        { value: 5, text: '分拣车间残损卷烟调换表', selected: false }
+        { value: 4, text: '库存卷烟抽查盘点记录', selected: false }
     ];
     constructor(injector: Injector
         , private router: Router
