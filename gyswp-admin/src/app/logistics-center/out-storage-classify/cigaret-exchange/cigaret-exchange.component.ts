@@ -8,8 +8,7 @@ import { AppConsts } from '@shared/AppConsts';
 @Component({
     moduleId: module.id,
     selector: 'cigaret-exchange',
-    templateUrl: 'cigaret-exchange.component.html',
-    styleUrls: ['cigaret-exchange.component.scss']
+    templateUrl: 'cigaret-exchange.component.html'
 })
 export class CigaretExchangeComponent extends PagedListingComponentBase<any>{
     exportLoading = false;

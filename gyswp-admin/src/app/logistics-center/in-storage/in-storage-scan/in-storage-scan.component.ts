@@ -7,8 +7,7 @@ import { addDays } from 'date-fns';
 @Component({
     moduleId: module.id,
     selector: 'in-storage-scan',
-    templateUrl: 'in-storage-scan.component.html',
-    styleUrls: ['in-storage-scan.component.scss']
+    templateUrl: 'in-storage-scan.component.html'
 })
 export class InStorageScanComponent extends PagedListingComponentBase<any>{
     search = { beginTime: '', endTime: '', type: 1 };

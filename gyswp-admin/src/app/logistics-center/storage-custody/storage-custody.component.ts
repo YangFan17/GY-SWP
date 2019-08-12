@@ -5,8 +5,7 @@ import { Router } from '@angular/router';
 @Component({
     moduleId: module.id,
     selector: 'storage-custody',
-    templateUrl: 'storage-custody.component.html',
-    styleUrls: ['storage-custody.component.scss']
+    templateUrl: 'storage-custody.component.html'
 })
 export class StorageCustodyComponent extends PagedListingComponentBase<any>{
     menuTypes = [

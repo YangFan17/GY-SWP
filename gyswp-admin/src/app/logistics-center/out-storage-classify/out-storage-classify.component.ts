@@ -5,8 +5,7 @@ import { Router } from '@angular/router';
 @Component({
     moduleId: module.id,
     selector: 'out-storage-classify',
-    templateUrl: 'out-storage-classify.component.html',
-    styleUrls: ['out-storage-classify.component.scss']
+    templateUrl: 'out-storage-classify.component.html'
 })
 export class OutStorageClassifyComponent extends PagedListingComponentBase<any>{
     menuTypes = [

@@ -8,8 +8,7 @@ import { AppConsts } from '@shared/AppConsts';
 @Component({
     moduleId: module.id,
     selector: 'entry-exit-registration',
-    templateUrl: 'entry-exit-registration.component.html',
-    styleUrls: ['entry-exit-registration.component.scss']
+    templateUrl: 'entry-exit-registration.component.html'
 })
 export class EntryExitRegistrationComponent extends PagedListingComponentBase<any>{
     exportLoading = false;

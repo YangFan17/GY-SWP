@@ -8,8 +8,7 @@ import { AppConsts } from '@shared/AppConsts';
 @Component({
     moduleId: module.id,
     selector: 'inspection-record',
-    templateUrl: 'inspection-record.component.html',
-    styleUrls: ['inspection-record.component.scss']
+    templateUrl: 'inspection-record.component.html'
 })
 export class InspectionRecordComponent extends PagedListingComponentBase<any>{
     exportLoading = false;

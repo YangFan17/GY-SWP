@@ -8,8 +8,7 @@ import { AppConsts } from '@shared/AppConsts';
 @Component({
     moduleId: module.id,
     selector: 'inventory-record',
-    templateUrl: 'inventory-record.component.html',
-    styleUrls: ['inventory-record.component.scss']
+    templateUrl: 'inventory-record.component.html'
 })
 export class InventoryRecordComponent extends PagedListingComponentBase<any>{
     exportLoading = false;
