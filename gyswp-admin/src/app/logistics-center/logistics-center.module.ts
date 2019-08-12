@@ -18,6 +18,10 @@ import { StorageCustodyComponent } from './storage-custody/storage-custody.compo
 import { UseOutStorageComponent } from './out-storage-classify/use-out-storage/use-out-storage.component';
 import { CigaretExchangeComponent } from './out-storage-classify/cigaret-exchange/cigaret-exchange.component';
 import { DailyCheckComponent } from './in-storage/daily-check/daily-check.component';
+import { EntryExitRegistrationComponent } from './storage-custody/entry-exit-registration/entry-exit-registration.component';
+import { InventoryRecordComponent } from './storage-custody/inventory-record/inventory-record.component';
+import { InspectionRecordComponent } from './storage-custody/inspection-record/inspection-record.component';
+import { MildewSummerComponent } from './storage-custody/mildew-summer/mildew-summer.component';
 
 @NgModule({
     imports: [
@@ -37,6 +41,10 @@ import { DailyCheckComponent } from './in-storage/daily-check/daily-check.compon
         InStorageScanComponent,
         //在库报管
         StorageCustodyComponent,
+        EntryExitRegistrationComponent,
+        InventoryRecordComponent,
+        InspectionRecordComponent,
+        MildewSummerComponent,
         //出库分拣
         OutStorageClassifyComponent,
         UseOutStorageComponent,
@@ -54,6 +62,10 @@ import { DailyCheckComponent } from './in-storage/daily-check/daily-check.compon
         InStorageScanComponent,
         //在库报管
         StorageCustodyComponent,
+        EntryExitRegistrationComponent,
+        InventoryRecordComponent,
+        InspectionRecordComponent,
+        MildewSummerComponent,
         //出库分拣
         OutStorageClassifyComponent,
         UseOutStorageComponent,

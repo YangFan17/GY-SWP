@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.LC_CigaretExchanges.Dtos;
 using GYSWP.LC_CigaretExchanges;
+using GYSWP.Dtos;
 
 namespace GYSWP.LC_CigaretExchanges
 {
@@ -72,11 +73,11 @@ namespace GYSWP.LC_CigaretExchanges
         Task BatchDelete(List<Guid> input);
 
 
-		/// <summary>
+        /// <summary>
         /// 导出LC_CigaretExchange为excel表
         /// </summary>
         /// <returns></returns>
-		//Task<FileDto> GetToExcel();
-
+        //Task<FileDto> GetToExcel();
+        Task<APIResultDto> ExportCigaretExchange(GetLC_CigaretExchangesInput input);
     }
 }

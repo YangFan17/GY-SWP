@@ -8,8 +8,7 @@ import { AppConsts } from '@shared/AppConsts';
 @Component({
     moduleId: module.id,
     selector: 'use-out-storage',
-    templateUrl: 'use-out-storage.component.html',
-    styleUrls: ['use-out-storage.component.scss']
+    templateUrl: 'use-out-storage.component.html'
 })
 export class UseOutStorageComponent extends PagedListingComponentBase<any>{
     exportLoading = false;

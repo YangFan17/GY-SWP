@@ -7,10 +7,10 @@ import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     moduleId: module.id,
-    selector: 'cigaret-exchange',
-    templateUrl: 'cigaret-exchange.component.html'
+    selector: 'inventory-record',
+    templateUrl: 'inventory-record.component.html'
 })
-export class CigaretExchangeComponent extends PagedListingComponentBase<any>{
+export class InventoryRecordComponent extends PagedListingComponentBase<any>{
     exportLoading = false;
     search = { beginTime: '', endTime: '' };
     timeFormat = 'yyyy-MM-dd';
@@ -48,7 +48,7 @@ export class CigaretExchangeComponent extends PagedListingComponentBase<any>{
         params.SkipCount = request.skipCount;
         params.MaxResultCount = request.maxResultCount;
         this.isTableLoading = false;
-        this.logisticService.getPagedCigaretExchangeAsync(params)
+        this.logisticService.getPagedInventoryRecordAsync(params)
             .finally(() => {
                 finishedCallback();
             })
@@ -78,7 +78,7 @@ export class CigaretExchangeComponent extends PagedListingComponentBase<any>{
         let params: any = {};
         params.BeginTime = this.search.beginTime;
         params.EndTime = this.search.endTime;
-        this.logisticService.exportCigaretExchange(params).subscribe((data => {
+        this.logisticService.exportInventoryRecord(params).subscribe((data => {
             if (data.code == 0) {
                 var url = AppConsts.remoteServiceBaseUrl + data.data;
                 document.getElementById('exportUrl').setAttribute('href', url);

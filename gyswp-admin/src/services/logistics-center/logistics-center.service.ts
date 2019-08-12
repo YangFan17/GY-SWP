@@ -77,7 +77,74 @@ export class LogisticService {
     }
 
     ///在库保管
-    //
+    //卷烟仓库人员出入登记
+    getPagedEntryExitRegistrationAsync(param: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/EntryExitRegistration/GetPagedAsync";
+        return this._commonhttp.get(url_, param).pipe(map(data => {
+            const result = new PagedResultDto();
+            result.items = data.items;
+            result.totalCount = data.totalCount;
+            return result;
+        }));
+    }
+    //导出卷烟仓库人员出入登记
+    exportEntryExitRegistration(param: any): Observable<ApiResult> {
+        var _url = '/api/services/app/EntryExitRegistration/ExportEntryExitRegistratione';
+        return this._commonhttp.post(_url, param).pipe(map(data => {
+            return ApiResult.fromJS(data);
+        }));
+    }
+    //库存卷烟抽查盘点记录
+    getPagedInventoryRecordAsync(param: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/SCInventoryRecord/GetPagedAsync";
+        return this._commonhttp.get(url_, param).pipe(map(data => {
+            const result = new PagedResultDto();
+            result.items = data.items;
+            result.totalCount = data.totalCount;
+            return result;
+        }));
+    }
+    //导出库存卷烟抽查盘点记录
+    exportInventoryRecord(param: any): Observable<ApiResult> {
+        var _url = '/api/services/app/SCInventoryRecord/ExportSCInventoryRecord';
+        return this._commonhttp.post(_url, param).pipe(map(data => {
+            return ApiResult.fromJS(data);
+        }));
+    }
+    //巡查记录
+    getPagedInspectionRecordAsync(param: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/InspectionRecord/GetPagedAsync";
+        return this._commonhttp.get(url_, param).pipe(map(data => {
+            const result = new PagedResultDto();
+            result.items = data.items;
+            result.totalCount = data.totalCount;
+            return result;
+        }));
+    }
+    //导出巡查记录
+    exportInspectionRecord(param: any): Observable<ApiResult> {
+        var _url = '/api/services/app/InspectionRecord/ExportInspectionRecord';
+        return this._commonhttp.post(_url, param).pipe(map(data => {
+            return ApiResult.fromJS(data);
+        }));
+    }
+    //防霉度夏
+    getPagedMildewSummerAsync(param: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/LC_MildewSummer/GetPaged";
+        return this._commonhttp.get(url_, param).pipe(map(data => {
+            const result = new PagedResultDto();
+            result.items = data.items;
+            result.totalCount = data.totalCount;
+            return result;
+        }));
+    }
+    //导出防霉度夏
+    exportMildewSummer(param: any): Observable<ApiResult> {
+        var _url = '/api/services/app/LC_MildewSummer/ExportLC_MildewSummere';
+        return this._commonhttp.post(_url, param).pipe(map(data => {
+            return ApiResult.fromJS(data);
+        }));
+    }
 
     ///出库分拣
     //卷烟分拣领用出库单

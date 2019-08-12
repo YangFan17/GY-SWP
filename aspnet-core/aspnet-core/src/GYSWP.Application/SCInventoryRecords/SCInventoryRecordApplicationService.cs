@@ -22,6 +22,12 @@ using GYSWP.SCInventoryRecords;
 using GYSWP.SCInventoryRecords.Dtos;
 using GYSWP.SCInventoryRecords.DomainService;
 using Abp.Auditing;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using GYSWP.Helpers;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
+using GYSWP.Dtos;
 
 namespace GYSWP.SCInventoryRecords
 {
@@ -33,6 +39,7 @@ namespace GYSWP.SCInventoryRecords
     {
         private readonly IRepository<SCInventoryRecord, long> _entityRepository;
 
+        private readonly IHostingEnvironment _hostingEnvironment;
         private readonly ISCInventoryRecordManager _entityManager;
 
         /// <summary>
@@ -40,11 +47,13 @@ namespace GYSWP.SCInventoryRecords
         ///</summary>
         public SCInventoryRecordAppService(
         IRepository<SCInventoryRecord, long> entityRepository
-        ,ISCInventoryRecordManager entityManager
+        , IHostingEnvironment hostingEnvironment
+        , ISCInventoryRecordManager entityManager
         )
         {
             _entityRepository = entityRepository; 
              _entityManager=entityManager;
+            _hostingEnvironment = hostingEnvironment;
         }
 
 
@@ -57,15 +66,15 @@ namespace GYSWP.SCInventoryRecords
         public async Task<PagedResultDto<SCInventoryRecordListDto>> GetPagedAsync(GetSCInventoryRecordsInput input)
 		{
 
-		    var query = _entityRepository.GetAll();
-			// TODO:根据传入的参数添加过滤条件
-            
+		    var query = _entityRepository.GetAll().WhereIf(input.BeginTime.HasValue, c => c.CreationTime >= input.BeginTime && c.CreationTime < input.EndTime.Value.ToDayEnd());
+            // TODO:根据传入的参数添加过滤条件
 
-			var count = await query.CountAsync();
+
+            var count = await query.CountAsync();
 
 			var entityList = await query
-					.OrderBy(input.Sorting).AsNoTracking()
-					.PageBy(input)
+                    .OrderByDescending(v => v.CreationTime).AsNoTracking()
+                    .PageBy(input)
 					.ToListAsync();
 
 			// var entityListDtos = ObjectMapper.Map<List<SCInventoryRecordListDto>>(entityList);
@@ -194,18 +203,93 @@ SCInventoryRecordEditDto editDto;
 		}
 
 
-		/// <summary>
-		/// 导出SCInventoryRecord为excel表,等待开发。
-		/// </summary>
-		/// <returns></returns>
-		//public async Task<FileDto> GetToExcel()
-		//{
-		//	var users = await UserManager.Users.ToListAsync();
-		//	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
-		//	await FillRoleNames(userListDtos);
-		//	return _userListExcelExporter.ExportToFile(userListDtos);
-		//}
+        /// <summary>
+        /// 导出SCInventoryRecord为excel表,等待开发。
+        /// </summary>
+        /// <returns></returns>
+        //public async Task<FileDto> GetToExcel()
+        //{
+        //	var users = await UserManager.Users.ToListAsync();
+        //	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
+        //	await FillRoleNames(userListDtos);
+        //	return _userListExcelExporter.ExportToFile(userListDtos);
+        //}
+        /// <summary>
+        /// 导出库存卷烟抽查盘点记录
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<APIResultDto> ExportSCInventoryRecord(GetSCInventoryRecordsInput input)
+        {
+            try
+            {
+                var exportData = await GetSCInventoryRecordForExcel(input);
+                var result = new APIResultDto();
+                result.Code = 0;
+                result.Data = CreateSCInventoryRecordExcel("库存卷烟抽查盘点记录.xlsx", exportData);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Logger.ErrorFormat("ExportSCInventoryRecord errormsg{0} Exception{1}", ex.Message, ex);
+                return new APIResultDto() { Code = 901, Msg = "网络忙...请待会儿再试！" };
 
+            }
+        }
+
+        private async Task<List<SCInventoryRecordListDto>> GetSCInventoryRecordForExcel(GetSCInventoryRecordsInput input)
+        {
+            var query = _entityRepository.GetAll().WhereIf(input.BeginTime.HasValue, c => c.CreationTime >= input.BeginTime && c.CreationTime < input.EndTime.Value.ToDayEnd());
+            var entityList = await query
+                   .OrderByDescending(v => v.CreationTime).AsNoTracking()
+                    .ToListAsync();
+            var entityListDtos = entityList.MapTo<List<SCInventoryRecordListDto>>();
+            return entityListDtos;
+        }
+
+        /// <summary>
+        /// 创建库存卷烟抽查盘点记录表
+        /// </summary>
+        /// <param name="fileName">表名</param>
+        /// <param name="data">表数据</param>
+        /// <returns></returns>
+        private string CreateSCInventoryRecordExcel(string fileName, List<SCInventoryRecordListDto> data)
+        {
+            var fullPath = ExcelHelper.GetSavePath(_hostingEnvironment.WebRootPath) + fileName;
+            using (var fs = new FileStream(fullPath, FileMode.Create, FileAccess.Write))
+            {
+                IWorkbook workbook = new XSSFWorkbook();
+                ISheet sheet = workbook.CreateSheet("SCInventoryRecord");
+                var rowIndex = 0;
+                IRow titleRow = sheet.CreateRow(rowIndex);
+                string[] titles = { "商品名称", "现库存量", "库存合计", "库存实数", "原件短少", "残损", "备注", "创建人", "创建时间" };
+                var fontTitle = workbook.CreateFont();
+                fontTitle.IsBold = true;
+                for (int i = 0; i < titles.Length; i++)
+                {
+                    var cell = titleRow.CreateCell(i);
+                    cell.CellStyle.SetFont(fontTitle);
+                    cell.SetCellValue(titles[i]);
+                }
+                var font = workbook.CreateFont();
+                foreach (var item in data)
+                {
+                    rowIndex++;
+                    IRow row = sheet.CreateRow(rowIndex);
+                    ExcelHelper.SetCell(row.CreateCell(0), font, item.Name);
+                    ExcelHelper.SetCell(row.CreateCell(1), font, item.CurrentStock?.ToString());
+                    ExcelHelper.SetCell(row.CreateCell(2), font, item.TotalInventory?.ToString());
+                    ExcelHelper.SetCell(row.CreateCell(3), font, item.InventoryRealNumber?.ToString());
+                    ExcelHelper.SetCell(row.CreateCell(4), font, item.ShortOriginal?.ToString());
+                    ExcelHelper.SetCell(row.CreateCell(5), font, item.Damaged?.ToString());
+                    ExcelHelper.SetCell(row.CreateCell(6), font, item.Remarks);
+                    ExcelHelper.SetCell(row.CreateCell(7), font, item.EmployeeName);
+                    ExcelHelper.SetCell(row.CreateCell(8), font, item.CreationTime.ToString("yyyy-MM-dd hh:mm:ss"));
+                }
+                workbook.Write(fs);
+            }
+            return "/files/downloadtemp/" + fileName;
+        }
     }
 }
 

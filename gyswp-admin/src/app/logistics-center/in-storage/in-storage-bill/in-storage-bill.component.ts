@@ -7,8 +7,7 @@ import { addDays } from 'date-fns';
 @Component({
     moduleId: module.id,
     selector: 'in-storage-bill',
-    templateUrl: 'in-storage-bill.component.html',
-    styleUrls: ['in-storage-bill.component.scss']
+    templateUrl: 'in-storage-bill.component.html'
 })
 export class InStorageBillComponent extends PagedListingComponentBase<any>{
     search = { beginTime: '', endTime: '' };

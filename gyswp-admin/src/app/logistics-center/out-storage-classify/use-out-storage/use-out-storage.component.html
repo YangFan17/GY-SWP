@@ -31,7 +31,55 @@
         </div>
     </form>
     <ng-template #totalTemplate let-total>共 {{totalItems}} 条</ng-template>
-    <nz-table #nzTable [nzFrontPagination]="false" [nzShowTotal]="totalTemplate" [nzTotal]="totalItems"
+
+    <nz-table #nzTable [nzData]="dataList" [nzFrontPagination]="false" [nzShowTotal]="totalTemplate"
+        [nzTotal]="totalItems" nzBordered nzSize="middle"
+        [nzWidthConfig]="['150px','150px','50px','50px','50px','50px','50px','100px','50px','50px','100px','100px','100px','150px']"
+        [(nzPageIndex)]="pageNumber" [(nzPageSize)]="pageSize" [nzLoading]="isTableLoading" [nzShowSizeChanger]="true"
+        (nzPageIndexChange)="refresh()" (nzPageSizeChange)="refresh()">
+        <thead>
+            <tr>
+                <th rowspan="2" nzLeft="0px">分拣线名称</th>
+                <th rowspan="2">商品名称</th>
+                <th colspan="2">预出库数量</th>
+                <th colspan="3">补库量</th>
+                <th rowspan="2">实际订单量</th>
+                <th colspan="2">库存盘点</th>
+                <th rowspan="2">保管员</th>
+                <th rowspan="2">分拣员</th>
+                <th rowspan="2">创建人</th>
+                <th rowspan="2">创建时间</th>
+            </tr>
+            <tr>
+                <th>差异</th>
+                <th>零条</th>
+                <th>整盘</th>
+                <th>总件</th>
+                <th>总条</th>
+                <th>盘点</th>
+                <th>零条</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of nzTable.data">
+                <td>{{item.sortLineName}}</td>
+                <td>{{item.productName}}</td>
+                <td>{{item.preDiffNum}}</td>
+                <td>{{item.preAloneNum}}</td>
+                <td>{{item.supWholeNum}}</td>
+                <td>{{item.supAllPieceNum}}</td>
+                <td>{{item.supAllItemNum}}</td>
+                <td>{{item.acutalOrderNum}}</td>
+                <td>{{item.checkNum}}</td>
+                <td>{{item.checkAloneNum}}</td>
+                <td>{{item.clerkName}}</td>
+                <td>{{item.sortorName}}</td>
+                <td>{{item.employeeName}}</td>
+                <td>{{item.creationTime |_date}}</td>
+            </tr>
+        </tbody>
+    </nz-table>
+    <!-- <nz-table #nzTable [nzFrontPagination]="false" [nzShowTotal]="totalTemplate" [nzTotal]="totalItems"
         [nzData]="dataList" [(nzPageIndex)]="pageNumber" [(nzPageSize)]="pageSize" [nzLoading]="isTableLoading"
         [nzShowSizeChanger]="true" (nzPageIndexChange)="refresh()" (nzPageSizeChange)="refresh()">
         <thead>
@@ -70,5 +118,5 @@
                 <td>{{item.creationTime |_date}}</td>
             </tr>
         </tbody>
-    </nz-table>
+    </nz-table> -->
 </div>

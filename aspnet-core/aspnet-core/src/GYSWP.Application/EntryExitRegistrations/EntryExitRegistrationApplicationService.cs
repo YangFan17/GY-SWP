@@ -22,6 +22,12 @@ using GYSWP.EntryExitRegistrations;
 using GYSWP.EntryExitRegistrations.Dtos;
 using GYSWP.EntryExitRegistrations.DomainService;
 using Abp.Auditing;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using GYSWP.Helpers;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
+using GYSWP.Dtos;
 
 namespace GYSWP.EntryExitRegistrations
 {
@@ -33,6 +39,7 @@ namespace GYSWP.EntryExitRegistrations
     {
         private readonly IRepository<EntryExitRegistration, long> _entityRepository;
 
+        private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IEntryExitRegistrationManager _entityManager;
 
         /// <summary>
@@ -40,11 +47,13 @@ namespace GYSWP.EntryExitRegistrations
         ///</summary>
         public EntryExitRegistrationAppService(
         IRepository<EntryExitRegistration, long> entityRepository
-        ,IEntryExitRegistrationManager entityManager
+        , IHostingEnvironment hostingEnvironment
+        , IEntryExitRegistrationManager entityManager
         )
         {
             _entityRepository = entityRepository; 
              _entityManager=entityManager;
+            _hostingEnvironment = hostingEnvironment;
         }
 
 
@@ -57,14 +66,14 @@ namespace GYSWP.EntryExitRegistrations
         public async Task<PagedResultDto<EntryExitRegistrationListDto>> GetPagedAsync(GetEntryExitRegistrationsInput input)
 		{
 
-		    var query = _entityRepository.GetAll();
-			// TODO:根据传入的参数添加过滤条件
-            
+		    var query = _entityRepository.GetAll().WhereIf(input.BeginTime.HasValue, c => c.CreationTime >= input.BeginTime && c.CreationTime < input.EndTime.Value.ToDayEnd());
+            // TODO:根据传入的参数添加过滤条件
 
-			var count = await query.CountAsync();
 
-			var entityList = await query
-					.OrderBy(input.Sorting).AsNoTracking()
+            var count = await query.CountAsync();
+
+            var entityList = await query
+                    .OrderByDescending(v => v.CreationTime).AsNoTracking()
 					.PageBy(input)
 					.ToListAsync();
 
@@ -194,18 +203,91 @@ EntryExitRegistrationEditDto editDto;
 		}
 
 
-		/// <summary>
-		/// 导出EntryExitRegistration为excel表,等待开发。
-		/// </summary>
-		/// <returns></returns>
-		//public async Task<FileDto> GetToExcel()
-		//{
-		//	var users = await UserManager.Users.ToListAsync();
-		//	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
-		//	await FillRoleNames(userListDtos);
-		//	return _userListExcelExporter.ExportToFile(userListDtos);
-		//}
+        /// <summary>
+        /// 导出EntryExitRegistration为excel表,等待开发。
+        /// </summary>
+        /// <returns></returns>
+        //public async Task<FileDto> GetToExcel()
+        //{
+        //	var users = await UserManager.Users.ToListAsync();
+        //	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
+        //	await FillRoleNames(userListDtos);
+        //	return _userListExcelExporter.ExportToFile(userListDtos);
+        //}
+        /// <summary>
+        /// 导出卷烟仓库人员出入登记表
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<APIResultDto> ExportEntryExitRegistratione(GetEntryExitRegistrationsInput input)
+        {
+            try
+            {
+                var exportData = await GetEntryExitRegistrationeForExcel(input);
+                var result = new APIResultDto();
+                result.Code = 0;
+                result.Data = CreateEntryExitRegistrationeExcel("卷烟仓库人员出入登记表.xlsx", exportData);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Logger.ErrorFormat("ExportEntryExitRegistratione errormsg{0} Exception{1}", ex.Message, ex);
+                return new APIResultDto() { Code = 901, Msg = "网络忙...请待会儿再试！" };
 
+            }
+        }
+
+        private async Task<List<EntryExitRegistrationListDto>> GetEntryExitRegistrationeForExcel(GetEntryExitRegistrationsInput input)
+        {
+            var query = _entityRepository.GetAll().WhereIf(input.BeginTime.HasValue, c => c.CreationTime >= input.BeginTime && c.CreationTime < input.EndTime.Value.ToDayEnd());
+            var entityList = await query
+                   .OrderByDescending(v => v.CreationTime).AsNoTracking()
+                    .ToListAsync();
+            var entityListDtos = entityList.MapTo<List<EntryExitRegistrationListDto>>();
+            return entityListDtos;
+        }
+
+        /// <summary>
+        /// 创建卷烟仓库人员出入登记表
+        /// </summary>
+        /// <param name="fileName">表名</param>
+        /// <param name="data">表数据</param>
+        /// <returns></returns>
+        private string CreateEntryExitRegistrationeExcel(string fileName, List<EntryExitRegistrationListDto> data)
+        {
+            var fullPath = ExcelHelper.GetSavePath(_hostingEnvironment.WebRootPath) + fileName;
+            using (var fs = new FileStream(fullPath, FileMode.Create, FileAccess.Write))
+            {
+                IWorkbook workbook = new XSSFWorkbook();
+                ISheet sheet = workbook.CreateSheet("EntryExitRegistratione");
+                var rowIndex = 0;
+                IRow titleRow = sheet.CreateRow(rowIndex);
+                string[] titles = { "入库时间", "出库时间", "入库事由", "库内有无异常", "备注", "创建人", "创建时间" };
+                var fontTitle = workbook.CreateFont();
+                fontTitle.IsBold = true;
+                for (int i = 0; i < titles.Length; i++)
+                {
+                    var cell = titleRow.CreateCell(i);
+                    cell.CellStyle.SetFont(fontTitle);
+                    cell.SetCellValue(titles[i]);
+                }
+                var font = workbook.CreateFont();
+                foreach (var item in data)
+                {
+                    rowIndex++;
+                    IRow row = sheet.CreateRow(rowIndex);
+                    ExcelHelper.SetCell(row.CreateCell(0), font, item.EntryTime?.ToString("yyyy-MM-dd HH:mm:ss"));
+                    ExcelHelper.SetCell(row.CreateCell(1), font, item.ExitTime?.ToString("yyyy-MM-dd HH:mm:ss"));
+                    ExcelHelper.SetCell(row.CreateCell(2), font, item.ReasonsForWarehousing);
+                    ExcelHelper.SetCell(row.CreateCell(3), font, item.IsAbnormal == true ? "有" : "无");
+                    ExcelHelper.SetCell(row.CreateCell(4), font, item.Remarks);
+                    ExcelHelper.SetCell(row.CreateCell(5), font, item.EmployeeName);
+                    ExcelHelper.SetCell(row.CreateCell(6), font, item.CreationTime.ToString("yyyy-MM-dd HH:mm:ss"));
+                }
+                workbook.Write(fs);
+            }
+            return "/files/downloadtemp/" + fileName;
+        }
     }
 }
 

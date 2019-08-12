@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.LC_MildewSummers.Dtos;
 using GYSWP.LC_MildewSummers;
+using GYSWP.Dtos;
 
 namespace GYSWP.LC_MildewSummers
 {
@@ -72,11 +73,11 @@ namespace GYSWP.LC_MildewSummers
         Task BatchDelete(List<Guid> input);
 
 
-		/// <summary>
+        /// <summary>
         /// 导出LC_MildewSummer为excel表
         /// </summary>
         /// <returns></returns>
-		//Task<FileDto> GetToExcel();
-
+        //Task<FileDto> GetToExcel();
+        Task<APIResultDto> ExportLC_MildewSummere(GetLC_MildewSummersInput input);
     }
 }

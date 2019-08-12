@@ -7,10 +7,11 @@ import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     moduleId: module.id,
-    selector: 'cigaret-exchange',
-    templateUrl: 'cigaret-exchange.component.html'
+    selector: 'mildew-summer',
+    templateUrl: 'mildew-summer.component.html',
+    styleUrls: ['mildew-summer.component.scss']
 })
-export class CigaretExchangeComponent extends PagedListingComponentBase<any>{
+export class MildewSummerComponent extends PagedListingComponentBase<any>{
     exportLoading = false;
     search = { beginTime: '', endTime: '' };
     timeFormat = 'yyyy-MM-dd';
@@ -48,12 +49,13 @@ export class CigaretExchangeComponent extends PagedListingComponentBase<any>{
         params.SkipCount = request.skipCount;
         params.MaxResultCount = request.maxResultCount;
         this.isTableLoading = false;
-        this.logisticService.getPagedCigaretExchangeAsync(params)
+        this.logisticService.getPagedMildewSummerAsync(params)
             .finally(() => {
                 finishedCallback();
             })
             .subscribe((result: PagedResultDto) => {
                 this.dataList = result.items
+                console.log(this.dataList);
                 this.totalItems = result.totalCount;
             });
     }
@@ -78,7 +80,7 @@ export class CigaretExchangeComponent extends PagedListingComponentBase<any>{
         let params: any = {};
         params.BeginTime = this.search.beginTime;
         params.EndTime = this.search.endTime;
-        this.logisticService.exportCigaretExchange(params).subscribe((data => {
+        this.logisticService.exportMildewSummer(params).subscribe((data => {
             if (data.code == 0) {
                 var url = AppConsts.remoteServiceBaseUrl + data.data;
                 document.getElementById('exportUrl').setAttribute('href', url);

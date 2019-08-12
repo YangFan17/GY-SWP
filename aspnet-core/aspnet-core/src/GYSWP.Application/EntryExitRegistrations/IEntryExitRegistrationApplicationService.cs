@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.EntryExitRegistrations.Dtos;
 using GYSWP.EntryExitRegistrations;
+using GYSWP.Dtos;
 
 namespace GYSWP.EntryExitRegistrations
 {
@@ -72,11 +73,11 @@ namespace GYSWP.EntryExitRegistrations
         Task BatchDeleteAsync(List<long> input);
 
 
-		/// <summary>
+        /// <summary>
         /// 导出EntryExitRegistration为excel表
         /// </summary>
         /// <returns></returns>
-		//Task<FileDto> GetToExcel();
-
+        //Task<FileDto> GetToExcel();
+        Task<APIResultDto> ExportEntryExitRegistratione(GetEntryExitRegistrationsInput input);
     }
 }
