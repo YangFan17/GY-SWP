@@ -259,7 +259,7 @@ namespace GYSWP.LC_TeamSafetyActivitys
                     ExcelHelper.SetCell(row.CreateCell(1), font, item.IsSafeEquipOk == true ? "是" : "否");
                     ExcelHelper.SetCell(row.CreateCell(2), font, item.IsEmpHealth == true ? "有" : "无");
                     ExcelHelper.SetCell(row.CreateCell(3), font, item.IsTdjOrLsjOk == true ? "正常" : "异常");
-                    ExcelHelper.SetCell(row.CreateCell(4), font, item.IsAisleOk == true ? "是" : "否");
+                    ExcelHelper.SetCell(row.CreateCell(4), font, item.IsAisleOk == true ? "是" : "否");           
                     ExcelHelper.SetCell(row.CreateCell(5), font, item.IsExitBad == true ? "是" : "否");
                     ExcelHelper.SetCell(row.CreateCell(6), font, item.IsFireEquipBad == true ? "是" : "否");
                     ExcelHelper.SetCell(row.CreateCell(7), font, item.IsSafeMarkClean == true ? "是" : "否");

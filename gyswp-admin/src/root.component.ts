@@ -50,7 +50,7 @@ export class RootComponent implements OnInit {
     MessageExtension.overrideAbpNotify(this._notifyService);
 
     //  设置标题
-    this.titleSrv.prefix = '广元企业标准库管理系统';
+    this.titleSrv.prefix = '广元标准化工作平台';
 
     this.router.events
       .pipe(filter(evt => evt instanceof NavigationEnd))

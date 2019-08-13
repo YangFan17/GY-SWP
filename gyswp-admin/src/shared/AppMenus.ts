@@ -102,7 +102,7 @@ export class AppMenus {
             text: "数据统计",
             icon: { type: "icon", value: "bar-chart" },
             reuse: false,
-            acl: "QiGuanAdmin",// 权限
+            acl: ["QiGuanAdmin", "Admin"],// 权限
             link: "",
             group: true,
             children: [
@@ -137,7 +137,7 @@ export class AppMenus {
             text: "物流中心",
             icon: { type: "icon", value: "control" },
             reuse: false,
-            acl: "",// 权限
+            acl: ["LogisticsEmployee", "Admin"],// 权限
             link: "",
             group: true,
             children: [

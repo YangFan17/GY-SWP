@@ -66,7 +66,7 @@ const routes: Routes = [
         path: 'logistic',
         loadChildren: './logistics-center/logistics-center.module#LogisticsCenterModule',
         canActivate: [ACLGuard],
-        data: { guard: ['Admin'] },
+        data: { guard: ['Admin', 'LogisticsEmployee'] },
       },
       {
         path: 'position',
