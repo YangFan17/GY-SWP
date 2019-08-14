@@ -2,42 +2,54 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using Abp.Application.Services.Dto;
+using Abp.Domain.Entities.Auditing;
+using GYSWP.PositionInfos;
 
-namespace  GYSWP.PositionInfos.Dtos
+namespace GYSWP.PositionInfos.Dtos
 {
-    public class PositionInfoEditDto : FullAuditedEntityDto<Guid?>
+    public class PositionInfoEditDto: FullAuditedEntityDto<Guid?>
     {
 
+        /// <summary>
+        /// Id
+        /// </summary>
+        public Guid? Id { get; set; }
 
-        //[Required]
-        [StringLength(200)]
-        public virtual string Position { get; set; }
+
 
         /// <summary>
-        /// 工作职责
+        /// Position
         /// </summary>
-        [StringLength(500)]
-        public virtual string Duties { get; set; }
+        [Required(ErrorMessage = "Position不能为空")]
+        public string Position { get; set; }
+
+
 
         /// <summary>
-        /// 员工Id
+        /// Duties
         /// </summary>
-        //[Required]
-        [StringLength(200)]
-        public virtual string EmployeeId { get; set; }
+        public string Duties { get; set; }
+
+
 
         /// <summary>
-        /// 姓名快照
+        /// EmployeeId
         /// </summary>
-        [StringLength(20)]
-        public virtual string EmployeeName { get; set; }
+        [Required(ErrorMessage = "EmployeeId不能为空")]
+        public string EmployeeId { get; set; }
+
+
+
+        /// <summary>
+        /// EmployeeName
+        /// </summary>
+        public string EmployeeName { get; set; }
     }
-
     public class PosInfoInput
     {
-        /// <summary>
-        /// 工作职责
-        /// </summary>
+        //summary
+        //工作职责
+        // summary
         [StringLength(500)]
         public virtual string Duties { get; set; }
     }

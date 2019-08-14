@@ -64,6 +64,7 @@ export class CriterionComponent extends PagedListingComponentBase<any>{
      * 重置
      */
     reset() {
+        this.pageNumber = 1;
         this.search = { keyWord: '', categoryId: '0' };
         this.refresh();
     }

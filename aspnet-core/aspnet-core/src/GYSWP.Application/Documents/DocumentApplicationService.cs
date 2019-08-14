@@ -371,12 +371,13 @@ namespace GYSWP.Documents
             return docDeptList;
         }
 
+
         /// <summary>
         /// 获取当前用户所属标准
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public async Task<PagedResultDto<DocumentListDto>> GetPagedWithPermission(GetDocumentsInput input)
+        public async Task<PagedResultDto<DocumentTitleDto>> GetPagedWithPermission(GetDocumentsInput input)
         {
             var curUser = await GetCurrentUserAsync();
             string deptStr = await _employeeRepository.GetAll().Where(v => v.Id == curUser.EmployeeId).Select(v => v.Department).FirstOrDefaultAsync();
@@ -384,14 +385,32 @@ namespace GYSWP.Documents
             var query = _entityRepository.GetAll().Where(v => v.IsAction == true && (v.PublishTime.HasValue ? v.PublishTime <= DateTime.Today : false) && (v.IsAllUser == true || v.DeptIds.Contains(deptId) || v.EmployeeIds.Contains(curUser.EmployeeId)))
                 .WhereIf(input.CategoryId.HasValue, v => v.CategoryId == input.CategoryId)
                 .WhereIf(!string.IsNullOrEmpty(input.KeyWord), e => e.Name.Contains(input.KeyWord) || e.DocNo.Contains(input.KeyWord));
-            var count = await query.CountAsync();
-            var entityList = await query
-                    .OrderBy(v => v.CategoryId)
-                    .ThenByDescending(v => v.PublishTime).AsNoTracking()
-                    .PageBy(input)
-                    .ToListAsync();
-            var entityListDtos = entityList.MapTo<List<DocumentListDto>>();
-            return new PagedResultDto<DocumentListDto>(count, entityListDtos);
+
+            var cate = _categoryRepository.GetAll();
+            var org = _organizationRepository.GetAll();
+            var result = from q in query join c in cate on q.CategoryId equals c.Id
+                         join o in org on c.DeptId equals o.Id
+                         select new DocumentTitleDto()
+                         {
+                             Id = q.Id,
+                             DocNo = q.DocNo,
+                             Name = q.Name,
+                             CategoryDesc = q.CategoryDesc,
+                             PublishTime = q.PublishTime,
+                             DeptName = o.DepartmentName
+                         };
+            var count = await result.CountAsync();
+            var entityListDtos = await result.OrderBy(v=>v.DeptName).ThenBy(v => v.CategoryDesc).ThenByDescending(v => v.PublishTime).AsNoTracking().PageBy(input).ToListAsync();
+            // var entityListDtos = ObjectMapper.Map<List<DocumentListDto>>(entityList);
+            //var entityListDtos = entityList.MapTo<List<DocumentListDto>>();
+            //var count = await query.CountAsync();
+            //var entityList = await query
+            //        .OrderBy(v => v.CategoryId)
+            //        .ThenByDescending(v => v.PublishTime).AsNoTracking()
+            //        .PageBy(input)
+            //        .ToListAsync();
+            //var entityListDtos = entityList.MapTo<List<DocumentListDto>>();
+            return new PagedResultDto<DocumentTitleDto>(count, entityListDtos);
         }
 
         /// <summary>
@@ -412,9 +431,11 @@ namespace GYSWP.Documents
         [AbpAllowAnonymous]
         public async Task<List<DocumentListDto>> GetDocumentListByDDUserIdAsync(EntityDto<string> input)
         {
+            string deptStr = await _employeeRepository.GetAll().Where(v => v.Id.ToString() == input.Id).Select(v => v.Department).FirstOrDefaultAsync();
+            string deptId = deptStr.Replace('[', ' ').Replace(']', ' ').Trim();
             var query = _entityRepository.GetAll().Where(v => v.IsAction == true
                                                         && (v.PublishTime.HasValue ? v.PublishTime <= DateTime.Today : false)
-                                                        && (v.IsAllUser == true || v.EmployeeIds.Contains(input.Id)));
+                                                        && (v.IsAllUser == true || v.DeptIds.Contains(deptId) || v.EmployeeIds.Contains(input.Id)));
             var entityList = await query.OrderBy(v => v.CategoryId)
                                         .ThenByDescending(v => v.PublishTime)
                                         .AsNoTracking()

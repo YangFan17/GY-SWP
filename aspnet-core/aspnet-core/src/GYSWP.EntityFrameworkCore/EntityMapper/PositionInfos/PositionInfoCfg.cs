@@ -13,11 +13,11 @@ namespace GYSWP.EntityMapper.PositionInfos
 
             builder.ToTable("PositionInfos", YoYoAbpefCoreConsts.SchemaNames.CMS);
 
-            
-			builder.Property(a => a.Position).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
-			builder.Property(a => a.Duties).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
-			builder.Property(a => a.EmployeeId).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
-			builder.Property(a => a.EmployeeName).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
+
+            builder.Property(a => a.Position).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
+            builder.Property(a => a.Duties).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
+            builder.Property(a => a.EmployeeId).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
+            builder.Property(a => a.EmployeeName).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
 
 
         }

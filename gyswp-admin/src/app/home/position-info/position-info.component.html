@@ -22,11 +22,11 @@
                         {{item.duties}}
                     </td>
                     <td>
-                        <!-- <a (click)="editPosition(item.id)">维护</a>
-                        <nz-divider nzType="vertical"></nz-divider> -->
+                        <a (click)="editPosition(item.id)">编辑</a>
+                        <nz-divider nzType="vertical"></nz-divider>
                         <a (click)="showDetail(item.id)">添加实施要点</a>
-                        <!-- <nz-divider nzType="vertical"></nz-divider>
-                            <a style="color:#ff4d4f;" (click)="deleteClause(item)">删除</a> -->
+                        <nz-divider nzType="vertical"></nz-divider>
+                        <a style="color:#ff4d4f;" (click)="delete(item.id)">删除</a>
                     </td>
                 </tr>
             </tbody>

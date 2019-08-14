@@ -1,39 +1,33 @@
 <div class="padding-bottom-45">
     <h3 style="text-align: center;">
-        <span>工作标准及要点详情</span>
+        <span>适用标准及要点详情</span>
     </h3>
     <form nz-form #validateForm="ngForm" (ngSubmit)="save()" *ngIf="positionInfoId">
-        <nz-form-item nz-row>
-            <nz-form-label nz-col [nzSm]="4" nzRequired>工作标准</nz-form-label>
+        <!-- <nz-form-item nz-row>
+            <nz-form-label nz-col [nzSm]="4" nzRequired>适用标准</nz-form-label>
             <nz-form-control [nzSm]="20" nzHasFeedback>
-                <!-- <nz-input-group nzSize="large" [nzSuffix]="suffixIcon">
-                    <input placeholder="input here" name="document" nz-input [(ngModel)]="inputValue"
-                        (ngModelChange)="onChange($event)" [nzAutocomplete]="auto" />
-                </nz-input-group>
-                <ng-template #suffixIcon>
-                    <i nz-icon nzType="search"></i>
-                </ng-template>
-                <nz-autocomplete #auto>
-                    <nz-auto-optgroup *ngFor="let group of optionGroups" [nzLabel]="groupTitle">
-                        <ng-template #groupTitle>
-                            <span>{{group.title}}</span>
-                        </ng-template>
-                        <nz-auto-option *ngFor="let option of group.children" [nzLabel]="option.title"
-                            [nzValue]="option">
-                            {{option.title}}
-                        </nz-auto-option>
-                    </nz-auto-optgroup>
-                </nz-autocomplete> -->
                 <nz-select nzAllowClear name="optionGroup" #optionGroup="ngModel" required [(ngModel)]="docId"
-                    nzPlaceHolder="请选择工作标准">
+                    nzPlaceHolder="请选择适用标准">
                     <nz-option-group *ngFor="let item of optionGroups" nzLabel="{{item.title}}">
                         <nz-option *ngFor="let option of item.children" nzValue="{{option.id}}"
                             nzLabel="{{option.title}}"></nz-option>
                     </nz-option-group>
                     <nz-form-explain *ngIf="optionGroup.control.dirty&&optionGroup.control.errors">
-                        <ng-container *ngIf="optionGroup.control.hasError('required')">请选择工作标准</ng-container>
+                        <ng-container *ngIf="optionGroup.control.hasError('required')">请选择适用标准</ng-container>
                     </nz-form-explain>
                 </nz-select>
+            </nz-form-control>
+        </nz-form-item> -->
+        <nz-form-item nz-row>
+            <nz-form-label nz-col [nzSm]="4" nzRequired>适用标准</nz-form-label>
+            <nz-form-control [nzSm]="20">
+                <nz-input-group nzSearch [nzSuffix]="suffixIconButton">
+                    <input readonly="readonly" required name="docName" #docName="ngModel" [(ngModel)]="doc.name"
+                        nz-input placeholder="请选择适用标准">
+                    <ng-template #suffixIconButton>
+                        <button nz-button type="button" nzType="primary" (click)="chooseDoc()" nzSearch>选择标准</button>
+                    </ng-template>
+                </nz-input-group>
             </nz-form-control>
         </nz-form-item>
         <nz-form-item nz-row>

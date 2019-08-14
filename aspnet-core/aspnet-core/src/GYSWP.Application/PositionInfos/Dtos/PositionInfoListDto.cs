@@ -1,14 +1,17 @@
 
 
+
 using System;
 using Abp.Application.Services.Dto;
 using Abp.Domain.Entities.Auditing;
 using System.ComponentModel.DataAnnotations;
-using GYSWP.PositionInfos;
+using GYSWP.Clauses;
 using System.Collections.Generic;
+using Abp.AutoMapper;
 
 namespace GYSWP.PositionInfos.Dtos
 {
+    [AutoMapFrom(typeof(PositionInfo))]
     public class PositionInfoListDto : FullAuditedEntityDto<Guid>
     {
         /// <summary>

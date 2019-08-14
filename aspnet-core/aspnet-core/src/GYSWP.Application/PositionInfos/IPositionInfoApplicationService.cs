@@ -37,10 +37,10 @@ namespace GYSWP.PositionInfos
         Task<PagedResultDto<PositionInfoListDto>> GetPaged(GetPositionInfosInput input);
 
 
-		/// <summary>
-		/// 通过指定id获取PositionInfoListDto信息
-		/// </summary>
-		Task<PositionInfoListDto> GetById(EntityDto<Guid> input);
+        /// <summary>
+        /// 通过指定id获取PositionInfoListDto信息
+        /// </summary>
+        Task<PositionInfoListDto> GetById(EntityDto<Guid> input);
 
 
         /// <summary>
@@ -57,16 +57,6 @@ namespace GYSWP.PositionInfos
         /// <param name="input"></param>
         /// <returns></returns>
         Task<APIResultDto> CreateOrUpdate(CreateOrUpdatePositionInfoInput input);
-
-
-        /// <summary>
-        /// 删除PositionInfo信息的方法
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        Task Delete(EntityDto<Guid> input);
-
-
         /// <summary>
         /// 批量删除PositionInfo
         /// </summary>
@@ -82,5 +72,6 @@ namespace GYSWP.PositionInfos
         Task<APIResultDto> PositionInfoImportAsync(string input);
         Task<List<HomePositionList>> GetPositionTreeByIdAsync();
         Task<string> GetCurrentPositionAsync();
+        Task Delete(EntityDto<Guid> input);
     }
 }

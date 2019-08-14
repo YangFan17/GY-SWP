@@ -63,4 +63,22 @@ export class HomeService {
             return data;
         }));
     }
+
+    deletePositionById(id: string): Observable<any> {
+        let url_ = "/api/services/app/PositionInfo/Delete";
+        var param = { id: id };
+        return this._commonhttp.delete(url_, param).pipe(map(data => {
+            return data;
+        }));
+    }
+
+    getDocumentListAsync(param: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/Document/GetPagedWithPermission";
+        return this._commonhttp.get(url_, param).pipe(map(data => {
+            const result = new PagedResultDto();
+            result.items = data.items;
+            result.totalCount = data.totalCount;
+            return result;
+        }));
+    }
 }

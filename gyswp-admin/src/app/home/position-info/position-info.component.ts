@@ -5,6 +5,7 @@ import { CreatePositionInfoComponent } from './create-position-info/create-posit
 import { PositionInfo } from 'entities/position-info';
 import { AddDocumentComponent } from './add-document/add-document.component';
 import { Router } from '@angular/router';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd';
 
 @Component({
     moduleId: module.id,
@@ -14,11 +15,13 @@ import { Router } from '@angular/router';
 })
 export class PositionInfoComponent extends AppComponentBase {
     listOfMapData: PositionInfo[] = [];
+    confirmModal: NzModalRef;
 
     constructor(
         injector: Injector
         , private homeService: HomeService
         , private router: Router
+        , private modal: NzModalService
     ) {
         super(injector);
     }
@@ -73,6 +76,21 @@ export class PositionInfoComponent extends AppComponentBase {
                 }
             });
     }
+
+    delete(id: string): void {
+        if (id) {
+            this.confirmModal = this.modal.confirm({
+                nzContent: `是否删除当前工作职责?`,
+                nzOnOk: () => {
+                    this.homeService.deletePositionById(id).subscribe(res => {
+                        this.notify.success('删除成功！', '');
+                        this.getPositionInfoList();
+                    });
+                }
+            });
+        }
+    }
+
     return() {
         this.router.navigate(['app/home']);
     }

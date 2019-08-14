@@ -74,7 +74,7 @@ namespace GYSWP.Documents
         Task BatchDelete(List<Guid> input);
 
         Task<List<DocNzTreeNode>> GetDeptDocNzTreeNodesAsync(string rootName);
-        Task<PagedResultDto<DocumentListDto>> GetPagedWithPermission(GetDocumentsInput input);
+        Task<PagedResultDto<DocumentTitleDto>> GetPagedWithPermission(GetDocumentsInput input);
         Task<DocumentTitleDto> GetDocumentTitleAsync(Guid id);
 
         Task<List<DocumentListDto>> GetDocumentListByDDUserIdAsync(EntityDto<string> input);

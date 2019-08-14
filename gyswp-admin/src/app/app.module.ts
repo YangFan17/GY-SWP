@@ -10,6 +10,7 @@ import { G2GroupBarModule } from '../../packages/group-bar';
 import { PositionInfoComponent } from './home/position-info/position-info.component';
 import { CreatePositionInfoComponent } from './home/position-info/create-position-info/create-position-info.component';
 import { AddDocumentComponent } from './home/position-info/add-document/add-document.component';
+import { EmpDocListComponent } from './home/position-info/emp-doc-list/emp-doc-list.component';
 
 @NgModule({
   imports: [
@@ -26,11 +27,13 @@ import { AddDocumentComponent } from './home/position-info/add-document/add-docu
     HomeComponent,
     PositionInfoComponent,
     CreatePositionInfoComponent,
-    AddDocumentComponent
+    AddDocumentComponent,
+    EmpDocListComponent
   ],
   entryComponents: [
     CreatePositionInfoComponent,
-    AddDocumentComponent
+    AddDocumentComponent,
+    EmpDocListComponent
   ],
   providers: [],
 })

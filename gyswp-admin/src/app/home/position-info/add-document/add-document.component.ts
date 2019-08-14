@@ -3,6 +3,7 @@ import { Component, Input, Injector } from '@angular/core';
 import { HomeService } from 'services/home/home.service';
 import { AppComponentBase, ModalComponentBase } from '@shared/component-base';
 import { MainPointsRecord } from 'entities';
+import { EmpDocListComponent } from '../emp-doc-list/emp-doc-list.component';
 
 @Component({
     moduleId: module.id,
@@ -17,7 +18,8 @@ export class AddDocumentComponent extends ModalComponentBase implements OnInit {
     mainPointsRecord: MainPointsRecord = new MainPointsRecord();
     mainPoint: string;
     optionGroups: any[];
-    docId: any;
+    docId: string;
+    doc: any = {};
     constructor(
         injector: Injector,
         private homeService: HomeService
@@ -26,22 +28,37 @@ export class AddDocumentComponent extends ModalComponentBase implements OnInit {
     }
 
     ngOnInit(): void {
-        this.getCategoryDocList();
+        // this.getCategoryDocList();
     }
 
     getCategoryDocList() {
         this.homeService.getCategoryDocByCurrentUser().subscribe((result) => {
             this.optionGroups = result;
-            console.log(this.optionGroups);
+            // console.log(this.optionGroups);
         });
     }
 
+    chooseDoc() {
+        this.modalHelper
+            .open(EmpDocListComponent, { doc: this.doc }, 'lg', {
+                nzMask: true,
+                nzClosable: false,
+                nzMaskClosable: false,
+            })
+            .subscribe(doc => {
+                if (doc.id) {
+                    this.doc.id = doc.id;
+                    this.doc.name = doc.name;
+                }
+            });
+    }
+
     save(): void {
-        // console.log(this.docId);
-        if (this.docId) {
+        if (this.doc.id) {
             this.mainPointsRecord.mainPoint = this.mainPoint;
             this.mainPointsRecord.positionInfoId = this.positionInfoId;
-            this.mainPointsRecord.documentId = this.docId;
+            this.mainPointsRecord.documentId = this.doc.id;
+            this.saving = true;
             this.homeService.createMainPointRecord(this.mainPointsRecord)
                 .finally(() => { this.saving = false; })
                 .subscribe((data) => {

@@ -154,7 +154,7 @@ namespace GYSWP.PositionInfos
                 entity.EmployeeName = user.EmployeeName;
                 entity.Position = position;
                 await _entityRepository.InsertAsync(entity);
-                return new APIResultDto() { Code = 0, Msg = "保存成功"};
+                return new APIResultDto() { Code = 0, Msg = "保存成功" };
             }
         }
 
@@ -200,7 +200,6 @@ namespace GYSWP.PositionInfos
 
         public async Task Delete(EntityDto<Guid> input)
         {
-            //TODO:删除前的逻辑判断，是否允许删除
             await _entityRepository.DeleteAsync(input.Id);
         }
 
@@ -285,7 +284,7 @@ namespace GYSWP.PositionInfos
                      Id = v.Id,
                      Title = v.Name
                  }).ToListAsync();
-                if(item.Children.Count == 0)
+                if (item.Children.Count == 0)
                 {
                     item.IsEmpty = true;
                 }

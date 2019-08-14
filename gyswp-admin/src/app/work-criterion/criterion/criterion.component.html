@@ -66,6 +66,7 @@
                 <tr>
                     <th>标准编号</th>
                     <th>标准名称</th>
+                    <th>归口部门</th>
                     <th>标准分类</th>
                     <th>发布时间</th>
                     <th>操作</th>
@@ -75,6 +76,7 @@
                 <tr *ngFor="let item of nzTable.data">
                     <td>{{item.docNo}}</td>
                     <td><a title="预览" (click)="goPre(item.id)">{{item.name}}</a></td>
+                    <td>{{item.deptName}}</td>
                     <td>{{item.categoryDesc}}</td>
                     <td>{{item.publishTime | date: "yyyy-MM-dd"}}</td>
                     <td>
