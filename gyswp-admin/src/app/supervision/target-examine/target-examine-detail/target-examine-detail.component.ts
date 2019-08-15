@@ -21,7 +21,12 @@ export class TargetExamineDetailComponent extends AppComponentBase implements On
     deptInfo: any[] = []; //选中的部门info
     indicator: Indicators = new Indicators();
     confirmModal: NzModalRef;
-
+    achieveTypes = [
+        { value: 1, text: '大于 >' },
+        { value: 2, text: '大于等于 >=' },
+        { value: 3, text: '小于 <' },
+        { value: 4, text: '小于等于 <=' },
+    ];
     constructor(injector: Injector
         , private actRouter: ActivatedRoute
         , private router: Router

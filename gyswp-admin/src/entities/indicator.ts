@@ -13,6 +13,7 @@ export class Indicators {
     expectedValue: number;
     cycleTime: number;
     cycleTimeName: string;
+    achieveType: number = 1;
 
     getDepts(): any[] {
         let depts = [];
@@ -58,6 +59,7 @@ export class Indicators {
             this.expectedValue = data["expectedValue"];
             this.cycleTime = data["cycleTime"];
             this.cycleTimeName = data["cycleTimeName"];
+            this.achieveType = data["achieveType"];
         }
     }
     toJSON(data?: any) {
@@ -75,6 +77,7 @@ export class Indicators {
         data["deptNames"] = this.deptNames;
         data["expectedValue"] = this.expectedValue;
         data["cycleTime"] = this.cycleTime;
+        data["achieveType"] = this.achieveType;
         return data;
     }
     static fromJS(data: any): Indicators {

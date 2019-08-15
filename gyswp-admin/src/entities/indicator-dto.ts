@@ -17,6 +17,8 @@ export class IndicatorShowDto {
     indicatorDetailId: string;
     statusName: string;
     status: number;
+    achieveType: number;
+    achieveTypeName: string;
     constructor(data?: any) {
         if (data) {
             for (var property in data) {
@@ -39,6 +41,8 @@ export class IndicatorShowDto {
             this.indicatorDetailId = data["indicatorDetailId"];
             this.statusName = data["statusName"];
             this.status = data["status"];
+            this.achieveType = data["achieveType"];
+            this.achieveTypeName = data["achieveTypeName"];
         }
     }
     toJSON(data?: any) {

@@ -36,8 +36,17 @@
                     </nz-form-control>
                 </nz-form-item>
                 <nz-form-item nz-row>
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>达成条件</nz-form-label>
+                    <nz-form-control [nzSm]="20">
+                        <nz-radio-group name="achieveType" #achieveType="ngModel" [(ngModel)]="indicator.achieveType">
+                            <label nz-radio *ngFor="let item of achieveTypes"
+                                [nzValue]="item.value">{{item.text}}</label>
+                        </nz-radio-group>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item nz-row>
                     <nz-form-label nz-col [nzSm]="4" nzRequired>预期值</nz-form-label>
-                    <nz-form-control [nzSm]="20" nzHasFeedback>
+                    <nz-form-control [nzSm]="4">
                         <nz-input-group nzSearch [nzSuffix]="suffixIconButton">
                             <input nzSearch nz-input name="expectedValue" #expectedValue="ngModel"
                                 [(ngModel)]="indicator.expectedValue" [placeholder]="'请填写预期值'"

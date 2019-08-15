@@ -93,13 +93,18 @@ namespace GYSWP.Indicators.Dtos
         /// </summary>
         [Required]
         public decimal ExpectedValue { get; set; }
-
+        /// <summary>
+        /// 达成条件
+        /// </summary>
+        [Required]
+        public AchieveType AchieveType { get; set; }
         /// <summary>
         /// 周期
         /// </summary>
         [Required]
         public CycleTime CycleTime { get; set; }
         public string CycleTimeName { get { return CycleTime.ToString(); } }
+        public string AchieveTypeName { get { return AchieveType.ToString(); } }
     }
 
     public class IndicatorShowDto : EntityDto<Guid>
@@ -142,6 +147,8 @@ namespace GYSWP.Indicators.Dtos
         public IndicatorStatus Status { get; set; }
         public string CycleTimeName { get; set; }
         public string StatusName { get { return Status.ToString(); } }
+        public AchieveType AchieveType { get; set; }
+        public string AchieveTypeName { get { return AchieveType.ToString(); } }
     }
     public class IndicatorReviewDto : EntityDto<Guid>
     {
@@ -162,6 +169,7 @@ namespace GYSWP.Indicators.Dtos
         public DateTime? CompleteTime { get; set; }
         public string EmployeeName { get; set; }
         public string EmployeeDeptName { get; set; }
-
+        public AchieveType AchieveType { get; set; }
+        public string AchieveTypeName { get { return AchieveType.ToString(); } }
     }
 }

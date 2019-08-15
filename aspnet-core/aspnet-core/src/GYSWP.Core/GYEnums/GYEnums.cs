@@ -135,6 +135,14 @@ namespace GYSWP.GYEnums
         出库扫码 = 2
     }
 
+    public enum AchieveType
+    {
+        大于 = 1,
+        大于等于 = 2,
+        小于 = 3,
+        小于等于 = 4
+    }
+
     public static class GYCode
     {
         public static string MessageTitle = "MessageTitle";

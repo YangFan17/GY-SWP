@@ -102,5 +102,11 @@ namespace  GYSWP.Indicators.Dtos
         /// </summary>
         [Required]
         public CycleTime CycleTime { get; set; }
+
+        /// <summary>
+        /// 达成条件
+        /// </summary>
+        [Required]
+        public AchieveType AchieveType { get; set; }
     }
 }

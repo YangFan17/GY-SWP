@@ -46,13 +46,13 @@
                     <nz-form-label nz-col [nzSm]="4" nzRequired>预期值</nz-form-label>
                     <nz-form-control [nzSm]="20">
                         <nz-form-text>
-                            {{indicator.expectedValue}}%
+                            {{indicator.achieveTypeName + indicator.expectedValue}}%
                         </nz-form-text>
                     </nz-form-control>
                 </nz-form-item>
                 <nz-form-item nz-row *ngIf="indicator.status === 1">
                     <nz-form-label nz-col [nzSm]="4" nzRequired>实际值</nz-form-label>
-                    <nz-form-control [nzSm]="20">
+                    <nz-form-control [nzSm]="4">
                         <nz-input-group nzSearch [nzSuffix]="suffixIconButton">
                             <input nzSearch nz-input name="actualValue" #actualValue="ngModel"
                                 [(ngModel)]="indicatorDetail.actualValue" [placeholder]="'请填写实际值'"
@@ -68,7 +68,7 @@
                     </nz-form-control>
                 </nz-form-item>
                 <nz-form-item *ngIf="indicator.status !== 1" nz-row style="margin-bottom: 0px;">
-                    <nz-form-label nz-col [nzSm]="4" nzRequired>预期值</nz-form-label>
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>实际值</nz-form-label>
                     <nz-form-control [nzSm]="20">
                         <nz-form-text>
                             {{indicator.actualValue}}%

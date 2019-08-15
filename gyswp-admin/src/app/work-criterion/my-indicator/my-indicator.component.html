@@ -31,7 +31,7 @@
                         <nz-badge *ngIf="item.status == 2" [nzStatus]="'success'" [nzText]="'已达成'"></nz-badge>
                         <nz-badge *ngIf="item.status == 3" [nzStatus]="'error'" [nzText]="'未达成'"></nz-badge>
                     </td>
-                    <td>{{item.expectedValue}}%</td>
+                    <td>{{item.achieveTypeName + item.expectedValue}}%</td>
                     <td>
                         <a (click)="goDetail(item.indicatorDetailId)">{{item.status == 1?'填写指标':'详情'}}</a>
                         <nz-divider *ngIf="item.status == 3" nzType="vertical"></nz-divider>

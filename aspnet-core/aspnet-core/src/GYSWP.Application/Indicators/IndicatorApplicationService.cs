@@ -315,7 +315,8 @@ namespace GYSWP.Indicators
                             DeptName = d.DeptName,
                             Status = d.Status,
                             CreatorDeptName = i.CreatorDeptName,
-                            IndicatorDetailId = d.Id
+                            IndicatorDetailId = d.Id,
+                            AchieveType = i.AchieveType
                         };
 
             var count = await query.CountAsync();
@@ -364,7 +365,8 @@ namespace GYSWP.Indicators
                              Status = d.Status,
                              CreatorDeptName = i.CreatorDeptName,
                              IndicatorDetailId = d.Id,
-                             ActualValue = d.ActualValue
+                             ActualValue = d.ActualValue,
+                             AchieveType = i.AchieveType
                          };
 
             return await result.FirstOrDefaultAsync();
@@ -411,6 +413,7 @@ namespace GYSWP.Indicators
                              IndicatorDetailId = d.Id,
                              ActualValue = d.ActualValue,
                              EmployeeDeptName = d.DeptName,
+                             AchieveType = i.AchieveType
                          };
 
             return await result.OrderByDescending(v=>v.Status).ThenByDescending(v=>v.CompleteTime).ToListAsync();

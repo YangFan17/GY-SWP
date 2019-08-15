@@ -76,8 +76,20 @@ export class TargetDeptComponent extends ModalComponentBase implements OnInit {
     }
 
     checkBoxChange(data: NzFormatEmitEvent) {
-        this.orgCheckedKeys = data.keys;
-        this.refreshDeptTags({ id: data.node.key, name: data.node.origin.deptName, isChecked: data.node.isChecked });
+        if (data.node.key === '1') {
+            this.nodes[0].children.forEach(v => {
+                if (data.node.isChecked) {
+                    v.isChecked = true;
+                } else {
+                    v.isChecked = false;
+                }
+                this.orgCheckedKeys.push(v.key);
+                this.refreshDeptTags({ id: v.key, name: v.title, isChecked: v.isChecked });
+            });
+        } else {
+            this.orgCheckedKeys = data.keys;
+            this.refreshDeptTags({ id: data.node.key, name: data.node.origin.deptName, isChecked: data.node.isChecked });
+        }
     }
     //#endregion
 

@@ -88,5 +88,11 @@ namespace GYSWP.Indicators
         /// </summary>
         [Required]
         public virtual CycleTime CycleTime { get; set; }
+
+        /// <summary>
+        /// 达成条件
+        /// </summary>
+        [Required]
+        public virtual AchieveType AchieveType { get; set; }
     }
 }

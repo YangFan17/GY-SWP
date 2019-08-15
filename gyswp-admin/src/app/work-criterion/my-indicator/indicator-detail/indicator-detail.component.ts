@@ -39,12 +39,36 @@ export class IndicatorDetailComponent extends AppComponentBase implements OnInit
                 let input: any = {};
                 input.id = this.indicator.indicatorDetailId;
                 input.actualValue = this.indicatorDetail.actualValue;
-                if (this.indicator.expectedValue > this.indicatorDetail.actualValue) {
-                    input.status = 3;
+                if (this.indicator.achieveType === 1) { // 大于 = 1,
+                    if (this.indicatorDetail.actualValue > this.indicator.expectedValue) {
+                        input.status = 2;
+                    }
+                    else {
+                        input.status = 3;
+                    }
+                } else if (this.indicator.achieveType === 2) {// 大于等于 = 2,
+                    if (this.indicatorDetail.actualValue >= this.indicator.expectedValue) {
+                        input.status = 2;
+                    }
+                    else {
+                        input.status = 3;
+                    }
+                } else if (this.indicator.achieveType === 3) {// 小于 = 3,
+                    if (this.indicatorDetail.actualValue < this.indicator.expectedValue) {
+                        input.status = 2;
+                    }
+                    else {
+                        input.status = 3;
+                    }
+                } else {// 小于等于 = 4
+                    if (this.indicatorDetail.actualValue <= this.indicator.expectedValue) {
+                        input.status = 2;
+                    }
+                    else {
+                        input.status = 3;
+                    }
                 }
-                else {
-                    input.status = 2;
-                }
+
                 this.workCriterionService.changeStatusByIdAsync(input)
                     .finally(() => { this.saving = false; })
                     .subscribe(res => {
