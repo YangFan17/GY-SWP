@@ -11,10 +11,11 @@
                     <th>指标释义</th>
                     <th>测量方式</th>
                     <th>检查周期</th>
-                    <th>创建时间</th>
+                    <!-- <th>创建时间</th> -->
                     <th>检查对象</th>
                     <th>指标状态</th>
                     <th>预期值</th>
+                    <th>指标来源</th>
                     <th>操作</th>
                 </tr>
             </thead>
@@ -24,7 +25,7 @@
                     <td>{{item.paraphrase}}</td>
                     <td>{{item.measuringWay}}</td>
                     <td>{{item.cycleTimeName}}</td>
-                    <td>{{item.creationTime | date: "yyyy-MM-dd"}}</td>
+                    <!-- <td>{{item.creationTime | date: "yyyy-MM-dd"}}</td> -->
                     <td>{{item.deptName}}</td>
                     <td>
                         <nz-badge *ngIf="item.status == 1" [nzStatus]="'default'" [nzText]="'未填写'"></nz-badge>
@@ -32,8 +33,10 @@
                         <nz-badge *ngIf="item.status == 3" [nzStatus]="'error'" [nzText]="'未达成'"></nz-badge>
                     </td>
                     <td>{{item.achieveTypeName + item.expectedValue}}%</td>
+                    <td>{{item.sourceDocName}}</td>
                     <td>
-                        <a (click)="goDetail(item.indicatorDetailId)">{{item.status == 1?'填写指标':'详情'}}</a>
+                        <!-- <a (click)="goDetail(item.indicatorDetailId)">{{item.status == 1?'填写指标':'详情'}}</a> -->
+                        <a *ngIf="item.status != 1" (click)="goDetail(item.indicatorDetailId)">详情</a>
                         <nz-divider *ngIf="item.status == 3" nzType="vertical"></nz-divider>
                         <a *ngIf="item.status == 3" (click)="resultFeedBack(item.indicatorDetailId)">整改措施</a>
                     </td>

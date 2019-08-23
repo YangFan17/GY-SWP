@@ -8,6 +8,7 @@ using GYSWP.Documents;
 using Abp.AutoMapper;
 using GYSWP.Clauses.Dtos;
 using System.Collections.Generic;
+using GYSWP.GYEnums;
 
 namespace GYSWP.Documents.Dtos
 {
@@ -103,6 +104,10 @@ namespace GYSWP.Documents.Dtos
         public string DeptName { get; set; }
 
         public List<ClauseListDto> ClauseList { get; set; }
+        /// <summary>
+        /// 适用于（QMS,EMS,OHS）
+        /// </summary>
+        public string SuitableCode { get; set; }
     }
 
     [AutoMapFrom(typeof(Document))]
@@ -118,5 +123,27 @@ namespace GYSWP.Documents.Dtos
         /// </summary>
         [StringLength(50)]
         public string Stamps { get; set; }
+    }
+
+    [AutoMapFrom(typeof(Document))]
+    public class DocumentConfirmDto : EntityDto<Guid>
+    {
+        public string Name { get; set; }
+        public string DocNo { get; set; }
+        public string CategoryDesc { get; set; }
+        public DateTime? PublishTime { get; set; }
+        public string DeptName { get; set; }
+        public int ShouldNum { get; set; }
+        public int ActualNum { get; set; }
+        public string DeptIds { get; set; }
+        public bool IsAllUser { get; set; }
+        public string EmployeeIds { get; set; }
+        public int DifferNum
+        {
+            get
+            {
+               return ShouldNum - ActualNum;
+            }
+        }
     }
 }

@@ -6,6 +6,7 @@ import { Indicators } from 'entities';
 import { TargetDeptComponent } from './target-dept/target-dept.component';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd';
 import { TargetListComponent } from './target-list/target-list.component';
+import { TargetSourceDocComponent } from './target-source-doc/target-source-doc.component';
 
 @Component({
     moduleId: module.id,
@@ -26,7 +27,10 @@ export class TargetExamineDetailComponent extends AppComponentBase implements On
         { value: 2, text: '大于等于 >=' },
         { value: 3, text: '小于 <' },
         { value: 4, text: '小于等于 <=' },
+        { value: 5, text: '等于 =' }
     ];
+    doc: any = {};
+
     constructor(injector: Injector
         , private actRouter: ActivatedRoute
         , private router: Router
@@ -53,6 +57,7 @@ export class TargetExamineDetailComponent extends AppComponentBase implements On
             nzOnOk: () => {
                 this.indicator.cycleTime = this.cycleTime == '1' ? 1 : 2;
                 this.getDepts();
+                this.indicator.sourceDocId = this.doc.id;
                 this.supervisionService.createOrUpdateIndicatorAsync(this.indicator, this.deptInfo)
                     .finally(() => { this.saving = false; })
                     .subscribe(res => {
@@ -75,6 +80,8 @@ export class TargetExamineDetailComponent extends AppComponentBase implements On
                 if (res.deptIds) {
                     this.setDepts(this.indicator);
                 }
+                this.doc.name = res.sourceDocName;
+                this.doc.id = res.sourceDocId;
                 this.targetList.id = res.id;
                 this.targetList.getIndicatorListById();
             });
@@ -126,6 +133,22 @@ export class TargetExamineDetailComponent extends AppComponentBase implements On
         }
         this.indicator.deptIds = (deptIds == '' ? '' : deptIds.substr(0, deptIds.length - 1));
         this.indicator.deptNames = (deptNames == '' ? '' : deptNames.substr(0, deptNames.length - 1));
+    }
+
+
+    chooseDoc() {
+        this.modalHelper
+            .open(TargetSourceDocComponent, {}, 'lg', {
+                nzMask: true,
+                nzClosable: false,
+                nzMaskClosable: false,
+            })
+            .subscribe(doc => {
+                if (doc) {
+                    this.doc.id = doc.id;
+                    this.doc.name = doc.name;
+                }
+            });
     }
 
     return() {

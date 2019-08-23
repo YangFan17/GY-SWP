@@ -38,6 +38,20 @@
                 </nz-form-item>
 
                 <nz-form-item nz-row>
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>达成条件</nz-form-label>
+                    <nz-form-control [nzSm]="20">
+                        <!-- <nz-checkbox-wrapper style="width: 100%;" name="suitableType" #suitableType="ngModel"
+                            [(ngModel)]="document.suitableType">
+                            <div nz-row>
+                                <label nz-checkbox *ngFor="let item of suitableTypes"
+                                    [nzValue]="item.value">{{item.text}}</label>
+                            </div>
+                        </nz-checkbox-wrapper> -->
+                        <nz-checkbox-group name="suitableType" [(ngModel)]="suitableTypes"></nz-checkbox-group>
+                    </nz-form-control>
+                </nz-form-item>
+
+                <nz-form-item nz-row>
                     <nz-form-label nz-col [nzSm]="4" nzRequired>标准状态</nz-form-label>
                     <nz-form-control [nzSm]="20">
                         <nz-radio-group #isControls="ngModel" [(ngModel)]="isControl"

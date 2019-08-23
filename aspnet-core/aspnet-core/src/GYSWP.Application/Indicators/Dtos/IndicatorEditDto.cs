@@ -108,5 +108,11 @@ namespace  GYSWP.Indicators.Dtos
         /// </summary>
         [Required]
         public AchieveType AchieveType { get; set; }
+
+        /// <summary>
+        /// 来源标准Id
+        /// </summary>
+        [Required]
+        public Guid SourceDocId { get; set; }
     }
 }

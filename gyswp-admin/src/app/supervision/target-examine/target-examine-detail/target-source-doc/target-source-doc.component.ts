@@ -1,17 +1,17 @@
-import { Component, OnInit, Injector, Output, EventEmitter } from '@angular/core';
-import { PagedRequestDto, PagedResultDto, ModalPagedListingComponentBase } from '@shared/component-base';
-import { HomeService } from 'services';
+import { Component, OnInit, Output, EventEmitter, Injector } from '@angular/core';
+import { ModalPagedListingComponentBase, PagedRequestDto, PagedResultDto } from '@shared/component-base';
+import { SupervisionService } from 'services';
 
 @Component({
     moduleId: module.id,
-    selector: 'emp-doc-list',
-    templateUrl: 'emp-doc-list.component.html',
-    providers: [HomeService]
+    selector: 'target-source-doc',
+    templateUrl: 'target-source-doc.component.html'
 })
-export class EmpDocListComponent extends ModalPagedListingComponentBase<any> implements OnInit {
+
+export class TargetSourceDocComponent extends ModalPagedListingComponentBase<any> implements OnInit {
     @Output() modalSelect: EventEmitter<any> = new EventEmitter<any>();
     constructor(injector: Injector
-        , private homeService: HomeService
+        , private supervisionService: SupervisionService
     ) {
         super(injector);
     }
@@ -32,7 +32,7 @@ export class EmpDocListComponent extends ModalPagedListingComponentBase<any> imp
         let params: any = {};
         params.SkipCount = request.skipCount;
         params.MaxResultCount = request.maxResultCount;
-        this.homeService.getDocumentListAsync(params)
+        this.supervisionService.getCurDeptDocListAsync(params)
             .finally(() => {
                 finishedCallback();
             })

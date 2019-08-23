@@ -23,6 +23,7 @@ export class DocumentDto {
     deptName: string;
     isAction: boolean;
     stamps: string;
+    suitableCode: string;
     constructor(data?: any) {
         if (data) {
             for (var property in data) {
@@ -98,6 +99,7 @@ export class DocumentDto {
             this.deptName = data["deptName"];
             this.isAction = data["isAction"];
             this.stamps = data["stamps"];
+            this.suitableCode = data["suitableCode"];
         }
     }
     toJSON(data?: any) {
@@ -125,6 +127,7 @@ export class DocumentDto {
         data["isAllUser"] = this.isAllUser;
         data["isAction"] = this.isAction;
         data["stamps"] = this.stamps;
+        data["suitableCode"] = this.suitableCode;
         return data;
     }
     static fromJS(data: any): DocumentDto {

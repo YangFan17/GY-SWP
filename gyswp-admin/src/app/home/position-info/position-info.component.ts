@@ -1,11 +1,11 @@
 import { Component, Injector } from '@angular/core';
-import { HomeService } from 'services/home/home.service';
 import { AppComponentBase } from '@shared/app-component-base';
 import { CreatePositionInfoComponent } from './create-position-info/create-position-info.component';
 import { PositionInfo } from 'entities/position-info';
 import { AddDocumentComponent } from './add-document/add-document.component';
 import { Router } from '@angular/router';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd';
+import { HomeService } from 'services';
 
 @Component({
     moduleId: module.id,

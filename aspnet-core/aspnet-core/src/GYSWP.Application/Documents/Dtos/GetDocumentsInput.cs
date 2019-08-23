@@ -2,6 +2,7 @@
 using Abp.Runtime.Validation;
 using GYSWP.Dtos;
 using GYSWP.Documents;
+using System;
 
 namespace GYSWP.Documents.Dtos
 {
@@ -40,5 +41,14 @@ namespace GYSWP.Documents.Dtos
         public string Path { get; set; }
 
         public int CategoryId { get; set; }
+    }
+
+    public class GetConfirmTypeInput : PagedSortedAndFilteredInputDto
+    {
+        /// <summary>
+        /// 1 已认领 2 未认领
+        /// </summary>
+        public int Type { get; set; }
+        public Guid DocId { get; set; }
     }
 }

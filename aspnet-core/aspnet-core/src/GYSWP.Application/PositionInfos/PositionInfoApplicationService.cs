@@ -28,6 +28,8 @@ using System.Text.RegularExpressions;
 using GYSWP.Employees;
 using GYSWP.Documents;
 using GYSWP.Categorys;
+using GYSWP.EmployeeClauses;
+using GYSWP.Clauses;
 
 namespace GYSWP.PositionInfos
 {
@@ -43,6 +45,8 @@ namespace GYSWP.PositionInfos
         private readonly IRepository<Employee, string> _employeeRepository;
         private readonly IRepository<Document, Guid> _documentRepository;
         private readonly IRepository<Category, int> _categoryRepository;
+        private readonly IRepository<EmployeeClause, Guid> _employeeClauseRepository;
+        private readonly IRepository<Clause, Guid> _clauseRepository;
 
         /// <summary>
         /// 构造函数 
@@ -54,6 +58,8 @@ namespace GYSWP.PositionInfos
         , IRepository<Employee, string> employeeRepository
         , IRepository<Document, Guid> documentRepository
         , IRepository<Category, int> categoryRepository
+        , IRepository<EmployeeClause, Guid> employeeClauseRepository
+        , IRepository<Clause, Guid> clauseRepository
         )
         {
             _entityRepository = entityRepository;
@@ -62,6 +68,8 @@ namespace GYSWP.PositionInfos
             _employeeRepository = employeeRepository;
             _documentRepository = documentRepository;
             _categoryRepository = categoryRepository;
+            _employeeClauseRepository = employeeClauseRepository;
+            _clauseRepository = clauseRepository;
         }
 
 
@@ -320,7 +328,7 @@ namespace GYSWP.PositionInfos
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        private async Task<List<MainPointsList>> GetMainPointsChildrenAsync(Guid id)
+        private async Task<List<MainPointsList>> GetMainPointsChildrenAsync(Guid id, string empId)
         {
             var doc = _documentRepository.GetAll().Select(v => new { v.Id, v.Name, v.DocNo });
             var points = _mainPointsRecordRepository.GetAll().Where(v => v.PositionInfoId == id);
@@ -334,7 +342,31 @@ namespace GYSWP.PositionInfos
                                         MainPointId = po.Id,
                                         DocId = d.Id
                                     }).ToListAsync();
+            foreach (var item in pointsInfo)
+            {
+                item.ClauseNoList = await GetChildrenClauseListAsync(item.DocId, empId);
+            }
             return pointsInfo;
+        }
+
+        /// <summary>
+        /// 适用标准确认过的编号
+        /// </summary>
+        /// <param name="docId"></param>
+        /// <param name="empId"></param>
+        /// <returns></returns>
+        private async Task<List<EmpClauseList>> GetChildrenClauseListAsync(Guid docId, string empId)
+        {
+            var empClause = _employeeClauseRepository.GetAll().Where(v => v.DocumentId == docId && v.EmployeeId == empId);
+            var clause = _clauseRepository.GetAll().Where(v => v.DocumentId == docId).Select(v => new { v.ClauseNo, v.Id });
+            var empClauseList = await (from ec in empClause
+                                       join c in clause on ec.ClauseId equals c.Id
+                                       select new EmpClauseList()
+                                       {
+                                           Id = c.Id,
+                                           ClauseNo = c.ClauseNo
+                                       }).ToListAsync();
+            return empClauseList;
         }
 
         /// <summary>
@@ -354,7 +386,7 @@ namespace GYSWP.PositionInfos
                               }).ToListAsync();
             foreach (var item in list)
             {
-                item.Children = await GetMainPointsChildrenAsync(item.Id);
+                item.Children = await GetMainPointsChildrenAsync(item.Id, user.EmployeeId);
             }
             return list;
         }

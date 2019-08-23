@@ -96,8 +96,19 @@ namespace GYSWP.PositionInfos.Dtos
         public string MainPoint { get; set; }
         public string DocName { get; set; }
         public string DocNo { get; set; }
+        public List<EmpClauseList> ClauseNoList { get; set; }
         public Guid MainPointId { get; set; }
     }
+
+    /// <summary>
+    /// 条款编号列表
+    /// </summary>
+    public class EmpClauseList
+    {
+        public Guid Id { get; set; }
+        public string ClauseNo { get; set; }
+    }
+
     public class HomePositionTreeList
     {
         public HomePositionTreeList()

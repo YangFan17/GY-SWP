@@ -53,7 +53,7 @@ export class AppMenus {
             group: true,
             children: [
                 {
-                    text: "我的标准",
+                    text: "岗位适用标准",
                     link: "/app/criterion/criterion",
                     reuse: false
                 },
@@ -127,10 +127,15 @@ export class AppMenus {
                     reuse: false
                 },
                 {
+                    text: "标准认领统计",
+                    link: "/app/reports/standard-confirm",
+                    reuse: false
+                },
+                {
                     text: "合理化建议统计",
                     link: "/app/reports/adviseReport",
                     reuse: false
-                },
+                }
             ]
         },
         {

@@ -24,6 +24,7 @@
                 <td>{{item.employeeName}}</td>
                 <td>{{item.completeTime | date: "yyyy-MM-dd"}}</td>
                 <td>
+                    <a *ngIf="item.status == 1" (click)="fullResult(item.indicatorDetailId)">填写指标</a>
                     <a *ngIf="item.status == 3" (click)="resultFeedBack(item.indicatorDetailId)">查看措施</a>
                 </td>
             </tr>

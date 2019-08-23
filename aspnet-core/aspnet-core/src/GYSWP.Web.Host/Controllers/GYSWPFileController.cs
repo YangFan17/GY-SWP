@@ -56,7 +56,7 @@ namespace GYSWP.Web.Host.Controllers
                     fileSize = formFile.Length; //获得文件大小，以字节为单位
                     var uid = Guid.NewGuid().ToString();
                     string newFileName = uid + fileExt; //随机生成新的文件名
-                    var fileDire = webRootPath + "/docfiles/";
+                    var fileDire = webRootPath + @"E:\gyswpData\docfiles/";
                     if (!Directory.Exists(fileDire))
                     {
                         Directory.CreateDirectory(fileDire);

@@ -140,7 +140,15 @@ namespace GYSWP.GYEnums
         大于 = 1,
         大于等于 = 2,
         小于 = 3,
-        小于等于 = 4
+        小于等于 = 4,
+        等于 = 5
+    }
+
+    public enum SuitableType
+    {
+        QMS = 1,
+        EMS = 2,
+        OHS = 3
     }
 
     public static class GYCode

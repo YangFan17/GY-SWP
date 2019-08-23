@@ -6,6 +6,8 @@ import { SuperviseComponent } from './supervise/supervise.component';
 import { StandardrevisionComponent } from './standardrevision/standardrevision.component';
 import { AdviseComponent } from './advise/advise.component'
 import { IndicatorSuperviseComponent } from './indicator-supervise/indicator-supervise.component';
+import { StandardConfirmComponent } from './standard-confirm/standard-confirm.component';
+import { ConfirmDetailComponent } from './standard-confirm/confirm-detail/confirm-detail.component';
 
 
 const routes: Routes = [
@@ -28,14 +30,19 @@ const routes: Routes = [
         component: IndicatorSuperviseComponent,
         canActivate: [AppRouteGuard],
     },
-    // {
-    //     path: 'standardrevision',
-    //     component: StandardrevisionComponent,
-    //     canActivate: [AppRouteGuard],
-    // },
+    {
+        path: 'standard-confirm',
+        component: StandardConfirmComponent,
+        canActivate: [AppRouteGuard],
+    },
     {
         path: 'adviseReport',
         component: AdviseComponent,
+        canActivate: [AppRouteGuard],
+    },
+    {
+        path: 'confirm-detail/:id/:status',
+        component: ConfirmDetailComponent,
         canActivate: [AppRouteGuard],
     },
 ];

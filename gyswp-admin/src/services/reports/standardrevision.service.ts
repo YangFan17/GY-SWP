@@ -4,6 +4,7 @@ import { CommonHttpClient } from "services/common-httpclient";
 import { map } from "rxjs/operators";
 import { API_BASE_URL } from "@shared/service-proxies/service-proxies";
 import { NzTreeNode } from "ng-zorro-antd";
+import { PagedResultDto } from "@shared/component-base";
 
 @Injectable()
 export class StandardRevisionService {
@@ -32,6 +33,26 @@ export class StandardRevisionService {
                 arry.push(tree);
             });
             return arry;
+        }));
+    }
+
+    getDocumentConfirmsList(params: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/Document/GetReportDocumentConfirmsListAsync";
+        return this._commonhttp.get(url_, params).pipe(map(data => {
+            const result = new PagedResultDto();
+            result.items = data.items;
+            result.totalCount = data.totalCount;
+            return result;
+        }));
+    }
+
+    GetEmpConfirmListById(params: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/Document/GetPagedEmpConfirmListByIdAsync";
+        return this._commonhttp.get(url_, params).pipe(map(data => {
+            const result = new PagedResultDto();
+            result.items = data.items;
+            result.totalCount = data.totalCount;
+            return result;
         }));
     }
 }

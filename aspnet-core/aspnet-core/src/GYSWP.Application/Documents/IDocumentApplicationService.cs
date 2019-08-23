@@ -91,5 +91,8 @@ namespace GYSWP.Documents
         Task<APIResultDto> DingUpdateAsync(DingDocumentEditDto input);
         Task<APIResultDto> DocumentReadAsync(DocumentReadInput input);
         Task<string> GetDocNameById(EntityDto<Guid> input);
+        Task<PagedResultDto<DocumentConfirmDto>> GetReportDocumentConfirmsListAsync(GetDocumentsInput input);
+        Task<PagedResultDto<DocumentTitleDto>> GetPagedCurDeptDocListAsync(GetDocumentsInput input);
+        Task<PagedResultDto<EmpBriefInfo>> GetPagedEmpConfirmListByIdAsync(GetConfirmTypeInput input);
     }
 }

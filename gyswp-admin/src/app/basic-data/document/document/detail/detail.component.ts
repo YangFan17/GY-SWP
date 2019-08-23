@@ -56,6 +56,12 @@ export class DetailComponent extends AppComponentBase implements OnInit {
     attachment: DocAttachment = new DocAttachment();
     isControl: string;
     isValid: string;
+    suitableTypes = [
+        { label: 'QMS', value: '1', checked: false },
+        { label: 'EMS', value: '2', checked: false },
+        { label: 'OHS', value: '3', checked: false }
+    ];
+    splitCodes: string[];//suitableTypes拆分
 
     constructor(injector: Injector
         , private actRouter: ActivatedRoute
@@ -79,6 +85,7 @@ export class DetailComponent extends AppComponentBase implements OnInit {
     }
 
     save() {
+        this.saving = true;
         if (!this.document.id) {
             this.document.categoryId = parseInt(this.category.id);
             // this.document.categoryDesc = this.category.name;
@@ -96,6 +103,10 @@ export class DetailComponent extends AppComponentBase implements OnInit {
 
         this.getUserDepts();
 
+        var suitableFilter = this.suitableTypes.filter(v => v.checked == true);
+        this.document.suitableCode = suitableFilter.map(v => {
+            return v.value;
+        }).join(',');
         this.basicDataService.createOrUpdateDocumentAsync(this.document, this.newFileList)
             .finally(() => { this.saving = false; })
             .subscribe(res => {
@@ -123,6 +134,19 @@ export class DetailComponent extends AppComponentBase implements OnInit {
 
                 if (res.employeeIds || res.employeeDes) {
                     this.setUserDepts(this.document);
+                }
+                if (res.suitableCode) {
+                    this.splitCodes = res.suitableCode.split(',');
+                    let i: number = 0;
+                    this.suitableTypes.forEach(v => {
+                        if (v.value == this.splitCodes[i]) {
+                            v.checked = true;
+                            if (i < this.splitCodes.length) {
+                                i++;
+                            }
+                        }
+                    }
+                    );
                 }
                 this.isUpdate = true;
                 this.isAllUser = res.isAllUser == true ? '1' : '0';

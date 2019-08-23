@@ -6,9 +6,11 @@ using Abp.Domain.Entities.Auditing;
 using System.ComponentModel.DataAnnotations;
 using GYSWP.Indicators;
 using GYSWP.GYEnums;
+using Abp.AutoMapper;
 
 namespace GYSWP.Indicators.Dtos
 {
+    [AutoMapFrom(typeof(Indicator))]
     public class IndicatorListDto : EntityDto<Guid>, IHasCreationTime
     {
 
@@ -105,6 +107,15 @@ namespace GYSWP.Indicators.Dtos
         public CycleTime CycleTime { get; set; }
         public string CycleTimeName { get { return CycleTime.ToString(); } }
         public string AchieveTypeName { get { return AchieveType.ToString(); } }
+
+        /// <summary>
+        /// 来源标准Id
+        /// </summary>
+        public Guid SourceDocId { get; set; }
+        /// <summary>
+        /// 标准名称
+        /// </summary>
+        public string SourceDocName { get; set; }
     }
 
     public class IndicatorShowDto : EntityDto<Guid>
@@ -149,6 +160,7 @@ namespace GYSWP.Indicators.Dtos
         public string StatusName { get { return Status.ToString(); } }
         public AchieveType AchieveType { get; set; }
         public string AchieveTypeName { get { return AchieveType.ToString(); } }
+        public string SourceDocName { get; set; }
     }
     public class IndicatorReviewDto : EntityDto<Guid>
     {

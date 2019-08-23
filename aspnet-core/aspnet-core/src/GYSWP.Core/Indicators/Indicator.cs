@@ -94,5 +94,11 @@ namespace GYSWP.Indicators
         /// </summary>
         [Required]
         public virtual AchieveType AchieveType { get; set; }
+
+        /// <summary>
+        /// 来源标准Id
+        /// </summary>
+        [Required]
+        public virtual Guid SourceDocId { get; set; }
     }
 }

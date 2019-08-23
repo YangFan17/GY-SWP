@@ -172,7 +172,7 @@ export class SelfLearningComponent extends AppComponentBase implements OnInit {
             })
             .subscribe(isSave => {
                 if (isSave) {
-                    this.getClauseList();
+                    // this.getClauseList();
                 }
             });
     }

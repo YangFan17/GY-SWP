@@ -43,6 +43,14 @@
                     </nz-form-control>
                 </nz-form-item>
                 <nz-form-item nz-row style="margin-bottom: 0px;">
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>指标来源</nz-form-label>
+                    <nz-form-control [nzSm]="20">
+                        <nz-form-text>
+                            {{indicator.sourceDocName}}
+                        </nz-form-text>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item nz-row style="margin-bottom: 0px;">
                     <nz-form-label nz-col [nzSm]="4" nzRequired>预期值</nz-form-label>
                     <nz-form-control [nzSm]="20">
                         <nz-form-text>

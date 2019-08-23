@@ -341,7 +341,7 @@ namespace GYSWP.Documents
             ////        root.children = await getDeptTreeAsync(Array.ConvertAll(depts, d => long.Parse(d)));
             ////    }
             ////}
-            if (roles.Contains(RoleCodes.Admin)||roles.Contains(RoleCodes.QiGuanAdmin))
+            if (roles.Contains(RoleCodes.Admin) || roles.Contains(RoleCodes.QiGuanAdmin))
             {
                 root.children = await getDeptTreeAsync(new long[] { 1 });//顶级部门
             }
@@ -388,7 +388,8 @@ namespace GYSWP.Documents
 
             var cate = _categoryRepository.GetAll();
             var org = _organizationRepository.GetAll();
-            var result = from q in query join c in cate on q.CategoryId equals c.Id
+            var result = from q in query
+                         join c in cate on q.CategoryId equals c.Id
                          join o in org on c.DeptId equals o.Id
                          select new DocumentTitleDto()
                          {
@@ -400,7 +401,7 @@ namespace GYSWP.Documents
                              DeptName = o.DepartmentName
                          };
             var count = await result.CountAsync();
-            var entityListDtos = await result.OrderBy(v=>v.DeptName).ThenBy(v => v.CategoryDesc).ThenByDescending(v => v.PublishTime).AsNoTracking().PageBy(input).ToListAsync();
+            var entityListDtos = await result.OrderBy(v => v.DeptName).ThenBy(v => v.CategoryDesc).ThenByDescending(v => v.PublishTime).AsNoTracking().PageBy(input).ToListAsync();
             // var entityListDtos = ObjectMapper.Map<List<DocumentListDto>>(entityList);
             //var entityListDtos = entityList.MapTo<List<DocumentListDto>>();
             //var count = await query.CountAsync();
@@ -455,13 +456,15 @@ namespace GYSWP.Documents
         public async Task<DocumentListDto> GetDocInfoByScanAsync(Guid id, string userId)
         {
             var doc = await _entityRepository.GetAsync(id);
-            string deptName = await _organizationRepository.GetAll().Where(v => v.Id.ToString() == doc.DeptIds).Select(v => v.DepartmentName).FirstOrDefaultAsync();
+            long deptId = await _categoryRepository.GetAll().Where(v => v.Id == doc.CategoryId).Select(v => v.DeptId).FirstOrDefaultAsync();
+            string deptName = await _organizationRepository.GetAll().Where(v => v.Id == deptId).Select(v => v.DepartmentName).FirstOrDefaultAsync();
+            //string deptName = await _organizationRepository.GetAll().Where(v => v.Id.ToString() == doc.DeptIds).Select(v => v.DepartmentName).FirstOrDefaultAsync();
             var result = doc.MapTo<DocumentListDto>();
             result.DeptName = deptName;
-
             var confirmIds = await _employeeClauseRepository.GetAll().Where(v => v.DocumentId == id && v.EmployeeId == userId).Select(v => v.ClauseId).ToListAsync();
             var clauseList = await _clauseRepository.GetAll().Where(v => v.DocumentId == id).OrderBy(v => v.ClauseNo).AsNoTracking().ToListAsync();
             var clauseDtoList = clauseList.MapTo<List<ClauseListDto>>();
+            clauseDtoList.Sort(Factory.Comparer);
             clauseDtoList.ForEach((c) =>
             {
                 c.IsConfirm = confirmIds.Any(e => e == c.Id);
@@ -469,6 +472,8 @@ namespace GYSWP.Documents
             result.ClauseList = clauseDtoList;
             return result;
         }
+
+
 
         /// <summary>
         /// 钉钉上修改Document的公共方法
@@ -537,6 +542,136 @@ namespace GYSWP.Documents
                 Logger.ErrorFormat("SendEmpToChooseUserAsync errormsg{0} Exception{1}", ex.Message, ex);
                 return new APIResultDto() { Code = 901, Msg = "钉钉消息发送失败" };
             }
+        }
+
+        /// <summary>
+        /// 标准认领报表列表
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<PagedResultDto<DocumentConfirmDto>> GetReportDocumentConfirmsListAsync(GetDocumentsInput input)
+        {
+            var categoryIds = await _categoryRepository.GetAll().Where(v => v.DeptId == input.DeptId).Select(v => v.Id).ToArrayAsync();
+            var query = _entityRepository.GetAll().Where(v => categoryIds.Contains(v.CategoryId) && v.IsAction == true).WhereIf(!string.IsNullOrEmpty(input.KeyWord), v => v.Name.Contains(input.KeyWord) ||v.DocNo.Contains(input.KeyWord));
+            var entityList = await query.OrderBy(v => v.CategoryId).ThenByDescending(v => v.PublishTime).AsNoTracking().PageBy(input).ToListAsync();
+
+            var entityListDtos = entityList.MapTo<List<DocumentConfirmDto>>();
+            foreach (var item in entityListDtos)
+            {
+                if (item.IsAllUser == true)
+                {
+                    item.ShouldNum = await _employeeRepository.CountAsync();
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(item.DeptIds))
+                    {
+                        string[] deptIds = item.DeptIds.Split(',');
+                        item.ShouldNum = await _employeeRepository.CountAsync(e => deptIds.Contains(e.Department.Replace('[', ' ').Replace(']', ' ').Trim()));
+                    }
+                    if (!string.IsNullOrEmpty(item.EmployeeIds))
+                    {
+                        item.ShouldNum += item.EmployeeIds.Split(',').Count();
+                    }
+                }
+
+                item.ActualNum = await _employeeClauseRepository.GetAll().Where(v => v.DocumentId == item.Id).Select(v => v.EmployeeId).Distinct().CountAsync();
+            }
+            var count = await query.CountAsync();
+            return new PagedResultDto<DocumentConfirmDto>(count, entityListDtos);
+        }
+
+        /// <summary>
+        /// 查询已认领or未认领人员名单
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<PagedResultDto<EmpBriefInfo>> GetPagedEmpConfirmListByIdAsync(GetConfirmTypeInput input)
+        {
+            List<EmpBriefInfo> entityListDtos = new List<EmpBriefInfo>();
+            int count = 0;
+            if (input.Type == 1)//已认领
+            {
+                string[] empIds = await _employeeClauseRepository.GetAll().Where(v => v.DocumentId == input.DocId).Select(v => v.EmployeeId).Distinct().ToArrayAsync();
+                var entityList = _employeeRepository.GetAll().Where(v => empIds.Contains(v.Id)).Select(v => new EmpBriefInfo()
+                {
+                    Id = v.Id,
+                    Name = v.Name,
+                    Phone = v.Mobile,
+                    Position = v.Position
+                });
+                count = await entityList.CountAsync();
+                entityListDtos = await entityList.OrderBy(v => v.Name).PageBy(input).ToListAsync();
+                return new PagedResultDto<EmpBriefInfo>(count, entityListDtos);
+            }
+            else
+            {
+                var doc = await _entityRepository.GetAsync(input.DocId);
+                string[] confirmEmpIds = await _employeeClauseRepository.GetAll().Where(v => v.DocumentId == input.DocId).Select(v => v.EmployeeId).Distinct().ToArrayAsync();
+                if (doc.IsAllUser)
+                {
+                    var entityList = _employeeRepository.GetAll().Where(v=>!confirmEmpIds.Contains(v.Id)).Select(v => new EmpBriefInfo()
+                    {
+                        Id = v.Id,
+                        Name = v.Name,
+                        Phone = v.Mobile,
+                        Position = v.Position
+                    });
+                    count = await entityList.CountAsync();
+                    entityListDtos = await entityList.OrderBy(v => v.Name).PageBy(input).ToListAsync();
+                    return new PagedResultDto<EmpBriefInfo>(count, entityListDtos);
+                }
+                else
+                {
+                    List<EmpBriefInfo> tempListDtos = new List<EmpBriefInfo>();
+                    string[] deptIds = null;
+                    string[] empIds = null;
+                    if (!string.IsNullOrEmpty(doc.DeptIds))
+                    {
+                        deptIds = doc.DeptIds.Split(',');
+                    }
+                    if (!string.IsNullOrEmpty(doc.EmployeeIds))
+                    {
+                        empIds = doc.EmployeeIds.Split(',');
+                    }
+                    var entityList = _employeeRepository.GetAll()
+                    //    .WhereIf(deptIds.Length > 0, e => deptIds.Contains(e.Department.Replace('[', ' ').Replace(']', ' ').Trim())
+                    //|| det
+                    //)
+                    //.WhereIf(empIds.Length>0,e=>empIds.Contains(e.Id))
+                    .Where(v => (deptIds.Length > 0 ? deptIds.Contains(v.Department.Replace('[', ' ').Replace(']', ' ').Trim()) : true)
+                    || (empIds.Length > 0 ? empIds.Contains(v.Id) : true) && !confirmEmpIds.Contains(v.Id))
+                    .Select(v => new EmpBriefInfo()
+                    {
+                        Id = v.Id,
+                        Name = v.Name,
+                        Phone = v.Mobile,
+                        Position = v.Position
+                        //}).OrderBy(v => v.Name).PageBy(input).ToListAsync();
+                    });
+
+                    count = await entityList.CountAsync();
+                    entityListDtos = await entityList.OrderBy(v => v.Name).PageBy(input).ToListAsync();
+                    return new PagedResultDto<EmpBriefInfo>(count, entityListDtos);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 检查指标获取当前部门标准来源
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<PagedResultDto<DocumentTitleDto>> GetPagedCurDeptDocListAsync(GetDocumentsInput input)
+        {
+            var user = await GetCurrentUserAsync();
+            string empDept = await _employeeRepository.GetAll().Where(v => v.Id == user.EmployeeId).Select(v => v.Department).FirstOrDefaultAsync();
+            var categoryIds = await _categoryRepository.GetAll().Where(v => "[" + v.DeptId + "]" == empDept).Select(v => v.Id).ToArrayAsync();
+            var query = _entityRepository.GetAll().Where(v => categoryIds.Contains(v.CategoryId) && v.IsAction == true);
+            var entityList = await query.OrderBy(v => v.CategoryId).ThenByDescending(v => v.PublishTime).AsNoTracking().PageBy(input).ToListAsync();
+            var entityListDtos = entityList.MapTo<List<DocumentTitleDto>>();
+            var count = await query.CountAsync();
+            return new PagedResultDto<DocumentTitleDto>(count, entityListDtos);
         }
 
 
@@ -799,4 +934,23 @@ namespace GYSWP.Documents
         }
     }
     #endregion
+    class Factory : IComparer<ClauseListDto>
+    {
+        private Factory() { }
+        public static IComparer<ClauseListDto> Comparer
+        {
+            get { return new Factory(); }
+        }
+        public int Compare(ClauseListDto x, ClauseListDto y)
+        {
+            try
+            {
+                return x.ClauseNo.Length == y.ClauseNo.Length ? x.ClauseNo.CompareTo(y.ClauseNo) : x.ClauseNo.Length - y.ClauseNo.Length;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+    }
 }

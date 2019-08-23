@@ -1,0 +1,40 @@
+<div class="padding-bottom-45">
+    <h3 style="text-align: center;">
+        <span>填写检查指标</span>
+    </h3>
+    <form nz-form #validateForm="ngForm" *ngIf="id">
+        <nz-form-item nz-row style="margin-bottom: 0px;">
+            <nz-form-label nz-col [nzSm]="4" nzRequired>考核部门</nz-form-label>
+            <nz-form-control [nzSm]="20">
+                <nz-form-text>
+                    {{indicator.creatorDeptName}}
+                </nz-form-text>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item nz-row>
+            <nz-form-label nz-col [nzSm]="4" nzRequired>实际值</nz-form-label>
+            <nz-form-control [nzSm]="20">
+                <nz-input-group nzSearch [nzSuffix]="suffixIconButton">
+                    <input nzSearch nz-input name="actualValue" #actualValue="ngModel"
+                        [(ngModel)]="indicatorDetail.actualValue" [placeholder]="'请填写实际值'"
+                        pattern="^(0|[1-9][0-9]*)(\.[0-9]*)?$" required>
+                    <ng-template #suffixIconButton>
+                        <button nz-button nzType="primary" disabled nzSearch>%</button>
+                    </ng-template>
+                </nz-input-group>
+                <nz-form-explain *ngIf="actualValue.control.dirty&&actualValue.control.errors">
+                    <ng-container *ngIf="actualValue.control.hasError('required')">请填写实际值</ng-container>
+                    <ng-container *ngIf="actualValue.control.hasError('pattern')">请输入正确的格式</ng-container>
+                </nz-form-explain>
+            </nz-form-control>
+        </nz-form-item>
+        <div class="modal-footer">
+            <button nz-button type="button" [disabled]="saving" (click)="close()">
+                取消
+            </button>
+            <button nz-button [nzType]="'primary'" type="button" (click)="save()"
+                [disabled]="!validateForm.valid||saving">
+                保存
+            </button>
+        </div>
+    </form>

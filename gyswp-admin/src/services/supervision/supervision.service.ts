@@ -232,4 +232,28 @@ export class SupervisionService {
             return data;
         }));
     }
+
+    getIndicatorDetailByIdAsync(id: any): Observable<IndicatorShowDto> {
+        let url_ = "/api/services/app/Indicator/GetIndicatorDetailByIdAsync";
+        return this._commonhttp.get(url_, { id: id }).pipe(map(data => {
+            return IndicatorShowDto.fromJS(data);
+        }));
+    }
+
+    changeIndicatorStatusByIdAsync(input: any): Observable<ApiResult> {
+        let url_ = "/api/services/app/IndicatorsDetail/ChangeStatusByIdAsync";
+        return this._commonhttp.post(url_, input).pipe(map(data => {
+            return ApiResult.fromJS(data);
+        }));
+    }
+
+    getCurDeptDocListAsync(param: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/Document/GetPagedCurDeptDocListAsync";
+        return this._commonhttp.get(url_, param).pipe(map(data => {
+            const result = new PagedResultDto();
+            result.items = data.items;
+            result.totalCount = data.totalCount;
+            return result;
+        }));
+    }
 }

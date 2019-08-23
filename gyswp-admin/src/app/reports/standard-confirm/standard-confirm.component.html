@@ -1,0 +1,78 @@
+<page-header [title]=""></page-header>
+<nz-card>
+    <div nz-row>
+        <div nz-col nzSpan="4">
+            <nz-spin nzSimple [nzSize]="'small'" *ngIf="!nodes || nodes.length == 0"></nz-spin>
+            <nz-tree #detpTree [(ngModel)]="nodes" (nzClick)="activeNode($event)" [nzDefaultExpandAll]="true">
+            </nz-tree>
+        </div>
+        <div nz-col nzSpan="20">
+            <form nz-form [nzLayout]="'inline'">
+                <div nz-row [nzGutter]="18">
+                    <div nz-col [nzSpan]="8" class="mb-md">
+                        <nz-form-item class="d-flex" style="margin-bottom: 0px;">
+                            <nz-form-label nzFor="keyWord">标准名称/编号</nz-form-label>
+                            <nz-form-control class="flex-1">
+                                <input nz-input name="keyWord" [(ngModel)]="search.keyWord"
+                                    [placeholder]="'请输入标准名称/编号'">
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <!-- <div nz-col [nzSpan]="6" class="mb-md">
+            <nz-form-item class="d-flex" style="margin-bottom: 0px;">
+              <nz-form-label nzFor="month">月份</nz-form-label>
+              <nz-form-control class="flex-1">
+                <nz-month-picker [(ngModel)]="date" name="date" (ngModelChange)="onChange($event)" nzPlaceHolder="选择月份">
+                </nz-month-picker>
+              </nz-form-control>
+            </nz-form-item>
+          </div> -->
+                    <div nz-col [nzSpan]="8" class="mb-md right" [class.text-right]="'true'" style="float: right;">
+                        <nz-form-item class="d-flex" style="margin-right: 0px;margin-bottom: 0px;">
+                            <nz-form-control class="flex-1">
+                                <button nz-button type="button" (click)="reset()" class="mx-sm">重置</button>
+                                <button nz-button type="button" (click)="refreshData()" nzType="primary"
+                                    [nzLoading]="isTableLoading">
+                                    查询</button>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                </div>
+            </form>
+            <ng-template #totalTemplate let-total>共 {{totalItems}} 条</ng-template>
+            <nz-table #nzTable [nzFrontPagination]="false" [nzShowTotal]="totalTemplate" [nzTotal]="totalItems"
+                [nzData]="dataList" [(nzPageIndex)]="pageNumber" [(nzPageSize)]="pageSize" [nzLoading]="isTableLoading"
+                [nzShowSizeChanger]="true" (nzPageIndexChange)="refresh()" (nzPageSizeChange)="refresh()">
+                <thead>
+                    <tr>
+                        <th>标准编号</th>
+                        <th>标准名称</th>
+                        <th>标准分类</th>
+                        <th>发布时间</th>
+                        <th>应认领数（人）</th>
+                        <th>实认领数（人）</th>
+                        <th>未认领数（人）</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of nzTable.data">
+                        <td>{{item.docNo}}</td>
+                        <td>{{item.name}}</td>
+                        <td>{{item.categoryDesc}}</td>
+                        <td>{{item.publishTime | date: "yyyy-MM-dd"}}</td>
+                        <td>{{item.shouldNum}}</td>
+                        <td><a (click)="goDetail(item.id,1)">
+                                {{item.actualNum}}
+                            </a>
+                        </td>
+                        <td>
+                            <a (click)="goDetail(item.id,2)">
+                                {{item.differNum}}
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </nz-table>
+        </div>
+    </div>
+</nz-card>

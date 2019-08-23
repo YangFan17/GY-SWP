@@ -5,6 +5,7 @@ using Abp.Application.Services.Dto;
 using Abp.AutoMapper;
 using Abp.Domain.Entities.Auditing;
 using GYSWP.Documents;
+using GYSWP.GYEnums;
 
 namespace  GYSWP.Documents.Dtos
 {
@@ -91,5 +92,10 @@ namespace  GYSWP.Documents.Dtos
         /// </summary>
         [StringLength(50)]
         public string Stamps { get; set; }
+
+        /// <summary>
+        /// 适用于（QMS,EMS,OHS）
+        /// </summary>
+        public string SuitableCode { get; set; }
     }
 }

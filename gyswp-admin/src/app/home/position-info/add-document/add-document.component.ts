@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Component, Input, Injector } from '@angular/core';
-import { HomeService } from 'services/home/home.service';
 import { AppComponentBase, ModalComponentBase } from '@shared/component-base';
 import { MainPointsRecord } from 'entities';
 import { EmpDocListComponent } from '../emp-doc-list/emp-doc-list.component';
+import { HomeService } from 'services';
 
 @Component({
     moduleId: module.id,
@@ -46,7 +46,7 @@ export class AddDocumentComponent extends ModalComponentBase implements OnInit {
                 nzMaskClosable: false,
             })
             .subscribe(doc => {
-                if (doc.id) {
+                if (doc) {
                     this.doc.id = doc.id;
                     this.doc.name = doc.name;
                 }

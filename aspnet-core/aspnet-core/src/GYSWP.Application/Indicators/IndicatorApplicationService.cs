@@ -26,6 +26,7 @@ using GYSWP.Dtos;
 using GYSWP.Organizations;
 using GYSWP.Employees;
 using GYSWP.DingDingApproval;
+using GYSWP.Documents;
 
 namespace GYSWP.Indicators
 {
@@ -41,6 +42,7 @@ namespace GYSWP.Indicators
         private readonly IRepository<Organization, long> _organizationRepository;
         private readonly IRepository<Employee, string> _employeeRepository;
         private readonly IApprovalAppService _approvalAppService;
+        private readonly IRepository<Document, Guid> _documentRepository;
 
         /// <summary>
         /// 构造函数 
@@ -51,7 +53,8 @@ namespace GYSWP.Indicators
         , IRepository<IndicatorsDetail, Guid> indicatorsDetailRepository
         , IRepository<Organization, long> organizationRepository
         , IRepository<Employee, string> employeeRepository
-                , IApprovalAppService approvalAppService
+        , IRepository<Document, Guid> documentRepository
+        , IApprovalAppService approvalAppService
         )
         {
             _entityRepository = entityRepository;
@@ -60,6 +63,7 @@ namespace GYSWP.Indicators
             _organizationRepository = organizationRepository;
             _employeeRepository = employeeRepository;
             _approvalAppService = approvalAppService;
+            _documentRepository = documentRepository;
         }
 
 
@@ -73,29 +77,27 @@ namespace GYSWP.Indicators
         {
             var user = await GetCurrentUserAsync();
             //var detail =  _indicatorsDetailRepository.GetAll();
-            var query = _entityRepository.GetAll().Where(v => v.CreatorEmpeeId == user.EmployeeId);
-            //var query = from i in indicator
-            //            join d in detail on i.Id equals d.IndicatorsId into g
-            //            from table in g.DefaultIfEmpty()
-            //            select new IndicatorShowDto() {
-            //                Id = i.Id,
-            //                CreationTime = i.CreationTime,
-            //                CreatorEmpName = i.CreatorEmpName,
-            //                Title = i.Title,
-            //                Paraphrase = i.Paraphrase,
-            //                MeasuringWay = i.MeasuringWay,
-            //                ExpectedValue = i.ExpectedValue,
-            //                CycleTimeName = i.CycleTime.ToString(),
-            //                DeptIds = i.DeptId,
-            //                StatusName = table.Status.ToString(),
-            //                ActualValue = table.ActualValue,
-            //                CreatorDeptName = i.CreatorDeptName,
-            //                DeptNames = i.DeptName
-            //            };
+            var doc = _documentRepository.GetAll().Select(v => new { v.Id, v.Name });
+            var indicator = _entityRepository.GetAll().Where(v => v.CreatorEmpeeId == user.EmployeeId);
+            var query = from i in indicator
+                        join d in doc on i.SourceDocId equals d.Id
+                        select new IndicatorListDto()
+                        {
+                            Id = i.Id,
+                            //CreationTime = i.CreationTime,
+                            //CreatorEmpName = i.CreatorEmpName,
+                            Title = i.Title,
+                            Paraphrase = i.Paraphrase,
+                            MeasuringWay = i.MeasuringWay,
+                            ExpectedValue = i.ExpectedValue,
+                            CycleTime = i.CycleTime,
+                            AchieveType = i.AchieveType,
+                            SourceDocName = d.Name
+                        };
 
             var count = await query.CountAsync();
             var entityList = await query
-                    .OrderBy(v => v.CycleTime).ThenByDescending(v => v.CreationTime).AsNoTracking()
+                    .OrderByDescending(v => v.CreationTime).AsNoTracking()
                     .PageBy(input)
                     .ToListAsync();
             var entityListDtos = entityList.MapTo<List<IndicatorListDto>>();
@@ -110,8 +112,10 @@ namespace GYSWP.Indicators
         public async Task<IndicatorListDto> GetById(EntityDto<Guid> input)
         {
             var entity = await _entityRepository.GetAsync(input.Id);
-
-            return entity.MapTo<IndicatorListDto>();
+            string docName = await _documentRepository.GetAll().Where(v=>v.Id == entity.SourceDocId).Select(v => v.Name).FirstOrDefaultAsync();
+            var result = entity.MapTo<IndicatorListDto>();
+            result.SourceDocName = docName;
+            return result;
         }
 
         /// <summary>
@@ -282,6 +286,7 @@ namespace GYSWP.Indicators
                 return new PagedResultDto<IndicatorShowDto>(0, null);
             }
             var indicator = _entityRepository.GetAll();
+            var docInfo = _documentRepository.GetAll().Select(v => new { v.Id, v.Name });
             //var query = from i in indicator
             //            join d in detail on i.Id equals d.IndicatorsId into g
             //            from table in g.DefaultIfEmpty()
@@ -302,6 +307,7 @@ namespace GYSWP.Indicators
             //            };
             var query = from d in detail
                         join i in indicator on d.IndicatorsId equals i.Id 
+                        join doc in docInfo on i.SourceDocId equals doc.Id
                         select new IndicatorShowDto()
                         {
                             Id = i.Id,
@@ -316,7 +322,8 @@ namespace GYSWP.Indicators
                             Status = d.Status,
                             CreatorDeptName = i.CreatorDeptName,
                             IndicatorDetailId = d.Id,
-                            AchieveType = i.AchieveType
+                            AchieveType = i.AchieveType,
+                            SourceDocName = doc.Name
                         };
 
             var count = await query.CountAsync();
@@ -336,6 +343,7 @@ namespace GYSWP.Indicators
         {
             var detail = _indicatorsDetailRepository.GetAll().Where(v => v.Id == input.Id);
             var indicator = _entityRepository.GetAll();
+            var docInfo = _documentRepository.GetAll().Select(v => new { v.Id, v.Name });
             //var result = from i in indicator
             //            join d in detail on i.Id equals d.IndicatorsId into g
             //            from table in g.DefaultIfEmpty()
@@ -354,6 +362,7 @@ namespace GYSWP.Indicators
             //            };
             var result = from d in detail
                          join i in indicator on d.IndicatorsId equals i.Id 
+                         join doc in docInfo on i.SourceDocId equals doc.Id
                          select new IndicatorShowDto()
                          {
                              Id = i.Id,
@@ -366,7 +375,8 @@ namespace GYSWP.Indicators
                              CreatorDeptName = i.CreatorDeptName,
                              IndicatorDetailId = d.Id,
                              ActualValue = d.ActualValue,
-                             AchieveType = i.AchieveType
+                             AchieveType = i.AchieveType,
+                             SourceDocName = doc.Name
                          };
 
             return await result.FirstOrDefaultAsync();

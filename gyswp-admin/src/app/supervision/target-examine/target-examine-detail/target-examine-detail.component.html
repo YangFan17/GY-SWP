@@ -62,6 +62,19 @@
                     </nz-form-control>
                 </nz-form-item>
                 <nz-form-item nz-row>
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>指标来源</nz-form-label>
+                    <nz-form-control [nzSm]="10">
+                        <nz-input-group nzSearch [nzSuffix]="sourceButton">
+                            <input readonly="readonly" required name="sourceDocId" #sourceDocId="ngModel"
+                                [(ngModel)]="doc.name" nz-input placeholder="请选择指标来源">
+                            <ng-template #sourceButton>
+                                <button nz-button type="button" nzType="primary" (click)="chooseDoc()"
+                                    nzSearch>选择来源</button>
+                            </ng-template>
+                        </nz-input-group>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item nz-row>
                     <nz-form-label nz-col [nzSm]="4" nzRequired>检查周期</nz-form-label>
                     <nz-form-control [nzSm]="20">
                         <nz-radio-group #cycleTimeRadio="ngModel" [(ngModel)]="cycleTime"

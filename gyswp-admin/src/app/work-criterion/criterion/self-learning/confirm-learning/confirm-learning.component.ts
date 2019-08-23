@@ -9,7 +9,8 @@ import { take } from 'rxjs/operators';
     moduleId: module.id,
     selector: 'confirm-learning',
     templateUrl: 'confirm-learning.component.html',
-    styleUrls: ['confirm-learning.component.less']
+    styleUrls: ['confirm-learning.component.less'],
+    providers: [WorkCriterionService]
 })
 export class ConfirmLearningComponent extends ModalComponentBase {
     @Input() docId: string;

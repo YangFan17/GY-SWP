@@ -14,6 +14,8 @@ export class Indicators {
     cycleTime: number;
     cycleTimeName: string;
     achieveType: number = 1;
+    sourceDocId: string;
+    sourceDocName: string;
 
     getDepts(): any[] {
         let depts = [];
@@ -60,6 +62,8 @@ export class Indicators {
             this.cycleTime = data["cycleTime"];
             this.cycleTimeName = data["cycleTimeName"];
             this.achieveType = data["achieveType"];
+            this.sourceDocId = data["sourceDocId"];
+            this.sourceDocName = data["sourceDocName"];
         }
     }
     toJSON(data?: any) {
@@ -78,6 +82,7 @@ export class Indicators {
         data["expectedValue"] = this.expectedValue;
         data["cycleTime"] = this.cycleTime;
         data["achieveType"] = this.achieveType;
+        data["sourceDocId"] = this.sourceDocId;
         return data;
     }
     static fromJS(data: any): Indicators {

@@ -60,8 +60,15 @@ export class IndicatorDetailComponent extends AppComponentBase implements OnInit
                     else {
                         input.status = 3;
                     }
-                } else {// 小于等于 = 4
+                } else if (this.indicator.achieveType === 4) {// 小于等于 = 4
                     if (this.indicatorDetail.actualValue <= this.indicator.expectedValue) {
+                        input.status = 2;
+                    }
+                    else {
+                        input.status = 3;
+                    }
+                } else {
+                    if (this.indicatorDetail.actualValue === this.indicator.expectedValue) {
                         input.status = 2;
                     }
                     else {

@@ -16,6 +16,9 @@ using GYSWP.Configuration;
 using GYSWP.Identity;
 
 using Abp.AspNetCore.SignalR.Hubs;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
+using Microsoft.AspNetCore.Http;
 
 namespace GYSWP.Web.Host.Startup
 {
@@ -92,6 +95,12 @@ namespace GYSWP.Web.Host.Startup
             app.UseCors(_defaultCorsPolicyName); // Enable CORS!
 
             app.UseStaticFiles();
+
+            //app.UseStaticFiles(new StaticFileOptions()
+            //{
+            //    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"C:\docFile")),
+            //    RequestPath = new PathString("/docFile")
+            //});
 
             app.UseAuthentication();
 

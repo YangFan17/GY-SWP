@@ -1,4 +1,5 @@
 ﻿using Abp.Domain.Entities.Auditing;
+using GYSWP.GYEnums;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -83,5 +84,10 @@ namespace GYSWP.Documents
         /// </summary>
         [StringLength(50)]
         public virtual string Stamps { get; set; }
+
+        /// <summary>
+        /// 适用于（QMS,EMS,OHS）
+        /// </summary>
+        public virtual string SuitableCode { get; set; }
     }
 }

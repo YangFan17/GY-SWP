@@ -5,6 +5,7 @@ import { SupervisionService } from 'services';
 import { NzModalService } from 'ng-zorro-antd';
 import { IndicatorShowDto } from 'entities';
 import { FeedbackResultComponent } from '@app/supervision/criterion-examine/feedback-result/feedback-result.component';
+import { FullInResultComponent } from './full-in-result/full-in-result.component';
 
 @Component({
     moduleId: module.id,
@@ -44,6 +45,20 @@ export class TargetListComponent extends AppComponentBase implements OnInit {
             })
             .subscribe(isSave => {
                 if (isSave) {
+                }
+            });
+    }
+
+    fullResult(id: string): void {
+        this.modalHelper
+            .open(FullInResultComponent, { id: id }, 'md', {
+                nzMask: true,
+                nzClosable: false,
+                nzMaskClosable: false,
+            })
+            .subscribe(isSave => {
+                if (isSave) {
+                    this.getIndicatorListById();
                 }
             });
     }

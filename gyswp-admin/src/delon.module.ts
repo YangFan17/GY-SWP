@@ -54,7 +54,7 @@ const REUSETAB_PROVIDES = [
 import { PageHeaderConfig } from '@delon/abc';
 export function fnPageHeaderConfig(): PageHeaderConfig {
   // return Object.assign(new PageHeaderConfig(), { homeI18n: '管理' });
-  return Object.assign(new PageHeaderConfig(), { homeI18n: '' });
+  return Object.assign(new PageHeaderConfig(), { homeI18n: '主页' });
 }
 
 

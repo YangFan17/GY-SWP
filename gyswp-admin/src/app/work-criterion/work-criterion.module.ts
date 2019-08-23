@@ -13,7 +13,6 @@ import { SharedModule } from '@shared/shared.module';
 import { PreviewDocComponent } from './criterion/preview-doc/preview-doc.component';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { SelfLearningComponent } from './criterion/self-learning/self-learning.component';
-import { ConfirmLearningComponent } from './criterion/self-learning/confirm-learning/confirm-learning.component';
 import { DocApplicationComponent } from './criterion/self-learning/doc-application/doc-application.component';
 import { RevisedListComponent } from './criterion/self-learning/revised-list/revised-list.component';
 import { RevisedClauseDetailComponent } from './criterion/self-learning/revised-clause-detail/revised-clause-detail.component';
@@ -27,6 +26,7 @@ import { ResultDetailComponent } from './my-examine/examine-detail/result-detail
 import { ResultFeedbackComponent } from './my-examine/examine-detail/result-feedback/result-feedback.component';
 import { MyIndicatorComponent } from './my-indicator/my-indicator.component';
 import { IndicatorDetailComponent } from './my-indicator/indicator-detail/indicator-detail.component';
+import { IndicatorChooseDocComponent } from './my-indicator/indicator-detail/indicator-choose-doc/indicator-choose-doc.component';
 
 @NgModule({
     imports: [
@@ -43,7 +43,7 @@ import { IndicatorDetailComponent } from './my-indicator/indicator-detail/indica
         CriterionComponent,
         PreviewDocComponent,
         SelfLearningComponent,
-        ConfirmLearningComponent,
+        // ConfirmLearningComponent,
         DocApplicationComponent,
         RevisedClauseDetailComponent,
         RevisedListComponent,
@@ -57,12 +57,13 @@ import { IndicatorDetailComponent } from './my-indicator/indicator-detail/indica
         ResultFeedbackComponent,
         MyIndicatorComponent,
         IndicatorDetailComponent,
+        IndicatorChooseDocComponent
     ],
     entryComponents: [
         CriterionComponent,
         PreviewDocComponent,
         SelfLearningComponent,
-        ConfirmLearningComponent,
+        // ConfirmLearningComponent,
         DocApplicationComponent,
         RevisedClauseDetailComponent,
         RevisedListComponent,
@@ -76,6 +77,7 @@ import { IndicatorDetailComponent } from './my-indicator/indicator-detail/indica
         ResultFeedbackComponent,
         MyIndicatorComponent,
         IndicatorDetailComponent,
+        IndicatorChooseDocComponent
     ],
     providers: [WorkCriterionService]
 })

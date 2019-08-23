@@ -1,7 +1,7 @@
 import { Component, OnInit, Injector, Input } from '@angular/core';
 import { ModalComponentBase } from '@shared/component-base/modal-component-base';
-import { HomeService } from 'services/home/home.service';
 import { PositionInfo } from 'entities/position-info';
+import { HomeService } from 'services';
 
 @Component({
     moduleId: module.id,
@@ -22,7 +22,6 @@ export class CreatePositionInfoComponent extends ModalComponentBase implements O
     ngOnInit() {
         if (this.id) {
             this.positionInfo.id = this.id;
-            console.log(this.id);
             this.homeService.getPositionInfoById(this.id).subscribe((data) => {
                 this.positionInfo = data;
             });

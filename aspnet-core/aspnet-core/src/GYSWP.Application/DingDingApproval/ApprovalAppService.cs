@@ -431,7 +431,7 @@ namespace GYSWP.DingDingApproval
         }
 
         /// <summary>
-        /// 发送指标考核填写通知通知
+        /// 发送指标考核填写通知
         /// </summary>
         [AbpAllowAnonymous]
         public APIResultDto SendIndicatorMessageAsync(string empId)
@@ -446,7 +446,7 @@ namespace GYSWP.DingDingApproval
                 msgdto.to_all_user = false;
                 msgdto.agent_id = ddConfig.AgentID;
                 msgdto.msg.msgtype = "text";
-                msgdto.msg.text.content = $"您有新的指标任务下达，请前往标准化工作平台进行填写{DateTime.Now.ToString()}";
+                msgdto.msg.text.content = $"您有新的指标任务下达，请前往标准化工作平台进行查看{DateTime.Now.ToString()}";
                 var url = string.Format("https://oapi.dingtalk.com/topapi/message/corpconversation/asyncsend_v2?access_token={0}", accessToken);
                 var jsonString = SerializerHelper.GetJsonString(msgdto, null);
                 using (MemoryStream ms = new MemoryStream())
@@ -461,6 +461,40 @@ namespace GYSWP.DingDingApproval
             catch (Exception ex)
             {
                 Logger.ErrorFormat("SendIndicatorMessageAsync errormsg{0} Exception{1}", ex.Message, ex);
+                return new APIResultDto() { Code = 901, Msg = "钉钉消息发送失败" };
+            }
+        }
+
+        /// <summary>
+        /// 发送指标考核结果通知
+        /// </summary>
+        [AbpAllowAnonymous]
+        public APIResultDto SendIndicatorResultAsync(IndicatorStatus status)
+        {
+            try
+            {
+                DingDingAppConfig ddConfig = _dingDingAppService.GetDingDingConfigByApp(DingDingAppEnum.标准化工作平台);
+                string accessToken = _dingDingAppService.GetAccessToken(ddConfig.Appkey, ddConfig.Appsecret);
+                var msgdto = new DingMsgDto();
+                msgdto.userid_list = "1926112826844702";
+                msgdto.to_all_user = false;
+                msgdto.agent_id = ddConfig.AgentID;
+                msgdto.msg.msgtype = "text";
+                msgdto.msg.text.content = $"您的指标任务{status.ToString()}，请前往标准化工作平台进行查看{DateTime.Now.ToString()}";
+                var url = string.Format("https://oapi.dingtalk.com/topapi/message/corpconversation/asyncsend_v2?access_token={0}", accessToken);
+                var jsonString = SerializerHelper.GetJsonString(msgdto, null);
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    var bytes = Encoding.UTF8.GetBytes(jsonString);
+                    ms.Write(bytes, 0, bytes.Length);
+                    ms.Seek(0, SeekOrigin.Begin);
+                    var obj = Post.PostGetJson<object>(url, null, ms);
+                };
+                return new APIResultDto() { Code = 0, Msg = "钉钉消息发送成功" };
+            }
+            catch (Exception ex)
+            {
+                Logger.ErrorFormat("SendIndicatorResultAsync errormsg{0} Exception{1}", ex.Message, ex);
                 return new APIResultDto() { Code = 901, Msg = "钉钉消息发送失败" };
             }
         }

@@ -27,6 +27,7 @@ using NPOI.XSSF.UserModel;
 using GYSWP.Helpers;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using NPOI.SS.Util;
 
 namespace GYSWP.LC_InStorageRecords
 {
@@ -262,7 +263,7 @@ LC_InStorageRecordEditDto editDto;
                     rowIndex++;
                     IRow row = sheet.CreateRow(rowIndex);
                     ExcelHelper.SetCell(row.CreateCell(0), font, item.Name);
-                    ExcelHelper.SetCell(row.CreateCell(1), font, item.CarNo );
+                    ExcelHelper.SetCell(row.CreateCell(1), font, item.CarNo);
                     ExcelHelper.SetCell(row.CreateCell(2), font, item.DeliveryUnit);
                     ExcelHelper.SetCell(row.CreateCell(3), font, item.BillNo);
                     ExcelHelper.SetCell(row.CreateCell(4), font, item.ReceivableAmount.ToString());
@@ -277,6 +278,57 @@ LC_InStorageRecordEditDto editDto;
                 workbook.Write(fs);
             }
             return "/files/downloadtemp/" + fileName;
+        }
+        public string test()
+        {
+            var fullPath = ExcelHelper.GetSavePath(_hostingEnvironment.WebRootPath) + "测试表格.xlsx";
+            using (var fs = new FileStream(fullPath, FileMode.Create, FileAccess.Write))
+            {
+                IWorkbook workbook = new XSSFWorkbook();
+                ISheet sheet = workbook.CreateSheet("InStorageRecord");
+                //var rowIndex = 0;
+                //IRow titleRow = sheet.CreateRow(rowIndex);
+                IRow titleRow = sheet.CreateRow(0);
+              
+                //string[] titles = { "品名规格", "车号", "发货单位", "单据号", "应收数量", "实收数量", "差损情况", "质量", "收货人", "备注" };
+                var fontTitle = workbook.CreateFont();
+                fontTitle.IsBold = true;
+                //for (int i = 0; i < titles.Length; i++)
+                //{
+                //    var cell = titleRow.CreateCell(i);
+                //    cell.CellStyle.SetFont(fontTitle);
+                //    cell.SetCellValue(titles[i]);
+                //}
+                var cell = titleRow.CreateCell(0);
+                //cell.SetCellValue("居中");
+                cell.CellStyle.SetFont(fontTitle);
+                cell.SetCellValue("卷烟入库记录");
+                sheet.AddMergedRegion(new CellRangeAddress(0, 0, 0, 11)); //合并单元格第二行从第二列到第三列
+                ICellStyle BorderStyle = workbook.CreateCellStyle();
+                BorderStyle.VerticalAlignment = VerticalAlignment.Justify;
+                cell.CellStyle = BorderStyle;
+                //BorderStyle.BorderBottom = BorderStyle.BorderBottom;
+                //var font = workbook.CreateFont();
+                //foreach (var item in data)
+                //{
+                //    rowIndex++;
+                //    IRow row = sheet.CreateRow(rowIndex);
+                //    ExcelHelper.SetCell(row.CreateCell(0), font, item.Name);
+                //    ExcelHelper.SetCell(row.CreateCell(1), font, item.CarNo);
+                //    ExcelHelper.SetCell(row.CreateCell(2), font, item.DeliveryUnit);
+                //    ExcelHelper.SetCell(row.CreateCell(3), font, item.BillNo);
+                //    ExcelHelper.SetCell(row.CreateCell(4), font, item.ReceivableAmount.ToString());
+                //    ExcelHelper.SetCell(row.CreateCell(5), font, item.ActualAmount.ToString());
+                //    ExcelHelper.SetCell(row.CreateCell(6), font, item.DiffContent);
+                //    ExcelHelper.SetCell(row.CreateCell(7), font, item.Quality);
+                //    ExcelHelper.SetCell(row.CreateCell(8), font, item.ReceiverName);
+                //    ExcelHelper.SetCell(row.CreateCell(9), font, item.Remark);
+                //    //ExcelHelper.SetCell(row.CreateCell(10), font, item.EmployeeName);
+                //    //ExcelHelper.SetCell(row.CreateCell(11), font, item.CreationTime.ToString("yyyy-MM-dd hh:mm:ss"));
+                //}
+                workbook.Write(fs);
+            }
+            return "/files/downloadtemp/" +"测试表格.xlsx";
         }
     }
 }

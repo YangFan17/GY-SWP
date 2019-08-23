@@ -57,7 +57,6 @@ export class StandardrevisionComponent extends AppComponentBase implements OnIni
     this.search.deptId = this.selectedDept.id;
     this.month = this.date.getMonth() + 1;
     this.isTableLoading = true;
-    this.isTableLoading = true;
     //alert(this.month)
     this.standardRevisionService.GetSearchStandardRevisions(this.search).subscribe((data) => {
       this.dataList = data;

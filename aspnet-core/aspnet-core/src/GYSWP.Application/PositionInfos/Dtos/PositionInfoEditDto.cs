@@ -9,18 +9,10 @@ namespace GYSWP.PositionInfos.Dtos
 {
     public class PositionInfoEditDto: FullAuditedEntityDto<Guid?>
     {
-
-        /// <summary>
-        /// Id
-        /// </summary>
-        public Guid? Id { get; set; }
-
-
-
         /// <summary>
         /// Position
         /// </summary>
-        [Required(ErrorMessage = "Position不能为空")]
+        //[Required(ErrorMessage = "Position不能为空")]
         public string Position { get; set; }
 
 
@@ -35,7 +27,7 @@ namespace GYSWP.PositionInfos.Dtos
         /// <summary>
         /// EmployeeId
         /// </summary>
-        [Required(ErrorMessage = "EmployeeId不能为空")]
+        //[Required(ErrorMessage = "EmployeeId不能为空")]
         public string EmployeeId { get; set; }
 
 

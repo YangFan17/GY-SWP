@@ -19,6 +19,7 @@ export class IndicatorShowDto {
     status: number;
     achieveType: number;
     achieveTypeName: string;
+    sourceDocName: string;
     constructor(data?: any) {
         if (data) {
             for (var property in data) {
@@ -43,6 +44,7 @@ export class IndicatorShowDto {
             this.status = data["status"];
             this.achieveType = data["achieveType"];
             this.achieveTypeName = data["achieveTypeName"];
+            this.sourceDocName = data["sourceDocName"];
         }
     }
     toJSON(data?: any) {
