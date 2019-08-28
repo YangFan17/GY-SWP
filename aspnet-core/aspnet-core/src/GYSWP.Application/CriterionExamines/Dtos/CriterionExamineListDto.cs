@@ -78,5 +78,9 @@ namespace GYSWP.CriterionExamines.Dtos
                 return CreationTime.ToString("yyyy-MM-dd");
             }
         }
+        /// <summary>
+        /// 截止时间 当天23:59:59
+        /// </summary>
+        public DateTime? EndTime { get; set; }
     }
 }

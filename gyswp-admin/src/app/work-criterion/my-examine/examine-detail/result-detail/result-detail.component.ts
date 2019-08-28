@@ -11,7 +11,7 @@ import { UploadFile, NzModalRef, NzModalService } from 'ng-zorro-antd';
 })
 export class ResultDetailComponent extends ModalComponentBase implements OnInit {
     @Input() id: string;
-    postUrl: string = '/GYSWPFile/DocFilesPostsAsync';
+    postUrl: string = '/GYSWPFile/ExamineFilesPostsAsync';
     uploadLoading = false;
     examineResult: ExamineResult = new ExamineResult();
     examineRecord: ExamineRecord = new ExamineRecord();
@@ -118,7 +118,7 @@ export class ResultDetailComponent extends ModalComponentBase implements OnInit 
             this.uploadLoading = false;
             var res = info.file.response.result;
             if (res.code == 0) {
-                this.attachment.name = res.data.name;
+                this.attachment.name = res.data.name + res.data.ext;
                 this.attachment.type = 3;
                 this.attachment.fileSize = res.data.size;
                 this.attachment.path = res.data.url;

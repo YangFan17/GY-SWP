@@ -19,14 +19,15 @@ namespace GYSWP.Web.Host.Controllers
 {
     public class GYSWPFileController : AbpController
     {
-        private readonly IHostingEnvironment _hostingEnvironment;
+        //private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IDocumentAppService _documentAppService;
 
-        public GYSWPFileController(IHostingEnvironment hostingEnvironment
-            , IDocumentAppService documentAppService
+        public GYSWPFileController(
+            //IHostingEnvironment hostingEnvironment , 
+            IDocumentAppService documentAppService
           )
         {
-            this._hostingEnvironment = hostingEnvironment;
+            //this._hostingEnvironment = hostingEnvironment;
             _documentAppService = documentAppService;
         }
 
@@ -39,8 +40,8 @@ namespace GYSWP.Web.Host.Controllers
             var date = Request;
             var files = Request.Form.Files;
             //long size = files.Sum(f => f.Length);
-            string webRootPath = _hostingEnvironment.WebRootPath;
-            string contentRootPath = _hostingEnvironment.ContentRootPath;
+            //string webRootPath = _hostingEnvironment.WebRootPath;
+            //string contentRootPath = _hostingEnvironment.ContentRootPath;
             var filePath = string.Empty;
             var returnUrl = string.Empty;
             var fileName = string.Empty;
@@ -56,7 +57,8 @@ namespace GYSWP.Web.Host.Controllers
                     fileSize = formFile.Length; //获得文件大小，以字节为单位
                     var uid = Guid.NewGuid().ToString();
                     string newFileName = uid + fileExt; //随机生成新的文件名
-                    var fileDire = webRootPath + @"E:\gyswpData\docfiles/";
+                    //var fileDire = webRootPath + @"D:\gyswpData\docfiles/";
+                    var fileDire = @"C:\gyswpData\docfiles/";
                     if (!Directory.Exists(fileDire))
                     {
                         Directory.CreateDirectory(fileDire);
@@ -78,6 +80,97 @@ namespace GYSWP.Web.Host.Controllers
         }
 
         /// <summary>
+        /// 条款附件
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        [RequestFormSizeLimit(valueCountLimit: 2147483647)]
+        [HttpPost]
+        [AbpAllowAnonymous]
+        public async Task<JsonResult> ClauseFilesPostsAsync(IFormFile[] file)
+        {
+            var date = Request;
+            var files = Request.Form.Files;
+            var filePath = string.Empty;
+            var returnUrl = string.Empty;
+            var fileName = string.Empty;
+            long fileSize = 0;
+            string fileExt = string.Empty;
+
+            foreach (var formFile in files)
+            {
+                if (formFile.Length > 0)
+                {
+                    fileName = formFile.FileName.Substring(0, formFile.FileName.IndexOf('.'));
+                    fileExt = Path.GetExtension(formFile.FileName); //文件扩展名，不含“.”
+                    fileSize = formFile.Length; //获得文件大小，以字节为单位
+                    var uid = Guid.NewGuid().ToString();
+                    string newFileName = uid + fileExt; //随机生成新的文件名
+                    var fileDire = @"C:\gyswpData\clausefiles/";
+                    if (!Directory.Exists(fileDire))
+                    {
+                        Directory.CreateDirectory(fileDire);
+                    }
+                    filePath = fileDire + newFileName;
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await formFile.CopyToAsync(stream);
+                    }
+
+                    returnUrl = "/clausefiles/" + newFileName;
+                }
+            }
+            var apiResult = new APIResultDto();
+            apiResult.Code = 0;
+            apiResult.Msg = "上传文件成功";
+            apiResult.Data = new { name = fileName, size = fileSize, ext = fileExt, url = returnUrl };
+            return Json(apiResult);
+        }
+
+        [RequestFormSizeLimit(valueCountLimit: 2147483647)]
+        [HttpPost]
+        [AbpAllowAnonymous]
+        public async Task<JsonResult> ExamineFilesPostsAsync(IFormFile[] file)
+        {
+            var date = Request;
+            var files = Request.Form.Files;
+            var filePath = string.Empty;
+            var returnUrl = string.Empty;
+            var fileName = string.Empty;
+            long fileSize = 0;
+            string fileExt = string.Empty;
+
+            foreach (var formFile in files)
+            {
+                if (formFile.Length > 0)
+                {
+                    fileName = formFile.FileName.Substring(0, formFile.FileName.IndexOf('.'));
+                    fileExt = Path.GetExtension(formFile.FileName); //文件扩展名，不含“.”
+                    fileSize = formFile.Length; //获得文件大小，以字节为单位
+                    var uid = Guid.NewGuid().ToString();
+                    string newFileName = uid + fileExt; //随机生成新的文件名
+                    var fileDire = @"C:\gyswpData\examinefiles/";
+                    if (!Directory.Exists(fileDire))
+                    {
+                        Directory.CreateDirectory(fileDire);
+                    }
+                    filePath = fileDire + newFileName;
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await formFile.CopyToAsync(stream);
+                    }
+
+                    returnUrl = "/examinefiles/" + newFileName;
+                }
+            }
+            var apiResult = new APIResultDto();
+            apiResult.Code = 0;
+            apiResult.Msg = "上传文件成功";
+            apiResult.Data = new { name = fileName, size = fileSize, ext = fileExt, url = returnUrl };
+            return Json(apiResult);
+        }
+
+        /// <summary>
         /// 批量导入标准文档txt
         /// </summary>
         /// <param name="file"></param>
@@ -89,14 +182,16 @@ namespace GYSWP.Web.Host.Controllers
         public async Task<JsonResult> DocFilesTxTPostsAsync(IFormFile[] file, int categoryId)
         {
             var files = Request.Form.Files;
-            string webRootPath = _hostingEnvironment.WebRootPath;
+            //string webRootPath = _hostingEnvironment.WebRootPath;
             var filePath = string.Empty;
             var fileName = string.Empty;
             string fileExt = string.Empty;
             //TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
             //string time = Convert.ToInt64(ts.TotalSeconds).ToString();
             //var fileDire = webRootPath + "/txtUpload/" + Guid.NewGuid();
-            var fileDire = webRootPath + "/txtUpload/" + Guid.NewGuid();
+            //var fileDire = webRootPath + "/txtUpload/" + Guid.NewGuid();
+            var fileDire = @"C:\gyswpData\txtUpload/" + Guid.NewGuid();
+
             if (!Directory.Exists(fileDire))
             {
                 Directory.CreateDirectory(fileDire);

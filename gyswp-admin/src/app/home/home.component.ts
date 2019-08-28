@@ -15,6 +15,7 @@ import { ConfirmLearningComponent } from '@app/work-criterion/criterion/self-lea
 export class HomeComponent extends AppComponentBase implements OnInit {
   position: string;
   listOfMapData = [];
+  num = 6;
   constructor(
     injector: Injector
     , private router: Router
@@ -37,15 +38,15 @@ export class HomeComponent extends AppComponentBase implements OnInit {
   getClauseList() {
     this.homeService.getPositionTreeByIdAsync().subscribe((result) => {
       this.listOfMapData = result
-      let i = 1;
-      this.listOfMapData.forEach(v => {
-        v.duties = i + '、工作职责：' + v.duties;
-        // v.children.forEach(item => {
-        //   if (item.mainPoint.indexOf('\r\n') != -1)
-        //     item.mainPoint = item.mainPoint.replace(/(\r\n)|(\n)/g, '<br/>');
-        // });
-        i++;
-      });
+      // let i = 1;
+      // this.listOfMapData.forEach(v => {
+      //   v.duties = i + '、工作职责：' + v.duties;
+      //   // v.children.forEach(item => {
+      //   //   if (item.mainPoint.indexOf('\r\n') != -1)
+      //   //     item.mainPoint = item.mainPoint.replace(/(\r\n)|(\n)/g, '<br/>');
+      //   // });
+      //   i++;
+      // });
     });
   }
 

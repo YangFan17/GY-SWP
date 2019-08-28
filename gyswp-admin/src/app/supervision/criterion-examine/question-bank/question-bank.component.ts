@@ -1,8 +1,8 @@
 import { Component, Input, Injector } from '@angular/core';
-import { ModalComponentBase, PagedResultDto } from '@shared/component-base';
+import { ModalComponentBase } from '@shared/component-base';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd';
 import { SupervisionService } from 'services';
-import { RevisedListDetailComponent } from '@app/work-criterion/criterion/self-learning/revised-list/revised-list-detail/revised-list-detail.component';
+import { ExamineRecord } from 'entities';
 
 @Component({
     moduleId: module.id,
@@ -14,8 +14,8 @@ export class QuestionBankComponent extends ModalComponentBase {
     @Input() title: string = '检查表';
     isLoading: boolean = false;
     confirmModal: NzModalRef;
-    dataList: any[] = [];
-    totalItems: number = 0;
+    dataList: ExamineRecord[] = [];
+    endDate: any;
     constructor(injector: Injector
         , private supervisionService: SupervisionService
         , private modal: NzModalService
@@ -35,9 +35,8 @@ export class QuestionBankComponent extends ModalComponentBase {
             .finally(() => {
                 this.isLoading = false;
             })
-            .subscribe((result: PagedResultDto) => {
-                this.dataList = result.items
-                this.totalItems = result.totalCount;
+            .subscribe((result: ExamineRecord[]) => {
+                this.dataList = result
             });
     }
 
@@ -61,7 +60,10 @@ export class QuestionBankComponent extends ModalComponentBase {
             this.confirmModal = this.modal.confirm({
                 nzContent: `是否发布当前监督检查任务?`,
                 nzOnOk: () => {
-                    this.supervisionService.publishCriterionExamineAsync(this.examineId).finally(() => { this.isLoading = false; }).subscribe(res => {
+                    let input: any = {};
+                    input.examineId = this.examineId;
+                    input.endTime = this.endDate;
+                    this.supervisionService.publishCriterionExamineAsync(input).finally(() => { this.isLoading = false; }).subscribe(res => {
                         if (res.code == 0) {
                             this.notify.success('监督检查发布成功！', '');
                             this.success(true);

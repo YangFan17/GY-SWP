@@ -3,12 +3,16 @@
         <nz-input-group nzSearch [nzSuffix]="suffixButton">
             <input type="text" [(ngModel)]="keyWord" nz-input placeholder="标准名称/编号">
         </nz-input-group>
+
         <ng-template #suffixButton>
             <button nz-button nzType="default" [nzLoading]="isTableLoading" (click)="refreshData(true)"
                 nzSearch>搜索</button>
         </ng-template>
     </div>
     <div nz-col nzSpan="6" style="text-align:right;">
+        <button nz-button (click)="reset()" nzShape="circle">
+            <i class="anticon anticon-reload"></i>
+        </button>
         <button nz-button (click)="create()" nzShape="circle" nzType="primary">
             <i class="anticon anticon-plus"></i>
         </button>

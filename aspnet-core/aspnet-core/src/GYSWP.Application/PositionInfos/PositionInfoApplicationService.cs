@@ -240,10 +240,10 @@ namespace GYSWP.PositionInfos
                             Duties = e.Duties
                         };
             var entityList = await query.ToListAsync();
-            if (entityList.Count() <= 0)
-            {
-                return null;
-            }
+            //if (entityList.Count() <= 0)
+            //{
+            //    return null;
+            //}
             return entityList;
         }
 

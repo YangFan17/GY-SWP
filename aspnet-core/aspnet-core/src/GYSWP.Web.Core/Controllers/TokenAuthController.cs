@@ -31,8 +31,8 @@ namespace GYSWP.Controllers
     [Route("api/[controller]/[action]")]
     public class TokenAuthController : GYSWPControllerBase
     {
-        private string APPID = "dingoanherbetgt7ld5rrh";
-        private string REDIRECT_URI = "http://localhost:21021";
+        //private string APPID = "dingoanherbetgt7ld5rrh";
+        //private string REDIRECT_URI = "http://localhost:21021";
         private readonly LogInManager _logInManager;
         private readonly ITenantCache _tenantCache;
         private readonly AbpLoginResultTypeHelper _abpLoginResultTypeHelper;

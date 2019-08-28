@@ -120,6 +120,7 @@ namespace GYSWP.Employees.Dtos
     public class NzTreeNode
     {
         public virtual string title { get; set; }
+        public virtual long? order { get; set; }
         public virtual string key { get; set; }
         public virtual bool IsLeaf { get; set; }
 

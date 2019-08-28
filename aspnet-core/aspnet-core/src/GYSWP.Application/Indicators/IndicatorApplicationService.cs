@@ -92,12 +92,13 @@ namespace GYSWP.Indicators
                             ExpectedValue = i.ExpectedValue,
                             CycleTime = i.CycleTime,
                             AchieveType = i.AchieveType,
-                            SourceDocName = d.Name
+                            SourceDocName = d.Name,
+                            EndTime = i.EndTime
                         };
 
             var count = await query.CountAsync();
             var entityList = await query
-                    .OrderByDescending(v => v.CreationTime).AsNoTracking()
+                    .OrderByDescending(v => v.EndTime).ThenByDescending(v=>v.CreationTime).AsNoTracking()
                     .PageBy(input)
                     .ToListAsync();
             var entityListDtos = entityList.MapTo<List<IndicatorListDto>>();
@@ -170,6 +171,7 @@ namespace GYSWP.Indicators
                 input.Indicator.CreatorEmpName = user.EmployeeName;
                 input.Indicator.CreatorDeptId = organization.Id;
                 input.Indicator.CreatorDeptName = organization.DepartmentName;
+                input.Indicator.EndTime = input.Indicator.EndTime.ToDayEnd();
                 var entity = await Create(input.Indicator);
                 await CurrentUnitOfWork.SaveChangesAsync();
                 var adminList = await GetUsersInRoleAsync("StandardAdmin");
@@ -427,6 +429,26 @@ namespace GYSWP.Indicators
                          };
 
             return await result.OrderByDescending(v=>v.Status).ThenByDescending(v=>v.CompleteTime).ToListAsync();
+        }
+
+        /// <summary>
+        /// 自动更新逾期状态
+        /// </summary>
+        [AbpAllowAnonymous]
+        public async Task AutoUpdateIndicatorStatusAsync()
+        {
+            DateTime curTime = DateTime.Today.AddDays(1);
+            Logger.InfoFormat(curTime.ToString());
+            var indicator = _entityRepository.GetAll().Where(v => v.EndTime < curTime);
+            var detail = _indicatorsDetailRepository.GetAll().Where(v => v.Status == GYEnums.IndicatorStatus.未填写);
+            var query = from d in detail
+                        join i in indicator on d.IndicatorsId equals i.Id
+                        select d;
+            var overdueList = await query.ToListAsync();
+            foreach (var item in overdueList)
+            {
+                item.Status = GYEnums.IndicatorStatus.已逾期;
+            }
         }
     }
 }

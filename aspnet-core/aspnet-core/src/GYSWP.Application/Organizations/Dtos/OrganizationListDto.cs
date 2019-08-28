@@ -60,7 +60,7 @@ namespace GYSWP.Organizations.Dtos
     public class OrganizationNzTreeNode : NzTreeNode
     {
         public string deptName { get; set; }
-
+        public long? order { get; set; }
         public override bool expanded
         {
             get
@@ -95,7 +95,7 @@ namespace GYSWP.Organizations.Dtos
     {
         public long Key { get; set; }
         public long? ParentId { get; set; }
-
+        public long? Order { get; set; }
         public string Title { get; set; }
         public bool Disabled { get; set; }
         public bool Selected { get; set; }

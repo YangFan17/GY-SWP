@@ -6,7 +6,34 @@
 </div>
 <div>
   <p style="text-align: center;font-weight: bold;font-size: 20px;">{{position}}</p>
-  <nz-list nzBordered [nzDataSource]="listOfMapData" [nzRenderItem]="defaultItem" [nzRenderItem]="item">
+  <div *ngFor="let item of listOfMapData;let i = index">
+    <nz-table #nzTable [nzData]="item.children" [nzNoResult]="noResult" [nzShowPagination]="false" nzBordered>
+      <thead>
+        <tr>
+          <th nzWidth="8%">工作职责{{i+1}}</th>
+          <th nzWidth="30%">适用标准</th>
+          <!-- <th>标准实施要点及记录</th> -->
+          <th>适用条款</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td [attr.rowspan]="item.children.length +1">{{item.duties}}</td>
+        </tr>
+        <tr *ngFor="let data of nzTable.data">
+          <td><a (click)="goDoc(data.docId)">{{data.docNo}} {{data.docName}}</a></td>
+          <!-- <td style="word-wrap:break-word;">
+                {{data.mainPoint}}
+              </td> -->
+          <td style="word-wrap:break-word;">
+            <nz-tag (click)="goLearn(data.docId,data.docName,clause.id)" *ngFor="let clause of data.clauseNoList">
+              {{clause.clauseNo}}</nz-tag>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+  <!-- <nz-list nzBordered [nzDataSource]="listOfMapData" [nzRenderItem]="defaultItem" [nzRenderItem]="item">
     <ng-template #defaultItem let-item>
       <nz-list-item style="padding-bottom: 0px;border-bottom-width: 0px;">
         <nz-list-item-meta [nzTitle]="nzTitle">
@@ -18,21 +45,18 @@
       <nz-table #nzTable [nzData]="item.children" [nzNoResult]="noResult" [nzShowPagination]="false" nzBordered>
         <thead>
           <tr>
-            <th nzWidth="15%">标准名称</th>
-            <th nzWidth="15%">标准编号</th>
-            <!-- <th>标准实施要点及记录</th> -->
-            <th>适用条款编号</th>
+            <th nzWidth="8%">工作职责</th>
+            <th nzWidth="30%">适用标准</th>
+            <th>适用条款</th>
           </tr>
         </thead>
         <tbody>
+          <tr>
+            <td [attr.rowspan]="item.children.length +1 ">{{item.duties}}{{item.children.length}}</td>
+          </tr>
           <tr *ngFor="let data of nzTable.data">
-            <td><a (click)="goDoc(data.docId)">{{data.docName}}</a></td>
-            <td>
-              {{data.docNo}}
-            </td>
-            <!-- <td style="word-wrap:break-word;">
-              {{data.mainPoint}}
-            </td> -->
+            <td><a (click)="goDoc(data.docId)">{{data.docNo}} {{data.docName}}</a></td>
+        
             <td style="word-wrap:break-word;">
               <nz-tag (click)="goLearn(data.docId,data.docName,clause.id)" *ngFor="let clause of data.clauseNoList">
                 {{clause.clauseNo}}</nz-tag>
@@ -41,7 +65,7 @@
         </tbody>
       </nz-table>
     </ng-template>
-  </nz-list>
+  </nz-list> -->
 </div>
 <div style="text-align: center;margin-top: 24px;margin-bottom: 24px;">
   <button style="width: 300px;" nz-button (click)="goEdit()" nzType="default" nzBlock>填写工作职责</button>

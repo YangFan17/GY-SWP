@@ -16,9 +16,16 @@ import { DeptUserComponent } from './dept-user/dept-user.component';
 })
 export class DetailComponent extends AppComponentBase implements OnInit {
     @ViewChild('clause') clause: ClauseComponent;
-    isAllUser = '1';
+    // isAllUser = '1';
     userTags = [];
     deptTags = [];
+    controlOptions = [
+        { label: '受控', value: '1' },
+        { label: '非受控', value: '2' }
+    ];
+    validOptions = [{ label: '作废', value: '3' },
+    { label: '现行有效', value: '4' }
+    ];
     host = AppConsts.remoteServiceBaseUrl;
     postUrl: string = '/GYSWPFile/DocFilesPostsAsync';
     qrCode = {
@@ -96,11 +103,25 @@ export class DetailComponent extends AppComponentBase implements OnInit {
             this.newFileList = [];
         }
         this.document.publishTime = this.dateFormat(this.document.publishTime);
-        this.document.isAllUser = this.isAllUser == '1' ? true : false;
+        // this.document.isAllUser = this.isAllUser == '1' ? true : false;
+        this.document.isAllUser = false;
+        // var control = null;
+        // if (this.isControl) {
+        //     control = this.isControl == '5' ? '1' : '2';
+        // }
+        // if (this.isValid) {
+        //     this.document.stamps = control + ',' + this.isValid;
+        // }
 
-        var control = this.isControl == '5' ? '1' : '2';
-        this.document.stamps = control + ',' + this.isValid;
-
+        if (this.isControl && this.isValid) {
+            this.document.stamps = this.isControl + ',' + this.isValid;
+        } else if (this.isControl && !this.isValid) {
+            this.document.stamps = this.isControl
+        } else if (!this.isControl && this.isValid) {
+            this.document.stamps = this.isValid
+        } else {
+            this.document.stamps = null;
+        }
         this.getUserDepts();
 
         var suitableFilter = this.suitableTypes.filter(v => v.checked == true);
@@ -126,13 +147,13 @@ export class DetailComponent extends AppComponentBase implements OnInit {
         if (this.id) {
             this.basicDataService.getDocumentByIdAsync(this.id).subscribe(res => {
                 this.document = res;
-
-                if (res.stamps && res.stamps.indexOf(',') != -1) {
-                    this.isControl = res.stamps.split(',')[0] == '1' ? '5' : '6';
-                    this.isValid = res.stamps.split(',')[1];
+                if (res.stamps) {
+                    var stamIds = res.stamps.split(',');
+                    this.isControl = stamIds[0];
+                    this.isValid = stamIds[1];
                 }
 
-                if (res.employeeIds || res.employeeDes) {
+                if (res.employeeIds || res.deptIds) {
                     this.setUserDepts(this.document);
                 }
                 if (res.suitableCode) {
@@ -149,7 +170,7 @@ export class DetailComponent extends AppComponentBase implements OnInit {
                     );
                 }
                 this.isUpdate = true;
-                this.isAllUser = res.isAllUser == true ? '1' : '0';
+                // this.isAllUser = res.isAllUser == true ? '1' : '0';
                 this.category.id = res.categoryId.toString();
                 this.category.name = res.categoryDesc;
                 this.qrCode.value = res.id;
@@ -277,9 +298,9 @@ export class DetailComponent extends AppComponentBase implements OnInit {
         this.isValid = ngmodel;
     }
     //#region 人员选择模块
-    allUserRadioChange(ngmodel: string) {
-        this.isAllUser = ngmodel;
-    }
+    // allUserRadioChange(ngmodel: string) {
+    //     this.isAllUser = ngmodel;
+    // }
 
     getUserDepts() {
         if (this.document.isAllUser) {

@@ -20,6 +20,7 @@
                     <nz-badge *ngIf="item.status == 1" [nzStatus]="'default'" [nzText]="'未填写'"></nz-badge>
                     <nz-badge *ngIf="item.status == 2" [nzStatus]="'success'" [nzText]="'已达成'"></nz-badge>
                     <nz-badge *ngIf="item.status == 3" [nzStatus]="'error'" [nzText]="'未达成'"></nz-badge>
+                    <nz-badge *ngIf="item.status == 4" [nzStatus]="'warning'" [nzText]="'已逾期'"></nz-badge>
                 </td>
                 <td>{{item.employeeName}}</td>
                 <td>{{item.completeTime | date: "yyyy-MM-dd"}}</td>

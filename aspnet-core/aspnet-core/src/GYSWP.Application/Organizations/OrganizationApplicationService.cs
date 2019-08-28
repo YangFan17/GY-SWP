@@ -214,8 +214,9 @@ namespace GYSWP.Organizations
                                               Id = o.Id,
                                               DepartmentName = o.DepartmentName,
                                               OrgDeptName = o.DepartmentName,
-                                              ParentId = o.ParentId
-                                          }).ToListAsync();
+                                              ParentId = o.ParentId,
+                                              Order = o.Order
+                                          }).OrderBy(v=>v.Order).ToListAsync();
             foreach (var item in organizationList)
             {
                 if (item.Id == 1)
@@ -408,8 +409,9 @@ namespace GYSWP.Organizations
                 Key = c.Id,
                 Title = c.DepartmentName,
                 ParentId = c.ParentId,
+                Order = c.Order
                 //Children = GetExamineChildren(c.Id)
-            }).ToListAsync();
+            }).OrderBy(v=>v.Order).ToListAsync();
             return list;
         }
 
@@ -739,8 +741,9 @@ namespace GYSWP.Organizations
                                               Id = o.Id,
                                               DepartmentName = o.DepartmentName,
                                               OrgDeptName = o.DepartmentName,
-                                              ParentId = o.ParentId
-                                          }).ToListAsync();
+                                              ParentId = o.ParentId,
+                                              Order = o.Order
+                                          }).OrderBy(v=>v.Order).ToListAsync();
 
             return GetTargetTrees(0, organizationList);
         }
@@ -751,8 +754,9 @@ namespace GYSWP.Organizations
                 key = t.Id.ToString(),
                 title = t.DepartmentName,
                 deptName = t.OrgDeptName,
+                order = t.Order,
                 children = GetTargetTrees(t.Id, organizationList)
-            }).ToList();
+            }).OrderBy(v=>v.order).ToList();
             return treeNodeList;
         }
     }

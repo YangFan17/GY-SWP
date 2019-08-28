@@ -61,7 +61,10 @@ export class CategoryComponent extends AppComponentBase implements OnInit {
     }
 
     contextMenu($event: MouseEvent, template: TemplateRef<void>, node): void {
-        if (node.title == '技术标准' || node.title == '管理标准' || node.title == '工作标准' || node.title == '外来文件' || node.title == '作废标准库' || node.title == '现行标准库' || node.title == '风险库') {
+        if (node.title == '技术标准' || node.title == '管理标准' || node.title == '工作标准' || node.title == '外来文件'
+            || node.title == '作废标准库' || node.title == '现行标准库' || node.title == '风险库'
+            || node.title == '法律法规' || node.title == '上级文件' || node.title == '外来标准'
+        ) {
             // 默认分类无法修改
             this.showMenu = false;
             this.dropdown = this.nzDropdownService.create($event, template);

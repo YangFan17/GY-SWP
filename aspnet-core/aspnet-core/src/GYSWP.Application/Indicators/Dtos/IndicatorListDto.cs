@@ -116,6 +116,7 @@ namespace GYSWP.Indicators.Dtos
         /// 标准名称
         /// </summary>
         public string SourceDocName { get; set; }
+        public DateTime EndTime { get; set; }
     }
 
     public class IndicatorShowDto : EntityDto<Guid>

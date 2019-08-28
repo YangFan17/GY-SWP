@@ -30,7 +30,7 @@
                 </nz-input-group>
             </nz-form-control>
         </nz-form-item>
-        <nz-form-item nz-row>
+        <!-- <nz-form-item nz-row>
             <nz-form-label nz-col [nzSm]="4">实施要点</nz-form-label>
             <nz-form-control [nzSm]="20" nzHasFeedback>
                 <textarea name="mainPoints" nz-input rows="5" placeholder="请填写实施要点及记录" #mainPoints="ngModel"
@@ -39,7 +39,7 @@
                     <ng-container *ngIf="mainPoints.control.hasError('maxlength')">字符长度小于等于2000</ng-container>
                 </nz-form-explain>
             </nz-form-control>
-        </nz-form-item>
+        </nz-form-item> -->
         <div class="modal-footer">
             <button nz-button type="button" [disabled]="saving" (click)="close()">
                 取消

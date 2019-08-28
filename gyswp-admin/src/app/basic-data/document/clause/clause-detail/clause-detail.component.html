@@ -76,7 +76,7 @@
                             <nz-list-item-meta style="text-align: left;" [nzDescription]="nzDescription">
                             </nz-list-item-meta>
                             <ng-template #nzDescription>
-                                <a href="{{item.url | hostUrl}}" target="_blank">{{item.name}}</a>
+                                <a href="{{item.url | fileUrl}}" target="_blank">{{item.name}}</a>
                             </ng-template>
                         </nz-list-item>
                     </ng-template>

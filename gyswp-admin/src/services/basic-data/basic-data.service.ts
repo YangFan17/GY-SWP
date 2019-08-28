@@ -200,4 +200,16 @@ export class BasicDataService {
             return data;
         }));
     }
+
+    getTargetTrees(): Observable<NzTreeNode[]> {
+        let url = "/api/services/app/Organization/GetTargetTreesAsync";
+        return this._commonhttp.get(url).pipe(map(data => {
+            let arry = [];
+            data.map(d => {
+                let tree = new NzTreeNode(d);
+                arry.push(tree);
+            });
+            return arry;
+        }));
+    }
 }

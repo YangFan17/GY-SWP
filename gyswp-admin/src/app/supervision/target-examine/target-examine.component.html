@@ -52,6 +52,7 @@
                     <!-- <th>指标状态</th> -->
                     <th>预期值</th>
                     <th>指标来源</th>
+                    <th>截止日期</th>
                     <!-- <th>实际值</th> -->
                     <th>操作</th>
                 </tr>
@@ -69,6 +70,7 @@
                     <nz-badge *ngIf="item.statusName == 3" [nzStatus]="'error'" [nzText]="'未达成'"></nz-badge> -->
                     <td>{{item.achieveTypeName + item.expectedValue}}%</td>
                     <td>{{item.sourceDocName}}</td>
+                    <td>{{item.endTime | date: "yyyy-MM-dd"}}</td>
                     <!-- <td>{{item.actualValue}}</td> -->
                     <td>
                         <a (click)="goDetail(item.id)">详情</a>

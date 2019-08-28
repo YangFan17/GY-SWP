@@ -282,10 +282,11 @@ namespace GYSWP.Documents
             {
                 key = d.Id.ToString(),
                 title = d.DepartmentName,
+                order = d.Order,
                 children = getDeptChildTree(d.Id, depts)
             });
 
-            return trees.ToList();
+            return trees.OrderBy(v => v.order).ToList();
         }
 
         /// <summary>
@@ -308,6 +309,7 @@ namespace GYSWP.Documents
                     {
                         key = dept.Id.ToString(),
                         title = dept.DepartmentName,
+                        order = dept.Order,
                         children = getDeptChildTree(id, depts)
                     });
                 }
@@ -552,7 +554,7 @@ namespace GYSWP.Documents
         public async Task<PagedResultDto<DocumentConfirmDto>> GetReportDocumentConfirmsListAsync(GetDocumentsInput input)
         {
             var categoryIds = await _categoryRepository.GetAll().Where(v => v.DeptId == input.DeptId).Select(v => v.Id).ToArrayAsync();
-            var query = _entityRepository.GetAll().Where(v => categoryIds.Contains(v.CategoryId) && v.IsAction == true).WhereIf(!string.IsNullOrEmpty(input.KeyWord), v => v.Name.Contains(input.KeyWord) ||v.DocNo.Contains(input.KeyWord));
+            var query = _entityRepository.GetAll().Where(v => categoryIds.Contains(v.CategoryId) && v.IsAction == true).WhereIf(!string.IsNullOrEmpty(input.KeyWord), v => v.Name.Contains(input.KeyWord) || v.DocNo.Contains(input.KeyWord));
             var entityList = await query.OrderBy(v => v.CategoryId).ThenByDescending(v => v.PublishTime).AsNoTracking().PageBy(input).ToListAsync();
 
             var entityListDtos = entityList.MapTo<List<DocumentConfirmDto>>();
@@ -610,7 +612,7 @@ namespace GYSWP.Documents
                 string[] confirmEmpIds = await _employeeClauseRepository.GetAll().Where(v => v.DocumentId == input.DocId).Select(v => v.EmployeeId).Distinct().ToArrayAsync();
                 if (doc.IsAllUser)
                 {
-                    var entityList = _employeeRepository.GetAll().Where(v=>!confirmEmpIds.Contains(v.Id)).Select(v => new EmpBriefInfo()
+                    var entityList = _employeeRepository.GetAll().Where(v => !confirmEmpIds.Contains(v.Id)).Select(v => new EmpBriefInfo()
                     {
                         Id = v.Id,
                         Name = v.Name,
@@ -697,7 +699,7 @@ namespace GYSWP.Documents
                     entity.CategoryCode = CategoryCode;
                     entity.CategoryDesc = CategoryDesc;
                     entity.CategoryId = input.CategoryId;
-                    entity.IsAllUser = true;
+                    entity.IsAllUser = false;
                     entity.IsAction = true;
                     entity.PublishTime = dt;
                     var id = await _entityRepository.InsertAndGetIdAsync(entity);
@@ -934,6 +936,10 @@ namespace GYSWP.Documents
         }
     }
     #endregion
+
+    /// <summary>
+    /// 按照自然数排序（无法覆盖null）
+    /// </summary>
     class Factory : IComparer<ClauseListDto>
     {
         private Factory() { }
@@ -945,7 +951,30 @@ namespace GYSWP.Documents
         {
             try
             {
-                return x.ClauseNo.Length == y.ClauseNo.Length ? x.ClauseNo.CompareTo(y.ClauseNo) : x.ClauseNo.Length - y.ClauseNo.Length;
+                int ret = 0;
+                var xsplit = x.ClauseNo.Split(".".ToCharArray()).Select(z => int.Parse(z)).ToList();
+                var ysplit = y.ClauseNo.Split(".".ToCharArray()).Select(z => int.Parse(z)).ToList();
+                for (int i = 0; i < Math.Max(xsplit.Count, ysplit.Count); i++)
+                {
+
+                    if (xsplit.Count - 1 < i)
+                    {
+                        ret = -1;
+                        return ret;
+                    }
+                    else if (ysplit.Count - 1 < i)
+                    {
+                        ret = 1;
+                        return ret;
+                    }
+                    else
+                    {
+                        ret = xsplit[i] - ysplit[i];
+                        if (ret != 0)
+                            return ret;
+                    }
+                }
+                return ret;
             }
             catch (Exception ex)
             {

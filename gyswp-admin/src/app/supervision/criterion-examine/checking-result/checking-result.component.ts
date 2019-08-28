@@ -10,7 +10,7 @@ import { SupervisionService } from 'services';
 })
 export class CheckingResultComponent extends ModalComponentBase implements OnInit {
     @Input() id: string;
-    postUrl: string = '/GYSWPFile/DocFilesPostsAsync';
+    // postUrl: string = '/GYSWPFile/DocFilesPostsAsync';
     uploadLoading = false;
     examineResult: ExamineResult = new ExamineResult();
     examineRecord: ExamineRecord = new ExamineRecord();

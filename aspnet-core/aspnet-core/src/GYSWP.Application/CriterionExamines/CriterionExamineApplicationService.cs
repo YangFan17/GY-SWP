@@ -276,7 +276,7 @@ namespace GYSWP.CriterionExamines
                                     edEntity.EmployeeName = emp.EmpName;
                                     edEntity.CriterionExamineId = exaId;
                                     edEntity.Result = GYEnums.ExamineStatus.未检查;
-                                    edEntity.Status = GYEnums.ResultStatus.未开始;
+                                    edEntity.Status = GYEnums.ResultStatus.进行中;
                                     await _examineDetailRepository.InsertAsync(edEntity);
                                 }
                             }
@@ -388,7 +388,7 @@ namespace GYSWP.CriterionExamines
                             edEntity.EmployeeName = examEmp.Name;
                             edEntity.CriterionExamineId = exaId;
                             edEntity.Result = GYEnums.ExamineStatus.未检查;
-                            edEntity.Status = GYEnums.ResultStatus.未开始;
+                            edEntity.Status = GYEnums.ResultStatus.进行中;
                             await _examineDetailRepository.InsertAsync(edEntity);
                         }
                         foreach (var item in ZhuanMaiClauseList)
@@ -402,7 +402,7 @@ namespace GYSWP.CriterionExamines
                             edEntity.EmployeeName = examEmp.Name;
                             edEntity.CriterionExamineId = exaId;
                             edEntity.Result = GYEnums.ExamineStatus.未检查;
-                            edEntity.Status = GYEnums.ResultStatus.未开始;
+                            edEntity.Status = GYEnums.ResultStatus.进行中;
                             await _examineDetailRepository.InsertAsync(edEntity);
                         }
                         foreach (var item in OtherClauseList)
@@ -416,7 +416,7 @@ namespace GYSWP.CriterionExamines
                             edEntity.EmployeeName = examEmp.Name;
                             edEntity.CriterionExamineId = exaId;
                             edEntity.Result = GYEnums.ExamineStatus.未检查;
-                            edEntity.Status = GYEnums.ResultStatus.未开始;
+                            edEntity.Status = GYEnums.ResultStatus.进行中;
                             await _examineDetailRepository.InsertAsync(edEntity);
                         }
                     }
@@ -476,7 +476,7 @@ namespace GYSWP.CriterionExamines
                             edEntity.EmployeeName = examEmp.Name;
                             edEntity.CriterionExamineId = exaId;
                             edEntity.Result = GYEnums.ExamineStatus.未检查;
-                            edEntity.Status = GYEnums.ResultStatus.未开始;
+                            edEntity.Status = GYEnums.ResultStatus.进行中;
                             await _examineDetailRepository.InsertAsync(edEntity);
                         }
                         foreach (var item in ZhuanMaiClauseList)
@@ -490,7 +490,7 @@ namespace GYSWP.CriterionExamines
                             edEntity.EmployeeName = examEmp.Name;
                             edEntity.CriterionExamineId = exaId;
                             edEntity.Result = GYEnums.ExamineStatus.未检查;
-                            edEntity.Status = GYEnums.ResultStatus.未开始;
+                            edEntity.Status = GYEnums.ResultStatus.进行中;
                             await _examineDetailRepository.InsertAsync(edEntity);
                         }
                         foreach (var item in YanYeClauseList)
@@ -504,7 +504,7 @@ namespace GYSWP.CriterionExamines
                             edEntity.EmployeeName = examEmp.Name;
                             edEntity.CriterionExamineId = exaId;
                             edEntity.Result = GYEnums.ExamineStatus.未检查;
-                            edEntity.Status = GYEnums.ResultStatus.未开始;
+                            edEntity.Status = GYEnums.ResultStatus.进行中;
                             await _examineDetailRepository.InsertAsync(edEntity);
                         }
                         foreach (var item in OtherClauseList)
@@ -518,7 +518,7 @@ namespace GYSWP.CriterionExamines
                             edEntity.EmployeeName = examEmp.Name;
                             edEntity.CriterionExamineId = exaId;
                             edEntity.Result = GYEnums.ExamineStatus.未检查;
-                            edEntity.Status = GYEnums.ResultStatus.未开始;
+                            edEntity.Status = GYEnums.ResultStatus.进行中;
                             await _examineDetailRepository.InsertAsync(edEntity);
                         }
                     }
@@ -542,7 +542,7 @@ namespace GYSWP.CriterionExamines
                         edEntity.EmployeeName = examEmp.Name;
                         edEntity.CriterionExamineId = exaId;
                         edEntity.Result = GYEnums.ExamineStatus.未检查;
-                        edEntity.Status = GYEnums.ResultStatus.未开始;
+                        edEntity.Status = GYEnums.ResultStatus.进行中;
                         await _examineDetailRepository.InsertAsync(edEntity);
                     }
                 }
@@ -566,7 +566,7 @@ namespace GYSWP.CriterionExamines
                         edEntity.EmployeeName = examEmp.Name;
                         edEntity.CriterionExamineId = exaId;
                         edEntity.Result = GYEnums.ExamineStatus.未检查;
-                        edEntity.Status = GYEnums.ResultStatus.未开始;
+                        edEntity.Status = GYEnums.ResultStatus.进行中;
                         await _examineDetailRepository.InsertAsync(edEntity);
                     }
                 }
@@ -637,11 +637,12 @@ namespace GYSWP.CriterionExamines
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public async Task<APIResultDto> PublishCriterionExamineAsync(EntityDto<Guid> input)
+        public async Task<APIResultDto> PublishCriterionExamineAsync(PublishExamineDto input)
         {
-            var entity = await _entityRepository.GetAsync(input.Id);
+            var entity = await _entityRepository.GetAsync(input.ExamineId);
             entity.IsPublish = true;
-            string[] empIds = await _examineDetailRepository.GetAll().Where(v => v.CriterionExamineId == input.Id).Select(v => v.EmployeeId).Distinct().ToArrayAsync();
+            entity.EndTime = input.EndTime.ToDayEnd();
+            string[] empIds = await _examineDetailRepository.GetAll().Where(v => v.CriterionExamineId == input.ExamineId).Select(v => v.EmployeeId).Distinct().ToArrayAsync();
             foreach (var empId in empIds)
             {
                 _approvalAppService.SendCriterionExamineMessageAsync(empId);
@@ -664,6 +665,27 @@ namespace GYSWP.CriterionExamines
                     .ToListAsync();
             var entityListDtos = entityList.MapTo<List<CriterionExamineListDto>>();
             return new PagedResultDto<CriterionExamineListDto>(count, entityListDtos);
+        }
+
+        /// <summary>
+        /// 自动更新逾期状态
+        /// </summary>
+        [AbpAllowAnonymous]
+        public async Task AutoUpdateCriterionStatusAsync()
+        {
+            DateTime curTime = DateTime.Today.AddDays(1);
+            Logger.InfoFormat(curTime.ToString());
+            var examine = _entityRepository.GetAll().Where(v => v.IsPublish == true && v.EndTime < curTime);
+            var detail = _examineDetailRepository.GetAll().Where(v => v.Status == GYEnums.ResultStatus.进行中);
+            var query = from d in detail
+                        join e in examine on d.CriterionExamineId equals e.Id
+                        select d;
+            var overdueList = await query.ToListAsync();
+            foreach (var item in overdueList)
+            {
+                item.Status = GYEnums.ResultStatus.已逾期;
+                item.Result = GYEnums.ExamineStatus.不合格;
+            }
         }
     }
 }

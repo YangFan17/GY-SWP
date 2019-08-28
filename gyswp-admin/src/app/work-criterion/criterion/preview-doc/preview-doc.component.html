@@ -1,5 +1,5 @@
 <nz-card [nzBordered]="false" nzTitle="标准文档预览">
-    <pdf-viewer [src]="pdfSrc | hostUrl" [original-size]="true" [render-text]="false" style="display: block;">
+    <pdf-viewer [src]="pdfSrc | fileUrl" [original-size]="true" [render-text]="false" style="display: block;">
     </pdf-viewer>
     <footer-toolbar>
         <button nz-button [nzType]="'default'" (click)="return()">

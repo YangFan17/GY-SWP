@@ -20,7 +20,7 @@ export class ClauseDetailComponent extends ModalComponentBase {
     @Input() id: string;
     title: string = '条款详情';
     clause: Clause = new Clause();
-    postUrl: string = '/GYSWPFile/DocFilesPostsAsync';
+    postUrl: string = '/GYSWPFile/ClauseFilesPostsAsync';
     // fileList: Attachment[] = [];
     attachmentList: Attachment[] = [];
     attachment: DocAttachment = new DocAttachment();
@@ -59,7 +59,7 @@ export class ClauseDetailComponent extends ModalComponentBase {
         this.basicDataService.createOrUpdateClauseAsync(this.clause, this.newAttachment)
             .finally(() => { this.saving = false; })
             .subscribe(res => {
-                this.notify.info('保存成功！', '');
+                this.notify.success('保存成功！', '');
                 if (res.code == 0) {
                     this.clause.id = res.data;
                     this.success(true);

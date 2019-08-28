@@ -68,8 +68,9 @@ namespace GYSWP.GYEnums
 
     public enum ResultStatus
     {
-        未开始 = 1,
-        已完成 = 2
+        进行中 = 1,
+        已完成 = 2,
+        已逾期 = 3
     }
 
     public enum FeedType
@@ -98,7 +99,8 @@ namespace GYSWP.GYEnums
     {
         未填写 = 1,
         已达成 = 2,
-        未达成 = 3
+        未达成 = 3,
+        已逾期 = 4
     }
 
     public enum CycleTime

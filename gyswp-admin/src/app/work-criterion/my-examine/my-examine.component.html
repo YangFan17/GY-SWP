@@ -12,6 +12,7 @@
                     <th>创建者部门</th>
                     <th>考核对象</th>
                     <th>创建时间</th>
+                    <th>截止日期</th>
                     <th>操作</th>
                 </tr>
             </thead>
@@ -22,6 +23,7 @@
                     <td>{{item.creatorDeptName}}</td>
                     <td>{{item.deptName}}</td>
                     <td>{{item.creationTime | _date}}</td>
+                    <td>{{item.endTime | date: "yyyy-MM-dd"}}</td>
                     <td>
                         <a (click)="goDetail(item.id)">详情</a>
                     </td>

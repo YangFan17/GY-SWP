@@ -26,9 +26,9 @@ export class TargetListComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit(): void {
-        if (this.id) {
-            this.getIndicatorListById();
-        }
+        // if (this.id) {
+        //     this.getIndicatorListById();
+        // }
     }
     getIndicatorListById() {
         this.supervisionService.getIndicatorListById(this.id).subscribe(res => {

@@ -110,4 +110,13 @@ namespace GYSWP.CriterionExamines.Dtos
         public string EmpId { get; set; }
         public string EmpName { get; set; }
     }
+
+    /// <summary>
+    /// 发布检查表Dto
+    /// </summary>
+    public class PublishExamineDto
+    {
+        public Guid ExamineId { get; set; }
+        public DateTime EndTime { get; set; }
+    }
 }

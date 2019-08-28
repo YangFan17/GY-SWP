@@ -62,5 +62,9 @@ namespace GYSWP.CriterionExamines
         /// </summary>
         [StringLength(100)]
         public virtual string DeptName { get; set; }
+        /// <summary>
+        /// 截止时间 当天23:59:59
+        /// </summary>
+        public virtual DateTime? EndTime { get; set; }
     }
 }

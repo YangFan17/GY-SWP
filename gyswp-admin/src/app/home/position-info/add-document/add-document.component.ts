@@ -16,7 +16,7 @@ export class AddDocumentComponent extends ModalComponentBase implements OnInit {
     @Input() positionInfoId: string;
     inputValue: string;
     mainPointsRecord: MainPointsRecord = new MainPointsRecord();
-    mainPoint: string;
+    // mainPoint: string;
     optionGroups: any[];
     docId: string;
     doc: any = {};
@@ -55,7 +55,7 @@ export class AddDocumentComponent extends ModalComponentBase implements OnInit {
 
     save(): void {
         if (this.doc.id) {
-            this.mainPointsRecord.mainPoint = this.mainPoint;
+            // this.mainPointsRecord.mainPoint = this.mainPoint;
             this.mainPointsRecord.positionInfoId = this.positionInfoId;
             this.mainPointsRecord.documentId = this.doc.id;
             this.saving = true;

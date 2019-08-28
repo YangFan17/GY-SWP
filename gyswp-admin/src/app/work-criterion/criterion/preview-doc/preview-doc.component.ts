@@ -31,7 +31,10 @@ export class PreviewDocComponent extends AppComponentBase implements OnInit {
     getById() {
         this.workCriterionService.getPreviewDocByIdAsync(this.id).subscribe(res => {
             if (res.code == 0) {
+                // this.pdfSrc = 'http://127.0.0.1:21021/docFile' + res.data;
                 this.pdfSrc = res.data;
+                console.log(this.pdfSrc);
+
             } else {
 
             }

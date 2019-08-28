@@ -10,6 +10,7 @@ export class CriterionExamine {
     creatorDeptName: string;
     deptName: string;
     typeName: string;
+    endTime: Date;
     constructor(data?: any) {
         if (data) {
             for (var property in data) {
@@ -31,6 +32,7 @@ export class CriterionExamine {
             this.creatorDeptName = data["creatorDeptName"];
             this.deptName = data["deptName"];
             this.typeName = data["typeName"];
+            this.endTime = data["endTime"];
         }
     }
     toJSON(data?: any) {

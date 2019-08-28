@@ -51,10 +51,10 @@
                     </nz-form-control>
                 </nz-form-item>
 
-                <nz-form-item nz-row>
+                <nz-form-item nz-row style="margin-bottom: 0px;">
                     <nz-form-label nz-col [nzSm]="4" nzRequired>标准状态</nz-form-label>
                     <nz-form-control [nzSm]="20">
-                        <nz-radio-group #isControls="ngModel" [(ngModel)]="isControl"
+                        <!-- <nz-radio-group #isControls="ngModel" [(ngModel)]="isControl"
                             (ngModelChange)="controlRadioChange($event)" [ngModelOptions]="{standalone: true}">
                             <label nz-radio nzValue="5">受控</label>
                             <label nz-radio nzValue="6">不受控</label>
@@ -63,6 +63,17 @@
                             (ngModelChange)="validRadioChange($event)" [ngModelOptions]="{standalone: true}">
                             <label nz-radio nzValue="3">作废</label>
                             <label nz-radio nzValue="4">现行有效</label>
+                        </nz-radio-group> -->
+                        <nz-radio-group name="isControl" [(ngModel)]="isControl">
+                            <label nz-radio [nzValue]="c.value" *ngFor="let c of controlOptions">{{ c.label }}</label>
+                        </nz-radio-group>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item nz-row>
+                    <div nz-col [nzSm]="4"></div>
+                    <nz-form-control [nzSm]="20">
+                        <nz-radio-group name="isValid" [(ngModel)]="isValid">
+                            <label nz-radio [nzValue]="v.value" *ngFor="let v of validOptions">{{ v.label }}</label>
                         </nz-radio-group>
                     </nz-form-control>
                 </nz-form-item>
@@ -70,7 +81,7 @@
                 <nz-form-item nz-row>
                     <nz-form-label nz-col [nzSm]="4" nzRequired>可查看人员</nz-form-label>
                     <nz-form-control [nzSm]="20">
-                        <nz-radio-group #isAllUsers="ngModel" [(ngModel)]="isAllUser"
+                        <!-- <nz-radio-group #isAllUsers="ngModel" [(ngModel)]="isAllUser"
                             (ngModelChange)="allUserRadioChange($event)" [ngModelOptions]="{standalone: true}">
                             <label nz-radio nzValue="1">所有人员</label>
                             <label nz-radio nzValue="0">其他部门和部分人员</label>
@@ -87,7 +98,18 @@
                             <nz-tag class="editable-tag" [nzColor]="'#108ee9'" (click)="showDeptUserModel()">
                                 <i class="anticon anticon-plus"></i> 选择部门和人员
                             </nz-tag>
-                        </div>
+                        </div> -->
+                        <nz-tag *ngFor="let dept of deptTags; let i = index;" [nzColor]="'blue'" [nzMode]="'closeable'"
+                            (nzAfterClose)="handleDeptClose(dept)">
+                            {{ dept.name }}
+                        </nz-tag>
+                        <nz-tag *ngFor="let user of userTags; let i = index;" [nzMode]="'closeable'"
+                            (nzAfterClose)="handleUserClose(user)">
+                            {{ user.name }}
+                        </nz-tag>
+                        <nz-tag class="editable-tag" [nzColor]="'#108ee9'" (click)="showDeptUserModel()">
+                            <i class="anticon anticon-plus"></i> 选择部门和人员
+                        </nz-tag>
                     </nz-form-control>
                 </nz-form-item>
                 <nz-form-item nz-row>

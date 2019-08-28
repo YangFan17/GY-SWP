@@ -286,12 +286,13 @@ namespace GYSWP.Users
             var userList = await _employeeAppService.GetAllEmployeeListAsync();
             var entityByDD = userList.Select(e => new SynchroDingUser()
             {
-                UserName = GetPinyin(e.Name) + e.Mobile.Substring(7, 4),
+                //UserName = GetPinyin(e.Name)+e.Mobile.Substring(7, 4),
+                UserName = e.Mobile,
                 IsActive = true,
                 EmailAddress = "GYSWP" + GetPinyin(e.Name) + e.Mobile.Substring(7, 4) + "@gy.com",
                 Name = e.Name,
                 Surname = e.Name,
-                Password = "123qwe",
+                Password = "Gyyc@3265882",
                 EmployeeId = e.Id,
                 EmployeeName = e.Name,
                 UnionId = e.Unionid,
@@ -382,7 +383,7 @@ namespace GYSWP.Users
                     r += obj.ToString();
                 }
             }
-            return r.ToLower();
+            return r.ToUpper();
         }
     }
 }

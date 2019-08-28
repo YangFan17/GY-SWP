@@ -100,5 +100,10 @@ namespace GYSWP.Indicators
         /// </summary>
         [Required]
         public virtual Guid SourceDocId { get; set; }
+        /// <summary>
+        /// 截止时间 当天23:59:59
+        /// </summary>
+        [Required]
+        public virtual DateTime EndTime { get; set; }
     }
 }

@@ -22,7 +22,7 @@ export class UploadTxtComponent extends ModalFormComponentBase<any> implements O
         , private basicDataService: BasicDataService
     ) {
         super(injector);
-        this.postUrl = '/GYSWPFile/DocFilesTxTPostsAsync?categoryId=' + this.categoryId;
+        // this.postUrl = '/GYSWPFile/DocFilesTxTPostsAsync?categoryId=' + this.categoryId;
     }
 
     ngOnInit() {
@@ -31,6 +31,8 @@ export class UploadTxtComponent extends ModalFormComponentBase<any> implements O
         //     address: ['', [Validators.required]]
         // });
         // this.setFormValues(this.address);
+        console.log(this.postUrl);
+
     }
 
     handleChange = (info: { file: UploadFile }): void => {

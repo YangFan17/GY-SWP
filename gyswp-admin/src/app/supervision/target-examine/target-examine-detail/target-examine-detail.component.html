@@ -36,6 +36,16 @@
                     </nz-form-control>
                 </nz-form-item>
                 <nz-form-item nz-row>
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>检查周期</nz-form-label>
+                    <nz-form-control [nzSm]="20">
+                        <nz-radio-group #cycleTimeRadio="ngModel" [(ngModel)]="cycleTime"
+                            (ngModelChange)="cycleTimeRadioChange($event)" [ngModelOptions]="{standalone: true}">
+                            <label nz-radio nzValue="1">年度</label>
+                            <label nz-radio nzValue="2">季度</label>
+                        </nz-radio-group>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item nz-row>
                     <nz-form-label nz-col [nzSm]="4" nzRequired>达成条件</nz-form-label>
                     <nz-form-control [nzSm]="20">
                         <nz-radio-group name="achieveType" #achieveType="ngModel" [(ngModel)]="indicator.achieveType">
@@ -75,13 +85,13 @@
                     </nz-form-control>
                 </nz-form-item>
                 <nz-form-item nz-row>
-                    <nz-form-label nz-col [nzSm]="4" nzRequired>检查周期</nz-form-label>
-                    <nz-form-control [nzSm]="20">
-                        <nz-radio-group #cycleTimeRadio="ngModel" [(ngModel)]="cycleTime"
-                            (ngModelChange)="cycleTimeRadioChange($event)" [ngModelOptions]="{standalone: true}">
-                            <label nz-radio nzValue="1">年度</label>
-                            <label nz-radio nzValue="2">季度</label>
-                        </nz-radio-group>
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>截止日期</nz-form-label>
+                    <nz-form-control [nzSm]="6">
+                        <nz-date-picker name="endTime" required [nzFormat]="'yyyy/MM/dd'" #endTime="ngModel"
+                            [(ngModel)]="indicator.endTime"></nz-date-picker>
+                        <nz-form-explain *ngIf="endTime.control.dirty&&endTime.control.errors">
+                            <ng-container *ngIf="endTime.control.hasError('required')">请选择截止日期</ng-container>
+                        </nz-form-explain>
                     </nz-form-control>
                 </nz-form-item>
                 <nz-form-item nz-row>

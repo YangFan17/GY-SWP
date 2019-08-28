@@ -209,7 +209,7 @@ namespace GYSWP.ExamineDetails
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public async Task<PagedResultDto<ExamineRecordDto>> GetExamineRecordNoPagedByIdAsync(GetExamineDetailsInput input)
+        public async Task<List<ExamineRecordDto>> GetExamineRecordNoPagedByIdAsync(GetExamineDetailsInput input)
         {
             var query = _entityRepository.GetAll().Where(v => v.CriterionExamineId == input.ExamineId);
             var doc = _documentRepository.GetAll().Select(v => new { v.Id, v.Name });
@@ -225,9 +225,8 @@ namespace GYSWP.ExamineDetails
                             + (c.Content != null ? (c.Content.Length > 15 ? c.Content.Substring(0, 15) + "..." : c.Content) : ""),
                             EmployeeName = q.EmployeeName
                         });
-            var count = await list.CountAsync();
             var entityList = await list.OrderBy(v => v.Status).ThenBy(v => v.EmployeeName).ThenBy(v => v.DocumentName).ToListAsync();
-            return new PagedResultDto<ExamineRecordDto>(count, entityList);
+            return entityList;
         }
 
         /// <summary>

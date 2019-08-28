@@ -114,5 +114,9 @@ namespace  GYSWP.Indicators.Dtos
         /// </summary>
         [Required]
         public Guid SourceDocId { get; set; }
+        /// <summary>
+        /// 截止时间 当天23:59:59
+        /// </summary>
+        public DateTime EndTime { get; set; }
     }
 }

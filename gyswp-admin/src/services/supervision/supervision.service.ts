@@ -83,13 +83,10 @@ export class SupervisionService {
         }));
     }
 
-    getExamineRecordNoPagedByIdAsync(param: any): Observable<PagedResultDto> {
+    getExamineRecordNoPagedByIdAsync(param: any): Observable<ExamineRecord[]> {
         let url_ = "/api/services/app/ExamineDetail/GetExamineRecordNoPagedByIdAsync";
         return this._commonhttp.get(url_, param).pipe(map(data => {
-            const result = new PagedResultDto();
-            result.items = data.items;
-            result.totalCount = data.totalCount;
-            return result;
+            return ExamineRecord.fromJSArray(data);
         }));
     }
 
@@ -219,9 +216,9 @@ export class SupervisionService {
         }));
     }
 
-    publishCriterionExamineAsync(id: any): Observable<ApiResult> {
+    publishCriterionExamineAsync(input: any): Observable<ApiResult> {
         let url_ = "/api/services/app/CriterionExamine/PublishCriterionExamineAsync";
-        return this._commonhttp.post(url_, { id: id }).pipe(map(data => {
+        return this._commonhttp.post(url_, input).pipe(map(data => {
             return ApiResult.fromJS(data);
         }));
     }
