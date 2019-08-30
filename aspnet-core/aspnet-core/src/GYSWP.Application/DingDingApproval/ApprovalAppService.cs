@@ -73,7 +73,6 @@ namespace GYSWP.DingDingApproval
         [AbpAllowAnonymous]
         public async Task<APIResultDto> SubmitDocApproval(string Reason, string Content, DateTime CreationTime, OperateType OperateType, string DocName)
         {
-            //string accessToken = "5febf1152a49339ab414ce9cb11dfa66";
             DingDingAppConfig ddConfig = _dingDingAppService.GetDingDingConfigByApp(DingDingAppEnum.标准化工作平台);
             string accessToken = _dingDingAppService.GetAccessToken(ddConfig.Appkey, ddConfig.Appsecret);
             var user = await GetCurrentUserAsync();

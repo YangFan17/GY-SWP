@@ -391,6 +391,43 @@ namespace GYSWP.PositionInfos
             return list;
         }
 
+
+        /// <summary>
+        /// 钉钉获取工作职责主页面
+        /// </summary>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public async Task<List<HomePositionList>> GetDDPositionTreeByIdAsync(string empId)
+        {
+
+            var posList = _entityRepository.GetAll().Where(v => v.EmployeeId == empId);
+            var list = await (from p in posList
+                              select new HomePositionList()
+                              {
+                                  Id = p.Id,
+                                  Duties = p.Duties,
+                              }).ToListAsync();
+            foreach (var item in list)
+            {
+                item.Children = await GetDDDocListAsync(item.Id, empId);
+            }
+            return list;
+        }
+
+        private async Task<List<MainPointsList>> GetDDDocListAsync(Guid id, string empId)
+        {
+            var doc = _documentRepository.GetAll().Select(v => new { v.Id, v.Name, v.DocNo });
+            var points = _mainPointsRecordRepository.GetAll().Where(v => v.PositionInfoId == id);
+            var pointsInfo = await (from po in points
+                                    join d in doc on po.DocumentId equals d.Id
+                                    select new MainPointsList()
+                                    {
+                                        DocName = d.Name,
+                                        DocId = d.Id
+                                    }).ToListAsync();
+            return pointsInfo;
+        }
+
         #region 工作职责导入方法
         /// <summary>
         /// 工作职责批量导入

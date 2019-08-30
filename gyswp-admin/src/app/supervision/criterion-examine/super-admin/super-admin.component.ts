@@ -85,7 +85,17 @@ export class SuperAdminComponent extends ModalComponentBase implements OnInit {
                             }
                         });
                     } else {//县局超管考核
-                        this.supervisionService.createInternalExamineAsync(params).subscribe(res => {
+                        // this.supervisionService.createInternalExamineAsync(params).subscribe(res => {
+                        //     if (res.code == 0) {
+                        //         this.notify.success('考核表创建成功', '');
+                        //         // this.modal.closeAll();
+                        //         this.showExamineList(res.data.id, res.data.title);
+                        //     }
+                        //     else {
+                        //         this.notify.error('考核表创建失败，请重试！', '');
+                        //     }
+                        // });
+                        this.supervisionService.createCountryDeptInternalExamineAsync(params).subscribe(res => {
                             if (res.code == 0) {
                                 this.notify.success('考核表创建成功', '');
                                 // this.modal.closeAll();

@@ -9,11 +9,11 @@ import { QuestionBankComponent } from '../question-bank/question-bank.component'
 @Component({
     moduleId: module.id,
     selector: 'emp-list',
-    templateUrl: 'emp-list.component.html',
-    styleUrls: ['emp-list.component.less']
+    templateUrl: 'emp-list.component.html'
 })
 export class EmpListComponent extends AppComponentBase implements OnInit {
     dept: any = { id: '', name: '', isCurDept: false };
+    isCountryDept: boolean;//是否为基层部门
     loading = false;
     empList: Employee[] = [];
     confirmModal: NzModalRef;
@@ -44,7 +44,14 @@ export class EmpListComponent extends AppComponentBase implements OnInit {
         params.DepartId = this.dept.id;
         params.DepartName = this.dept.name;
         this.loading = true;
-        this.supervisionService.getEmployeeListByDeptIdAsync(params)
+        // this.supervisionService.getEmployeeListByDeptIdAsync(params)
+        //     .finally(() => {
+        //         this.loading = false;
+        //     })
+        //     .subscribe((result: Employee[]) => {
+        //         this.empList = result;
+        //     });
+        this.supervisionService.getAllEmployeeByDeptIdAsync(params)
             .finally(() => {
                 this.loading = false;
             })
@@ -94,44 +101,68 @@ export class EmpListComponent extends AppComponentBase implements OnInit {
     /***
      * 内部考核
      */
-    internalExa(): void {
-        let num: number = 0;
-        let checkedInfo: Employee[] = [];
-        num = this.checkedLength;
-        if (num == 0) { //默认全选
-            num = this.empList.length;
-            checkedInfo = this.empList;
-        } else { //过滤筛选
-            checkedInfo = this.empList.filter(v => v.checked);
-        }
-        this.confirmModal = this.modal.confirm({
-            nzContent: `是否为当前 ${num} 人生成考核记录信息?`,
-            nzOnOk: () => {
-                let empInfo: any[] = [];
-                checkedInfo.forEach(v => {
-                    empInfo.push({ EmpId: v.id, EmpName: v.name });
-                });
-                let params: any = {};
-                params.Type = 1;
-                params.DeptId = this.dept.id;
-                params.DeptName = this.dept.name;
-                params.EmpInfo = empInfo;
-                this.supervisionService.createInternalExamineAsync(params).finally(() => { this.saving = false; }).subscribe(res => {
-                    if (res.code == 0) {
-                        // this.notify.info('考核表创建成功', '');
-                        // this.modal.closeAll();
-                        this.notify.success('考核表创建成功', '');
-                        this.showExamineList(res.data.id, res.data.title);
-                    }
-                    else {
-                        this.notify.error('考核表创建失败，请重试！', '');
-                    }
-                });
-            },
-            nzOnCancel: () => {
-                this.saving = false;
+    internalExa(type: number): void {
+        if (type === 1) {
+            let num: number = 0;
+            let checkedInfo: Employee[] = [];
+            num = this.checkedLength;
+            if (num == 0) { //默认全选
+                num = this.empList.length;
+                checkedInfo = this.empList;
+            } else { //过滤筛选
+                checkedInfo = this.empList.filter(v => v.checked);
             }
-        });
+            this.confirmModal = this.modal.confirm({
+                nzContent: `是否为当前 ${num} 人生成考核记录信息?`,
+                nzOnOk: () => {
+                    let empInfo: any[] = [];
+                    checkedInfo.forEach(v => {
+                        empInfo.push({ EmpId: v.id, EmpName: v.name });
+                    });
+                    let params: any = {};
+                    params.Type = 1;
+                    params.DeptId = this.dept.id;
+                    params.DeptName = this.dept.name;
+                    params.EmpInfo = empInfo;
+                    this.supervisionService.createInternalExamineAsync(params).finally(() => { this.saving = false; }).subscribe(res => {
+                        if (res.code == 0) {
+                            // this.notify.info('考核表创建成功', '');
+                            // this.modal.closeAll();
+                            this.notify.success('考核表创建成功', '');
+                            this.showExamineList(res.data.id, res.data.title);
+                        }
+                        else {
+                            this.notify.error('考核表创建失败，请重试！', '');
+                        }
+                    });
+                },
+                nzOnCancel: () => {
+                    this.saving = false;
+                }
+            });
+        } else {
+            this.confirmModal = this.modal.confirm({
+                nzContent: `是否为当前部门生成考核记录信息?`,
+                nzOnOk: () => {
+                    let params: any = {};
+                    params.Type = 2;
+                    params.DeptId = this.dept.id;
+                    params.DeptName = this.dept.name;
+                    this.supervisionService.createInternalExamineAsync(params).finally(() => { this.saving = false; }).subscribe(res => {
+                        if (res.code == 0) {
+                            this.notify.success('考核表创建成功', '');
+                            this.showExamineList(res.data.id, res.data.title);
+                        }
+                        else {
+                            this.notify.error('考核表创建失败，请重试！', '');
+                        }
+                    });
+                },
+                nzOnCancel: () => {
+                    this.saving = false;
+                }
+            });
+        }
     }
 
     showExamineList(id: string, title: string): void {

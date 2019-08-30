@@ -79,5 +79,6 @@ namespace GYSWP.Employees
 
         Task<DingDingUserDto> GetDingDingUserByCodeAsync(string code, DingDingAppEnum appId);
         Task<List<Employee>> GetAllEmployeeListAsync();
+        Task<string> GetDeptStandardAdminByIdAsync(string deptId);
     }
 }

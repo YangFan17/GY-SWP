@@ -73,5 +73,6 @@ namespace GYSWP.PositionInfos
         Task<List<HomePositionList>> GetPositionTreeByIdAsync();
         Task<string> GetCurrentPositionAsync();
         Task Delete(EntityDto<Guid> input);
+        Task<List<HomePositionList>> GetDDPositionTreeByIdAsync(string empId);
     }
 }

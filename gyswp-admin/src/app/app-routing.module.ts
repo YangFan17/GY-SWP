@@ -43,7 +43,7 @@ const routes: Routes = [
         path: 'supervision',
         loadChildren: './supervision/supervision.module#SupervisionModule',
         canActivate: [AppRouteGuard, ACLGuard],
-        data: { guard: ['Admin', 'QiGuanAdmin', 'CountyAdmin'] },
+        data: { guard: ['Admin', 'QiGuanAdmin', 'CountyAdmin', 'DeptAdmin'] },
       },
       {
         path: 'advises',

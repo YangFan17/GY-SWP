@@ -25,6 +25,7 @@ using GYSWP.Organizations;
 using GYSWP.DingDing.Dtos;
 using Abp.Auditing;
 using GYSWP.DingDing;
+using GYSWP.Organizations.DomainService;
 
 namespace GYSWP.Employees
 {
@@ -39,6 +40,7 @@ namespace GYSWP.Employees
         private readonly IRepository<Organization, long> _organizationRepository;
         private readonly IDingDingAppService _dingDingAppService;
         private readonly IEmployeeManager _entityManager;
+        private readonly IOrganizationManager _organizationManager;
 
         /// <summary>
         /// 构造函数 
@@ -49,6 +51,8 @@ namespace GYSWP.Employees
         , IDingDingAppService dingDingAppService
         , IRepository<User, long> userRepository
         , IRepository<Organization, long> organizationRepository
+        , IOrganizationManager organizationManager
+
         )
         {
             _entityRepository = entityRepository;
@@ -56,6 +60,7 @@ namespace GYSWP.Employees
             _userRepository = userRepository;
             _entityManager = entityManager;
             _organizationRepository = organizationRepository;
+            _organizationManager = organizationManager;
         }
 
 
@@ -274,6 +279,7 @@ namespace GYSWP.Employees
             return user;
         }
 
+        #region 旧版考核人员选择
         /// <summary>
         /// 部门选择员工
         /// </summary>
@@ -330,7 +336,7 @@ namespace GYSWP.Employees
                 {
                     if (userInfo.Position.Contains("局长") && !userInfo.Position.Contains("副局长"))//局长考核部长
                     {
-                        var query = _entityRepository.GetAll().Where(v => v.Department.Contains(input.DepartId) && (v.Position == "科长"||v.Position =="主任") && v.Id != user.EmployeeId);
+                        var query = _entityRepository.GetAll().Where(v => v.Department.Contains(input.DepartId) && (v.Position == "科长" || v.Position == "主任") && v.Id != user.EmployeeId);
                         var employees = await query.OrderBy(v => v.Name).AsNoTracking().ToListAsync();
                         var employeeListDtos = employees.MapTo<List<EmployeeListDto>>();
                         return employeeListDtos;
@@ -388,6 +394,7 @@ namespace GYSWP.Employees
             //}
             return null;
         }
+        #endregion
 
         [AbpAllowAnonymous]
         [Audited]
@@ -399,7 +406,7 @@ namespace GYSWP.Employees
             var assessToken = _dingDingAppService.GetAccessToken(ddConfig.Appkey, ddConfig.Appsecret);
             var userId = _dingDingAppService.GetUserId(assessToken, code);
             //userId = "16550049332052666774";//测试
-            userId = "99991111126849999";
+            //userId = "99991111126849999";
             //userId = "5896512826844512";
             if (userId == null)
             {
@@ -417,8 +424,29 @@ namespace GYSWP.Employees
         /// <returns></returns>
         public async Task<List<Employee>> GetAllEmployeeListAsync()
         {
-          var list =  await _entityRepository.GetAll().AsNoTracking().ToListAsync();
+            var list = await _entityRepository.GetAll().AsNoTracking().ToListAsync();
             return list;
+        }
+
+
+        /// <summary>
+        /// 根据部门Id获取标准化管理员
+        /// </summary>
+        /// <param name="empId"></param>
+        /// <returns></returns>
+        public async Task<string> GetDeptStandardAdminByIdAsync(string deptId)
+        {
+            var adminList = await GetUsersInRoleAsync("StandardAdmin");//查询所有标准化管理员
+            string[] adminIds = adminList.Select(v => v.EmployeeId).ToArray();
+            foreach (var id in adminIds)
+            {
+                var empRootDeptId = await _organizationManager.GetEmpDeptRoodIdAsync(id);
+                if (empRootDeptId.ToString() == deptId)
+                {
+                    return id;
+                }
+            }
+            return null;
         }
     }
 }

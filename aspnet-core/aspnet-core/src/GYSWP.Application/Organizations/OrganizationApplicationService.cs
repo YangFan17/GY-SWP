@@ -216,7 +216,7 @@ namespace GYSWP.Organizations
                                               OrgDeptName = o.DepartmentName,
                                               ParentId = o.ParentId,
                                               Order = o.Order
-                                          }).OrderBy(v=>v.Order).ToListAsync();
+                                          }).OrderBy(v => v.Order).ToListAsync();
             foreach (var item in organizationList)
             {
                 if (item.Id == 1)
@@ -411,7 +411,7 @@ namespace GYSWP.Organizations
                 ParentId = c.ParentId,
                 Order = c.Order
                 //Children = GetExamineChildren(c.Id)
-            }).OrderBy(v=>v.Order).ToListAsync();
+            }).OrderBy(v => v.Order).ToListAsync();
             return list;
         }
 
@@ -649,7 +649,7 @@ namespace GYSWP.Organizations
             if (orgInfo.ParentId != 1)
             {
                 long? resultId = orgInfo.ParentId;
-                id = GetTopDeptId(orgInfo.ParentId,ref resultId);
+                id = GetTopDeptId(orgInfo.ParentId, ref resultId);
             }
             else
             {
@@ -697,13 +697,13 @@ namespace GYSWP.Organizations
         /// </summary>
         /// <param name="pId"></param>
         /// <returns></returns>
-        private long? GetTopDeptId( long? pId,ref long? resultId)
+        private long? GetTopDeptId(long? pId, ref long? resultId)
         {
             var result = _entityRepository.GetAll().Where(v => v.Id == pId).Select(v => new { v.ParentId, v.Id }).FirstOrDefault();
             resultId = result.Id;
             if (result.ParentId != 1)
             {
-                GetTopDeptId(result.ParentId , ref resultId);
+                GetTopDeptId(result.ParentId, ref resultId);
             }
             return resultId;
         }
@@ -719,7 +719,7 @@ namespace GYSWP.Organizations
                 Key = 0,
                 Title = "考核部门"
             };
-            var organization = await _entityRepository.GetAll().Where(v => v.ParentId == 1 && v.DepartmentName!= "物流中心" &&!v.DepartmentName.Contains("公司")).Select(v => new OrganizationTreeNodeDto()
+            var organization = await _entityRepository.GetAll().Where(v => v.ParentId == 1 && v.DepartmentName != "物流中心" && !v.DepartmentName.Contains("公司")).Select(v => new OrganizationTreeNodeDto()
             {
                 Key = v.Id,
                 Title = v.DepartmentName,
@@ -743,7 +743,7 @@ namespace GYSWP.Organizations
                                               OrgDeptName = o.DepartmentName,
                                               ParentId = o.ParentId,
                                               Order = o.Order
-                                          }).OrderBy(v=>v.Order).ToListAsync();
+                                          }).OrderBy(v => v.Order).ToListAsync();
 
             return GetTargetTrees(0, organizationList);
         }
@@ -756,8 +756,41 @@ namespace GYSWP.Organizations
                 deptName = t.OrgDeptName,
                 order = t.Order,
                 children = GetTargetTrees(t.Id, organizationList)
-            }).OrderBy(v=>v.order).ToList();
+            }).OrderBy(v => v.order).ToList();
             return treeNodeList;
+        }
+
+        /// <summary>
+        /// 获取当前用户部门Id
+        /// </summary>
+        /// <returns></returns>
+        public async Task<string> GetDeptIdAsync()
+        {
+            var user = await GetCurrentUserAsync();
+            string deptStr = await _employeeRepository.GetAll().Where(v => v.Id == user.EmployeeId).Select(v => v.Department).FirstOrDefaultAsync();
+            string deptId = deptStr.Replace('[', ' ').Replace(']', ' ').Trim();
+            return deptId;
+        }
+
+        /// <summary>
+        /// 判断是否为基层单位
+        /// </summary>
+        /// <param name="deptId"></param>
+        /// <returns></returns>
+        public async Task<bool> GetIsCountrnDeptAsync(long deptId)
+        {
+            var user = await GetCurrentUserAsync();
+            if (deptId == 59549057 || deptId == 59646091 || deptId == 59552081 || deptId == 59632058
+              || deptId == 59571109 || deptId == 59584063 || deptId == 59644078 || deptId == 59620071 || deptId == 59628060
+              || deptId == 59538081 || deptId == 59490590 || deptId == 59591062 || deptId == 59481641 || deptId == 59534185
+              || deptId == 59534184 || deptId == 59593071 || deptId == 59534183)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 }

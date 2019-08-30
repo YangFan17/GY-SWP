@@ -10,7 +10,8 @@
     <nz-table #nzTable [nzData]="item.children" [nzNoResult]="noResult" [nzShowPagination]="false" nzBordered>
       <thead>
         <tr>
-          <th nzWidth="8%">工作职责{{i+1}}</th>
+          <th nzWidth="5%">序号</th>
+          <th nzWidth="8%">工作职责</th>
           <th nzWidth="30%">适用标准</th>
           <!-- <th>标准实施要点及记录</th> -->
           <th>适用条款</th>
@@ -18,10 +19,11 @@
       </thead>
       <tbody>
         <tr>
+          <td [attr.rowspan]="item.children.length +1">{{i+1}}</td>
           <td [attr.rowspan]="item.children.length +1">{{item.duties}}</td>
         </tr>
         <tr *ngFor="let data of nzTable.data">
-          <td><a (click)="goDoc(data.docId)">{{data.docNo}} {{data.docName}}</a></td>
+          <td><a (click)="goDoc(data.docId)">{{data.docName}}</a></td>
           <!-- <td style="word-wrap:break-word;">
                 {{data.mainPoint}}
               </td> -->

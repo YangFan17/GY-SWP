@@ -23,7 +23,7 @@ namespace  GYSWP.Clauses.Dtos
 		public Guid? ParentId { get; set; }
 
         public string Title { get; set; }
-        [StringLength(2000)]
+        [StringLength(3000)]
         public string Content { get; set; }
         /// <summary>
         /// 父Id（root 为 空）

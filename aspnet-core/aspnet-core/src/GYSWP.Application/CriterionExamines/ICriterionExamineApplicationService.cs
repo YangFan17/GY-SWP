@@ -84,5 +84,6 @@ namespace GYSWP.CriterionExamines
         Task<APIResultDto> PublishCriterionExamineAsync(PublishExamineDto input);
         Task<PagedResultDto<CriterionExamineListDto>> GetPagedCriterionRecordByQGAdmin(GetCriterionExaminesInput input);
         Task AutoUpdateCriterionStatusAsync();
+        Task<APIResultDto> CreateCountryDeptInternalExamineAsync(CriterionExamineInfoDto input);
     }
 }

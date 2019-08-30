@@ -39,8 +39,22 @@ export class SupervisionService {
         }));
     }
 
+    getAllEmployeeByDeptIdAsync(params: any): Observable<Employee[]> {
+        let url_ = "/api/services/app/Employee/GetEmployeeListByDeptIdAsync";
+        return this._commonhttp.get(url_, params).pipe(map(data => {
+            return Employee.fromJSArray(data);
+        }));
+    }
+
     createInternalExamineAsync(params: any): Observable<ApiResult> {
         let url_ = "/api/services/app/CriterionExamine/CreateInternalExamineAsync";
+        return this._commonhttp.post(url_, params).pipe(map(data => {
+            return ApiResult.fromJS(data);
+        }));
+    }
+
+    createCountryDeptInternalExamineAsync(params: any): Observable<ApiResult> {
+        let url_ = "/api/services/app/CriterionExamine/CreateCountryDeptInternalExamineAsync";
         return this._commonhttp.post(url_, params).pipe(map(data => {
             return ApiResult.fromJS(data);
         }));
@@ -191,6 +205,25 @@ export class SupervisionService {
                 arry.push(tree);
             });
             return arry;
+        }));
+    }
+
+    getDeptDocNzTreeNodes(root: any): Observable<NzTreeNode[]> {
+        let url_ = "/api/services/app/Document/GetDeptDocNzTreeNodesAsync";
+        return this._commonhttp.get(url_, { rootName: root }).pipe(map(data => {
+            let arry = [];
+            data.map(d => {
+                let tree = new NzTreeNode(d);
+                arry.push(tree);
+            });
+            return arry;
+        }));
+    }
+
+    getDeptId(): Observable<string> {
+        let url_ = "/api/services/app/Organization/GetDeptIdAsync";
+        return this._commonhttp.get(url_).pipe(map(data => {
+            return data;
         }));
     }
 

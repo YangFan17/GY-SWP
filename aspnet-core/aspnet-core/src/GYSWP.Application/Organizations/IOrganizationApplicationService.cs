@@ -79,5 +79,7 @@ namespace GYSWP.Organizations
         Task<OrganizationTreeNodeDto> GetDeptTreeByCountyAdminAsync();
         Task<OrganizationTreeNodeDto> GetTargetExamineDeptTreeAsync();
         Task<List<OrganizationNzTreeNode>> GetTargetTreesAsync();
+        Task<string> GetDeptIdAsync();
+        Task<bool> GetIsCountrnDeptAsync(long deptId);
     }
 }

@@ -11,7 +11,7 @@ namespace GYSWP.Clauses
         public virtual Guid? ParentId { get; set; }
         [StringLength(500)]
         public virtual string Title { get; set; }
-        [StringLength(2000)]
+        [StringLength(3000)]
         public virtual string Content { get; set; }
         /// <summary>
         /// 父Id（root 为 空）
