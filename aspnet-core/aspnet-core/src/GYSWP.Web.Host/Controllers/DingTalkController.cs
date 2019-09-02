@@ -55,7 +55,8 @@ namespace GYSWP.Web.Host.Controllers
             request.call_back_tag = new List<string>();
             request.call_back_tag.Add("bpms_instance_change");
             //request.url = "http://yangfan.vaiwan.com/DingTalk/ApprovalCallbackAsync";
-            request.url = "http://gy.intcov.com/DingTalk/ApprovalCallbackAsync";
+            //request.url = "http://gy.intcov.com/DingTalk/ApprovalCallbackAsync";
+            request.url = "http://bz.scgyyc.com/DingTalk/ApprovalCallbackAsync";
             request.aes_key = "99skhqweass5232345IUJKWEDL5251054DSFdsuhfW9";
             request.token = "12345";
             var jsonString = SerializerHelper.GetJsonString(request, null);
@@ -78,7 +79,8 @@ namespace GYSWP.Web.Host.Controllers
         public async Task ApprovalCallbackAsync(string signature, string timestamp, string nonce)
         {
             string token = "12345";
-            string suitekey = "ding6f6f3ad4521c207335c2f4657eb6378f";
+            //string suitekey = "ding6f6f3ad4521c207335c2f4657eb6378f";
+            string suitekey = "dingb73bcbdd093242ab35c2f4657eb6378f";
             string aes_key = "99skhqweass5232345IUJKWEDL5251054DSFdsuhfW9";
             //post数据包数据中的加密数据
             var encryptStr = GetPostParam(Request.GetRequestMemoryStream());
@@ -109,17 +111,17 @@ namespace GYSWP.Web.Host.Controllers
 
                     if (type == "finish")//审批实例结束
                     {
-                        if (title.Contains("制修订发起流程测试"))
+                        if (title.Contains("制修订发起流程"))
                         {
                             await _applyInfoAppService.UpdateApplyInfoByPIIdAsync(processInstanceId, result);
                             return;
                         }
-                        else if (title.Contains("修订审核流程测试"))
+                        else if (title.Contains("修订审核流程"))
                         {
                             await _applyInfoAppService.UpdateDocClauseByPIIdAsync(processInstanceId, result);
                             return;
                         }
-                        else if (title.Contains("制定审批流程测试"))
+                        else if (title.Contains("制定审批流程"))
                         {
                             await _applyInfoAppService.CreateDraDocByPIIdAsync(processInstanceId, result);
                             return;
