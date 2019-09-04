@@ -37,15 +37,6 @@ export class AppMenus {
             ]
         },
         {
-            text: "我的标准",
-            icon: { type: "icon", value: "read" },
-            reuse: false,
-            link: "/app/criterion/criterion",
-            group: true,
-            children: [
-            ]
-        },
-        {
             text: "工作中心",
             icon: { type: "icon", value: "laptop" },
             reuse: false,

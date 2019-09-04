@@ -52,7 +52,7 @@ namespace GYSWP.Web.Host.Controllers
             {
                 if (formFile.Length > 0)
                 {
-                    fileName = formFile.FileName.Substring(0, formFile.FileName.IndexOf('.'));
+                    fileName = formFile.FileName.Substring(0, formFile.FileName.LastIndexOf('.'));
                     fileExt = Path.GetExtension(formFile.FileName); //文件扩展名，不含“.”
                     fileSize = formFile.Length; //获得文件大小，以字节为单位
                     var uid = Guid.NewGuid().ToString();
@@ -101,7 +101,7 @@ namespace GYSWP.Web.Host.Controllers
             {
                 if (formFile.Length > 0)
                 {
-                    fileName = formFile.FileName.Substring(0, formFile.FileName.IndexOf('.'));
+                    fileName = formFile.FileName.Substring(0, formFile.FileName.LastIndexOf('.'));
                     fileExt = Path.GetExtension(formFile.FileName); //文件扩展名，不含“.”
                     fileSize = formFile.Length; //获得文件大小，以字节为单位
                     var uid = Guid.NewGuid().ToString();
@@ -144,7 +144,7 @@ namespace GYSWP.Web.Host.Controllers
             {
                 if (formFile.Length > 0)
                 {
-                    fileName = formFile.FileName.Substring(0, formFile.FileName.IndexOf('.'));
+                    fileName = formFile.FileName.Substring(0, formFile.FileName.LastIndexOf('.'));
                     fileExt = Path.GetExtension(formFile.FileName); //文件扩展名，不含“.”
                     fileSize = formFile.Length; //获得文件大小，以字节为单位
                     var uid = Guid.NewGuid().ToString();
@@ -203,7 +203,7 @@ namespace GYSWP.Web.Host.Controllers
                 {
                     //fileName = formFile.FileName.Substring(0, formFile.FileName.IndexOf('.'));
                     var originTxt = formFile.FileName.Split('/')[1];
-                    fileName = originTxt.Substring(0, originTxt.IndexOf('.'));
+                    fileName = originTxt.Substring(0, originTxt.LastIndexOf('.'));
                     fileExt = Path.GetExtension(originTxt); //文件扩展名，不含“.”
                     filePath = fileDire +'/'+ fileName+ fileExt;
                     using (var stream = new FileStream(filePath, FileMode.Create))

@@ -30,7 +30,7 @@
                     <td>
                         <nz-badge *ngIf="item.status == 1" [nzStatus]="'default'" [nzText]="'未开始'"></nz-badge>
                         <nz-badge *ngIf="item.status == 2" [nzStatus]="'success'" [nzText]="'已完成'"></nz-badge>
-                        <nz-badge *ngIf="item.status == 2" [nzStatus]="'warning'" [nzText]="'已逾期'"></nz-badge>
+                        <nz-badge *ngIf="item.status == 3" [nzStatus]="'warning'" [nzText]="'已逾期'"></nz-badge>
                     </td>
                     <td>
                         <nz-badge *ngIf="item.result == 1" [nzStatus]="'default'" [nzText]="'未检查'"></nz-badge>

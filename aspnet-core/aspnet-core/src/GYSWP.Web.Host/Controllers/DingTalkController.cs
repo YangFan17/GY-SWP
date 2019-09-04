@@ -195,33 +195,33 @@ namespace GYSWP.Web.Host.Controllers
         /// 更新已创建的回调事件
         /// </summary>
         /// <returns></returns>
-        [HttpPost]
-        public async Task<OapiCallBackUpdateCallBackResponse> UpdateCallBackAsync()
-        {
-            DingDingAppConfig ddConfig = _dingDingAppService.GetDingDingConfigByApp(DingDingAppEnum.标准化工作平台);
-            string accessToken = _dingDingAppService.GetAccessToken(ddConfig.Appkey, ddConfig.Appsecret);
-            //var url = string.Format("https://oapi.dingtalk.com/call_back/update_call_back?access_token={0}", accessToken);
-            DefaultDingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/call_back/update_call_back");
-            OapiCallBackUpdateCallBackRequest request = new OapiCallBackUpdateCallBackRequest();
-            //request.Url = "http://pm.hechuangcd.com/DingTalk/ApprovalCallbackAsync";
-            request.Url = "http://gy.intcov.com/DingTalk/ApprovalCallbackAsync";
-            request.AesKey = "45skhqweass5232345IUJKWEDL5251054DSFdsuhfW1";
-            request.Token = "123";
-            List<string> items = new List<string>();
-            items.Add("bpms_instance_change");
-            request.CallBackTag = items;
-            var rq = SerializerHelper.GetJsonString(request, null);
-            OapiCallBackUpdateCallBackResponse response = client.Execute(request, accessToken);
-            //using (MemoryStream ms = new MemoryStream())
-            //{
-            //    var bytes = Encoding.UTF8.GetBytes(rq);
-            //    ms.Write(bytes, 0, bytes.Length);
-            //    ms.Seek(0, SeekOrigin.Begin);
-            //    response = Post.PostGetJson<OapiCallBackUpdateCallBackResponse>(url, null, ms);
-            //};
-            return response;
-            //OapiCallBackUpdateCallBackResponse response = client.execute(request, accessToken);
-        }
+        //[HttpPost]
+        //public async Task<OapiCallBackUpdateCallBackResponse> UpdateCallBackAsync()
+        //{
+        //    DingDingAppConfig ddConfig = _dingDingAppService.GetDingDingConfigByApp(DingDingAppEnum.标准化工作平台);
+        //    string accessToken = _dingDingAppService.GetAccessToken(ddConfig.Appkey, ddConfig.Appsecret);
+        //    //var url = string.Format("https://oapi.dingtalk.com/call_back/update_call_back?access_token={0}", accessToken);
+        //    DefaultDingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/call_back/update_call_back");
+        //    OapiCallBackUpdateCallBackRequest request = new OapiCallBackUpdateCallBackRequest();
+        //    //request.Url = "http://pm.hechuangcd.com/DingTalk/ApprovalCallbackAsync";
+        //    request.Url = "http://gy.intcov.com/DingTalk/ApprovalCallbackAsync";
+        //    request.AesKey = "45skhqweass5232345IUJKWEDL5251054DSFdsuhfW1";
+        //    request.Token = "123";
+        //    List<string> items = new List<string>();
+        //    items.Add("bpms_instance_change");
+        //    request.CallBackTag = items;
+        //    var rq = SerializerHelper.GetJsonString(request, null);
+        //    OapiCallBackUpdateCallBackResponse response = client.Execute(request, accessToken);
+        //    //using (MemoryStream ms = new MemoryStream())
+        //    //{
+        //    //    var bytes = Encoding.UTF8.GetBytes(rq);
+        //    //    ms.Write(bytes, 0, bytes.Length);
+        //    //    ms.Seek(0, SeekOrigin.Begin);
+        //    //    response = Post.PostGetJson<OapiCallBackUpdateCallBackResponse>(url, null, ms);
+        //    //};
+        //    return response;
+        //    //OapiCallBackUpdateCallBackResponse response = client.execute(request, accessToken);
+        //}
 
         public object RemoveCallBack()
         {

@@ -70,7 +70,7 @@ namespace GYSWP.Users
         }
         public override async Task<PagedResultDto<UserDto>> GetAll(PagedUserResultRequestDto input)
         {
-            var query = base.Repository.GetAll().WhereIf(!string.IsNullOrEmpty(input.Keyword),v => v.Name.Contains(input.Keyword));
+            var query = base.Repository.GetAll().WhereIf(!string.IsNullOrEmpty(input.Keyword),v => v.Name.Contains(input.Keyword) || v.UserName.Contains(input.Keyword));
             var count = await query.CountAsync();
             var entityList = await query
                     .AsNoTracking()

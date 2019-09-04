@@ -11,7 +11,8 @@
   <div nz-row>
     <div nz-col nzSpan="12" style="padding-right:10px;">
       <nz-input-group nzSearch [nzSuffix]="suffixButton">
-        <input type="text" [(ngModel)]="keyWord" nz-input placeholder="姓名">
+        <input type="text" (keyup)="($event.which === 13) ? refreshData() : 0" [(ngModel)]="keyWord" nz-input
+          placeholder="姓名">
       </nz-input-group>
       <ng-template #suffixButton>
         <button nz-button nzType="default" [nzLoading]="isTableLoading" (click)="refreshData()" nzSearch>搜索</button>

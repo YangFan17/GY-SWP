@@ -53,6 +53,7 @@ export class EditUserComponent extends ModalComponentBase implements OnInit {
   }
 
   save(): void {
+    this.saving = true;
     let tmpRoleNames = [];
     this.roleList.forEach((item) => {
       if (item.checked) {
