@@ -366,6 +366,7 @@ namespace GYSWP.PositionInfos
                                            Id = c.Id,
                                            ClauseNo = c.ClauseNo
                                        }).ToListAsync();
+            empClauseList.Sort(Factory.Comparer);
             return empClauseList;
         }
 
@@ -443,10 +444,10 @@ namespace GYSWP.PositionInfos
                 foreach (var doc in docs)
                 {
                     string position = doc.Position.Split('.')[0];
-                    var empList = await _employeeRepository.GetAll().Where(v => v.Position == position).Select(v => new { v.Id, v.Name }).ToListAsync();
+                    var empList = await _employeeRepository.GetAll().Where(v => v.Position.Contains(position + "、") || v.Position.Contains("、" + position) || v.Position == position).Select(v => new { v.Id, v.Name }).ToListAsync();
                     if (empList.Count == 0)
                     {
-                        return new APIResultDto() { Code = 666, Msg = "导入失败,不存在员工" };
+                        return new APIResultDto() { Code = 666, Msg = $"导入失败,不存在岗位[{position}]" };
                     }
                     foreach (var emp in empList)
                     {
@@ -464,7 +465,7 @@ namespace GYSWP.PositionInfos
                                 Guid docId = await _documentRepository.GetAll().Where(v => v.Name == detailItem.DocName).Select(v => v.Id).FirstOrDefaultAsync();
                                 if (docId == Guid.Empty)
                                 {
-                                    return new APIResultDto() { Code = 888, Msg = "导入失败,不存在文档" };
+                                    return new APIResultDto() { Code = 888, Msg = $"导入失败,不存在标准名称[{detailItem.DocName}]" };
                                 }
                                 MainPointsRecord point = new MainPointsRecord();
                                 point.PositionInfoId = posId;
@@ -580,4 +581,47 @@ namespace GYSWP.PositionInfos
         public string Context { get; set; }
     }
     #endregion
+
+    class Factory : IComparer<EmpClauseList>
+    {
+        private Factory() { }
+        public static IComparer<EmpClauseList> Comparer
+        {
+            get { return new Factory(); }
+        }
+        public int Compare(EmpClauseList x, EmpClauseList y)
+        {
+            try
+            {
+                int ret = 0;
+                var xsplit = x.ClauseNo.Split(".".ToCharArray()).Select(z => int.Parse(z)).ToList();
+                var ysplit = y.ClauseNo.Split(".".ToCharArray()).Select(z => int.Parse(z)).ToList();
+                for (int i = 0; i < Math.Max(xsplit.Count, ysplit.Count); i++)
+                {
+
+                    if (xsplit.Count - 1 < i)
+                    {
+                        ret = -1;
+                        return ret;
+                    }
+                    else if (ysplit.Count - 1 < i)
+                    {
+                        ret = 1;
+                        return ret;
+                    }
+                    else
+                    {
+                        ret = xsplit[i] - ysplit[i];
+                        if (ret != 0)
+                            return ret;
+                    }
+                }
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+    }
 }

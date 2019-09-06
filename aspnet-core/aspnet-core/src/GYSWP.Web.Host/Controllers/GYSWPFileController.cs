@@ -11,6 +11,7 @@ using GYSWP.Configuration;
 using GYSWP.Documents;
 using GYSWP.Documents.Dtos;
 using GYSWP.Dtos;
+using GYSWP.PositionInfos;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,14 +22,16 @@ namespace GYSWP.Web.Host.Controllers
     {
         //private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IDocumentAppService _documentAppService;
-
+        private readonly IPositionInfoAppService _positionInfoAppService;
         public GYSWPFileController(
             //IHostingEnvironment hostingEnvironment , 
-            IDocumentAppService documentAppService
+            IDocumentAppService documentAppService,
+            IPositionInfoAppService positionInfoAppService
           )
         {
             //this._hostingEnvironment = hostingEnvironment;
             _documentAppService = documentAppService;
+            _positionInfoAppService = positionInfoAppService;
         }
 
         [RequestFormSizeLimit(valueCountLimit: 2147483647)]
@@ -205,7 +208,7 @@ namespace GYSWP.Web.Host.Controllers
                     var originTxt = formFile.FileName.Split('/')[1];
                     fileName = originTxt.Substring(0, originTxt.LastIndexOf('.'));
                     fileExt = Path.GetExtension(originTxt); //文件扩展名，不含“.”
-                    filePath = fileDire +'/'+ fileName+ fileExt;
+                    filePath = fileDire + '/' + fileName + fileExt;
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         await formFile.CopyToAsync(stream);
@@ -220,6 +223,47 @@ namespace GYSWP.Web.Host.Controllers
             apiResult.Code = 0;
             apiResult.Msg = "上传文件成功";
             return Json(apiResult);
+        }
+
+
+        /// <summary>
+        /// 批量导入工作职责txt
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        [RequestFormSizeLimit(valueCountLimit: 2147483647)]
+        [HttpPost]
+        [AbpAllowAnonymous]
+        //[Audited]
+        public async Task<JsonResult> PositionFilesTxTPostsAsync(IFormFile[] file)
+        {
+            var files = Request.Form.Files;
+            var filePath = string.Empty;
+            var fileName = string.Empty;
+            string fileExt = string.Empty;
+            var fileDire = @"E:\gyswpData\positionUpload/" + Guid.NewGuid();
+
+            if (!Directory.Exists(fileDire))
+            {
+                Directory.CreateDirectory(fileDire);
+            }
+
+            foreach (var formFile in files)
+            {
+                if (formFile.Length > 0)
+                {
+                    var originTxt = formFile.FileName.Split('/')[1];
+                    fileName = originTxt.Substring(0, originTxt.LastIndexOf('.'));
+                    fileExt = Path.GetExtension(originTxt); //文件扩展名，不含“.”
+                    filePath = fileDire + '/' + fileName + fileExt;
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await formFile.CopyToAsync(stream);
+                    }
+                }
+            }
+            var restult = await _positionInfoAppService.PositionInfoImportAsync(fileDire);
+            return Json(restult);
         }
     }
 }

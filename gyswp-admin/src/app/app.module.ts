@@ -12,6 +12,7 @@ import { CreatePositionInfoComponent } from './home/position-info/create-positio
 import { AddDocumentComponent } from './home/position-info/add-document/add-document.component';
 import { EmpDocListComponent } from './home/position-info/emp-doc-list/emp-doc-list.component';
 import { ConfirmLearningComponent } from './work-criterion/criterion/self-learning/confirm-learning/confirm-learning.component';
+import { UploadPositionComponent } from './home/position-info/upload-position/upload-position.component';
 
 @NgModule({
   imports: [
@@ -30,13 +31,15 @@ import { ConfirmLearningComponent } from './work-criterion/criterion/self-learni
     CreatePositionInfoComponent,
     AddDocumentComponent,
     EmpDocListComponent,
-    ConfirmLearningComponent
+    ConfirmLearningComponent,
+    UploadPositionComponent
   ],
   entryComponents: [
     CreatePositionInfoComponent,
     AddDocumentComponent,
     EmpDocListComponent,
-    ConfirmLearningComponent
+    ConfirmLearningComponent,
+    UploadPositionComponent
   ],
   providers: [],
 })

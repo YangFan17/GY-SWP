@@ -1,0 +1,14 @@
+<div class="padding-bottom-45">
+    <h3 style="text-align: center;">
+        <span>职责导入</span>
+    </h3>
+    <div nz-col class="mb-md">
+        <nz-alert nzType="info" nzMessage="请选择目标文件夹并导入" nzShowIcon></nz-alert>
+    </div>
+    <div class="custom-modal-footer" style="text-align: right;">
+        <nz-upload nzAction="{{postUrl | hostUrl}}" [nzDisabled]="uploading" (nzChange)="handleChange($event)"
+            nzDirectory>
+            <button nz-button>批量导入</button>
+        </nz-upload>
+    </div>
+</div>

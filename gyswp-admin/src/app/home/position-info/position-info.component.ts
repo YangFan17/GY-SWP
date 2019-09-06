@@ -6,6 +6,7 @@ import { AddDocumentComponent } from './add-document/add-document.component';
 import { Router } from '@angular/router';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd';
 import { HomeService } from 'services';
+import { UploadPositionComponent } from './upload-position/upload-position.component';
 
 @Component({
     moduleId: module.id,
@@ -89,6 +90,20 @@ export class PositionInfoComponent extends AppComponentBase {
                 }
             });
         }
+    }
+
+    upload() {
+        this.modalHelper
+            .open(UploadPositionComponent, {}, 'md', {
+                nzMask: true,
+                nzClosable: true,
+                nzMaskClosable: false,
+            })
+            .subscribe(isSave => {
+                if (isSave) {
+                    // this.getTreeAsync(this.deptId);
+                }
+            });
     }
 
     return() {

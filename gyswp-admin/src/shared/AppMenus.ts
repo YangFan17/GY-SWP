@@ -69,12 +69,12 @@ export class AppMenus {
             group: true,
             children: [
                 {
-                    text: "标准监督",
+                    text: "标准条款检查",
                     link: "/app/supervision/supervision",
                     reuse: false
                 },
                 {
-                    text: "考核指标",
+                    text: "目标指标检查",
                     link: "/app/supervision/indicators",
                     reuse: false
                 },

@@ -7,9 +7,10 @@
 <div>
   <p style="text-align: center;font-weight: bold;font-size: 20px;">{{position}}</p>
   <div *ngFor="let item of listOfMapData;let i = index">
-    <nz-table #nzTable [nzData]="item.children" [nzNoResult]="noResult" [nzShowPagination]="false" nzBordered>
+    <nz-table #nzTable [nzData]="item.children" [nzNoResult]="noResult" [nzShowPagination]="false"
+      [nzFrontPagination]="false" nzBordered>
       <thead>
-        <tr>
+        <tr [ngClass]="{'test':i!=0 }">
           <th nzWidth="5%">序号</th>
           <th nzWidth="8%">工作职责</th>
           <th nzWidth="30%">适用标准</th>
