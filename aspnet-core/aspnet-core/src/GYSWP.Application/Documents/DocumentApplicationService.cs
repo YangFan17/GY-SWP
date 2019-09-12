@@ -329,20 +329,6 @@ namespace GYSWP.Documents
             //当前用户角色
             var roles = await GetUserRolesAsync();
             ////如果包含市级管理员 和 系统管理员 全部架构
-            ////if (roles.Contains(RoleCodes.Admin))
-            ////{
-            //root.children = await getDeptTreeAsync(new long[] { 1 });//顶级部门
-            ////}
-            ////else if (roles.Contains(RoleCodes.EnterpriseAdmin))//本部门架构
-            ////{
-            ////    var user = await GetCurrentUserAsync();
-            ////    if (!string.IsNullOrEmpty(user.EmployeeId))
-            ////    {
-            ////        var employee = await _employeeRepository.GetAsync(user.EmployeeId);
-            ////        var depts = employee.Department.Substring(1, employee.Department.Length - 2).Split("][");//多部门拆分
-            ////        root.children = await getDeptTreeAsync(Array.ConvertAll(depts, d => long.Parse(d)));
-            ////    }
-            ////}
             if (roles.Contains(RoleCodes.Admin) || roles.Contains(RoleCodes.QiGuanAdmin))
             {
                 root.children = await getDeptTreeAsync(new long[] { 1 });//顶级部门
@@ -357,6 +343,37 @@ namespace GYSWP.Documents
                     root.children = await getDeptTreeAsync(Array.ConvertAll(depts, d => long.Parse(d)));
                 }
             }
+            if (root.children.Count == 0)
+            {
+                root.children.Add(new DocNzTreeNode()
+                {
+                    key = "-1",
+                    title = "没有任何部门权限"
+                });
+            }
+            else
+            {
+                root.children[0].selected = true;
+            }
+            docDeptList.Add(root);
+            return docDeptList;
+        }
+
+        /// <summary>
+        /// 监督检查 不需要组织架构权限
+        /// </summary>
+        /// <param name="rootName"></param>
+        /// <returns></returns>
+        public async Task<List<DocNzTreeNode>> GetDeptDocNzTreeNodesNoPermissionAsync(string rootName)
+        {
+            var docDeptList = new List<DocNzTreeNode>();
+            var root = new DocNzTreeNode()
+            {
+                key = "0",
+                title = rootName //"标准归口部门"
+            };
+
+                root.children = await getDeptTreeAsync(new long[] { 1 });//顶级部门
             if (root.children.Count == 0)
             {
                 root.children.Add(new DocNzTreeNode()

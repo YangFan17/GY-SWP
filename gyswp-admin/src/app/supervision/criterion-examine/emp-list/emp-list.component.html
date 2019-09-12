@@ -15,10 +15,10 @@
         <i nz-icon type="usergroup-add"></i>
         <span>部门考核</span>
     </button>
-    <button nz-button type="button" *ngIf="isCountryDept" (click)="internalExa(1)">
+    <!-- <button nz-button type="button" *ngIf="isCountryDept" (click)="internalExa(1)">
         <i nz-icon type="usergroup-add"></i>
         <span>考核岗位人员</span>
-    </button>
+    </button> -->
     <!-- <button nz-button type="button" (click)="qiGuanExa()">
         <i nz-icon type="audit"></i>
         <span>企管科管理员考核</span>
@@ -34,7 +34,11 @@
             [nzLoading]="loading" [nzScroll]="{ y: '720px' }">
             <thead>
                 <tr>
-                    <th *ngIf="dept.isCurDept || isCountryDept" style="text-align: right;">
+                    <!-- <th *ngIf="dept.isCurDept || isCountryDept" style="text-align: right;">
+                        <label nz-checkbox [(ngModel)]="isSelectedAll" (ngModelChange)="checkAll($event)">
+                        </label>
+                    </th> -->
+                    <th *ngIf="dept.isCurDept" style="text-align: right;">
                         <label nz-checkbox [(ngModel)]="isSelectedAll" (ngModelChange)="checkAll($event)">
                         </label>
                     </th>
@@ -46,7 +50,11 @@
             </thead>
             <tbody>
                 <tr *ngFor="let item of nzTable.data">
-                    <td *ngIf="dept.isCurDept || isCountryDept" style="text-align: right;">
+                    <!-- <td *ngIf="dept.isCurDept || isCountryDept" style="text-align: right;">
+                        <label nz-checkbox [(ngModel)]="item.checked" (nzCheckedChange)="isCancelCheck($event)">
+                        </label>
+                    </td> -->
+                    <td *ngIf="dept.isCurDept" style="text-align: right;">
                         <label nz-checkbox [(ngModel)]="item.checked" (nzCheckedChange)="isCancelCheck($event)">
                         </label>
                     </td>

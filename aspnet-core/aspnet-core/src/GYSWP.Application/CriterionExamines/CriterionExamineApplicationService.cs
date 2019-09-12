@@ -31,6 +31,7 @@ using GYSWP.Documents;
 using Abp.Auditing;
 using GYSWP.DingDingApproval;
 using GYSWP.Organizations.DomainService;
+using GYSWP.Categorys;
 
 namespace GYSWP.CriterionExamines
 {
@@ -48,6 +49,7 @@ namespace GYSWP.CriterionExamines
         private readonly IRepository<ExamineDetail, Guid> _examineDetailRepository;
         private readonly IRepository<EmployeeClause, Guid> _employeeClauseRepository;
         private readonly IRepository<Document, Guid> _documentRepository;
+        private readonly IRepository<Category> _categoryRepository;
         private readonly IApprovalAppService _approvalAppService;
         private readonly IEmployeeManager _employeeManager;
         private readonly IOrganizationManager _organizationManager;
@@ -64,6 +66,7 @@ namespace GYSWP.CriterionExamines
         , IRepository<EmployeeClause, Guid> employeeClauseRepository
         , IEmployeeManager employeeManager
         , IRepository<Document, Guid> documentRepository
+        , IRepository<Category> categoryRepository
         , IApprovalAppService approvalAppService
         , IOrganizationManager organizationManager
         , IEmployeeAppService employeeService
@@ -77,6 +80,7 @@ namespace GYSWP.CriterionExamines
             _employeeClauseRepository = employeeClauseRepository;
             _employeeManager = employeeManager;
             _documentRepository = documentRepository;
+            _categoryRepository = categoryRepository;
             _approvalAppService = approvalAppService;
             _organizationManager = organizationManager;
             _employeeService = employeeService;
@@ -261,82 +265,122 @@ namespace GYSWP.CriterionExamines
                 //查询当前部门标准化管理员
                 //string DeptStandardAdminId = await _employeeService.GetDeptStandardAdminByIdAsync(input.DeptId.ToString());
                 //string DeptStandardAdminName = await _employeeRepository.GetAll().Where(v => v.Id == DeptStandardAdminId).Select(v => v.Name).FirstOrDefaultAsync();
-                foreach (var emp in input.EmpInfo)
+                if (input.Type == GYEnums.CriterionExamineType.外部考核)//部门外部考核抽自己部门的标准
                 {
-                    var empClauseGroupList = await _employeeClauseRepository.GetAll().Where(v => v.EmployeeId == emp.EmpId).GroupBy(v => new { v.DocumentId })
-                        .Select(v => new { DocId = v.Key.DocumentId, Count = v.Count() }).ToListAsync();
-                    if (empClauseGroupList.Count > 0)
+                    int zuofeiCategoryId = await _categoryRepository.GetAll().Where(v => v.DeptId == organization.Id && v.Name == "作废标准库").Select(v => v.Id).FirstOrDefaultAsync();
+                    int[] curDeptValidId = await _categoryRepository.GetAll().Where(v => v.DeptId == organization.Id && v.ParentId != 0 && v.ParentId != zuofeiCategoryId).Select(v => v.Id).ToArrayAsync();
+                    Guid[] curDeptDocIds = await _documentRepository.GetAll().Where(v => curDeptValidId.Contains(v.CategoryId)).Select(v => v.Id).ToArrayAsync();
+                    foreach (var emp in input.EmpInfo)
                     {
-                        foreach (var groupInfo in empClauseGroupList)
+                        var empClauseGroupList = await _employeeClauseRepository.GetAll().Where(v => v.EmployeeId == emp.EmpId && curDeptDocIds.Contains(v.DocumentId)).GroupBy(v => new { v.DocumentId })
+                            .Select(v => new { DocId = v.Key.DocumentId, Count = v.Count() }).ToListAsync();
+                        if (empClauseGroupList.Count > 0)
                         {
-                            #region 全部改为具体人员考核
-                            //if (groupInfo.Count > 0)
-                            //{
-                            //    int random = (int)Math.Ceiling(groupInfo.Count * 0.5);
-                            //    var empClauseList = await _employeeClauseRepository.GetAll().Where(v => v.EmployeeId == emp.EmpId && v.DocumentId == groupInfo.DocId).OrderBy(v => Guid.NewGuid()).Take(random).ToListAsync();
-                            //    if (entity.Type == GYEnums.CriterionExamineType.内部考核)//内部考核由每个人员填写
-                            //    {
-                            //        foreach (var item in empClauseList)
-                            //        {
-                            //            ExamineDetail edEntity = new ExamineDetail();
-                            //            edEntity.ClauseId = item.ClauseId;
-                            //            edEntity.DocumentId = item.DocumentId;
-                            //            edEntity.CreatorEmpeeId = user.EmployeeId;
-                            //            edEntity.CreatorEmpName = user.EmployeeName;
-                            //            edEntity.EmployeeId = emp.EmpId;
-                            //            edEntity.EmployeeName = emp.EmpName;
-                            //            edEntity.CriterionExamineId = exaId;
-                            //            edEntity.Result = GYEnums.ExamineStatus.未检查;
-                            //            edEntity.Status = GYEnums.ResultStatus.进行中;
-                            //            await _examineDetailRepository.InsertAsync(edEntity);
-                            //        }
-                            //    }
-                            //    else//外部考核由标准化管理员填写
-                            //    {
-                            //        //var adminList = await GetUsersInRoleAsync("StandardAdmin");
-                            //        //string[] adminIds = adminList.Select(v => v.EmployeeId).ToArray();
-                            //        //var examEmp = await _employeeRepository.GetAll().Where(v => adminIds.Contains(v.Id) && v.Department == "[" + input.DeptId + "]").Select(v => new { v.Id, v.Name }).FirstOrDefaultAsync();                                    
-                            //        foreach (var item in empClauseList)
-                            //        {
-                            //            ExamineDetail edEntity = new ExamineDetail();
-                            //            edEntity.ClauseId = item.ClauseId;
-                            //            edEntity.DocumentId = item.DocumentId;
-                            //            edEntity.CreatorEmpeeId = user.EmployeeId;
-                            //            edEntity.CreatorEmpName = user.EmployeeName;
-                            //            //edEntity.EmployeeId = examEmp.Id;
-                            //            //edEntity.EmployeeName = examEmp.Name;
-                            //            edEntity.EmployeeId = DeptStandardAdminId;
-                            //            edEntity.EmployeeName = DeptStandardAdminName;
-                            //            edEntity.CriterionExamineId = exaId;
-                            //            edEntity.Result = GYEnums.ExamineStatus.未检查;
-                            //            edEntity.Status = GYEnums.ResultStatus.进行中;
-                            //            await _examineDetailRepository.InsertAsync(edEntity);
-                            //        }
-                            //    }
-                            //}
-                            #endregion
-                            if (groupInfo.Count > 0)
+                            foreach (var groupInfo in empClauseGroupList)
                             {
-                                int random = (int)Math.Ceiling(groupInfo.Count * 0.5);
-                                var empClauseList = await _employeeClauseRepository.GetAll().Where(v => v.EmployeeId == emp.EmpId && v.DocumentId == groupInfo.DocId).OrderBy(v => Guid.NewGuid()).Take(random).ToListAsync();
-                                foreach (var item in empClauseList)
+                                if (groupInfo.Count > 0)
                                 {
-                                    ExamineDetail edEntity = new ExamineDetail();
-                                    edEntity.ClauseId = item.ClauseId;
-                                    edEntity.DocumentId = item.DocumentId;
-                                    edEntity.CreatorEmpeeId = user.EmployeeId;
-                                    edEntity.CreatorEmpName = user.EmployeeName;
-                                    edEntity.EmployeeId = emp.EmpId;
-                                    edEntity.EmployeeName = emp.EmpName;
-                                    edEntity.CriterionExamineId = exaId;
-                                    edEntity.Result = GYEnums.ExamineStatus.未检查;
-                                    edEntity.Status = GYEnums.ResultStatus.进行中;
-                                    await _examineDetailRepository.InsertAsync(edEntity);
+                                    int random = (int)Math.Ceiling(groupInfo.Count * 0.25);
+                                    var empClauseList = await _employeeClauseRepository.GetAll().Where(v => v.EmployeeId == emp.EmpId && v.DocumentId == groupInfo.DocId).OrderBy(v => Guid.NewGuid()).Take(random).ToListAsync();
+                                    foreach (var item in empClauseList)
+                                    {
+                                        ExamineDetail edEntity = new ExamineDetail();
+                                        edEntity.ClauseId = item.ClauseId;
+                                        edEntity.DocumentId = item.DocumentId;
+                                        edEntity.CreatorEmpeeId = user.EmployeeId;
+                                        edEntity.CreatorEmpName = user.EmployeeName;
+                                        edEntity.EmployeeId = emp.EmpId;
+                                        edEntity.EmployeeName = emp.EmpName;
+                                        edEntity.CriterionExamineId = exaId;
+                                        edEntity.Result = GYEnums.ExamineStatus.未检查;
+                                        edEntity.Status = GYEnums.ResultStatus.进行中;
+                                        await _examineDetailRepository.InsertAsync(edEntity);
+                                    }
                                 }
                             }
                         }
                     }
                 }
+                else
+                {
+                    foreach (var emp in input.EmpInfo)
+                    {
+                        var empClauseGroupList = await _employeeClauseRepository.GetAll().Where(v => v.EmployeeId == emp.EmpId).GroupBy(v => new { v.DocumentId })
+                            .Select(v => new { DocId = v.Key.DocumentId, Count = v.Count() }).ToListAsync();
+                        if (empClauseGroupList.Count > 0)
+                        {
+                            foreach (var groupInfo in empClauseGroupList)
+                            {
+                                #region 全部改为具体人员考核
+                                //if (groupInfo.Count > 0)
+                                //{
+                                //    int random = (int)Math.Ceiling(groupInfo.Count * 0.25);
+                                //    var empClauseList = await _employeeClauseRepository.GetAll().Where(v => v.EmployeeId == emp.EmpId && v.DocumentId == groupInfo.DocId).OrderBy(v => Guid.NewGuid()).Take(random).ToListAsync();
+                                //    if (entity.Type == GYEnums.CriterionExamineType.内部考核)//内部考核由每个人员填写
+                                //    {
+                                //        foreach (var item in empClauseList)
+                                //        {
+                                //            ExamineDetail edEntity = new ExamineDetail();
+                                //            edEntity.ClauseId = item.ClauseId;
+                                //            edEntity.DocumentId = item.DocumentId;
+                                //            edEntity.CreatorEmpeeId = user.EmployeeId;
+                                //            edEntity.CreatorEmpName = user.EmployeeName;
+                                //            edEntity.EmployeeId = emp.EmpId;
+                                //            edEntity.EmployeeName = emp.EmpName;
+                                //            edEntity.CriterionExamineId = exaId;
+                                //            edEntity.Result = GYEnums.ExamineStatus.未检查;
+                                //            edEntity.Status = GYEnums.ResultStatus.进行中;
+                                //            await _examineDetailRepository.InsertAsync(edEntity);
+                                //        }
+                                //    }
+                                //    else//外部考核由标准化管理员填写
+                                //    {
+                                //        //var adminList = await GetUsersInRoleAsync("StandardAdmin");
+                                //        //string[] adminIds = adminList.Select(v => v.EmployeeId).ToArray();
+                                //        //var examEmp = await _employeeRepository.GetAll().Where(v => adminIds.Contains(v.Id) && v.Department == "[" + input.DeptId + "]").Select(v => new { v.Id, v.Name }).FirstOrDefaultAsync();                                    
+                                //        foreach (var item in empClauseList)
+                                //        {
+                                //            ExamineDetail edEntity = new ExamineDetail();
+                                //            edEntity.ClauseId = item.ClauseId;
+                                //            edEntity.DocumentId = item.DocumentId;
+                                //            edEntity.CreatorEmpeeId = user.EmployeeId;
+                                //            edEntity.CreatorEmpName = user.EmployeeName;
+                                //            //edEntity.EmployeeId = examEmp.Id;
+                                //            //edEntity.EmployeeName = examEmp.Name;
+                                //            edEntity.EmployeeId = DeptStandardAdminId;
+                                //            edEntity.EmployeeName = DeptStandardAdminName;
+                                //            edEntity.CriterionExamineId = exaId;
+                                //            edEntity.Result = GYEnums.ExamineStatus.未检查;
+                                //            edEntity.Status = GYEnums.ResultStatus.进行中;
+                                //            await _examineDetailRepository.InsertAsync(edEntity);
+                                //        }
+                                //    }
+                                //}
+                                #endregion
+                                if (groupInfo.Count > 0)
+                                {
+                                    int random = (int)Math.Ceiling(groupInfo.Count * 0.25);
+                                    var empClauseList = await _employeeClauseRepository.GetAll().Where(v => v.EmployeeId == emp.EmpId && v.DocumentId == groupInfo.DocId).OrderBy(v => Guid.NewGuid()).Take(random).ToListAsync();
+                                    foreach (var item in empClauseList)
+                                    {
+                                        ExamineDetail edEntity = new ExamineDetail();
+                                        edEntity.ClauseId = item.ClauseId;
+                                        edEntity.DocumentId = item.DocumentId;
+                                        edEntity.CreatorEmpeeId = user.EmployeeId;
+                                        edEntity.CreatorEmpName = user.EmployeeName;
+                                        edEntity.EmployeeId = emp.EmpId;
+                                        edEntity.EmployeeName = emp.EmpName;
+                                        edEntity.CriterionExamineId = exaId;
+                                        edEntity.Result = GYEnums.ExamineStatus.未检查;
+                                        edEntity.Status = GYEnums.ResultStatus.进行中;
+                                        await _examineDetailRepository.InsertAsync(edEntity);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
                 return new APIResultDto() { Code = 0, Msg = "考核表创建成功", Data = new { entity.Id, entity.Title } };
             }
             catch (Exception ex)
@@ -409,7 +453,7 @@ namespace GYSWP.CriterionExamines
         //            int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
         //            if (total > 0)
         //            {
-        //                int random = (int)Math.Ceiling(total * 0.5);//计算抽查总数（总和的20%)
+        //                int random = (int)Math.Ceiling(total * 0.25);//计算抽查总数（总和的20%)
         //                int YingXiao = (int)Math.Ceiling(random * 0.4);//营销标准40%
         //                //如果预期计算结果大于实际数量，取实际结果
         //                if (YingXiao > YingXiaoList.Count())
@@ -491,7 +535,7 @@ namespace GYSWP.CriterionExamines
         //            int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
         //            if (total > 0)
         //            {
-        //                int random = (int)Math.Ceiling(total * 0.5);//计算抽查总数（总和的20%)
+        //                int random = (int)Math.Ceiling(total * 0.25);//计算抽查总数（总和的20%)
         //                int YingXiao = (int)Math.Ceiling(random * 0.3);//营销标准30%
         //                //如果预期计算结果大于实际数量，取实际结果
         //                if (YingXiao > YingXiaoList.Count())
@@ -582,7 +626,7 @@ namespace GYSWP.CriterionExamines
         //        else if (input.DeptId == 59593071) //物流中心
         //        {
         //            int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
-        //            int random = (int)Math.Ceiling(total * 0.5);
+        //            int random = (int)Math.Ceiling(total * 0.25);
         //            var examEmp = await _employeeRepository.GetAll().Where(v => v.Department == "[60007074]" && v.Position == "部长").Select(v => new { v.Id, v.Name }).FirstOrDefaultAsync();
         //            var empClauseList = await _employeeClauseRepository.GetAll().Where(v => employeeIds.Contains(v.EmployeeId)).OrderBy(v => Guid.NewGuid()).Take(random).ToListAsync();
         //            foreach (var item in empClauseList)
@@ -604,7 +648,7 @@ namespace GYSWP.CriterionExamines
         //        else //机关部门
         //        {
         //            int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
-        //            int random = (int)Math.Ceiling(total * 0.5);
+        //            int random = (int)Math.Ceiling(total * 0.25);
         //            var adminList = await GetUsersInRoleAsync("StandardAdmin");
         //            string[] adminIds = adminList.Select(v => v.EmployeeId).ToArray();
         //            var examEmp = await _employeeRepository.GetAll().Where(v => adminIds.Contains(v.Id) && v.Department == "[" + input.DeptId + "]").Select(v => new { v.Id, v.Name }).FirstOrDefaultAsync();
@@ -638,6 +682,284 @@ namespace GYSWP.CriterionExamines
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
+        //public async Task<APIResultDto> CreateExamineByQiGuanAsync(CriterionExamineInfoDto input)
+        //{
+        //    try
+        //    {
+        //        //生成考核基本信息
+        //        #region 考核基本信息
+        //        var user = await GetCurrentUserAsync();
+        //        string deptId = await _employeeRepository.GetAll().Where(v => v.Id == user.EmployeeId).Select(v => v.Department).FirstOrDefaultAsync();
+        //        var organization = await _organizationRepository.GetAll().Where(v => "[" + v.Id + "]" == deptId).Select(v => new { v.Id, v.DepartmentName }).FirstOrDefaultAsync();
+        //        CriterionExamine entity = new CriterionExamine();
+        //        entity.Type = input.Type;
+        //        entity.IsPublish = false;
+        //        entity.DeptId = input.DeptId;
+        //        entity.DeptName = input.DeptName;
+        //        entity.CreatorEmpeeId = user.EmployeeId;
+        //        entity.CreatorEmpName = user.EmployeeName;
+        //        entity.CreatorDeptId = organization.Id;
+        //        entity.CreatorDeptName = organization.DepartmentName;
+        //        DateTime date = DateTime.Now;
+        //        if (input.Type == GYEnums.CriterionExamineType.外部考核)
+        //        {
+        //            entity.Title = organization.DepartmentName + date.Year + "年" + date.Month + "月考核" + input.DeptName;
+        //        }
+        //        else
+        //        {
+        //            entity.Title = organization.DepartmentName + date.Year + "年" + date.Month + "月" + input.Type.ToString();
+        //        }
+        //        Guid exaId = await _entityRepository.InsertAndGetIdAsync(entity);
+        //        await CurrentUnitOfWork.SaveChangesAsync();
+        //        #endregion
+        //        //按照区县生成不同考核规则信息
+        //        #region 公共模块
+        //        string StandardAdminId = await _employeeService.GetDeptStandardAdminByIdAsync(input.DeptId.ToString());//查询所选部门标准化管理员
+        //        string StandardAdminName = await _employeeRepository.GetAll().Where(v => v.Id == StandardAdminId).Select(v => v.Name).FirstOrDefaultAsync();
+        //        string[] employeeIds = await GetEmployeeIdsByDeptId(input.DeptId);
+        //        var empClauseGroupList = await _employeeClauseRepository.GetAll().Where(v => employeeIds.Contains(v.EmployeeId)).GroupBy(v => v.DocumentId).Select(v => v.Key).ToListAsync();
+        //        var doc = _documentRepository.GetAll().Where(v => v.IsAction == true);
+        //        var org = _organizationRepository.GetAll();
+        //        var docCategroyList = (from e in empClauseGroupList
+        //                               join d in doc on e equals d.Id
+        //                               join o in org on d.DeptIds equals o.Id.ToString()
+        //                               select new
+        //                               {
+        //                                   e,
+        //                                   DeptName = o.DepartmentName
+        //                               }).ToList();
+
+        //        var YingXiaoList = docCategroyList.Where(d => d.DeptName == "市场营销科");//已确认的营销标准
+        //        var ZhuanMaiList = docCategroyList.Where(d => d.DeptName == "专卖科");//已确认的专卖标准
+
+
+        //        #endregion
+        //        //纯销区
+        //        #region 纯销区考核
+        //        if (input.DeptId == 59549059 || input.DeptId == 59584066 || input.DeptId == 59587088 || input.DeptId == 59634065)
+        //        {
+        //            var OtherList = docCategroyList.Where(d => d.DeptName != "专卖科" && d.DeptName != "市场营销科");//已确认的其他标准
+        //            int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
+        //            if (total > 0)
+        //            {
+        //                int random = (int)Math.Ceiling(total * 0.25);//计算抽查总数（总和的20%)
+        //                int YingXiao = (int)Math.Ceiling(random * 0.4);//营销标准40%
+        //                //如果预期计算结果大于实际数量，取实际结果
+        //                if (YingXiao > YingXiaoList.Count())
+        //                {
+        //                    YingXiao = YingXiaoList.Count();
+        //                }
+        //                int ZhuanMai = (int)Math.Ceiling(random * 0.4);//专卖标准40%
+        //                if (ZhuanMai > ZhuanMaiList.Count())
+        //                {
+        //                    ZhuanMai = ZhuanMaiList.Count();
+        //                }
+        //                int Other = random - YingXiao - ZhuanMai;//其他20%
+        //                if (Other > OtherList.Count())
+        //                {
+        //                    Other = OtherList.Count();
+        //                }
+        //                var YingXiaoClauseList = await _employeeClauseRepository.GetAll().Where(v => YingXiaoList.Select(y => y.e).Contains(v.DocumentId)).OrderBy(v => Guid.NewGuid()).Take(YingXiao).ToListAsync();
+        //                var ZhuanMaiClauseList = await _employeeClauseRepository.GetAll().Where(v => ZhuanMaiList.Select(z => z.e).Contains(v.DocumentId)).OrderBy(v => Guid.NewGuid()).Take(ZhuanMai).ToListAsync();
+        //                var OtherClauseList = await _employeeClauseRepository.GetAll().Where(v => OtherList.Select(o => o.e).Contains(v.DocumentId)).OrderBy(v => Guid.NewGuid()).Take(Other).ToListAsync();
+
+        //                foreach (var item in YingXiaoClauseList)
+        //                {
+        //                    ExamineDetail edEntity = new ExamineDetail();
+        //                    edEntity.ClauseId = item.ClauseId;
+        //                    edEntity.DocumentId = item.DocumentId;
+        //                    edEntity.CreatorEmpeeId = user.EmployeeId;
+        //                    edEntity.CreatorEmpName = user.EmployeeName;
+        //                    edEntity.EmployeeId = StandardAdminId;
+        //                    edEntity.EmployeeName = StandardAdminName;
+        //                    edEntity.CriterionExamineId = exaId;
+        //                    edEntity.Result = GYEnums.ExamineStatus.未检查;
+        //                    edEntity.Status = GYEnums.ResultStatus.进行中;
+        //                    await _examineDetailRepository.InsertAsync(edEntity);
+        //                }
+        //                foreach (var item in ZhuanMaiClauseList)
+        //                {
+        //                    ExamineDetail edEntity = new ExamineDetail();
+        //                    edEntity.ClauseId = item.ClauseId;
+        //                    edEntity.DocumentId = item.DocumentId;
+        //                    edEntity.CreatorEmpeeId = user.EmployeeId;
+        //                    edEntity.CreatorEmpName = user.EmployeeName;
+        //                    edEntity.EmployeeId = StandardAdminId;
+        //                    edEntity.EmployeeName = StandardAdminName;
+        //                    edEntity.CriterionExamineId = exaId;
+        //                    edEntity.Result = GYEnums.ExamineStatus.未检查;
+        //                    edEntity.Status = GYEnums.ResultStatus.进行中;
+        //                    await _examineDetailRepository.InsertAsync(edEntity);
+        //                }
+        //                foreach (var item in OtherClauseList)
+        //                {
+        //                    ExamineDetail edEntity = new ExamineDetail();
+        //                    edEntity.ClauseId = item.ClauseId;
+        //                    edEntity.DocumentId = item.DocumentId;
+        //                    edEntity.CreatorEmpeeId = user.EmployeeId;
+        //                    edEntity.CreatorEmpName = user.EmployeeName;
+        //                    edEntity.EmployeeId = StandardAdminId;
+        //                    edEntity.EmployeeName = StandardAdminName;
+        //                    edEntity.CriterionExamineId = exaId;
+        //                    edEntity.Result = GYEnums.ExamineStatus.未检查;
+        //                    edEntity.Status = GYEnums.ResultStatus.进行中;
+        //                    await _examineDetailRepository.InsertAsync(edEntity);
+        //                }
+        //            }
+        //        }
+        //        #endregion
+        //        //烟产区
+        //        #region 烟产区考核
+        //        else if (input.DeptId == 59569075 || input.DeptId == 59594070 || input.DeptId == 59617065)
+        //        {
+        //            var YanYeList = docCategroyList.Where(y => y.DeptName == "烟叶生产科" || y.DeptName == "烟叶生产管理科"
+        //            || y.DeptName == "王家站" || y.DeptName == "剑门烟叶站" || y.DeptName == "普安烟叶站" || y.DeptName == "武连烟叶站"
+        //            || y.DeptName == "枣林烟叶收购点" || y.DeptName == "檬子烟叶收购点" || y.DeptName == "双汇烟叶收购点");//已确认的烟叶标准
+        //            var OtherList = docCategroyList.Where(d => d.DeptName != "专卖科" && d.DeptName != "市场营销科"
+        //            && d.DeptName != "烟叶生产科" && d.DeptName != "烟叶生产管理科"
+        //            && d.DeptName != "王家站" && d.DeptName != "剑门烟叶站" && d.DeptName != "普安烟叶站" && d.DeptName != "武连烟叶站"
+        //            && d.DeptName != "枣林烟叶收购点" && d.DeptName != "檬子烟叶收购点" && d.DeptName != "双汇烟叶收购点"
+        //            );//已确认的其他标准
+        //            int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
+        //            if (total > 0)
+        //            {
+        //                int random = (int)Math.Ceiling(total * 0.25);//计算抽查总数（总和的20%)
+        //                int YingXiao = (int)Math.Ceiling(random * 0.3);//营销标准30%
+        //                //如果预期计算结果大于实际数量，取实际结果
+        //                if (YingXiao > YingXiaoList.Count())
+        //                {
+        //                    YingXiao = YingXiaoList.Count();
+        //                }
+        //                int ZhuanMai = (int)Math.Ceiling(random * 0.3);//专卖标准30%
+        //                if (ZhuanMai > ZhuanMaiList.Count())
+        //                {
+        //                    ZhuanMai = ZhuanMaiList.Count();
+        //                }
+        //                int Yanye = (int)Math.Ceiling(random * 0.3);//烟叶标准30%
+        //                if (Yanye > YanYeList.Count())
+        //                {
+        //                    Yanye = YanYeList.Count();
+        //                }
+        //                int Other = random - YingXiao - ZhuanMai;//其他10%
+        //                if (Other > OtherList.Count())
+        //                {
+        //                    Other = OtherList.Count();
+        //                }
+        //                var YingXiaoClauseList = await _employeeClauseRepository.GetAll().Where(v => YingXiaoList.Select(y => y.e).Contains(v.DocumentId)).OrderBy(v => Guid.NewGuid()).Take(YingXiao).ToListAsync();
+        //                var ZhuanMaiClauseList = await _employeeClauseRepository.GetAll().Where(v => ZhuanMaiList.Select(z => z.e).Contains(v.DocumentId)).OrderBy(v => Guid.NewGuid()).Take(ZhuanMai).ToListAsync();
+        //                var YanYeClauseList = await _employeeClauseRepository.GetAll().Where(v => YanYeList.Select(z => z.e).Contains(v.DocumentId)).OrderBy(v => Guid.NewGuid()).Take(Yanye).ToListAsync();
+        //                var OtherClauseList = await _employeeClauseRepository.GetAll().Where(v => OtherList.Select(o => o.e).Contains(v.DocumentId)).OrderBy(v => Guid.NewGuid()).Take(Other).ToListAsync();
+        //                foreach (var item in YingXiaoClauseList)
+        //                {
+        //                    ExamineDetail edEntity = new ExamineDetail();
+        //                    edEntity.ClauseId = item.ClauseId;
+        //                    edEntity.DocumentId = item.DocumentId;
+        //                    edEntity.CreatorEmpeeId = user.EmployeeId;
+        //                    edEntity.CreatorEmpName = user.EmployeeName;
+        //                    edEntity.EmployeeId = StandardAdminId;
+        //                    edEntity.EmployeeName = StandardAdminName;
+        //                    edEntity.CriterionExamineId = exaId;
+        //                    edEntity.Result = GYEnums.ExamineStatus.未检查;
+        //                    edEntity.Status = GYEnums.ResultStatus.进行中;
+        //                    await _examineDetailRepository.InsertAsync(edEntity);
+        //                }
+        //                foreach (var item in ZhuanMaiClauseList)
+        //                {
+        //                    ExamineDetail edEntity = new ExamineDetail();
+        //                    edEntity.ClauseId = item.ClauseId;
+        //                    edEntity.DocumentId = item.DocumentId;
+        //                    edEntity.CreatorEmpeeId = user.EmployeeId;
+        //                    edEntity.CreatorEmpName = user.EmployeeName;
+        //                    edEntity.EmployeeId = StandardAdminId;
+        //                    edEntity.EmployeeName = StandardAdminName;
+        //                    edEntity.CriterionExamineId = exaId;
+        //                    edEntity.Result = GYEnums.ExamineStatus.未检查;
+        //                    edEntity.Status = GYEnums.ResultStatus.进行中;
+        //                    await _examineDetailRepository.InsertAsync(edEntity);
+        //                }
+        //                foreach (var item in YanYeClauseList)
+        //                {
+        //                    ExamineDetail edEntity = new ExamineDetail();
+        //                    edEntity.ClauseId = item.ClauseId;
+        //                    edEntity.DocumentId = item.DocumentId;
+        //                    edEntity.CreatorEmpeeId = user.EmployeeId;
+        //                    edEntity.CreatorEmpName = user.EmployeeName;
+        //                    edEntity.EmployeeId = StandardAdminId;
+        //                    edEntity.EmployeeName = StandardAdminName;
+        //                    edEntity.CriterionExamineId = exaId;
+        //                    edEntity.Result = GYEnums.ExamineStatus.未检查;
+        //                    edEntity.Status = GYEnums.ResultStatus.进行中;
+        //                    await _examineDetailRepository.InsertAsync(edEntity);
+        //                }
+        //                foreach (var item in OtherClauseList)
+        //                {
+        //                    ExamineDetail edEntity = new ExamineDetail();
+        //                    edEntity.ClauseId = item.ClauseId;
+        //                    edEntity.DocumentId = item.DocumentId;
+        //                    edEntity.CreatorEmpeeId = user.EmployeeId;
+        //                    edEntity.CreatorEmpName = user.EmployeeName;
+        //                    edEntity.EmployeeId = StandardAdminId;
+        //                    edEntity.EmployeeName = StandardAdminName;
+        //                    edEntity.CriterionExamineId = exaId;
+        //                    edEntity.Result = GYEnums.ExamineStatus.未检查;
+        //                    edEntity.Status = GYEnums.ResultStatus.进行中;
+        //                    await _examineDetailRepository.InsertAsync(edEntity);
+        //                }
+        //            }
+        //        }
+        //        #endregion
+        //        #region 物流中心考核
+        //        else if (input.DeptId == 59593071) //物流中心
+        //        {
+        //            int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
+        //            int random = (int)Math.Ceiling(total * 0.25);
+        //            var empClauseList = await _employeeClauseRepository.GetAll().Where(v => employeeIds.Contains(v.EmployeeId)).OrderBy(v => Guid.NewGuid()).Take(random).ToListAsync();
+        //            foreach (var item in empClauseList)
+        //            {
+        //                ExamineDetail edEntity = new ExamineDetail();
+        //                edEntity.ClauseId = item.ClauseId;
+        //                edEntity.DocumentId = item.DocumentId;
+        //                edEntity.CreatorEmpeeId = user.EmployeeId;
+        //                edEntity.CreatorEmpName = user.EmployeeName;
+        //                edEntity.EmployeeId = StandardAdminId;
+        //                edEntity.EmployeeName = StandardAdminName;
+        //                edEntity.CriterionExamineId = exaId;
+        //                edEntity.Result = GYEnums.ExamineStatus.未检查;
+        //                edEntity.Status = GYEnums.ResultStatus.进行中;
+        //                await _examineDetailRepository.InsertAsync(edEntity);
+        //            }
+        //        }
+        //        #endregion
+        //        else //机关部门
+        //        {
+        //            int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
+        //            int random = (int)Math.Ceiling(total * 0.25);
+        //            var empClauseList = await _employeeClauseRepository.GetAll().Where(v => employeeIds.Contains(v.EmployeeId)).OrderBy(v => Guid.NewGuid()).Take(random).ToListAsync();
+        //            foreach (var item in empClauseList)
+        //            {
+        //                ExamineDetail edEntity = new ExamineDetail();
+        //                edEntity.ClauseId = item.ClauseId;
+        //                edEntity.DocumentId = item.DocumentId;
+        //                edEntity.CreatorEmpeeId = user.EmployeeId;
+        //                edEntity.CreatorEmpName = user.EmployeeName;
+        //                edEntity.EmployeeId = StandardAdminId;
+        //                edEntity.EmployeeName = StandardAdminName;
+        //                edEntity.CriterionExamineId = exaId;
+        //                edEntity.Result = GYEnums.ExamineStatus.未检查;
+        //                edEntity.Status = GYEnums.ResultStatus.进行中;
+        //                await _examineDetailRepository.InsertAsync(edEntity);
+        //            }
+        //        }
+        //        return new APIResultDto() { Code = 0, Msg = "考核表创建成功", Data = new { entity.Id, entity.Title } };
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Logger.ErrorFormat("CreateExamineAsync errormsg{0} Exception{1}", ex.Message, ex);
+        //        return new APIResultDto() { Code = 901, Msg = "考核表创建失败" };
+        //    }
+        //}
+
+
         public async Task<APIResultDto> CreateExamineByQiGuanAsync(CriterionExamineInfoDto input)
         {
             try
@@ -670,8 +992,6 @@ namespace GYSWP.CriterionExamines
                 #endregion
                 //按照区县生成不同考核规则信息
                 #region 公共模块
-                string StandardAdminId = await _employeeService.GetDeptStandardAdminByIdAsync(input.DeptId.ToString());//查询所选部门标准化管理员
-                string StandardAdminName = await _employeeRepository.GetAll().Where(v => v.Id == StandardAdminId).Select(v => v.Name).FirstOrDefaultAsync();
                 string[] employeeIds = await GetEmployeeIdsByDeptId(input.DeptId);
                 var empClauseGroupList = await _employeeClauseRepository.GetAll().Where(v => employeeIds.Contains(v.EmployeeId)).GroupBy(v => v.DocumentId).Select(v => v.Key).ToListAsync();
                 var doc = _documentRepository.GetAll().Where(v => v.IsAction == true);
@@ -698,7 +1018,7 @@ namespace GYSWP.CriterionExamines
                     int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
                     if (total > 0)
                     {
-                        int random = (int)Math.Ceiling(total * 0.5);//计算抽查总数（总和的20%)
+                        int random = (int)Math.Ceiling(total * 0.25);//计算抽查总数（总和的20%)
                         int YingXiao = (int)Math.Ceiling(random * 0.4);//营销标准40%
                         //如果预期计算结果大于实际数量，取实际结果
                         if (YingXiao > YingXiaoList.Count())
@@ -726,8 +1046,8 @@ namespace GYSWP.CriterionExamines
                             edEntity.DocumentId = item.DocumentId;
                             edEntity.CreatorEmpeeId = user.EmployeeId;
                             edEntity.CreatorEmpName = user.EmployeeName;
-                            edEntity.EmployeeId = StandardAdminId;
-                            edEntity.EmployeeName = StandardAdminName;
+                            edEntity.EmployeeId = item.EmployeeId;
+                            edEntity.EmployeeName = item.EmployeeName;
                             edEntity.CriterionExamineId = exaId;
                             edEntity.Result = GYEnums.ExamineStatus.未检查;
                             edEntity.Status = GYEnums.ResultStatus.进行中;
@@ -740,8 +1060,8 @@ namespace GYSWP.CriterionExamines
                             edEntity.DocumentId = item.DocumentId;
                             edEntity.CreatorEmpeeId = user.EmployeeId;
                             edEntity.CreatorEmpName = user.EmployeeName;
-                            edEntity.EmployeeId = StandardAdminId;
-                            edEntity.EmployeeName = StandardAdminName;
+                            edEntity.EmployeeId = item.EmployeeId;
+                            edEntity.EmployeeName = item.EmployeeName;
                             edEntity.CriterionExamineId = exaId;
                             edEntity.Result = GYEnums.ExamineStatus.未检查;
                             edEntity.Status = GYEnums.ResultStatus.进行中;
@@ -754,8 +1074,8 @@ namespace GYSWP.CriterionExamines
                             edEntity.DocumentId = item.DocumentId;
                             edEntity.CreatorEmpeeId = user.EmployeeId;
                             edEntity.CreatorEmpName = user.EmployeeName;
-                            edEntity.EmployeeId = StandardAdminId;
-                            edEntity.EmployeeName = StandardAdminName;
+                            edEntity.EmployeeId = item.EmployeeId;
+                            edEntity.EmployeeName = item.EmployeeName;
                             edEntity.CriterionExamineId = exaId;
                             edEntity.Result = GYEnums.ExamineStatus.未检查;
                             edEntity.Status = GYEnums.ResultStatus.进行中;
@@ -779,7 +1099,7 @@ namespace GYSWP.CriterionExamines
                     int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
                     if (total > 0)
                     {
-                        int random = (int)Math.Ceiling(total * 0.5);//计算抽查总数（总和的20%)
+                        int random = (int)Math.Ceiling(total * 0.25);//计算抽查总数（总和的20%)
                         int YingXiao = (int)Math.Ceiling(random * 0.3);//营销标准30%
                         //如果预期计算结果大于实际数量，取实际结果
                         if (YingXiao > YingXiaoList.Count())
@@ -812,8 +1132,8 @@ namespace GYSWP.CriterionExamines
                             edEntity.DocumentId = item.DocumentId;
                             edEntity.CreatorEmpeeId = user.EmployeeId;
                             edEntity.CreatorEmpName = user.EmployeeName;
-                            edEntity.EmployeeId = StandardAdminId;
-                            edEntity.EmployeeName = StandardAdminName;
+                            edEntity.EmployeeId = item.EmployeeId;
+                            edEntity.EmployeeName = item.EmployeeName;
                             edEntity.CriterionExamineId = exaId;
                             edEntity.Result = GYEnums.ExamineStatus.未检查;
                             edEntity.Status = GYEnums.ResultStatus.进行中;
@@ -826,8 +1146,8 @@ namespace GYSWP.CriterionExamines
                             edEntity.DocumentId = item.DocumentId;
                             edEntity.CreatorEmpeeId = user.EmployeeId;
                             edEntity.CreatorEmpName = user.EmployeeName;
-                            edEntity.EmployeeId = StandardAdminId;
-                            edEntity.EmployeeName = StandardAdminName;
+                            edEntity.EmployeeId = item.EmployeeId;
+                            edEntity.EmployeeName = item.EmployeeName;
                             edEntity.CriterionExamineId = exaId;
                             edEntity.Result = GYEnums.ExamineStatus.未检查;
                             edEntity.Status = GYEnums.ResultStatus.进行中;
@@ -840,8 +1160,8 @@ namespace GYSWP.CriterionExamines
                             edEntity.DocumentId = item.DocumentId;
                             edEntity.CreatorEmpeeId = user.EmployeeId;
                             edEntity.CreatorEmpName = user.EmployeeName;
-                            edEntity.EmployeeId = StandardAdminId;
-                            edEntity.EmployeeName = StandardAdminName;
+                            edEntity.EmployeeId = item.EmployeeId;
+                            edEntity.EmployeeName = item.EmployeeName;
                             edEntity.CriterionExamineId = exaId;
                             edEntity.Result = GYEnums.ExamineStatus.未检查;
                             edEntity.Status = GYEnums.ResultStatus.进行中;
@@ -854,8 +1174,8 @@ namespace GYSWP.CriterionExamines
                             edEntity.DocumentId = item.DocumentId;
                             edEntity.CreatorEmpeeId = user.EmployeeId;
                             edEntity.CreatorEmpName = user.EmployeeName;
-                            edEntity.EmployeeId = StandardAdminId;
-                            edEntity.EmployeeName = StandardAdminName;
+                            edEntity.EmployeeId = item.EmployeeId;
+                            edEntity.EmployeeName = item.EmployeeName;
                             edEntity.CriterionExamineId = exaId;
                             edEntity.Result = GYEnums.ExamineStatus.未检查;
                             edEntity.Status = GYEnums.ResultStatus.进行中;
@@ -868,7 +1188,7 @@ namespace GYSWP.CriterionExamines
                 else if (input.DeptId == 59593071) //物流中心
                 {
                     int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
-                    int random = (int)Math.Ceiling(total * 0.5);
+                    int random = (int)Math.Ceiling(total * 0.25);
                     var empClauseList = await _employeeClauseRepository.GetAll().Where(v => employeeIds.Contains(v.EmployeeId)).OrderBy(v => Guid.NewGuid()).Take(random).ToListAsync();
                     foreach (var item in empClauseList)
                     {
@@ -877,8 +1197,8 @@ namespace GYSWP.CriterionExamines
                         edEntity.DocumentId = item.DocumentId;
                         edEntity.CreatorEmpeeId = user.EmployeeId;
                         edEntity.CreatorEmpName = user.EmployeeName;
-                        edEntity.EmployeeId = StandardAdminId;
-                        edEntity.EmployeeName = StandardAdminName;
+                        edEntity.EmployeeId = item.EmployeeId;
+                        edEntity.EmployeeName = item.EmployeeName;
                         edEntity.CriterionExamineId = exaId;
                         edEntity.Result = GYEnums.ExamineStatus.未检查;
                         edEntity.Status = GYEnums.ResultStatus.进行中;
@@ -889,7 +1209,7 @@ namespace GYSWP.CriterionExamines
                 else //机关部门
                 {
                     int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
-                    int random = (int)Math.Ceiling(total * 0.5);
+                    int random = (int)Math.Ceiling(total * 0.25);
                     var empClauseList = await _employeeClauseRepository.GetAll().Where(v => employeeIds.Contains(v.EmployeeId)).OrderBy(v => Guid.NewGuid()).Take(random).ToListAsync();
                     foreach (var item in empClauseList)
                     {
@@ -898,8 +1218,8 @@ namespace GYSWP.CriterionExamines
                         edEntity.DocumentId = item.DocumentId;
                         edEntity.CreatorEmpeeId = user.EmployeeId;
                         edEntity.CreatorEmpName = user.EmployeeName;
-                        edEntity.EmployeeId = StandardAdminId;
-                        edEntity.EmployeeName = StandardAdminName;
+                        edEntity.EmployeeId = item.EmployeeId;
+                        edEntity.EmployeeName = item.EmployeeName;
                         edEntity.CriterionExamineId = exaId;
                         edEntity.Result = GYEnums.ExamineStatus.未检查;
                         edEntity.Status = GYEnums.ResultStatus.进行中;
@@ -955,7 +1275,7 @@ namespace GYSWP.CriterionExamines
                         {
                             if (groupInfo.Count > 0)
                             {
-                                int random = (int)Math.Ceiling(groupInfo.Count * 0.5);
+                                int random = (int)Math.Ceiling(groupInfo.Count * 0.25);
                                 var empClauseList = await _employeeClauseRepository.GetAll().Where(v => v.EmployeeId == emp.EmpId && v.DocumentId == groupInfo.DocId).OrderBy(v => Guid.NewGuid()).Take(random).ToListAsync();
 
                                 foreach (var item in empClauseList)
@@ -1093,6 +1413,17 @@ namespace GYSWP.CriterionExamines
                 item.Status = GYEnums.ResultStatus.已逾期;
                 item.Result = GYEnums.ExamineStatus.不合格;
             }
+        }
+
+        /// <summary>
+        /// 查询部门下面所有人，导出账号用
+        /// </summary>
+        /// <param name="deptId"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public async Task<string[]> GetEmpByDeptId(long deptId)
+        {
+           return await GetEmployeeIdsByDeptId(deptId);
         }
     }
 }

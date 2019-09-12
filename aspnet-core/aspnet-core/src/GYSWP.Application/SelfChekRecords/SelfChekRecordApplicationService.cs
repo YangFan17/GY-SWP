@@ -222,6 +222,22 @@ namespace GYSWP.SelfChekRecords
             entity.DocumentId = input.DocId;
             await _entityRepository.InsertAsync(entity);
         }
+
+        /// <summary>
+        /// 获取本年度当前条款学习次数
+        /// </summary>
+        /// <param name="empId"></param>
+        /// <param name="clauseId"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public async Task<int> GetCurClauseStudyCountAsync(string empId, Guid clauseId)
+        {
+            int curYear = DateTime.Now.Year;
+            DateTime beginTime = Convert.ToDateTime(curYear + "-01-01 00:00:00");
+            DateTime endTime = beginTime.AddYears(1);
+            int count = await _entityRepository.CountAsync(v => v.EmployeeId == empId && v.ClauseId == clauseId && v.CreationTime >= beginTime && v.CreationTime <= endTime);
+            return count;
+        }
     }
 }
 

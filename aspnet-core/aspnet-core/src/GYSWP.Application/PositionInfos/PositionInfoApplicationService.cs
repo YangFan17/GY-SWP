@@ -444,6 +444,7 @@ namespace GYSWP.PositionInfos
                 foreach (var doc in docs)
                 {
                     string position = doc.Position.Split('.')[0];
+                    //var empList = await _employeeRepository.GetAll().Where(v => v.Position == position).Select(v => new { v.Id, v.Name }).ToListAsync();
                     var empList = await _employeeRepository.GetAll().Where(v => v.Position.Contains(position + "、") || v.Position.Contains("、" + position) || v.Position == position).Select(v => new { v.Id, v.Name }).ToListAsync();
                     if (empList.Count == 0)
                     {

@@ -13,7 +13,7 @@
         <button nz-button (click)="reset()" nzShape="circle">
             <i class="anticon anticon-reload"></i>
         </button>
-        <button nz-button (click)="create()" nzShape="circle" nzType="primary">
+        <button *ngIf="selectedCategory.name != '外来文件'" nz-button (click)="create()" nzShape="circle" nzType="primary">
             <i class="anticon anticon-plus"></i>
         </button>
         <!-- <a style="display: none;" id="aDocZipUrl" href="#">
@@ -29,9 +29,9 @@
             [nzShowSizeChanger]="true" (nzPageIndexChange)="refresh()" (nzPageSizeChange)="refresh()">
             <thead>
                 <tr>
-                    <th>标准编号</th>
-                    <th>标准名称</th>
-                    <th>标准分类</th>
+                    <th>{{selectedCategory.name != '风险库'?'标准编号':'风险编号'}}</th>
+                    <th>{{selectedCategory.name != '风险库'?'标准名称':'风险名称'}}</th>
+                    <th>{{selectedCategory.name != '风险库'?'标准分类':'风险分类'}}</th>
                     <th>发布时间</th>
                     <th>操作</th>
                 </tr>

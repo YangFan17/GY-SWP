@@ -43,7 +43,7 @@ const routes: Routes = [
         path: 'supervision',
         loadChildren: './supervision/supervision.module#SupervisionModule',
         canActivate: [AppRouteGuard, ACLGuard],
-        data: { guard: ['Admin', 'QiGuanAdmin', 'CountyAdmin', 'DeptAdmin'] },
+        data: { guard: ['Admin', 'QiGuanAdmin', 'StandardAdmin', 'CountyAdmin', 'DeptAdmin'] },
       },
       {
         path: 'advises',
@@ -60,7 +60,7 @@ const routes: Routes = [
         path: 'reports',
         loadChildren: './reports/reports.module#ReportsModule',
         canActivate: [ACLGuard],
-        data: { guard: ['Admin', 'QiGuanAdmin'] },
+        data: { guard: ['Admin', 'QiGuanAdmin', 'StandardAdmin', 'CountyAdmin', 'DeptAdmin'] },
       },
       {
         path: 'logistic',

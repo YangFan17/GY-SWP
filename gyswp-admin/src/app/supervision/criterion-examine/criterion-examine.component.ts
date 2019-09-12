@@ -54,7 +54,7 @@ export class CriterionExamineComponent extends AppComponentBase implements OnIni
         //         }
         //     }
         // });
-        this.supervisionService.getDeptDocNzTreeNodes('考核对象').subscribe((data) => {
+        this.supervisionService.getDeptDocNzTreeNodesNoPermission('考核对象').subscribe((data) => {
             this.nodes = data;
             if (data.length > 0) {
                 var selectedNode = data[0].children[0];
@@ -82,16 +82,17 @@ export class CriterionExamineComponent extends AppComponentBase implements OnIni
                 this.isCurDept = true;
             } else {
                 this.isCurDept = false;
-            } if (data.node.key == '59549057' || data.node.key == '59646091' || data.node.key == '59552081'
-                || data.node.key == '59632058' || data.node.key == '59571109' || data.node.key == '59584063'
-                || data.node.key == '59644078' || data.node.key == '59620071' || data.node.key == '59628060'
-                || data.node.key == '59538081' || data.node.key == '59490590' || data.node.key == '59591062'
-                || data.node.key == '59481641' || data.node.key == '59534185' || data.node.key == '59534184'
-                || data.node.key == '59534183') {
-                this.empList.isCountryDept = false;
-            } else {
-                this.empList.isCountryDept = true;
             }
+            // if (data.node.key == '59549057' || data.node.key == '59646091' || data.node.key == '59552081'
+            //     || data.node.key == '59632058' || data.node.key == '59571109' || data.node.key == '59584063'
+            //     || data.node.key == '59644078' || data.node.key == '59620071' || data.node.key == '59628060'
+            //     || data.node.key == '59538081' || data.node.key == '59490590' || data.node.key == '59591062'
+            //     || data.node.key == '59481641' || data.node.key == '59534185' || data.node.key == '59534184'
+            //     || data.node.key == '59534183') {
+            //     this.empList.isCountryDept = false;
+            // } else {
+            //     this.empList.isCountryDept = true;
+            // }
             this.selectedDept = { id: data.node.key, name: data.node.title, isCurDept: this.isCurDept };
             this.empList.dept = this.selectedDept;
             this.empList.getEmployeeList();

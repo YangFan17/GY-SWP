@@ -94,5 +94,6 @@ namespace GYSWP.Documents
         Task<PagedResultDto<DocumentConfirmDto>> GetReportDocumentConfirmsListAsync(GetDocumentsInput input);
         Task<PagedResultDto<DocumentTitleDto>> GetPagedCurDeptDocListAsync(GetDocumentsInput input);
         Task<PagedResultDto<EmpBriefInfo>> GetPagedEmpConfirmListByIdAsync(GetConfirmTypeInput input);
+        Task<List<DocNzTreeNode>> GetDeptDocNzTreeNodesNoPermissionAsync(string rootName);
     }
 }

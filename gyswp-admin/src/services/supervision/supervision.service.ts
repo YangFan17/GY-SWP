@@ -220,6 +220,18 @@ export class SupervisionService {
         }));
     }
 
+    getDeptDocNzTreeNodesNoPermission(root: any): Observable<NzTreeNode[]> {
+        let url_ = "/api/services/app/Document/GetDeptDocNzTreeNodesNoPermissionAsync";
+        return this._commonhttp.get(url_, { rootName: root }).pipe(map(data => {
+            let arry = [];
+            data.map(d => {
+                let tree = new NzTreeNode(d);
+                arry.push(tree);
+            });
+            return arry;
+        }));
+    }
+
     getDeptId(): Observable<string> {
         let url_ = "/api/services/app/Organization/GetDeptIdAsync";
         return this._commonhttp.get(url_).pipe(map(data => {

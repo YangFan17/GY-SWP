@@ -56,7 +56,7 @@ export class RevisedListComponent extends ModalComponentBase {
                 id = item.id;
             }
             this.modalHelper
-                .open(RevisedListDetailComponent, { docId: this.docId, pId: pId, pNo: pNo, id: id, applyId: this.applyId }, 950, {
+                .open(RevisedListDetailComponent, { docId: this.docId, pId: pId, pNo: pNo, id: id, applyId: this.applyId, revisionType: item.revisionType }, 950, {
                     nzMask: true,
                     nzClosable: false,
                     nzMaskClosable: false,

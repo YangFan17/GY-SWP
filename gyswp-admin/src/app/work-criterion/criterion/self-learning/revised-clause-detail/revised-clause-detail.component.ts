@@ -52,7 +52,7 @@ export class RevisedClauseDetailComponent extends ModalComponentBase {
         this.workCriterionService.createRevisionAsync(this.clause, this.type, this.applyId)
             .finally(() => { this.saving = false; })
             .subscribe(res => {
-                this.notify.success('修订申请提交成功！', '');
+                this.notify.success('保存成功！', '');
                 if (res.code == 0) {
                     this.clause.id = res.data;
                     this.success(true);

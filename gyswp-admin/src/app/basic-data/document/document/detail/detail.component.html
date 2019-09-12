@@ -9,12 +9,16 @@
                     </nz-form-control>
                 </nz-form-item>
                 <nz-form-item nz-row style="margin-bottom: 0px;">
-                    <nz-form-label nz-col [nzSm]="4" nzRequired>标准分类</nz-form-label>
+                    <nz-form-label *ngIf="category.name !='风险库' &&category.name !='法律法规' &&category.name !='上级文件'"
+                        nz-col [nzSm]="4" nzRequired>标准分类</nz-form-label>
+                    <nz-form-label *ngIf="category.name == '风险库'" nz-col [nzSm]="4" nzRequired>风险分类</nz-form-label>
+                    <nz-form-label *ngIf="category.name =='法律法规' || category.name =='上级文件'" nz-col [nzSm]="4"
+                        nzRequired>文件分类</nz-form-label>
                     <nz-form-control nz-col [nzSm]="20">
                         <label>{{category.name}}</label>
                     </nz-form-control>
                 </nz-form-item>
-                <nz-form-item nz-row>
+                <nz-form-item nz-row *ngIf="category.name !='风险库' &&category.name !='法律法规' &&category.name !='上级文件'">
                     <nz-form-label nz-col [nzSm]="4" nzRequired>标准编号</nz-form-label>
                     <nz-form-control [nzSm]="20" nzHasFeedback>
                         <input nz-input name="docNo" maxlength="100" #docNo="ngModel" [(ngModel)]="document.docNo"
@@ -25,7 +29,31 @@
                         </nz-form-explain>
                     </nz-form-control>
                 </nz-form-item>
-                <nz-form-item nz-row>
+                <nz-form-item *ngIf="category.name =='法律法规' || category.name =='上级文件'" nz-row>
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>文件编号</nz-form-label>
+                    <nz-form-control [nzSm]="20" nzHasFeedback>
+                        <input nz-input name="docNo" maxlength="100" #docNo="ngModel" [(ngModel)]="document.docNo"
+                            [placeholder]="'请填写文件编号'" required>
+                        <nz-form-explain *ngIf="docNo.control.dirty&&docNo.control.errors">
+                            <ng-container *ngIf="docNo.control.hasError('required')">请填写文件编号</ng-container>
+                            <ng-container *ngIf="docNo.control.hasError('maxlength')">字符长度小于等于100</ng-container>
+                        </nz-form-explain>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item *ngIf="category.name == '风险库'" nz-row>
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>风险编号</nz-form-label>
+                    <nz-form-control [nzSm]="20" nzHasFeedback>
+                        <input nz-input name="docNo" maxlength="100" #docNo="ngModel" [(ngModel)]="document.docNo"
+                            [placeholder]="'请填写风险编号'" required>
+                        <nz-form-explain *ngIf="docNo.control.dirty&&docNo.control.errors">
+                            <ng-container *ngIf="docNo.control.hasError('required')">请填写风险编号</ng-container>
+                            <ng-container *ngIf="docNo.control.hasError('maxlength')">字符长度小于等于100</ng-container>
+                        </nz-form-explain>
+                    </nz-form-control>
+                </nz-form-item>
+
+
+                <nz-form-item *ngIf="category.name !='风险库' &&category.name !='法律法规' &&category.name !='上级文件'" nz-row>
                     <nz-form-label nz-col [nzSm]="4" nzRequired>标准名称</nz-form-label>
                     <nz-form-control [nzSm]="20" nzHasFeedback>
                         <input nz-input name="name" maxlength="200" #name="ngModel" [(ngModel)]="document.name"
@@ -36,34 +64,43 @@
                         </nz-form-explain>
                     </nz-form-control>
                 </nz-form-item>
+                <nz-form-item *ngIf="category.name =='法律法规' || category.name =='上级文件'" nz-row>
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>文件名称</nz-form-label>
+                    <nz-form-control [nzSm]="20" nzHasFeedback>
+                        <input nz-input name="name" maxlength="200" #name="ngModel" [(ngModel)]="document.name"
+                            [placeholder]="'请填写文件名称'" required>
+                        <nz-form-explain *ngIf="name.control.dirty&&name.control.errors">
+                            <ng-container *ngIf="name.control.hasError('required')">请填写文件名称</ng-container>
+                            <ng-container *ngIf="name.control.hasError('maxlength')">字符长度小于等于200</ng-container>
+                        </nz-form-explain>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item *ngIf="category.name == '风险库'" nz-row>
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>风险名称</nz-form-label>
+                    <nz-form-control [nzSm]="20" nzHasFeedback>
+                        <input nz-input name="name" maxlength="200" #name="ngModel" [(ngModel)]="document.name"
+                            [placeholder]="'请填写风险名称'" required>
+                        <nz-form-explain *ngIf="name.control.dirty&&name.control.errors">
+                            <ng-container *ngIf="name.control.hasError('required')">请填写风险名称</ng-container>
+                            <ng-container *ngIf="name.control.hasError('maxlength')">字符长度小于等于200</ng-container>
+                        </nz-form-explain>
+                    </nz-form-control>
+                </nz-form-item>
 
                 <nz-form-item nz-row>
-                    <nz-form-label nz-col [nzSm]="4" nzRequired>达成条件</nz-form-label>
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>适用于</nz-form-label>
                     <nz-form-control [nzSm]="20">
-                        <!-- <nz-checkbox-wrapper style="width: 100%;" name="suitableType" #suitableType="ngModel"
-                            [(ngModel)]="document.suitableType">
-                            <div nz-row>
-                                <label nz-checkbox *ngFor="let item of suitableTypes"
-                                    [nzValue]="item.value">{{item.text}}</label>
-                            </div>
-                        </nz-checkbox-wrapper> -->
                         <nz-checkbox-group name="suitableType" [(ngModel)]="suitableTypes"></nz-checkbox-group>
                     </nz-form-control>
                 </nz-form-item>
 
                 <nz-form-item nz-row style="margin-bottom: 0px;">
-                    <nz-form-label nz-col [nzSm]="4" nzRequired>标准状态</nz-form-label>
+                    <nz-form-label *ngIf="category.name !='风险库' &&category.name !='法律法规' &&category.name !='上级文件'"
+                        nz-col [nzSm]="4" nzRequired>标准状态</nz-form-label>
+                    <nz-form-label *ngIf="category.name == '风险库'" nz-col [nzSm]="4" nzRequired>风险状态</nz-form-label>
+                    <nz-form-label *ngIf="category.name =='法律法规' || category.name =='上级文件'" nz-col [nzSm]="4"
+                        nzRequired>文件状态</nz-form-label>
                     <nz-form-control [nzSm]="20">
-                        <!-- <nz-radio-group #isControls="ngModel" [(ngModel)]="isControl"
-                            (ngModelChange)="controlRadioChange($event)" [ngModelOptions]="{standalone: true}">
-                            <label nz-radio nzValue="5">受控</label>
-                            <label nz-radio nzValue="6">不受控</label>
-                        </nz-radio-group><br />
-                        <nz-radio-group #isValids="ngModel" [(ngModel)]="isValid"
-                            (ngModelChange)="validRadioChange($event)" [ngModelOptions]="{standalone: true}">
-                            <label nz-radio nzValue="3">作废</label>
-                            <label nz-radio nzValue="4">现行有效</label>
-                        </nz-radio-group> -->
                         <nz-radio-group name="isControl" [(ngModel)]="isControl">
                             <label nz-radio [nzValue]="c.value" *ngFor="let c of controlOptions">{{ c.label }}</label>
                         </nz-radio-group>
@@ -123,7 +160,11 @@
                     </nz-form-control>
                 </nz-form-item>
                 <nz-form-item nz-row>
-                    <nz-form-label nz-col [nzSm]="4" nzFor="attach">标准附件</nz-form-label>
+                    <nz-form-label *ngIf="category.name !='风险库' &&category.name !='法律法规' &&category.name !='上级文件'"
+                        nz-col [nzSm]="4" nzFor="attach">标准附件</nz-form-label>
+                    <nz-form-label *ngIf="category.name == '风险库'" nz-col [nzSm]="4" nzFor="attach">风险附件</nz-form-label>
+                    <nz-form-label *ngIf="category.name =='法律法规' || category.name =='上级文件'" nz-col [nzSm]="4"
+                        nzFor="attach">文件附件</nz-form-label>
                     <nz-form-control [nzSm]="20">
                         <nz-upload nzAction="{{postUrl | hostUrl}}" [nzBeforeUpload]="beforeUpload"
                             [nzFileList]="fileList" nzMultiple [nzLimit]="1" [nzFilter]="filters"
