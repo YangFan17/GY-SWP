@@ -16,6 +16,8 @@ export class QuestionBankComponent extends ModalComponentBase {
     confirmModal: NzModalRef;
     dataList: ExamineRecord[] = [];
     endDate: any;
+    deletButtonIShow: boolean = false;
+
     constructor(injector: Injector
         , private supervisionService: SupervisionService
         , private modal: NzModalService
@@ -38,6 +40,31 @@ export class QuestionBankComponent extends ModalComponentBase {
             .subscribe((result: ExamineRecord[]) => {
                 this.dataList = result
             });
+    }
+
+    ISomeOneChecked() {
+        if (this.dataList.filter(v => v.checked).length > 0) {
+            this.deletButtonIShow = true;
+        } else {
+            this.deletButtonIShow = false;
+        }
+    }
+    deleteBatch() {
+        let deleteNum: number = this.dataList.filter(v => v.checked).length;
+        this.confirmModal = this.modal.confirm({
+            nzContent: `是否删除当前 ${deleteNum} 项考核记录信息?`,
+            nzOnOk: () => {
+                let deleteIds: any[] = [];
+                this.dataList.filter(v => v.checked).forEach(v => {
+                    deleteIds.push(v.id);
+                });
+                this.supervisionService.deleteBatchExamineAsyne(deleteIds).subscribe(res => {
+                    this.notify.success('删除检查项成功！', '');
+                    this.getExamineDetailListById();
+                    this.deletButtonIShow = false;
+                })
+            }
+        });
     }
 
     remove(id: string): void {

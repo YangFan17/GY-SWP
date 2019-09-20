@@ -21,6 +21,7 @@
                 [nzLoading]="isLoading" [nzScroll]="{ y: '480px' }">
                 <thead>
                     <tr>
+                        <th nzWidth="5%"></th>
                         <th>所属标准</th>
                         <th>条款内容</th>
                         <th nzWidth="15%">考核对象</th>
@@ -29,6 +30,11 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let item of nzTable.data">
+                        <td nzWidth="5%">
+                            <label nz-checkbox name="checkbox" [(ngModel)]="item.checked"
+                                (ngModelChange)="ISomeOneChecked()">
+                            </label>
+                        </td>
                         <td>{{item.documentName}}</td>
                         <td>{{item.clauseInfo}}</td>
                         <td>{{item.employeeName}}</td>
@@ -52,7 +58,12 @@
                     [disabled]="!validateForm.valid || isLoading">
                     发布
                 </button>
+                <button nz-button type="button" style="float:right;" (click)="deleteBatch()"
+                    [disabled]="!deletButtonIShow">
+                    <span>删除</span>
+                </button>
             </div>
         </div>
     </form>
+
 </div>

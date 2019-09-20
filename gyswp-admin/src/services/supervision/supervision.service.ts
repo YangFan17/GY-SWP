@@ -1,4 +1,4 @@
-import { Inject, Optional, Injectable } from "@angular/core";
+import { Inject, Optional, Injectable, Input } from "@angular/core";
 import { Observer, Observable } from "rxjs";
 import { CommonHttpClient } from "services/common-httpclient";
 import { map } from "rxjs/operators";
@@ -271,6 +271,13 @@ export class SupervisionService {
     deleteExamineDetailByIdAsync(id: string): Observable<any> {
         let url_ = "/api/services/app/ExamineDetail/Delete";
         return this._commonhttp.delete(url_, { id: id }).pipe(map(data => {
+            return data;
+        }));
+    }
+
+    deleteBatchExamineAsyne(ids: string[]): Observable<any> {
+        let url_ = "/api/services/app/ExamineDetail/BatchDelete";
+        return this._commonhttp.post(url_, ids).pipe(map(data => {
             return data;
         }));
     }

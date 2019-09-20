@@ -98,7 +98,7 @@ namespace GYSWP.Web.Host.Startup
 
             app.UseStaticFiles(new StaticFileOptions()
             {
-                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"E:\gyswpData")),
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"C:\gyswpData")),
                 RequestPath = new PathString("/docFile")
             });
 
