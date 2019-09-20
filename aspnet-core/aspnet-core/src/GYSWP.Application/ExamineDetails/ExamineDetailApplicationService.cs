@@ -199,8 +199,10 @@ namespace GYSWP.ExamineDetails
 
         public async Task BatchDelete(List<Guid> input)
         {
-            // TODO:批量删除前的逻辑判断，是否允许删除
-            await _entityRepository.DeleteAsync(s => input.Contains(s.Id));
+            foreach (var item in input)
+            {
+                await _entityRepository.DeleteAsync(v=>v.Id == item);
+            }
         }
 
 
