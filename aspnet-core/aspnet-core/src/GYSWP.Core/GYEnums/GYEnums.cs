@@ -95,6 +95,13 @@ namespace GYSWP.GYEnums
         考核附件 = 3
     }
 
+    public enum LC_AttachmentType
+    {
+        检查验收 = 1,
+        卷烟机损 = 2,
+        设备故障 = 3
+    }
+
     public enum IndicatorStatus
     {
         未填写 = 1,

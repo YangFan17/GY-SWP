@@ -22,19 +22,19 @@
                         </nz-form-control>
                     </nz-form-item>
                 </div>
-                <div [acl]="'StandardAdmin'" nz-col [nzSpan]="8" class="mb-md right" [class.text-right]="'true'"
-                    style="float: right;">
+                <div nz-col [nzSpan]="8" class="mb-md right" [class.text-right]="'true'" style="float: right;">
                     <nz-form-item class="d-flex" style="margin-right: 0px;margin-bottom: 0px;">
                         <nz-form-control class="flex-1">
-                            <button nz-button type="button" *ngIf="editMode || isRevisionWaitTime" (click)="draftDoc()">
+                            <button [acl]="'StandardAdmin'" nz-button type="button"
+                                *ngIf="editMode || isRevisionWaitTime" (click)="draftDoc()">
                                 <i nz-icon type="form"></i>
                                 <span>标准制定</span>
                             </button>
                             <button nz-button type="button" (click)="refreshData()" nzType="primary"
                                 [nzLoading]="isTableLoading">查询</button>
                             <button nz-button type="button" (click)="reset()" class="mx-sm">重置</button>
-                            <button nz-button type="button" *ngIf="isApply && !editMode && !isRevision"
-                                (click)="draftApply()">
+                            <button [acl]="'StandardAdmin'" nz-button type="button"
+                                *ngIf="isApply && !editMode && !isRevision" (click)="draftApply()">
                                 <i nz-icon type="form"></i>
                                 <span>制定申请</span>
                             </button>

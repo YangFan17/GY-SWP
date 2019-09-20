@@ -16,8 +16,7 @@ namespace GYSWP.LC_QualityRecords
         /// <summary>
         /// 到货外键
         /// </summary>
-        [Required]
-        public virtual Guid TimeLogId { get; set; }
+             public virtual Guid? TimeLogId { get; set; }
 
         /// <summary>
         /// 卷烟名称

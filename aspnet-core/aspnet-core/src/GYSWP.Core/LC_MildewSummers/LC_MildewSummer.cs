@@ -16,14 +16,12 @@ namespace GYSWP.LC_MildewSummers
         /// <summary>
         /// 流程外键
         /// </summary>
-        [Required]
-        public virtual Guid TimeLogId { get; set; }
+        public virtual Guid? TimeLogId { get; set; }
 
         /// <summary>
         /// 上午开机时间
         /// </summary>
-        [Required]
-        public virtual DateTime AMBootTime { get; set; }
+        public virtual DateTime? AMBootTime { get; set; }
 
         /// <summary>
         /// 上午开机前温度

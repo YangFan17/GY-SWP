@@ -239,9 +239,23 @@ export class SupervisionService {
         }));
     }
 
-    createOrUpdateIndicatorAsync(params: any, deptInfo: any[]): Observable<ApiResult> {
+    // createOrUpdateIndicatorAsync(params: any, deptInfo: any[]): Observable<ApiResult> {
+    //     let url_ = "/api/services/app/Indicator/CreateOrUpdate";
+    //     let input = { Indicator: params, DeptInfo: deptInfo }
+    //     return this._commonhttp.post(url_, input).pipe(map(data => {
+    //         return ApiResult.fromJS(data);
+    //     }));
+    // }
+    createOrUpdateIndicatorAsync(params: any): Observable<ApiResult> {
         let url_ = "/api/services/app/Indicator/CreateOrUpdate";
-        let input = { Indicator: params, DeptInfo: deptInfo }
+        let input = { Indicator: params }
+        return this._commonhttp.post(url_, input).pipe(map(data => {
+            return ApiResult.fromJS(data);
+        }));
+    }
+
+    changeActionStatus(input: any): Observable<ApiResult> {
+        let url_ = "/api/services/app/Indicator/ChangeActionStatusAsync";
         return this._commonhttp.post(url_, input).pipe(map(data => {
             return ApiResult.fromJS(data);
         }));

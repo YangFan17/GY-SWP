@@ -131,7 +131,6 @@ LC_MildewSummerEditDto editDto;
 		/// <returns></returns>
 		
         [AbpAllowAnonymous]
-        [Audited]
         public async Task CreateOrUpdate(CreateOrUpdateLC_MildewSummerInput input)
 		{
 
@@ -278,7 +277,7 @@ LC_MildewSummerEditDto editDto;
                 {
                     rowIndex++;
                     IRow row = sheet.CreateRow(rowIndex);
-                    ExcelHelper.SetCell(row.CreateCell(0), font, item.AMBootTime.ToString("yyyy-MM-dd HH:mm:ss"));
+                    ExcelHelper.SetCell(row.CreateCell(0), font, item.AMBootTime?.ToString("yyyy-MM-dd HH:mm:ss"));
                     ExcelHelper.SetCell(row.CreateCell(1), font, item.AMBootBeforeTmp?.ToString());
                     ExcelHelper.SetCell(row.CreateCell(2), font, item.AMBootBeforeHum?.ToString());
                     ExcelHelper.SetCell(row.CreateCell(3), font, item.AMObservedTime?.ToString("yyyy-MM-dd HH:mm:ss"));

@@ -117,6 +117,11 @@ namespace GYSWP.Indicators.Dtos
         /// </summary>
         public string SourceDocName { get; set; }
         public DateTime EndTime { get; set; }
+        /// <summary>
+        /// 是否启用
+        /// </summary>
+        [Required]
+        public bool IsAction { get; set; }
     }
 
     public class IndicatorShowDto : EntityDto<Guid>
@@ -184,5 +189,11 @@ namespace GYSWP.Indicators.Dtos
         public string EmployeeDeptName { get; set; }
         public AchieveType AchieveType { get; set; }
         public string AchieveTypeName { get { return AchieveType.ToString(); } }
+    }
+
+    public class ExamineUser
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
     }
 }

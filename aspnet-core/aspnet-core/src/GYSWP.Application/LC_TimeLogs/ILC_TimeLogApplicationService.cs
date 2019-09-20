@@ -82,6 +82,6 @@ namespace GYSWP.LC_TimeLogs
         /// <param name="id"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        Task<APIResultDto> ModifyStatusById(Guid id, LC_TimeStatus status);
+        Task<APIResultDto> ModifyStatusById(Guid? id, LC_TimeStatus status);
     }
 }

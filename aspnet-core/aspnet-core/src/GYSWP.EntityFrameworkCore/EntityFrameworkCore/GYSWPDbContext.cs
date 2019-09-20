@@ -40,6 +40,8 @@ using GYSWP.LC_ScanRecords;
 using GYSWP.PositionInfos;
 using GYSWP.MainPointsRecords;
 using GYSWP.LC_MildewSummers;
+using GYSWP.LC_WarningReports;
+using GYSWP.IndicatorLibrarys;
 
 namespace GYSWP.EntityFrameworkCore
 {
@@ -73,7 +75,7 @@ namespace GYSWP.EntityFrameworkCore
         public virtual DbSet<IndicatorsDetail> IndicatorsDetails { get; set; }
         public virtual DbSet<PositionInfo> PositionInfos { get; set; }
         public virtual DbSet<MainPointsRecord> MainPointsRecords { get; set; }
-
+        public virtual DbSet<IndicatorLibrary> IndicatorLibrarys { get; set; }
         public virtual DbSet<EntryExitRegistration> LC_EntryExitRegistrations { get; set; }
         public virtual DbSet<InspectionRecord> LC_InspectionRecords { get; set; }
         public virtual DbSet<SCInventoryRecord> LC_SCInventoryRecords { get; set; }
@@ -93,5 +95,7 @@ namespace GYSWP.EntityFrameworkCore
         public virtual DbSet<LC_UseOutStorage> LC_UseOutStorages { get; set; }
         public virtual DbSet<LC_ScanRecord> LC_ScanRecords { get; set; }
         public virtual DbSet<LC_MildewSummer> LC_MildewSummers { get; set; }
+        public virtual DbSet<LC_Attachment> LC_Attachments { get; set; }
+        public virtual DbSet<LC_WarningReport> LC_WarningReports { get; set; }
     }
 }

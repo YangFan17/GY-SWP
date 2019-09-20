@@ -105,5 +105,11 @@ namespace GYSWP.Indicators
         /// </summary>
         [Required]
         public virtual DateTime EndTime { get; set; }
-    }
+
+        /// <summary>
+        /// 是否启用
+        /// </summary>
+        [Required]
+        public virtual bool IsAction { get; set; }
+}
 }

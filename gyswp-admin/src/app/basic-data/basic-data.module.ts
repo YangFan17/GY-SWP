@@ -46,7 +46,7 @@ import { UploadTxtComponent } from './document/document/upload-txt/upload-txt.co
         ClauseComponent,
         ClauseDetailComponent,
         DeptUserComponent,
-        UploadTxtComponent
+        UploadTxtComponent,
     ],
     entryComponents: [
         OrganizationComponent,
@@ -61,7 +61,7 @@ import { UploadTxtComponent } from './document/document/upload-txt/upload-txt.co
         ClauseComponent,
         ClauseDetailComponent,
         DeptUserComponent,
-        UploadTxtComponent
+        UploadTxtComponent,
     ],
     providers: [BasicDataService]
 })

@@ -19,7 +19,7 @@ namespace GYSWP.EntryExitRegistrations
         [Required]
         public virtual string EmployeeName { get; set; }
         /// <summary>
-        /// 员工id
+        /// 员工id             public virtual Guid? TimeLogId { get; set; }
         /// </summary>
         [StringLength(400)]
         [Required]
@@ -49,8 +49,7 @@ namespace GYSWP.EntryExitRegistrations
         /// <summary>
         /// 在库保管Id
         /// </summary>
-        [Required]
-        public virtual Guid TimeLogId { get; set; }
+        public virtual Guid? TimeLogId { get; set; }
         /// <summary>
         /// 创建日期
         /// </summary>

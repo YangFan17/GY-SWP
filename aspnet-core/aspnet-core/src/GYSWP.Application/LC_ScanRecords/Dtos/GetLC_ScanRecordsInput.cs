@@ -28,7 +28,7 @@ namespace GYSWP.LC_ScanRecords.Dtos
     {
         public string EmployeeId { get; set; }
         public string EmployeeName { get; set; }
-        public Guid TimeLogId { get; set; }
+        public Guid? TimeLogId { get; set; }
         public LC_TimeStatus Status { get; set; }
     }
 }

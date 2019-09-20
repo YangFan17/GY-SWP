@@ -12,15 +12,14 @@ namespace  GYSWP.LC_InStorageBills.Dtos
         /// <summary>
         /// Id
         /// </summary>
-        public Guid? Id { get; set; }         
+        public Guid? Id { get; set; }
 
+        public string BillNo { get; set; }
 
-        
-		/// <summary>
-		/// TimeLogId
-		/// </summary>
-		[Required(ErrorMessage="TimeLogId不能为空")]
-		public Guid TimeLogId { get; set; }
+        /// <summary>
+        /// TimeLogId
+        /// </summary>
+        public Guid? TimeLogId { get; set; }
 
 
 

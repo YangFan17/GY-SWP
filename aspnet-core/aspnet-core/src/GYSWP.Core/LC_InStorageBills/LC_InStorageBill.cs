@@ -12,12 +12,12 @@ namespace GYSWP.LC_InStorageBills
     [Table("LC_InStorageBills")]
     public class LC_InStorageBill : Entity<Guid>, IHasCreationTime
     {
+        public virtual string BillNo { get; set; }
 
         /// <summary>
         /// 到货外键
         /// </summary>
-        [Required]
-        public virtual Guid TimeLogId { get; set; }
+        public virtual Guid? TimeLogId { get; set; }
 
         /// <summary>
         /// 《烟草专卖品准运证》

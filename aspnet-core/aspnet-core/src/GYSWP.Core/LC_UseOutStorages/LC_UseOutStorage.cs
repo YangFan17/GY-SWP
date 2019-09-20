@@ -15,8 +15,7 @@ namespace GYSWP.LC_UseOutStorages
         /// <summary>
         /// 分拣外键
         /// </summary>
-        [Required]
-        public virtual Guid TimeLogId { get; set; }
+             public virtual Guid? TimeLogId { get; set; }
 
         /// <summary>
         /// 分拣线名称

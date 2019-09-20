@@ -1,10 +1,7 @@
-import { Component, OnInit, Injector, ViewChild } from '@angular/core';
-import { AppComponentBase, PagedListingComponentBase, PagedRequestDto, PagedResultDto } from '@shared/component-base';
+import { Component, Injector } from '@angular/core';
+import { PagedListingComponentBase, PagedRequestDto, PagedResultDto } from '@shared/component-base';
 import { SupervisionService } from 'services';
-import { NzFormatEmitEvent, NzTreeComponent } from 'ng-zorro-antd';
 import { Router } from '@angular/router';
-import { SelectGroup } from 'entities';
-import { DraftApplyInfoComponent } from '@app/work-criterion/criterion/draft-doc/draft-apply-info/draft-apply-info.component';
 
 @Component({
     moduleId: module.id,
@@ -12,7 +9,12 @@ import { DraftApplyInfoComponent } from '@app/work-criterion/criterion/draft-doc
     templateUrl: 'target-examine.component.html'
 })
 export class TargetExamineComponent extends PagedListingComponentBase<any>{
-    search: any = {};
+    search: any = { cycleTime: 0 };
+    cycleTimes = [
+        { value: 0, text: '全部', selected: true },
+        { value: 2, text: '季度', selected: false },
+        { value: 1, text: '年度', selected: false },
+    ]
     constructor(injector: Injector
         , private router: Router
         , private supervisionService: SupervisionService
@@ -35,7 +37,7 @@ export class TargetExamineComponent extends PagedListingComponentBase<any>{
      * 重置
      */
     reset() {
-        this.search = { keyWord: '', categoryId: '0' };
+        this.search = { keyWord: '', cycleTime: 0 };
         this.refresh();
     }
 
@@ -43,9 +45,9 @@ export class TargetExamineComponent extends PagedListingComponentBase<any>{
         let params: any = {};
         params.SkipCount = request.skipCount;
         params.MaxResultCount = request.maxResultCount;
-        params.KeyWord = this.search.keyWord;
-        if (this.search.categoryId != '0') {
-            params.CategoryId = this.search.categoryId;
+        // params.KeyWord = this.search.keyWord;
+        if (this.search.cycleTime != 0) {
+            params.cycleTime = this.search.cycleTime;
         }
         this.supervisionService.getIndicatorListAsync(params)
             .finally(() => {
