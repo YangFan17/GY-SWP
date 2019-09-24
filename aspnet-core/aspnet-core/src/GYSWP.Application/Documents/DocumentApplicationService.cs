@@ -899,7 +899,7 @@ namespace GYSWP.Documents
                 var result = _docRevisionRepository.GetAll().Where(v => v.Status == RevisionStatus.审核通过 && v.RevisionType == RevisionType.标准制定 && v.CreationTime >= input.StartTime && v.CreationTime < input.EndTimeFormart).Select(v => v.Id);
                 Guid[] results = await result.ToArrayAsync();
                 var count = await result.CountAsync();
-                var query = document.Where(e => results.Contains(e.BLLId));
+                var query = document.Where(e => results.Contains(e.BLLId.Value));
                 var entityListDtos = await (from q in query
                                             select new ReportDocDto()
                                             {
@@ -908,7 +908,7 @@ namespace GYSWP.Documents
                                                 DocNo = q.DocNo,
                                                 PublishTime = q.PublishTime,
                                                 CategoryDesc = q.CategoryDesc
-                                            }).OrderByDescending(v => v.PublishTime).AsNoTracking()
+                                            }).OrderByDescending(v => v.PublishTime)
              .PageBy(input).ToListAsync();
                 return new PagedResultDto<ReportDocDto>(count, entityListDtos);
             }
@@ -917,7 +917,7 @@ namespace GYSWP.Documents
                 var result = _docRevisionRepository.GetAll().Where(v => v.Status == RevisionStatus.审核通过 && v.RevisionType == RevisionType.标准制定 && v.CreationTime >= input.StartTime && v.CreationTime < input.EndTimeFormart).Select(v => v.Id);
                 Guid[] results = await result.ToArrayAsync();
                 var count = await result.CountAsync();
-                var query = document.Where(e => results.Contains(e.BLLId));
+                var query = document.Where(e => results.Contains(e.BLLId.Value));
                 var entityListDtos = await (from q in query
                                             select new ReportDocDto()
                                             {
@@ -926,7 +926,7 @@ namespace GYSWP.Documents
                                                 DocNo = q.DocNo,
                                                 PublishTime = q.PublishTime,
                                                 CategoryDesc = q.CategoryDesc
-                                            }).OrderByDescending(v => v.PublishTime).AsNoTracking()
+                                            }).OrderByDescending(v => v.PublishTime)
              .PageBy(input).ToListAsync();
                 return new PagedResultDto<ReportDocDto>(count, entityListDtos);
             }
@@ -942,7 +942,7 @@ namespace GYSWP.Documents
                                                 DocNo = q.DocNo,
                                                 PublishTime = q.PublishTime,
                                                 CategoryDesc = q.CategoryDesc
-                                            }).OrderByDescending(v => v.PublishTime).AsNoTracking()
+                                            }).OrderByDescending(v => v.PublishTime)
              .PageBy(input).ToListAsync();
                 return new PagedResultDto<ReportDocDto>(count, entityListDtos);
             }
@@ -961,7 +961,7 @@ namespace GYSWP.Documents
                                                 DocNo = q.DocNo,
                                                 PublishTime = q.PublishTime,
                                                 CategoryDesc = q.CategoryDesc
-                                            }).OrderByDescending(v => v.PublishTime).AsNoTracking()
+                                            }).OrderByDescending(v => v.PublishTime)
              .PageBy(input).ToListAsync();
                 return new PagedResultDto<ReportDocDto>(count, entityListDtos);
             }
@@ -983,7 +983,7 @@ namespace GYSWP.Documents
                                                 DocNo = q.DocNo,
                                                 PublishTime = q.PublishTime,
                                                 CategoryDesc = q.CategoryDesc
-                                            }).OrderByDescending(v => v.PublishTime).AsNoTracking()
+                                            }).OrderByDescending(v => v.PublishTime)
              .PageBy(input).ToListAsync();
                 return new PagedResultDto<ReportDocDto>(count, entityListDtos);
             }

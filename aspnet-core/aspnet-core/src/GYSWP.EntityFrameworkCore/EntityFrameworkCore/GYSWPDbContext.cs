@@ -42,6 +42,17 @@ using GYSWP.MainPointsRecords;
 using GYSWP.LC_MildewSummers;
 using GYSWP.LC_WarningReports;
 using GYSWP.IndicatorLibrarys;
+using GYSWP.LC_ForkliftMonthWhRecords;
+using GYSWP.LC_ForkliftWeekWhRecords;
+using GYSWP.LC_KyjFunctionRecords;
+using GYSWP.LC_KyjMonthMaintainRecords;
+using GYSWP.LC_KyjWeekMaintainRecords;
+using GYSWP.LC_LPFunctionRecords;
+using GYSWP.LC_LPMaintainRecords;
+using GYSWP.LC_SortingMonthRecords;
+using GYSWP.LC_SortingWeekRecords;
+using GYSWP.LC_SsjMonthWhByRecords;
+using GYSWP.LC_SsjWeekWhByRecords;
 
 namespace GYSWP.EntityFrameworkCore
 {
@@ -97,5 +108,18 @@ namespace GYSWP.EntityFrameworkCore
         public virtual DbSet<LC_MildewSummer> LC_MildewSummers { get; set; }
         public virtual DbSet<LC_Attachment> LC_Attachments { get; set; }
         public virtual DbSet<LC_WarningReport> LC_WarningReports { get; set; }
+
+        public virtual DbSet<LC_ForkliftMonthWhRecord> LC_ForkliftMonthWhRecords { get; set; }
+        public virtual DbSet<LC_ForkliftWeekWhRecord> LC_ForkliftWeekWhRecords { get; set; }
+        public virtual DbSet<LC_KyjFunctionRecord> LC_KyjFunctionRecords { get; set; }
+        public virtual DbSet<LC_KyjMonthMaintainRecord> LC_KyjMonthMaintainRecords { get; set; }
+        public virtual DbSet<LC_KyjWeekMaintainRecord> LC_KyjWeekMaintainRecords { get; set; }
+        public virtual DbSet<LC_LPFunctionRecord> LC_LPFunctionRecords { get; set; }
+        public virtual DbSet<LC_LPMaintainRecord> LC_LPMaintainRecords { get; set; }
+        public virtual DbSet<LC_SortingMonthRecord> LC_SortingMonthRecords { get; set; }
+        public virtual DbSet<LC_SortingWeekRecord> LC_SortingWeekRecords { get; set; }
+        public virtual DbSet<LC_SsjMonthWhByRecord> LC_SsjMonthWhByRecords { get; set; }
+        public virtual DbSet<LC_SsjWeekWhByRecord> LC_SsjWeekWhByRecords { get; set; }
+
     }
 }

@@ -92,6 +92,6 @@ namespace GYSWP.Documents
         /// <summary>
         /// 修订记录表Id
         /// </summary>
-        public virtual Guid BLLId { get; set; }
+        public virtual Guid? BLLId { get; set; }
     }
 }
