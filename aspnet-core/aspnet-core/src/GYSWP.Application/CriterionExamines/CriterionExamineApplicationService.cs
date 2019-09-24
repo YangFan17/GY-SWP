@@ -268,7 +268,8 @@ namespace GYSWP.CriterionExamines
                 if (input.Type == GYEnums.CriterionExamineType.外部考核)//部门外部考核抽自己部门的标准
                 {
                     int zuofeiCategoryId = await _categoryRepository.GetAll().Where(v => v.DeptId == organization.Id && v.Name == "作废标准库").Select(v => v.Id).FirstOrDefaultAsync();
-                    int[] curDeptValidId = await _categoryRepository.GetAll().Where(v => v.DeptId == organization.Id && v.ParentId != 0 && v.ParentId != zuofeiCategoryId).Select(v => v.Id).ToArrayAsync();
+                    int zuofeiWlwjId = await _categoryRepository.GetAll().Where(v => v.DeptId == organization.Id && v.Name == "外来文件" && v.ParentId != zuofeiCategoryId).Select(v => v.Id).FirstOrDefaultAsync();
+                    int[] curDeptValidId = await _categoryRepository.GetAll().Where(v => v.DeptId == organization.Id && v.ParentId != 0 && v.ParentId != zuofeiCategoryId && v.ParentId != zuofeiWlwjId).Select(v => v.Id).ToArrayAsync();
                     Guid[] curDeptDocIds = await _documentRepository.GetAll().Where(v => curDeptValidId.Contains(v.CategoryId)).Select(v => v.Id).ToArrayAsync();
                     foreach (var emp in input.EmpInfo)
                     {
