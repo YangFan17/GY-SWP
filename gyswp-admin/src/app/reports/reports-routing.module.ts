@@ -8,6 +8,10 @@ import { AdviseComponent } from './advise/advise.component'
 import { IndicatorSuperviseComponent } from './indicator-supervise/indicator-supervise.component';
 import { StandardConfirmComponent } from './standard-confirm/standard-confirm.component';
 import { ConfirmDetailComponent } from './standard-confirm/confirm-detail/confirm-detail.component';
+import { RevisionDocComponent } from './standardrevision/revision-doc/revision-doc.component';
+import { RevisionDraftComponent } from './standardrevision/revision-draft/revision-draft.component';
+
+
 
 
 const routes: Routes = [
@@ -45,6 +49,16 @@ const routes: Routes = [
         component: ConfirmDetailComponent,
         canActivate: [AppRouteGuard],
     },
+    {
+        path: 'revision-doc/:deptId/:type/:date',
+        component: RevisionDocComponent,
+        canActivate: [AppRouteGuard],
+    },
+    {
+        path: 'revision-draft/:id',
+        component: RevisionDraftComponent,
+        canActivate: [AppRouteGuard]
+    }
 ];
 
 @NgModule({

@@ -45,12 +45,12 @@
         <tbody>
           <tr *ngFor="let item of nzTable.data">
             <td>{{item.deptName}}</td>
-            <td style="text-align: center"><a href="">{{item.totalCurrentStandards}}</a></td>
-            <td style="text-align: center"><a href="">{{item.standardSettingNumber}}</a></td>
-            <!-- <td style="text-align: center"><a href="">{{item.standardSettingStripNumber}}</a></td> -->
-            <td style="text-align: center"><a href="">{{item.standardRevisionNumber}}</a></td>
-            <!-- <td style="text-align: center"><a href="">{{item.standardRevisionStripNumber}}</a></td> -->
-            <td style="text-align: center"><a href="">{{item.standardAbolitionNumber}}</a></td>
+            <td style="text-align: center"><a (click)="goTotalCurrent(1)">{{item.totalCurrentStandards}}</a></td>
+            <td style="text-align: center"><a (click)="goTotalCurrent(2)">{{item.standardSettingNumber}}</a></td>
+            <!-- <td style="text-align: center"><a (click)="goTotalCurrent(3)">{{item.standardSettingStripNumber}}</a></td> -->
+            <td style="text-align: center"><a (click)="goTotalCurrent(4)">{{item.standardRevisionNumber}}</a></td>
+            <!-- <td style="text-align: center"><a (click)="goTotalCurrent(5)">{{item.standardRevisionStripNumber}}</a></td> -->
+            <td style="text-align: center"><a (click)="goTotalCurrent(6)">{{item.standardAbolitionNumber}}</a></td>
           </tr>
         </tbody>
       </nz-table>

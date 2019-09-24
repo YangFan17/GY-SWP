@@ -1,0 +1,30 @@
+<page-header title="制修订标准统计"></page-header>
+<nz-card>
+    <div nz-row>
+        <ng-template #totalTemplate let-total>共 {{totalItems}} 条</ng-template>
+        <nz-table #nzTable [nzFrontPagination]="false" [nzShowTotal]="totalTemplate" [nzTotal]="totalItems"
+            [nzData]="dataList" [(nzPageIndex)]="pageNumber" [(nzPageSize)]="pageSize" [nzLoading]="isTableLoading"
+            [nzShowSizeChanger]="true" (nzPageIndexChange)="refresh()" (nzPageSizeChange)="refresh()">
+            <thead>
+                <tr>
+                    <th>标准编号</th>
+                    <th>标准名称</th>
+                    <th>标准分类</th>
+                    <!-- <th>发布时间</th> -->
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of nzTable.data">
+                    <td>{{item.docNo}}</td>
+                    <td>{{item.name}}</td>
+                    <td>{{item.categoryDesc}}</td>
+                    <!-- <td>{{item.publishTime | date: "yyyy-MM-dd"}}</td> -->
+                    <td>
+                        <a (click)="goDetail(item.id)">详情</a>
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>
+    </div>
+</nz-card>

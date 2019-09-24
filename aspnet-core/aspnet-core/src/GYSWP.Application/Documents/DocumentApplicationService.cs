@@ -39,6 +39,10 @@ using Senparc.CO2NET.HttpUtility;
 using GYSWP.Authorization.Users;
 using Abp.Auditing;
 using GYSWP.DocAttachments;
+using GYSWP.DocRevisions;
+using GYSWP.GYEnums;
+using GYSWP.ApplyInfos;
+using GYSWP.ClauseRevisions;
 
 namespace GYSWP.Documents
 {
@@ -59,7 +63,9 @@ namespace GYSWP.Documents
         private readonly IDingDingAppService _dingDingAppService;
         private readonly UserManager _userManager;
         private readonly IRepository<DocAttachment, Guid> _docAttachmentRepository;
-
+        private readonly IRepository<DocRevision, Guid> _docRevisionRepository;
+        private readonly IRepository<ApplyInfo, Guid> _applyInfoRepository;
+        private readonly IRepository<ClauseRevision, Guid> _clauseRevisionRepository;
         /// <summary>
         /// 构造函数 
         ///</summary>
@@ -75,6 +81,9 @@ namespace GYSWP.Documents
         , IDingDingAppService dingDingAppService
         , UserManager userManager
         , IRepository<DocAttachment, Guid> docAttachmentRepository
+        ,IRepository<ApplyInfo, Guid> applyInfoRepository
+        ,IRepository<ClauseRevision, Guid> clauseRevisionRepository
+        , IRepository<DocRevision, Guid> docRevisionRepository
         )
         {
             _userManager = userManager;
@@ -88,6 +97,9 @@ namespace GYSWP.Documents
             _employeeClauseRepository = employeeClauseRepository;
             _categoryManager = categoryManager;
             _docAttachmentRepository = docAttachmentRepository;
+            _applyInfoRepository = applyInfoRepository;
+            _clauseRevisionRepository = clauseRevisionRepository;
+            _docRevisionRepository = docRevisionRepository;
         }
 
 
@@ -121,7 +133,7 @@ namespace GYSWP.Documents
             return new PagedResultDto<DocumentListDto>(count, entityListDtos);
         }
 
-
+      
         /// <summary>
         /// 通过指定id获取DocumentListDto信息
         /// </summary>
@@ -846,6 +858,137 @@ namespace GYSWP.Documents
             }
 
             return docs;
+        }
+        /// <summary>
+        /// 标准统计查询
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<PagedResultDto<ReportDocDto>> GetActionDocumentsAsync(GetReportDocInput input)
+        {
+            int[] category = await _categoryRepository.GetAll().Where(v => v.DeptId == input.DeptId).Select(v => v.Id).ToArrayAsync();
+            var clauseRevisions = _clauseRevisionRepository.GetAll().Where(aa => aa.CreationTime >= input.StartTime && aa.CreationTime < input.EndTimeFormart);
+            var document = _entityRepository.GetAll();
+            if (input.DeptId != 1)
+            {
+                document = _entityRepository.GetAll().Where(e => category.Contains(e.CategoryId));
+            }
+            else
+            {
+                document = _entityRepository.GetAll();
+            }
+            if (input.Type == ReportDocEnum.现行标准总数)
+            {
+                var query = document.Where(e => e.PublishTime <= input.EndTimeFormart && e.IsAction == true);
+                var count = await query.CountAsync();
+                var entityListDtos = await (from q in query
+                                            select new ReportDocDto()
+                                            {
+                                                Id = q.Id,
+                                                Name = q.Name,
+                                                DocNo = q.DocNo,
+                                                PublishTime = q.PublishTime,
+                                                CategoryDesc = q.CategoryDesc
+                                            }).OrderByDescending(v => v.PublishTime).AsNoTracking()
+             .PageBy(input).ToListAsync();
+                return new PagedResultDto<ReportDocDto>(count, entityListDtos);
+
+            }
+            else if (input.Type == ReportDocEnum.标准制定个数)
+            {
+                var result = _docRevisionRepository.GetAll().Where(v => v.Status == RevisionStatus.审核通过 && v.RevisionType == RevisionType.标准制定 && v.CreationTime >= input.StartTime && v.CreationTime < input.EndTimeFormart).Select(v => v.Id);
+                Guid[] results = await result.ToArrayAsync();
+                var count = await result.CountAsync();
+                var query = document.Where(e => results.Contains(e.BLLId));
+                var entityListDtos = await (from q in query
+                                            select new ReportDocDto()
+                                            {
+                                                Id = q.Id,
+                                                Name = q.Name,
+                                                DocNo = q.DocNo,
+                                                PublishTime = q.PublishTime,
+                                                CategoryDesc = q.CategoryDesc
+                                            }).OrderByDescending(v => v.PublishTime).AsNoTracking()
+             .PageBy(input).ToListAsync();
+                return new PagedResultDto<ReportDocDto>(count, entityListDtos);
+            }
+            else if (input.Type == ReportDocEnum.标准定制条数)
+            {
+                var result = _docRevisionRepository.GetAll().Where(v => v.Status == RevisionStatus.审核通过 && v.RevisionType == RevisionType.标准制定 && v.CreationTime >= input.StartTime && v.CreationTime < input.EndTimeFormart).Select(v => v.Id);
+                Guid[] results = await result.ToArrayAsync();
+                var count = await result.CountAsync();
+                var query = document.Where(e => results.Contains(e.BLLId));
+                var entityListDtos = await (from q in query
+                                            select new ReportDocDto()
+                                            {
+                                                Id = q.Id,
+                                                Name = q.Name,
+                                                DocNo = q.DocNo,
+                                                PublishTime = q.PublishTime,
+                                                CategoryDesc = q.CategoryDesc
+                                            }).OrderByDescending(v => v.PublishTime).AsNoTracking()
+             .PageBy(input).ToListAsync();
+                return new PagedResultDto<ReportDocDto>(count, entityListDtos);
+            }
+            else if (input.Type == ReportDocEnum.标准废止个数)
+            {
+                var query = document.Where(aa => aa.IsAction == false && aa.InvalidTime >= input.StartTime && aa.InvalidTime < input.EndTimeFormart);
+                var count = await query.CountAsync();
+                var entityListDtos = await (from q in query
+                                            select new ReportDocDto()
+                                            {
+                                                Id = q.Id,
+                                                Name = q.Name,
+                                                DocNo = q.DocNo,
+                                                PublishTime = q.PublishTime,
+                                                CategoryDesc = q.CategoryDesc
+                                            }).OrderByDescending(v => v.PublishTime).AsNoTracking()
+             .PageBy(input).ToListAsync();
+                return new PagedResultDto<ReportDocDto>(count, entityListDtos);
+            }
+            else if (input.Type == ReportDocEnum.标准修订个数)
+            {
+                var query = document;
+                var revisionList = _applyInfoRepository.GetAll().Where(v => v.OperateType == OperateType.修订标准 && v.Status == ApplyStatus.审批通过 && v.ProcessingStatus == RevisionStatus.审核通过);
+                Guid?[] revisionDocIds = await revisionList.Select(v => v.DocumentId).ToArrayAsync();
+                var count = await query.CountAsync(v => revisionDocIds.Contains(v.Id));
+                var result = query.Where(v => revisionDocIds.Contains(v.Id));
+                var entityListDtos = await (from q in result
+                                            select new ReportDocDto()
+                                            {
+                                                Id = q.Id,
+                                                Name = q.Name,
+                                                DocNo = q.DocNo,
+                                                PublishTime = q.PublishTime,
+                                                CategoryDesc = q.CategoryDesc
+                                            }).OrderByDescending(v => v.PublishTime).AsNoTracking()
+             .PageBy(input).ToListAsync();
+                return new PagedResultDto<ReportDocDto>(count, entityListDtos);
+            }
+            else if (input.Type == ReportDocEnum.标准修订条数)
+            {
+                var query = document.Where(e => category.Contains(e.CategoryId));
+
+                var revisionList = _applyInfoRepository.GetAll().Where(v => v.OperateType == OperateType.修订标准 && v.Status == ApplyStatus.审批通过 && v.ProcessingStatus == RevisionStatus.审核通过);
+                Guid?[] revisionDocIds = await revisionList.Select(v => v.DocumentId).ToArrayAsync();
+
+                Guid[] curDeptRevisionIds = await query.Where(v => revisionDocIds.Contains(v.Id)).Select(v => v.Id).ToArrayAsync();
+                var count = await clauseRevisions.CountAsync(v => curDeptRevisionIds.Contains(v.DocumentId.Value));
+                var result = query.Where(v => curDeptRevisionIds.Contains(v.Id));
+                var entityListDtos = await (from q in result
+                                            select new ReportDocDto()
+                                            {
+                                                Id = q.Id,
+                                                Name = q.Name,
+                                                DocNo = q.DocNo,
+                                                PublishTime = q.PublishTime,
+                                                CategoryDesc = q.CategoryDesc
+                                            }).OrderByDescending(v => v.PublishTime).AsNoTracking()
+             .PageBy(input).ToListAsync();
+                return new PagedResultDto<ReportDocDto>(count, entityListDtos);
+            }
+            return null;
+
         }
     }
     public class SectionNo

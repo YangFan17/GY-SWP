@@ -26,6 +26,7 @@ export class StandardConfirmComponent extends PagedListingComponentBase<any>{
     }
 
     ngOnInit() {
+        console.log("2");
         this.getTrees();
     }
 
