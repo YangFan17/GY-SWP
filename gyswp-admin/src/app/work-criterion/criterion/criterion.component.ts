@@ -12,7 +12,7 @@ import { DraftApplyInfoComponent } from './draft-doc/draft-apply-info/draft-appl
     styleUrls: ['criterion.component.less']
 })
 export class CriterionComponent extends PagedListingComponentBase<any>{
-    search: any = { keyWord: '', categoryId: 0 };
+    search: any = { keyWord: '', categoryTypeId: 0 };
     categories = [
         { value: 0, text: '全部', selected: true },
         { value: 1, text: '技术标准', selected: false },
@@ -74,7 +74,7 @@ export class CriterionComponent extends PagedListingComponentBase<any>{
      */
     reset() {
         this.pageNumber = 1;
-        this.search = { keyWord: '', categoryId: 0 };
+        this.search = { keyWord: '', categoryTypeId: 0 };
         this.refresh();
     }
 
@@ -83,8 +83,8 @@ export class CriterionComponent extends PagedListingComponentBase<any>{
         params.SkipCount = request.skipCount;
         params.MaxResultCount = request.maxResultCount;
         params.KeyWord = this.search.keyWord;
-        if (this.search.categoryId != 0) {
-            params.CategoryId = this.search.categoryId;
+        if (this.search.categoryTypeId != 0) {
+            params.CategoryTypeId = this.search.categoryTypeId;
         }
         this.workCriterionService.getDocumentListAsync(params)
             .finally(() => {

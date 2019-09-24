@@ -15,7 +15,7 @@
                     <nz-form-item class="d-flex" style="margin-bottom: 0px;">
                         <nz-form-label nzFor="category">标准分类</nz-form-label>
                         <nz-form-control class="flex-1">
-                            <nz-select style="width: 100%;" name="category" [(ngModel)]="search.categoryId">
+                            <nz-select style="width: 100%;" name="category" [(ngModel)]="search.categoryTypeId">
                                 <nz-option *ngFor="let i of categories" [nzLabel]="i.text" [nzValue]="i.value">
                                 </nz-option>
                             </nz-select>
