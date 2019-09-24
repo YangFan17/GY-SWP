@@ -130,6 +130,18 @@ namespace GYSWP.Documents.Dtos
         public string Stamps { get; set; }
     }
 
+    public class DetailDocumentTitleDto : DocumentTitleDto
+    {
+        /// <summary>
+        /// 创建时间
+        /// </summary>
+        public string CreationTime { get; set; }
+        /// <summary>
+        /// 创建者姓名
+        /// </summary>
+        public string CreatorUserName { get; set; }
+    }
+
     [AutoMapFrom(typeof(Document))]
     public class DocumentConfirmDto : EntityDto<Guid>
     {

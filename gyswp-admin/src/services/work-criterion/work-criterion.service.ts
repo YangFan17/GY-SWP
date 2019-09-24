@@ -71,6 +71,13 @@ export class WorkCriterionService {
         }));
     }
 
+    getDetailDocumentTitleAsync(params: any): Observable<DocumentDto> {
+        let url_ = "/api/services/app/Document/GetDetailDocumentTitleAsync";
+        return this._commonhttp.get(url_, params).pipe(map(data => {
+            return DocumentDto.fromJS(data);
+        }));
+    }
+
     getUserOperateAsync(params: any): Observable<ApiResult> {
         let url_ = "/api/services/app/EmployeeClause/GetUserOperateAsync";
         return this._commonhttp.get(url_, params).pipe(map(data => {

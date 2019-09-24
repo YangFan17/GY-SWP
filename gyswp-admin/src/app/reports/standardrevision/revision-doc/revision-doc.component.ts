@@ -2,7 +2,6 @@ import { Component, Injector } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { PagedListingComponentBase, PagedRequestDto, PagedResultDto } from '@shared/component-base';
 import { WorkCriterionService } from 'services';
-import { tryParse } from 'selenium-webdriver/http';
 
 @Component({
     moduleId: module.id,
@@ -26,22 +25,6 @@ export class RevisionDocComponent extends PagedListingComponentBase<any>{
             this.date = this.actRouter.snapshot.params['date'];
         };
     }
-
-    refresh(): void {
-        this.getDataPage(this.pageNumber);
-    }
-    refreshData() {
-        this.pageNumber = 1;
-        this.refresh();
-    }
-    /**
-     * 重置
-     */
-    reset() {
-        this.pageNumber = 1;
-        this.refresh();
-    }
-
     protected fetchDataList(request: PagedRequestDto, pageNumber: number, finishedCallback: Function): void {
         let params: any = {};
         params.skipCount = request.skipCount;
@@ -60,6 +43,6 @@ export class RevisionDocComponent extends PagedListingComponentBase<any>{
     }
 
     goDetail(itemid: string) {
-        this.router.navigate(['app/reports/revision-draft', itemid]);
+        this.router.navigate(['app/reports/revision-draft', itemid, this.deptId, this.type, this.date]);
     }
 }
