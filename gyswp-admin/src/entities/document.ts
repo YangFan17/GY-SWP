@@ -25,6 +25,7 @@ export class DocumentDto {
     stamps: string;
     suitableCode: string;
     bllId: string;
+    creatorUserName: string;
     constructor(data?: any) {
         if (data) {
             for (var property in data) {
@@ -102,6 +103,7 @@ export class DocumentDto {
             this.stamps = data["stamps"];
             this.suitableCode = data["suitableCode"];
             this.bllId = data["bllId"];
+            this.creatorUserName = data["creatorUserName"];
         }
     }
     toJSON(data?: any) {

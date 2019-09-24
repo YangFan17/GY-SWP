@@ -897,7 +897,7 @@ namespace GYSWP.Documents
             else if (input.Type == ReportDocEnum.标准制定个数)
             {
                 var result = _docRevisionRepository.GetAll().Where(v => v.Status == RevisionStatus.审核通过 && v.RevisionType == RevisionType.标准制定 && v.CreationTime >= input.StartTime && v.CreationTime < input.EndTimeFormart).Select(v => v.Id);
-                Guid[] results = await result.ToArrayAsync();
+                Guid[] results =await result.ToArrayAsync();
                 var count = await result.CountAsync();
                 var query = document.Where(e => results.Contains(e.BLLId.Value));
                 var entityListDtos = await (from q in query
@@ -989,6 +989,26 @@ namespace GYSWP.Documents
             }
             return null;
 
+        }
+
+        /// <summary>
+        /// 制定详情页获取信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<DetailDocumentTitleDto> GetDetailDocumentTitleAsync(Guid id)
+        {
+            var query = await _entityRepository.GetAsync(id);
+            long deptId = await _categoryRepository.GetAll().Where(v => v.Id == query.CategoryId).Select(v => v.DeptId).FirstOrDefaultAsync();
+            string deptName = await _organizationRepository.GetAll().Where(v => v.Id == deptId).Select(v => v.DepartmentName).FirstOrDefaultAsync();
+            var result = query.MapTo<DetailDocumentTitleDto>();
+            if (query.CreatorUserId.HasValue)
+            {
+                var user = await _userManager.GetUserByIdAsync(query.CreatorUserId.Value);
+                result.CreatorUserName = user.EmployeeName;
+            }
+            result.DeptName = deptName;
+            return result;
         }
     }
     public class SectionNo

@@ -3,14 +3,15 @@
     <sv-container size="small" col="3" class="mb-md">
         <sv label="标准编号">{{docInfo.docNo}}</sv>
         <sv label="标准文档">
-            <a title="预览" (click)="goPre(docInfo.id)"> {{docInfo.name}}
-            </a>
+            {{docInfo.name}}
+
         </sv>
         <sv label="归口部门">{{docInfo.deptName}}</sv>
         <sv label="标准分类">{{docInfo.categoryDesc}}</sv>
         <sv label="标准状态"><label *ngIf="docStamps" style="color:red">[{{docStamps}}]</label></sv>
-        <sv label="发布时间">{{docInfo.publishTime| date: "yyyy-MM-dd"}}</sv>
-        <!-- <sv label="标准制定人">{{docInfo.| date: "yyyy-MM-dd"}}</sv> -->
+        <sv label="发布时间">{{docInfo.publishTime | date: "yyyy-MM-dd"}}</sv>
+        <sv *ngIf="docInfo.creatorUserName" label="创建人">{{docInfo.creatorUserName}}</sv>
+        <sv label="创建时间">{{docInfo.creationTime | date: "yyyy-MM-dd"}}</sv>
     </sv-container>
     <div nz-row>
         <nz-table #expandTable [nzData]="listOfMapData" [nzShowPagination]="false" [nzFrontPagination]="false">
