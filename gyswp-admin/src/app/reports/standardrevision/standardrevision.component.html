@@ -36,21 +36,21 @@
             <th>部门名称</th>
             <th style="text-align: center">现行标准总数</th>
             <th style="text-align: center">标准制定个数</th>
-            <th style="text-align: center">标准制定条数</th>
+            <!-- <th style="text-align: center">标准制定条数</th> -->
             <th style="text-align: center">标准修订个数</th>
-            <th style="text-align: center">标准修订条数</th>
+            <!-- <th style="text-align: center">标准修订条数</th> -->
             <th style="text-align: center">标准废止个数</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let item of nzTable.data">
             <td>{{item.deptName}}</td>
-            <td style="text-align: center"><a href="">{{item.totalCurrentStandards}}</a></td>
-            <td style="text-align: center"><a href="">{{item.standardSettingNumber}}</a></td>
-            <td style="text-align: center"><a href="">{{item.standardSettingStripNumber}}</a></td>
-            <td style="text-align: center"><a href="">{{item.standardRevisionNumber}}</a></td>
-            <td style="text-align: center"><a href="">{{item.standardRevisionStripNumber}}</a></td>
-            <td style="text-align: center"><a href="">{{item.standardAbolitionNumber}}</a></td>
+            <td style="text-align: center"><a (click)="goTotalCurrent(1)">{{item.totalCurrentStandards}}</a></td>
+            <td style="text-align: center"><a (click)="goTotalCurrent(2)">{{item.standardSettingNumber}}</a></td>
+            <!-- <td style="text-align: center"><a (click)="goTotalCurrent(3)">{{item.standardSettingStripNumber}}</a></td> -->
+            <td style="text-align: center"><a (click)="goTotalCurrent(4)">{{item.standardRevisionNumber}}</a></td>
+            <!-- <td style="text-align: center"><a (click)="goTotalCurrent(5)">{{item.standardRevisionStripNumber}}</a></td> -->
+            <td style="text-align: center"><a (click)="goTotalCurrent(6)">{{item.standardAbolitionNumber}}</a></td>
           </tr>
         </tbody>
       </nz-table>

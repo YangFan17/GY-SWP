@@ -33,7 +33,6 @@ namespace GYSWP.Documents.Dtos
                 Sorting = "Id";
             }
         }
-
     }
 
     public class DocumentReadInput 
@@ -50,5 +49,33 @@ namespace GYSWP.Documents.Dtos
         /// </summary>
         public int Type { get; set; }
         public Guid DocId { get; set; }
+    }
+
+    /// <summary>
+    /// 标准统计报表Dto
+    /// </summary>
+    public class GetReportDocInput : PagedSortedAndFilteredInputDto
+    {
+        public long DeptId { get; set; }
+        public string EndTime { get; set; }
+        public DateTime EndTimeFormart {
+            get
+            {
+               return Convert.ToDateTime(EndTime);
+            }
+        }
+
+        public DateTime StartTime { get; set; }
+        public ReportDocEnum Type { get; set; }
+    }
+
+    public enum ReportDocEnum
+    {
+        现行标准总数 = 1,
+        标准制定个数 = 2,
+        标准定制条数 = 3,
+        标准修订个数 = 4,
+        标准修订条数 = 5,
+        标准废止个数 = 6
     }
 }

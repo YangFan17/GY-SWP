@@ -12,6 +12,9 @@ import { AdviseComponent } from './advise/advise.component';
 import { IndicatorSuperviseComponent } from './indicator-supervise/indicator-supervise.component';
 import { StandardConfirmComponent } from './standard-confirm/standard-confirm.component';
 import { ConfirmDetailComponent } from './standard-confirm/confirm-detail/confirm-detail.component';
+import { RevisionDocComponent } from './standardrevision/revision-doc/revision-doc.component';
+import { RevisionDraftComponent } from './standardrevision/revision-draft/revision-draft.component';
+
 
 @NgModule({
     imports: [
@@ -30,7 +33,9 @@ import { ConfirmDetailComponent } from './standard-confirm/confirm-detail/confir
         AdviseComponent,
         IndicatorSuperviseComponent,
         StandardConfirmComponent,
-        ConfirmDetailComponent
+        ConfirmDetailComponent,
+        RevisionDocComponent,
+        RevisionDraftComponent
     ],
     entryComponents: [
         InspectComponent,
@@ -39,7 +44,9 @@ import { ConfirmDetailComponent } from './standard-confirm/confirm-detail/confir
         AdviseComponent,
         IndicatorSuperviseComponent,
         StandardConfirmComponent,
-        ConfirmDetailComponent
+        ConfirmDetailComponent,
+        RevisionDocComponent,
+        RevisionDraftComponent
     ]
 })
 export class ReportsModule { }

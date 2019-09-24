@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/component-base';
 import { NzTreeComponent, NzFormatEmitEvent } from 'ng-zorro-antd';
 import { StandardRevisionService } from 'services';
+import { Router } from '@angular/router';
 
 @Component({
   moduleId: module.id,
@@ -20,8 +21,11 @@ export class StandardrevisionComponent extends AppComponentBase implements OnIni
   search = { month: '', deptId: 1 };
   isTableLoading = false;
 
-  constructor(injector: Injector
-    , private standardRevisionService: StandardRevisionService) {
+  constructor(
+    injector: Injector
+    , private standardRevisionService: StandardRevisionService
+    , private router: Router
+  ) {
     super(injector);
   }
 
@@ -41,6 +45,11 @@ export class StandardrevisionComponent extends AppComponentBase implements OnIni
         }
       }
     });
+  }
+
+  goTotalCurrent(type: number) {
+    var date = this.dateFormat(this.date);
+    this.router.navigate(['app/reports/revision-doc', this.search.deptId, type, date]);
   }
 
   // 选中节点

@@ -146,4 +146,15 @@ namespace GYSWP.Documents.Dtos
             }
         }
     }
+
+    /// <summary>
+    /// 标准统计Dto
+    /// </summary>
+    public class ReportDocDto : EntityDto<Guid>
+    {
+        public string Name { get; set; }
+        public string DocNo { get; set; }
+        public string CategoryDesc { get; set; }
+        public DateTime? PublishTime { get; set; }
+    }
 }

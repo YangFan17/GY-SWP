@@ -89,5 +89,9 @@ namespace GYSWP.Documents
         /// 适用于（QMS,EMS,OHS）
         /// </summary>
         public virtual string SuitableCode { get; set; }
+        /// <summary>
+        /// 修订记录表Id
+        /// </summary>
+        public virtual Guid BLLId { get; set; }
     }
 }

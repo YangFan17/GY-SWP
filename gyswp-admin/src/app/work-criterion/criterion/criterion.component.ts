@@ -74,6 +74,8 @@ export class CriterionComponent extends PagedListingComponentBase<any>{
         params.SkipCount = request.skipCount;
         params.MaxResultCount = request.maxResultCount;
         params.KeyWord = this.search.keyWord;
+        console.log(this.search.keyWord);
+
         if (this.search.categoryId != '0') {
             params.CategoryId = this.search.categoryId;
         }
