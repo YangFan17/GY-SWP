@@ -580,19 +580,19 @@ namespace GYSWP.Documents
             {
                 if (item.IsAllUser == true)
                 {
-                    item.ShouldNum = await _employeeRepository.CountAsync();
+                    //item.ShouldNum = await _employeeRepository.CountAsync();
                 }
                 else
                 {
-                    if (!string.IsNullOrEmpty(item.DeptIds))
-                    {
-                        string[] deptIds = item.DeptIds.Split(',');
-                        item.ShouldNum = await _employeeRepository.CountAsync(e => deptIds.Contains(e.Department.Replace('[', ' ').Replace(']', ' ').Trim()));
-                    }
-                    if (!string.IsNullOrEmpty(item.EmployeeIds))
-                    {
-                        item.ShouldNum += item.EmployeeIds.Split(',').Count();
-                    }
+                    //if (!string.IsNullOrEmpty(item.DeptIds))
+                    //{
+                    //    string[] deptIds = item.DeptIds.Split(',');
+                    //    item.ShouldNum = await _employeeRepository.CountAsync(e => deptIds.Contains(e.Department.Replace('[', ' ').Replace(']', ' ').Trim()));
+                    //}
+                    //if (!string.IsNullOrEmpty(item.EmployeeIds))
+                    //{
+                    //    item.ShouldNum += item.EmployeeIds.Split(',').Count();
+                    //}
                 }
 
                 item.ActualNum = await _employeeClauseRepository.GetAll().Where(v => v.DocumentId == item.Id).Select(v => v.EmployeeId).Distinct().CountAsync();

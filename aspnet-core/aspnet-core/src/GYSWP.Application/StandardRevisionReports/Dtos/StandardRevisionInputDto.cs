@@ -21,7 +21,7 @@ namespace GYSWP.StandardRevisionReports
         {
             get
             {
-                return new DateTime(Month.Year, Month.Month + 1, 1);
+                return StartTime.Value.AddMonths(1);
             }
         }
     }
