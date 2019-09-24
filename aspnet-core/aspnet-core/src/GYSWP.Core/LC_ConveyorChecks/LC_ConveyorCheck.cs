@@ -16,8 +16,7 @@ namespace GYSWP.LC_ConveyorChecks
         /// <summary>
         /// 到货外键
         /// </summary>
-        [Required]
-        public virtual Guid TimeLogId { get; set; }
+             public virtual Guid? TimeLogId { get; set; }
 
         /// <summary>
         /// 设备编号

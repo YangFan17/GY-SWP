@@ -95,6 +95,13 @@ namespace GYSWP.GYEnums
         考核附件 = 3
     }
 
+    public enum LC_AttachmentType
+    {
+        检查验收 = 1,
+        卷烟机损 = 2,
+        设备故障 = 3
+    }
+
     public enum IndicatorStatus
     {
         未填写 = 1,
@@ -151,6 +158,15 @@ namespace GYSWP.GYEnums
         QMS = 1,
         EMS = 2,
         OHS = 3
+    }
+
+    public enum CategoryType
+    {
+        技术标准 = 1,
+        管理标准 = 2,
+        工作标准 = 3,
+        外来文件 = 4,
+        风险库 = 5
     }
 
     public static class GYCode

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Injector } from '@angular/core';
-import { AppComponentBase } from '@shared/component-base';
+import { AppComponentBase, PagedListingComponentBase, PagedRequestDto, PagedResultDto } from '@shared/component-base';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SupervisionService } from 'services';
 import { NzModalService } from 'ng-zorro-antd';
@@ -12,8 +12,9 @@ import { FullInResultComponent } from './full-in-result/full-in-result.component
     selector: 'target-list',
     templateUrl: 'target-list.component.html'
 })
-export class TargetListComponent extends AppComponentBase implements OnInit {
-    @Input() id: string;
+export class TargetListComponent extends PagedListingComponentBase<any>{
+    // @Input() id: string;
+    id: string;
     indicatorList: IndicatorShowDto[] = [];
     constructor(injector: Injector
         , private actRouter: ActivatedRoute
@@ -26,15 +27,43 @@ export class TargetListComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit(): void {
-        // if (this.id) {
-        //     this.getIndicatorListById();
-        // }
+        this.refreshData();
     }
-    getIndicatorListById() {
-        this.supervisionService.getIndicatorListById(this.id).subscribe(res => {
-            this.indicatorList = res;
-        });
+
+    refresh(): void {
+        this.getDataPage(this.pageNumber);
     }
+    refreshData() {
+        this.pageNumber = 1;
+        this.refresh();
+    }
+    /**
+     * 重置
+     */
+    reset() {
+        this.refresh();
+    }
+
+    protected fetchDataList(request: PagedRequestDto, pageNumber: number, finishedCallback: Function): void {
+        let params: any = {};
+        params.SkipCount = request.skipCount;
+        params.MaxResultCount = request.maxResultCount;
+        params.id = this.id;
+        this.supervisionService.getIndicatorRecord(params)
+            .finally(() => {
+                finishedCallback();
+            })
+            .subscribe((result: PagedResultDto) => {
+                this.dataList = result.items
+                this.totalItems = result.totalCount;
+            });
+    }
+
+    // getIndicatorListById() {
+    //     this.supervisionService.getIndicatorListById(this.id).subscribe(res => {
+    //         this.indicatorList = res;
+    //     });
+    // }
 
     resultFeedBack(id: string): void {
         this.modalHelper
@@ -58,8 +87,12 @@ export class TargetListComponent extends AppComponentBase implements OnInit {
             })
             .subscribe(isSave => {
                 if (isSave) {
-                    this.getIndicatorListById();
+                    this.refresh();
                 }
             });
+    }
+
+    return() {
+        this.router.navigate(['app/supervision/indicators']);
     }
 }

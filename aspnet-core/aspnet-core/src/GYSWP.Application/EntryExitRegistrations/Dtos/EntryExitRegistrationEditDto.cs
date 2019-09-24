@@ -64,8 +64,7 @@ namespace  GYSWP.EntryExitRegistrations.Dtos
         /// <summary>
         /// TimeLogId
         /// </summary>
-        [Required(ErrorMessage = "TimeLogId不能为空")]
-        public Guid TimeLogId { get; set; }
+        public Guid? TimeLogId { get; set; }
 
 
 

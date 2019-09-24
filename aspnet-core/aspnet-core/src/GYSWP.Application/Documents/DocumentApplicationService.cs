@@ -414,7 +414,8 @@ namespace GYSWP.Documents
             string deptStr = await _employeeRepository.GetAll().Where(v => v.Id == curUser.EmployeeId).Select(v => v.Department).FirstOrDefaultAsync();
             var deptId = deptStr.Replace('[', ' ').Replace(']', ' ').Trim();
             var query = _entityRepository.GetAll().Where(v => v.IsAction == true && (v.PublishTime.HasValue ? v.PublishTime <= DateTime.Today : false) && (v.IsAllUser == true || v.DeptIds.Contains(deptId) || v.EmployeeIds.Contains(curUser.EmployeeId)))
-                .WhereIf(input.CategoryId.HasValue, v => v.CategoryId == input.CategoryId)
+                //.WhereIf(input.CategoryId.HasValue, v => v.CategoryId == input.CategoryId)
+                .WhereIf(input.CategoryTypeId.HasValue, v => v.CategoryDesc.Contains(input.CategoryTypeId.ToString()))
                 .WhereIf(!string.IsNullOrEmpty(input.KeyWord), e => e.Name.Contains(input.KeyWord) || e.DocNo.Contains(input.KeyWord));
 
             var cate = _categoryRepository.GetAll();
@@ -591,19 +592,19 @@ namespace GYSWP.Documents
             {
                 if (item.IsAllUser == true)
                 {
-                    item.ShouldNum = await _employeeRepository.CountAsync();
+                    //item.ShouldNum = await _employeeRepository.CountAsync();
                 }
                 else
                 {
-                    if (!string.IsNullOrEmpty(item.DeptIds))
-                    {
-                        string[] deptIds = item.DeptIds.Split(',');
-                        item.ShouldNum = await _employeeRepository.CountAsync(e => deptIds.Contains(e.Department.Replace('[', ' ').Replace(']', ' ').Trim()));
-                    }
-                    if (!string.IsNullOrEmpty(item.EmployeeIds))
-                    {
-                        item.ShouldNum += item.EmployeeIds.Split(',').Count();
-                    }
+                    //if (!string.IsNullOrEmpty(item.DeptIds))
+                    //{
+                    //    string[] deptIds = item.DeptIds.Split(',');
+                    //    item.ShouldNum = await _employeeRepository.CountAsync(e => deptIds.Contains(e.Department.Replace('[', ' ').Replace(']', ' ').Trim()));
+                    //}
+                    //if (!string.IsNullOrEmpty(item.EmployeeIds))
+                    //{
+                    //    item.ShouldNum += item.EmployeeIds.Split(',').Count();
+                    //}
                 }
 
                 item.ActualNum = await _employeeClauseRepository.GetAll().Where(v => v.DocumentId == item.Id).Select(v => v.EmployeeId).Distinct().CountAsync();

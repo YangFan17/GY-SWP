@@ -75,5 +75,8 @@ namespace GYSWP.Indicators
         Task<IndicatorShowDto> GetIndicatorDetailByIdAsync(EntityDto<Guid> input);
         Task<List<IndicatorReviewDto>> GetDeptIndicatorDetailByIdAsync(EntityDto<Guid> input);
         Task AutoUpdateIndicatorStatusAsync();
+        Task<APIResultDto> ChangeActionStatusAsync(ChangeStatusDto input);
+        Task<APIResultDto> PublishIndicatorByIdAsync(PublishIndicatorInput input);
+        Task<PagedResultDto<IndicatorReviewDto>> GetPagedIndicatorRecordByIdAsync(GetIndicatorsInput input);
     }
 }

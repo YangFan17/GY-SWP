@@ -17,6 +17,7 @@ export class Indicators {
     sourceDocId: string;
     sourceDocName: string;
     endTime: Date;
+    isAction: boolean;
     getDepts(): any[] {
         let depts = [];
         if (!this.deptIds) {
@@ -65,6 +66,7 @@ export class Indicators {
             this.sourceDocId = data["sourceDocId"];
             this.sourceDocName = data["sourceDocName"];
             this.endTime = data["endTime"];
+            this.isAction = data["isAction"];
         }
     }
     toJSON(data?: any) {
@@ -84,7 +86,8 @@ export class Indicators {
         data["cycleTime"] = this.cycleTime;
         data["achieveType"] = this.achieveType;
         data["sourceDocId"] = this.sourceDocId;
-        data["endTime"] = this.endTime;
+        // data["endTime"] = this.endTime;
+        data["isAction"] = this.isAction;
         return data;
     }
     static fromJS(data: any): Indicators {

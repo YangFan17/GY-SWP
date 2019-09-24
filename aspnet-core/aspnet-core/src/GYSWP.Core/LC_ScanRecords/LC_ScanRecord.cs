@@ -16,8 +16,7 @@ namespace GYSWP.LC_ScanRecords
         /// <summary>
         /// 对应业务外键
         /// </summary>
-        [Required]
-        public virtual Guid TimeLogId { get; set; }
+        public virtual Guid? TimeLogId { get; set; }
 
         /// <summary>
         /// 类型（入库扫码、出库扫码）

@@ -239,9 +239,30 @@ export class SupervisionService {
         }));
     }
 
-    createOrUpdateIndicatorAsync(params: any, deptInfo: any[]): Observable<ApiResult> {
+    // createOrUpdateIndicatorAsync(params: any, deptInfo: any[]): Observable<ApiResult> {
+    //     let url_ = "/api/services/app/Indicator/CreateOrUpdate";
+    //     let input = { Indicator: params, DeptInfo: deptInfo }
+    //     return this._commonhttp.post(url_, input).pipe(map(data => {
+    //         return ApiResult.fromJS(data);
+    //     }));
+    // }
+    createOrUpdateIndicatorAsync(params: any): Observable<ApiResult> {
         let url_ = "/api/services/app/Indicator/CreateOrUpdate";
-        let input = { Indicator: params, DeptInfo: deptInfo }
+        let input = { Indicator: params }
+        return this._commonhttp.post(url_, input).pipe(map(data => {
+            return ApiResult.fromJS(data);
+        }));
+    }
+
+    publishIndicatorById(input: any): Observable<ApiResult> {
+        let url_ = "/api/services/app/Indicator/PublishIndicatorByIdAsync";
+        return this._commonhttp.post(url_, input).pipe(map(data => {
+            return ApiResult.fromJS(data);
+        }));
+    }
+
+    changeActionStatus(input: any): Observable<ApiResult> {
+        let url_ = "/api/services/app/Indicator/ChangeActionStatusAsync";
         return this._commonhttp.post(url_, input).pipe(map(data => {
             return ApiResult.fromJS(data);
         }));
@@ -298,6 +319,16 @@ export class SupervisionService {
 
     getCurDeptDocListAsync(param: any): Observable<PagedResultDto> {
         let url_ = "/api/services/app/Document/GetPagedCurDeptDocListAsync";
+        return this._commonhttp.get(url_, param).pipe(map(data => {
+            const result = new PagedResultDto();
+            result.items = data.items;
+            result.totalCount = data.totalCount;
+            return result;
+        }));
+    }
+
+    getIndicatorRecord(param: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/Indicator/GetPagedIndicatorRecordByIdAsync";
         return this._commonhttp.get(url_, param).pipe(map(data => {
             const result = new PagedResultDto();
             result.items = data.items;

@@ -8,6 +8,7 @@ import { EmpExamineRecordComponent } from './criterion-examine/emp-list/emp-exam
 import { TargetExamineComponent } from './target-examine/target-examine.component';
 import { TargetExamineDetailComponent } from './target-examine/target-examine-detail/target-examine-detail.component';
 import { QgExamineRecordComponent } from './criterion-examine/qg-examine-record/qg-examine-record.component';
+import { TargetListComponent } from './target-examine/target-examine-detail/target-list/target-list.component';
 
 
 const routes: Routes = [
@@ -63,7 +64,12 @@ const routes: Routes = [
         component: QgExamineRecordComponent,
         canActivate: [AppRouteGuard],
         data: { guard: 'QiGuanAdmin' },
-    }
+    },
+    {
+        path: 'target-record/:id',
+        component: TargetListComponent,
+        canActivate: [AppRouteGuard],
+    },
 ];
 
 @NgModule({

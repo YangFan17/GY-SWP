@@ -42,11 +42,11 @@ namespace GYSWP.LC_TimeLogs
         ///</summary>
         public LC_TimeLogAppService(
         IRepository<LC_TimeLog, Guid> entityRepository
-        ,ILC_TimeLogManager entityManager
+        , ILC_TimeLogManager entityManager
         )
         {
-            _entityRepository = entityRepository; 
-             _entityManager=entityManager;
+            _entityRepository = entityRepository;
+            _entityManager = entityManager;
         }
 
 
@@ -55,66 +55,66 @@ namespace GYSWP.LC_TimeLogs
         ///</summary>
         /// <param name="input"></param>
         /// <returns></returns>
-		 
+
         public async Task<PagedResultDto<LC_TimeLogListDto>> GetPaged(GetLC_TimeLogsInput input)
-		{
+        {
 
-		    var query = _entityRepository.GetAll();
-			// TODO:根据传入的参数添加过滤条件
-            
-
-			var count = await query.CountAsync();
-
-			var entityList = await query
-					.OrderBy(input.Sorting).AsNoTracking()
-					.PageBy(input)
-					.ToListAsync();
-
-			// var entityListDtos = ObjectMapper.Map<List<LC_TimeLogListDto>>(entityList);
-			var entityListDtos =entityList.MapTo<List<LC_TimeLogListDto>>();
-
-			return new PagedResultDto<LC_TimeLogListDto>(count,entityListDtos);
-		}
+            var query = _entityRepository.GetAll();
+            // TODO:根据传入的参数添加过滤条件
 
 
-		/// <summary>
-		/// 通过指定id获取LC_TimeLogListDto信息
-		/// </summary>
-		 
-		public async Task<LC_TimeLogListDto> GetById(EntityDto<Guid> input)
-		{
-			var entity = await _entityRepository.GetAsync(input.Id);
+            var count = await query.CountAsync();
 
-		    return entity.MapTo<LC_TimeLogListDto>();
-		}
+            var entityList = await query
+                    .OrderBy(input.Sorting).AsNoTracking()
+                    .PageBy(input)
+                    .ToListAsync();
 
-		/// <summary>
-		/// 获取编辑 LC_TimeLog
-		/// </summary>
-		/// <param name="input"></param>
-		/// <returns></returns>
-		
-		public async Task<GetLC_TimeLogForEditOutput> GetForEdit(NullableIdDto<Guid> input)
-		{
-			var output = new GetLC_TimeLogForEditOutput();
-LC_TimeLogEditDto editDto;
+            // var entityListDtos = ObjectMapper.Map<List<LC_TimeLogListDto>>(entityList);
+            var entityListDtos = entityList.MapTo<List<LC_TimeLogListDto>>();
 
-			if (input.Id.HasValue)
-			{
-				var entity = await _entityRepository.GetAsync(input.Id.Value);
+            return new PagedResultDto<LC_TimeLogListDto>(count, entityListDtos);
+        }
 
-				editDto = entity.MapTo<LC_TimeLogEditDto>();
 
-				//lC_TimeLogEditDto = ObjectMapper.Map<List<lC_TimeLogEditDto>>(entity);
-			}
-			else
-			{
-				editDto = new LC_TimeLogEditDto();
-			}
+        /// <summary>
+        /// 通过指定id获取LC_TimeLogListDto信息
+        /// </summary>
 
-			output.LC_TimeLog = editDto;
-			return output;
-		}
+        public async Task<LC_TimeLogListDto> GetById(EntityDto<Guid> input)
+        {
+            var entity = await _entityRepository.GetAsync(input.Id);
+
+            return entity.MapTo<LC_TimeLogListDto>();
+        }
+
+        /// <summary>
+        /// 获取编辑 LC_TimeLog
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+
+        public async Task<GetLC_TimeLogForEditOutput> GetForEdit(NullableIdDto<Guid> input)
+        {
+            var output = new GetLC_TimeLogForEditOutput();
+            LC_TimeLogEditDto editDto;
+
+            if (input.Id.HasValue)
+            {
+                var entity = await _entityRepository.GetAsync(input.Id.Value);
+
+                editDto = entity.MapTo<LC_TimeLogEditDto>();
+
+                //lC_TimeLogEditDto = ObjectMapper.Map<List<lC_TimeLogEditDto>>(entity);
+            }
+            else
+            {
+                editDto = new LC_TimeLogEditDto();
+            }
+
+            output.LC_TimeLog = editDto;
+            return output;
+        }
 
 
         /// <summary>
@@ -125,76 +125,76 @@ LC_TimeLogEditDto editDto;
         [AbpAllowAnonymous]
         [Audited]
         public async Task<LC_TimeLogEditDto> CreateOrUpdate(CreateOrUpdateLC_TimeLogInput input)
-		{
+        {
 
-			if (input.LC_TimeLog.Id.HasValue)
-			{
-				return await Update(input.LC_TimeLog);
-			}
-			else
-			{
-				return await Create(input.LC_TimeLog);
-			}
-		}
+            if (input.LC_TimeLog.Id.HasValue)
+            {
+                return await Update(input.LC_TimeLog);
+            }
+            else
+            {
+                return await Create(input.LC_TimeLog);
+            }
+        }
 
 
-		/// <summary>
-		/// 新增LC_TimeLog
-		/// </summary>
-		
-		protected virtual async Task<LC_TimeLogEditDto> Create(LC_TimeLogEditDto input)
-		{
-			//TODO:新增前的逻辑判断，是否允许新增
+        /// <summary>
+        /// 新增LC_TimeLog
+        /// </summary>
+
+        protected virtual async Task<LC_TimeLogEditDto> Create(LC_TimeLogEditDto input)
+        {
+            //TODO:新增前的逻辑判断，是否允许新增
 
             // var entity = ObjectMapper.Map <LC_TimeLog>(input);
-            var entity=input.MapTo<LC_TimeLog>();
-			
+            var entity = input.MapTo<LC_TimeLog>();
 
-			entity = await _entityRepository.InsertAsync(entity);
-			return entity.MapTo<LC_TimeLogEditDto>();
-		}
 
-		/// <summary>
-		/// 编辑LC_TimeLog
-		/// </summary>
-		
-		protected virtual async Task<LC_TimeLogEditDto> Update(LC_TimeLogEditDto input)
-		{
-			//TODO:更新前的逻辑判断，是否允许更新
+            entity = await _entityRepository.InsertAsync(entity);
+            return entity.MapTo<LC_TimeLogEditDto>();
+        }
 
-			var entity = await _entityRepository.GetAsync(input.Id.Value);
-			input.MapTo(entity);
+        /// <summary>
+        /// 编辑LC_TimeLog
+        /// </summary>
 
-			// ObjectMapper.Map(input, entity);
-		    var item =await _entityRepository.UpdateAsync(entity);
+        protected virtual async Task<LC_TimeLogEditDto> Update(LC_TimeLogEditDto input)
+        {
+            //TODO:更新前的逻辑判断，是否允许更新
+
+            var entity = await _entityRepository.GetAsync(input.Id.Value);
+            input.MapTo(entity);
+
+            // ObjectMapper.Map(input, entity);
+            var item = await _entityRepository.UpdateAsync(entity);
             return item.MapTo<LC_TimeLogEditDto>();
         }
 
 
 
-		/// <summary>
-		/// 删除LC_TimeLog信息的方法
-		/// </summary>
-		/// <param name="input"></param>
-		/// <returns></returns>
-		
-		public async Task Delete(EntityDto<Guid> input)
-		{
-			//TODO:删除前的逻辑判断，是否允许删除
-			await _entityRepository.DeleteAsync(input.Id);
-		}
+        /// <summary>
+        /// 删除LC_TimeLog信息的方法
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+
+        public async Task Delete(EntityDto<Guid> input)
+        {
+            //TODO:删除前的逻辑判断，是否允许删除
+            await _entityRepository.DeleteAsync(input.Id);
+        }
 
 
 
-		/// <summary>
-		/// 批量删除LC_TimeLog的方法
-		/// </summary>
-		
-		public async Task BatchDelete(List<Guid> input)
-		{
-			// TODO:批量删除前的逻辑判断，是否允许删除
-			await _entityRepository.DeleteAsync(s => input.Contains(s.Id));
-		}
+        /// <summary>
+        /// 批量删除LC_TimeLog的方法
+        /// </summary>
+
+        public async Task BatchDelete(List<Guid> input)
+        {
+            // TODO:批量删除前的逻辑判断，是否允许删除
+            await _entityRepository.DeleteAsync(s => input.Contains(s.Id));
+        }
 
         /// <summary>
         /// 记录开始入库信息
@@ -236,24 +236,27 @@ LC_TimeLogEditDto editDto;
         /// <param name="status"></param>
         /// <returns></returns>
         [AbpAllowAnonymous]
-        [Audited]
-        public async Task<APIResultDto> ModifyStatusById(Guid id, LC_TimeStatus status)
+        public async Task<APIResultDto> ModifyStatusById(Guid? id, LC_TimeStatus status)
         {
-            LC_TimeLog lC_TimeLog = await _entityRepository.FirstOrDefaultAsync(id);
-            if (lC_TimeLog == null)
+            if (id.HasValue)
             {
-                return new APIResultDto() { Code = 1, Msg = "未找到当前项" };
+                LC_TimeLog lC_TimeLog = await _entityRepository.FirstOrDefaultAsync(id.Value);
+                if (lC_TimeLog == null)
+                {
+                    return new APIResultDto() { Code = 1, Msg = "未找到当前项" };
+                }
+                else
+                {
+                    lC_TimeLog.Status = status;
+                    lC_TimeLog.EndTime = DateTime.Now;
+                    await _entityRepository.UpdateAsync(lC_TimeLog);
+                    return new APIResultDto() { Code = 0, Msg = "修改状态成功" };
+                }
             }
             else
             {
-                lC_TimeLog.Status = status;
-                lC_TimeLog.EndTime = DateTime.Now;
-                await _entityRepository.UpdateAsync(lC_TimeLog);
-                return new APIResultDto() { Code = 0, Msg = "修改状态成功" };
+                return new APIResultDto() { Code = 0, Msg = "成功结束" };
             }
-
         }
     }
 }
-
-

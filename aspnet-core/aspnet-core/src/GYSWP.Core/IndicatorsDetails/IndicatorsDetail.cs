@@ -64,5 +64,10 @@ namespace GYSWP.IndicatorsDetails
         /// 完成时间
         /// </summary>
         public virtual DateTime? CompleteTime { get; set; }
+        /// <summary>
+        /// 截止时间 当天23:59:59
+        /// </summary>
+        [Required]
+        public virtual DateTime EndTime { get; set; }
     }
 }

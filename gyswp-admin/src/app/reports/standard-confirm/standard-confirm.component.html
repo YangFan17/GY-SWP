@@ -60,16 +60,16 @@
                         <td>{{item.name}}</td>
                         <td>{{item.categoryDesc}}</td>
                         <td>{{item.publishTime | date: "yyyy-MM-dd"}}</td>
-                        <td>{{item.shouldNum}}</td>
+                        <!-- <td>{{item.shouldNum}}</td> -->
                         <td><a (click)="goDetail(item.id,1)">
                                 {{item.actualNum}}
                             </a>
                         </td>
-                        <td>
+                        <!-- <td>
                             <a (click)="goDetail(item.id,2)">
                                 {{item.differNum}}
                             </a>
-                        </td>
+                        </td> -->
                     </tr>
                 </tbody>
             </nz-table>

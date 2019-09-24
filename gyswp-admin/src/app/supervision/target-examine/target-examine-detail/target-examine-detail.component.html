@@ -1,7 +1,13 @@
 <form nz-form #validateForm="ngForm" *ngIf="indicator">
-    <nz-card [nzBordered]="false" nzTitle="检查指标详情">
+    <nz-card [nzBordered]="false" nzTitle="目标指标详情">
         <div nz-row>
             <div nz-col [nzSpan]="16">
+                <nz-form-item *ngIf="!indicator.isAction" style="margin-bottom: 0px;" nz-row nzRequired>
+                    <nz-form-label nz-col [nzSm]="4" nzRequired>发布状态</nz-form-label>
+                    <nz-form-control [nzSm]="20" style="color: red;" nzHasFeedback>
+                        已废止
+                    </nz-form-control>
+                </nz-form-item>
                 <nz-form-item nz-row>
                     <nz-form-label nz-col [nzSm]="4" nzRequired>检查指标</nz-form-label>
                     <nz-form-control [nzSm]="20" nzHasFeedback>
@@ -62,7 +68,7 @@
                                 [(ngModel)]="indicator.expectedValue" [placeholder]="'请填写预期值'"
                                 pattern="^(0|[1-9][0-9]*)(\.[0-9]*)?$" required>
                             <ng-template #suffixIconButton>
-                                <button nz-button nzType="primary" disabled nzSearch>%</button>
+                                <button nz-button nzType="primary" disabled nzSearch>%/次</button>
                             </ng-template>
                         </nz-input-group>
                         <nz-form-explain *ngIf="expectedValue.control.dirty&&expectedValue.control.errors">
@@ -84,7 +90,7 @@
                         </nz-input-group>
                     </nz-form-control>
                 </nz-form-item>
-                <nz-form-item nz-row>
+                <!-- <nz-form-item nz-row>
                     <nz-form-label nz-col [nzSm]="4" nzRequired>截止日期</nz-form-label>
                     <nz-form-control [nzSm]="6">
                         <nz-date-picker name="endTime" required [nzFormat]="'yyyy/MM/dd'" #endTime="ngModel"
@@ -93,7 +99,7 @@
                             <ng-container *ngIf="endTime.control.hasError('required')">请选择截止日期</ng-container>
                         </nz-form-explain>
                     </nz-form-control>
-                </nz-form-item>
+                </nz-form-item> -->
                 <nz-form-item nz-row>
                     <nz-form-label nz-col [nzSm]="4" nzRequired>考核部门</nz-form-label>
                     <nz-form-control [nzSm]="20">
@@ -110,15 +116,23 @@
                 </nz-form-item>
             </div>
         </div>
-        <target-list #targetList></target-list>
+        <!-- <target-list #targetList></target-list> -->
         <footer-toolbar errorCollect>
             <button nz-button [nzType]="'default'" (click)="return()">
                 返回
             </button>
-            <button *ngIf="!indicator.id" nz-button (click)="save()" [nzType]="'primary'" type="button"
+            <button nz-button (click)="save()" [nzType]="'primary'" type="button"
+                [disabled]="!validateForm.valid || saving">
+                保存
+            </button>
+            <button *ngIf="indicator.id" nz-button (click)="action()"
+                [nzType]=" indicator.isAction == true ?'danger':'primary'" type="button" [disabled]="saving">
+                {{indicator.isAction == true ?'废止':'启用'}}
+            </button>
+            <!-- <button *ngIf="!indicator.id" nz-button (click)="save()" [nzType]="'primary'" type="button"
                 [disabled]="!validateForm.valid || saving">
                 发布
-            </button>
+            </button> -->
         </footer-toolbar>
     </nz-card>
 </form>

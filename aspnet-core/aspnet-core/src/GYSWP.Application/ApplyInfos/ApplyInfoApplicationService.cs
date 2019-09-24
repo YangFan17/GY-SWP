@@ -504,6 +504,7 @@ namespace GYSWP.ApplyInfos
                 doc.CategoryCode = string.Join(',', categoryList.Select(c => c.Id).ToArray());
                 doc.CategoryDesc = string.Join(',', categoryList.Select(c => c.Name).ToArray());
                 doc.CreatorUserId = docRevision.CreatorUserId;
+                doc.BLLId = docRevision.Id;
                 Guid docId = await _documentRepository.InsertAndGetIdAsync(doc);
                 await CurrentUnitOfWork.SaveChangesAsync();
                 foreach (var item in clauseRevisionList)

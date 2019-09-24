@@ -16,8 +16,7 @@ namespace GYSWP.LC_SortingEquipChecks
         /// <summary>
         /// 分拣外键
         /// </summary>
-        [Required]
-        public virtual Guid TimeLogId { get; set; }
+             public virtual Guid? TimeLogId { get; set; }
 
         /// <summary>
         /// 责任人

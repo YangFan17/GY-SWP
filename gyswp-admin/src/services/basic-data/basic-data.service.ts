@@ -212,4 +212,14 @@ export class BasicDataService {
             return arry;
         }));
     }
+
+    getPagedIndicatorLibrary(params: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/IndicatorLibrary/GetPaged";
+        return this._commonhttp.get(url_, params).pipe(map(data => {
+            const result = new PagedResultDto();
+            result.items = data.items;
+            result.totalCount = data.totalCount;
+            return result;
+        }));
+    }
 }

@@ -449,5 +449,18 @@ namespace GYSWP.Employees
             }
             return null;
         }
+
+
+        /// <summary>
+        /// 获取部门及下级员工id
+        /// </summary>
+        /// <param name="deptId"></param>
+        /// <returns></returns>
+        private async Task<string[]> GetEmployeeIdsByDeptId(long deptId)
+        {
+            var childrenDeptIds = await _entityManager.GetDeptIdArrayAsync(deptId);
+            var query = _entityRepository.GetAll().Where(e => childrenDeptIds.Any(c => e.Department.Contains(c))).Select(e => e.Id);
+            return await query.ToArrayAsync();
+        }
     }
 }

@@ -76,6 +76,7 @@ namespace  GYSWP.IndicatorsDetails.Dtos
         /// </summary>
         [StringLength(100)]
         public string DeptName { get; set; }
+        public DateTime EndTime { get; set; }
     }
 
     public class IndicatorsDetailUpDateDto

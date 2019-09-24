@@ -19,7 +19,7 @@ export class AppMenus {
             text: "基础数据",
             icon: { type: "icon", value: "dingding" },
             reuse: false,
-            acl: ["QiGuanAdmin", "Admin", "StandardAdmin"],// 权限
+            acl: ["QiGuanAdmin", "Admin", "StandardAdmin", "CountyAdmin", "DeptAdmin"],// 权限
             link: "",
             group: true,
             children: [
@@ -33,7 +33,7 @@ export class AppMenus {
                     text: "标准管理",
                     link: "/app/basic/document",
                     reuse: false
-                },
+                }
             ]
         },
         {
@@ -93,7 +93,7 @@ export class AppMenus {
             text: "数据统计",
             icon: { type: "icon", value: "bar-chart" },
             reuse: false,
-            acl: ["QiGuanAdmin", "Admin", "StandardAdmin", "DeptAdmin"],// 权限
+            acl: ["QiGuanAdmin", "Admin", "StandardAdmin", "CountyAdmin", "DeptAdmin"],// 权限
             link: "",
             group: true,
             children: [
@@ -101,22 +101,22 @@ export class AppMenus {
                     text: "标准统计",
                     link: "/app/reports/standardrevision",
                     reuse: false,
-                    acl: ["QiGuanAdmin", "Admin", "StandardAdmin", "DeptAdmin"],// 权限
+                    acl: ["QiGuanAdmin", "Admin", "StandardAdmin", "CountyAdmin", "DeptAdmin"],// 权限
                 },
                 {
                     text: "阅读学习统计",
                     link: "/app/reports/inspect",
                     reuse: false,
-                    acl: ["QiGuanAdmin", "Admin", "StandardAdmin", "DeptAdmin"],// 权限
+                    acl: ["QiGuanAdmin", "Admin", "StandardAdmin", "CountyAdmin", "DeptAdmin"],// 权限
                 },
                 {
-                    text: "监督统计",
+                    text: "标准条款检查统计",
                     link: "/app/reports/supervise",
                     reuse: false,
                     acl: ["QiGuanAdmin", "Admin"],// 权限
                 },
                 {
-                    text: "指标统计",
+                    text: "目标指标检查统计",
                     link: "/app/reports/indicator-supervise",
                     reuse: false,
                     acl: ["QiGuanAdmin", "Admin"],// 权限
@@ -125,7 +125,7 @@ export class AppMenus {
                     text: "标准认领统计",
                     link: "/app/reports/standard-confirm",
                     reuse: false,
-                    acl: ["QiGuanAdmin", "Admin", "StandardAdmin"],// 权限
+                    acl: ["QiGuanAdmin", "Admin", "StandardAdmin", "CountyAdmin"],// 权限
                 },
                 {
                     text: "合理化建议统计",

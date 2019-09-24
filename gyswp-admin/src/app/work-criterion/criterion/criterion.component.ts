@@ -12,8 +12,16 @@ import { DraftApplyInfoComponent } from './draft-doc/draft-apply-info/draft-appl
     styleUrls: ['criterion.component.less']
 })
 export class CriterionComponent extends PagedListingComponentBase<any>{
-    search: any = { keyWord: '', categoryId: '0' };
-    categories = [];
+    search: any = { keyWord: '', categoryTypeId: 0 };
+    categories = [
+        { value: 0, text: '全部', selected: true },
+        { value: 1, text: '技术标准', selected: false },
+        { value: 2, text: '管理标准', selected: false },
+        { value: 3, text: '工作标准', selected: false },
+        { value: 4, text: '外来文件', selected: false },
+        { value: 5, text: '风险库', selected: false }
+    ]
+    // categories = [];
     isApply: boolean = false; // 是否可点击申请按钮
     isRevision: boolean = false; // 是否允许制修订
     editMode: boolean = false; //进入编辑模式
@@ -27,18 +35,18 @@ export class CriterionComponent extends PagedListingComponentBase<any>{
     }
 
     ngOnInit(): void {
-        this.getCategoryType();
+        // this.getCategoryType();
         this.getUserOperateDraftAsync();
     }
 
-    getCategoryType() {
-        this.workCriterionService.getCategoryTypeAsync().subscribe((result: SelectGroup[]) => {
-            this.categories.push(SelectGroup.fromJS({ value: '0', text: '全部' }));
-            result = result.filter(v => v.text != '作废标准库');
-            this.categories.push(...result);
-            this.refresh();
-        });
-    }
+    // getCategoryType() {
+    //     this.workCriterionService.getCategoryTypeAsync().subscribe((result: SelectGroup[]) => {
+    //         this.categories.push(SelectGroup.fromJS({ value: '0', text: '全部' }));
+    //         result = result.filter(v => v.text != '作废标准库');
+    //         this.categories.push(...result);
+    //         this.refresh();
+    //     });
+    // }
 
     getUserOperateDraftAsync() {
         this.workCriterionService.getUserOperateDraftAsync().subscribe((result) => {
@@ -48,6 +56,7 @@ export class CriterionComponent extends PagedListingComponentBase<any>{
                 this.editMode = result.data.editModel;
                 this.applyId = result.data.applyId;
                 this.isRevisionWaitTime = result.data.isRevisionWaitTime;
+                this.refresh();
             } else {
                 this.notify.error('请重试！');
             }
@@ -65,7 +74,7 @@ export class CriterionComponent extends PagedListingComponentBase<any>{
      */
     reset() {
         this.pageNumber = 1;
-        this.search = { keyWord: '', categoryId: '0' };
+        this.search = { keyWord: '', categoryTypeId: 0 };
         this.refresh();
     }
 
@@ -75,9 +84,11 @@ export class CriterionComponent extends PagedListingComponentBase<any>{
         params.MaxResultCount = request.maxResultCount;
         params.KeyWord = this.search.keyWord;
         console.log(this.search.keyWord);
-
         if (this.search.categoryId != '0') {
             params.CategoryId = this.search.categoryId;
+        }
+        if (this.search.categoryTypeId != 0) {
+            params.CategoryTypeId = this.search.categoryTypeId;
         }
         this.workCriterionService.getDocumentListAsync(params)
             .finally(() => {

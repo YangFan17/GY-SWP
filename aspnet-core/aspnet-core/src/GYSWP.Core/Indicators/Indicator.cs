@@ -103,7 +103,13 @@ namespace GYSWP.Indicators
         /// <summary>
         /// 截止时间 当天23:59:59
         /// </summary>
+        //[Required]
+        //public virtual DateTime EndTime { get; set; }
+
+        /// <summary>
+        /// 是否启用
+        /// </summary>
         [Required]
-        public virtual DateTime EndTime { get; set; }
-    }
+        public virtual bool IsAction { get; set; }
+}
 }

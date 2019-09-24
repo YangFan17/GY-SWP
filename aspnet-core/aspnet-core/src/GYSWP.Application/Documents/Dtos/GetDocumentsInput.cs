@@ -3,6 +3,7 @@ using Abp.Runtime.Validation;
 using GYSWP.Dtos;
 using GYSWP.Documents;
 using System;
+using GYSWP.GYEnums;
 
 namespace GYSWP.Documents.Dtos
 {
@@ -12,6 +13,8 @@ namespace GYSWP.Documents.Dtos
 
         public long DeptId { get; set; }
         public int? CategoryId { get; set; }
+
+        public CategoryType? CategoryTypeId { get; set; } 
         public string CategoryCode
         {
             get

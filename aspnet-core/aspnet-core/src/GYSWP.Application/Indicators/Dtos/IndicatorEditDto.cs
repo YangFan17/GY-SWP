@@ -117,6 +117,21 @@ namespace  GYSWP.Indicators.Dtos
         /// <summary>
         /// 截止时间 当天23:59:59
         /// </summary>
-        public DateTime EndTime { get; set; }
+        //public DateTime EndTime { get; set; }
+
+        /// <summary>
+        /// 是否启用
+        /// </summary>
+        [Required]
+        public bool IsAction { get; set; }
+    }
+
+    /// <summary>
+    /// 修改状态
+    /// </summary>
+    public class ChangeStatusDto
+    {
+        public Guid Id { get; set; }
+        public bool IsAction { get; set; }
     }
 }

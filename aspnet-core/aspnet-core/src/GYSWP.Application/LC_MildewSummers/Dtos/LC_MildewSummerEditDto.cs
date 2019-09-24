@@ -19,16 +19,14 @@ namespace  GYSWP.LC_MildewSummers.Dtos
 		/// <summary>
 		/// TimeLogId
 		/// </summary>
-		[Required(ErrorMessage="TimeLogId不能为空")]
-		public Guid TimeLogId { get; set; }
+		public Guid? TimeLogId { get; set; }
 
 
 
 		/// <summary>
 		/// AMBootTime
 		/// </summary>
-		[Required(ErrorMessage="AMBootTime不能为空")]
-		public DateTime AMBootTime { get; set; }
+		public DateTime? AMBootTime { get; set; }
 
 
 

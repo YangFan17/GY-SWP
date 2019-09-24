@@ -1,11 +1,10 @@
-import { Component, OnInit, Injector, ViewChild } from '@angular/core';
+import { Component, OnInit, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/component-base';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SupervisionService } from 'services';
 import { Indicators } from 'entities';
 import { TargetDeptComponent } from './target-dept/target-dept.component';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd';
-import { TargetListComponent } from './target-list/target-list.component';
 import { TargetSourceDocComponent } from './target-source-doc/target-source-doc.component';
 
 @Component({
@@ -14,7 +13,7 @@ import { TargetSourceDocComponent } from './target-source-doc/target-source-doc.
     templateUrl: 'target-examine-detail.component.html'
 })
 export class TargetExamineDetailComponent extends AppComponentBase implements OnInit {
-    @ViewChild('targetList') targetList: TargetListComponent;
+    // @ViewChild('targetList') targetList: TargetListComponent;
 
     id: string;
     cycleTime = '1';
@@ -44,6 +43,8 @@ export class TargetExamineDetailComponent extends AppComponentBase implements On
     ngOnInit(): void {
         if (this.id) {
             this.getById();
+        } else {
+            this.indicator.isAction = true;
         }
     }
 
@@ -52,21 +53,58 @@ export class TargetExamineDetailComponent extends AppComponentBase implements On
     }
 
     save(): void {
+        // this.confirmModal = this.modal.confirm({
+        //     nzContent: '发布后将无法修改，是否发布?',
+        //     nzOnOk: () => {
+        //         this.indicator.cycleTime = this.cycleTime == '1' ? 1 : 2;
+        //         this.getDepts();
+        //         this.indicator.sourceDocId = this.doc.id;
+        //         this.supervisionService.createOrUpdateIndicatorAsync(this.indicator, this.deptInfo)
+        //             .finally(() => { this.saving = false; })
+        //             .subscribe(res => {
+        //                 this.notify.success('发布成功！', '');
+        //                 if (res.code == 0) {
+        //                     this.indicator.id = res.data;
+        //                     this.id = this.indicator.id;
+        //                     this.targetList.id = this.id;
+        //                     this.targetList.getIndicatorListById();
+        //                 }
+        //             });
+        //     }
+        // });
+        this.saving = true;
+        this.indicator.cycleTime = this.cycleTime == '1' ? 1 : 2;
+        this.getDepts();
+        this.indicator.sourceDocId = this.doc.id;
+        this.supervisionService.createOrUpdateIndicatorAsync(this.indicator)
+            .finally(() => { this.saving = false; })
+            .subscribe(res => {
+                if (res.code == 0) {
+                    this.id = res.data;
+                    this.notify.success('保存成功！', '');
+                    this.getById();
+                } else {
+                    this.notify.error('保存失败，请重试！', '');
+                }
+            });
+    }
+
+    action() {
         this.confirmModal = this.modal.confirm({
-            nzContent: '发布后将无法修改，是否发布?',
+            nzContent: `是否${this.indicator.isAction == true ? '废止' : '启用'}当前指标?`,
             nzOnOk: () => {
-                this.indicator.cycleTime = this.cycleTime == '1' ? 1 : 2;
-                this.getDepts();
-                this.indicator.sourceDocId = this.doc.id;
-                this.supervisionService.createOrUpdateIndicatorAsync(this.indicator, this.deptInfo)
+                this.saving = true;
+                let input: any = {};
+                input.id = this.indicator.id;
+                input.isAction = !this.indicator.isAction;
+                this.supervisionService.changeActionStatus(input)
                     .finally(() => { this.saving = false; })
                     .subscribe(res => {
-                        this.notify.success('发布成功！', '');
                         if (res.code == 0) {
-                            this.indicator.id = res.data;
-                            this.id = this.indicator.id;
-                            this.targetList.id = this.id;
-                            this.targetList.getIndicatorListById();
+                            this.notify.success('保存成功！', '');
+                            this.getById();
+                        } else {
+                            this.notify.error('保存失败，请重试！', '');
                         }
                     });
             }
@@ -82,8 +120,8 @@ export class TargetExamineDetailComponent extends AppComponentBase implements On
                 }
                 this.doc.name = res.sourceDocName;
                 this.doc.id = res.sourceDocId;
-                this.targetList.id = res.id;
-                this.targetList.getIndicatorListById();
+                // this.targetList.id = res.id;
+                // this.targetList.getIndicatorListById();
             });
         }
     }

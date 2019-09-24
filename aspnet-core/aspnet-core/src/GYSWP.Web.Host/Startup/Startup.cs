@@ -98,6 +98,7 @@ namespace GYSWP.Web.Host.Startup
 
             app.UseStaticFiles(new StaticFileOptions()
             {
+                //发布需要更改路径
                 FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"C:\gyswpData")),
                 RequestPath = new PathString("/docFile")
             });
