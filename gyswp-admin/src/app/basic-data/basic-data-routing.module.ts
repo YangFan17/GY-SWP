@@ -5,7 +5,6 @@ import { Routes, RouterModule } from '@angular/router';
 import { DocumentComponent } from './document/document/document.component';
 import { DetailComponent } from './document/document/detail/detail.component';
 import { ACLGuard } from '@delon/acl';
-import { IndicatorLibraryComponent } from './indicator-library/indicator-library.component';
 
 
 const routes: Routes = [

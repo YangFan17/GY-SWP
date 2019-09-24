@@ -150,7 +150,7 @@ namespace GYSWP.StandardRevisionReports
                 Guid?[] revisionDocIds = await revisionList.Select(v => v.DocumentId).ToArrayAsync();
                 standardRevisionDto.StandardRevisionNumber = await documents.CountAsync(v => revisionDocIds.Contains(v.Id));
                 //制定个数
-                var settingDoc = _docRevisionRepository.GetAll().Where(v => v.DeptId == input.DeptId.ToString() && v.Status == RevisionStatus.审核通过 && v.RevisionType == RevisionType.标准制定&& v.CreationTime >= input.StartTime && v.CreationTime < input.EndTime).Select(v => v.Id);
+                var settingDoc = _docRevisionRepository.GetAll().Where(v => v.DeptId == input.DeptId.ToString() && v.Status == RevisionStatus.审核通过 && v.RevisionType == RevisionType.标准制定 && v.CreationTime >= input.StartTime && v.CreationTime < input.EndTime).Select(v => v.Id);
                 standardRevisionDto.StandardSettingNumber = await settingDoc.CountAsync();
                 //制定条数
                 Guid[] settingDocIds = await settingDoc.ToArrayAsync();

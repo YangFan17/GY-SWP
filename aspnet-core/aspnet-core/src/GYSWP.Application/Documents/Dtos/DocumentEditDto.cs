@@ -97,5 +97,10 @@ namespace  GYSWP.Documents.Dtos
         /// 适用于（QMS,EMS,OHS）
         /// </summary>
         public string SuitableCode { get; set; }
+
+        /// <summary>
+        /// 业务操作Id(制订记录Id)
+        /// </summary>
+        public Guid? BLLId { get; set; }
     }
 }

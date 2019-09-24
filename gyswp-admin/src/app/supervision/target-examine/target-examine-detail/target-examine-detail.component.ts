@@ -1,11 +1,10 @@
-import { Component, OnInit, Injector, ViewChild } from '@angular/core';
+import { Component, OnInit, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/component-base';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SupervisionService } from 'services';
 import { Indicators } from 'entities';
 import { TargetDeptComponent } from './target-dept/target-dept.component';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd';
-import { TargetListComponent } from './target-list/target-list.component';
 import { TargetSourceDocComponent } from './target-source-doc/target-source-doc.component';
 
 @Component({
@@ -14,7 +13,7 @@ import { TargetSourceDocComponent } from './target-source-doc/target-source-doc.
     templateUrl: 'target-examine-detail.component.html'
 })
 export class TargetExamineDetailComponent extends AppComponentBase implements OnInit {
-    @ViewChild('targetList') targetList: TargetListComponent;
+    // @ViewChild('targetList') targetList: TargetListComponent;
 
     id: string;
     cycleTime = '1';

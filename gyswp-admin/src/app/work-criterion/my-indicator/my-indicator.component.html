@@ -33,7 +33,7 @@
                         <nz-badge *ngIf="item.status == 3" [nzStatus]="'error'" [nzText]="'未达成'"></nz-badge>
                         <nz-badge *ngIf="item.status == 4" [nzStatus]="'warning'" [nzText]="'未达成'"></nz-badge>
                     </td>
-                    <td>{{item.achieveTypeName + item.expectedValue}}%</td>
+                    <td>{{item.achieveTypeName + item.expectedValue}}%/次</td>
                     <td>{{item.sourceDocName}}</td>
                     <td>
                         <!-- <a (click)="goDetail(item.indicatorDetailId)">{{item.status == 1?'填写指标':'详情'}}</a> -->

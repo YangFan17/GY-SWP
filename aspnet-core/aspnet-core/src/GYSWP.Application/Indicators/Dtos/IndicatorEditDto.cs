@@ -117,7 +117,7 @@ namespace  GYSWP.Indicators.Dtos
         /// <summary>
         /// 截止时间 当天23:59:59
         /// </summary>
-        public DateTime EndTime { get; set; }
+        //public DateTime EndTime { get; set; }
 
         /// <summary>
         /// 是否启用

@@ -116,7 +116,7 @@ namespace GYSWP.Indicators.Dtos
         /// 标准名称
         /// </summary>
         public string SourceDocName { get; set; }
-        public DateTime EndTime { get; set; }
+        //public DateTime EndTime { get; set; }
         /// <summary>
         /// 是否启用
         /// </summary>
@@ -185,10 +185,12 @@ namespace GYSWP.Indicators.Dtos
         public IndicatorStatus Status { get; set; }
         public string StatusName { get { return Status.ToString(); } }
         public DateTime? CompleteTime { get; set; }
+        public DateTime PublishTime { get; set; }
         public string EmployeeName { get; set; }
         public string EmployeeDeptName { get; set; }
         public AchieveType AchieveType { get; set; }
         public string AchieveTypeName { get { return AchieveType.ToString(); } }
+        public DateTime EndTime { get; set; }
     }
 
     public class ExamineUser

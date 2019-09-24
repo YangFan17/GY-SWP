@@ -86,7 +86,7 @@ export class Indicators {
         data["cycleTime"] = this.cycleTime;
         data["achieveType"] = this.achieveType;
         data["sourceDocId"] = this.sourceDocId;
-        data["endTime"] = this.endTime;
+        // data["endTime"] = this.endTime;
         data["isAction"] = this.isAction;
         return data;
     }

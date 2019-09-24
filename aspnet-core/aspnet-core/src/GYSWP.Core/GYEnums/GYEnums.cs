@@ -160,6 +160,15 @@ namespace GYSWP.GYEnums
         OHS = 3
     }
 
+    public enum CategoryType
+    {
+        技术标准 = 1,
+        管理标准 = 2,
+        工作标准 = 3,
+        外来文件 = 4,
+        风险库 = 5
+    }
+
     public static class GYCode
     {
         public static string MessageTitle = "MessageTitle";

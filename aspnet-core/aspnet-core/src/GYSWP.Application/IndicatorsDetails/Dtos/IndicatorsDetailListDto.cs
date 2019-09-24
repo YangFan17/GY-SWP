@@ -81,5 +81,6 @@ namespace GYSWP.IndicatorsDetails.Dtos
         /// 完成时间
         /// </summary>
         public DateTime? CompleteTime { get; set; }
+        public DateTime EndTime { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using GYSWP.Indicators;
@@ -11,6 +12,11 @@ namespace GYSWP.Indicators.Dtos
         [Required]
         public IndicatorEditDto Indicator { get; set; }
         public List<DeptInfo> DeptInfo { get; set; }
+    }
+    public class PublishIndicatorInput
+    {
+        public Guid[] IndicatorList { get; set; }
+        public DateTime EndTime { get; set; }
     }
     public class DeptInfo
     {

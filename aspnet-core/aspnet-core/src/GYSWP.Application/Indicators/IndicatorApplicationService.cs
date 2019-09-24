@@ -83,7 +83,7 @@ namespace GYSWP.Indicators
             string deptStr = await _employeeRepository.GetAll().Where(v => v.Id == user.EmployeeId).Select(v => v.Department).FirstOrDefaultAsync();
             string deptId = deptStr.Replace('[', ' ').Replace(']', ' ').Trim();
             var doc = _documentRepository.GetAll().Select(v => new { v.Id, v.Name });
-            var indicator = _entityRepository.GetAll().Where(v => v.CreatorDeptId.ToString() == deptId).WhereIf(input.CycleTime.HasValue,v=>v.CycleTime == input.CycleTime);
+            var indicator = _entityRepository.GetAll().Where(v => v.CreatorDeptId.ToString() == deptId).WhereIf(input.CycleTime.HasValue, v => v.CycleTime == input.CycleTime);
             var query = from i in indicator
                         join d in doc on i.SourceDocId equals d.Id
                         select new IndicatorListDto()
@@ -172,11 +172,79 @@ namespace GYSWP.Indicators
                 input.Indicator.CreatorEmpName = user.EmployeeName;
                 input.Indicator.CreatorDeptId = organization.Id;
                 input.Indicator.CreatorDeptName = organization.DepartmentName;
-                input.Indicator.EndTime = input.Indicator.EndTime.ToDayEnd();
+                //input.Indicator.EndTime = input.Indicator.EndTime.ToDayEnd();
                 var entity = await Create(input.Indicator);
                 await CurrentUnitOfWork.SaveChangesAsync();
                 return new APIResultDto() { Code = 0, Msg = "保存成功", Data = entity.Id };
             }
+        }
+
+        /// <summary>
+        /// 批量发布指标考核
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<APIResultDto> PublishIndicatorByIdAsync(PublishIndicatorInput input)
+        {
+            foreach (var id in input.IndicatorList)
+            {
+                var entity = await _entityRepository.GetAsync(id);
+                string[] deptStrList = entity.DeptIds.Split(',');
+                long[] deptIdList = Array.ConvertAll<string, long>(deptStrList, s => long.Parse(s));
+                foreach (var deptId in deptIdList.Where(v => v != 1 && v != 59549057))//过滤顶级部门
+                {
+                    string deptName = await _organizationRepository.GetAll().Where(v => v.Id == deptId).Select(v => v.DepartmentName).FirstOrDefaultAsync();
+                    var examEmp = new ExamineUser();
+                    //机关部门
+                    if (deptId == 59481641 || deptId == 59490590 || deptId == 59534183 || deptId == 59534184 || deptId == 59534185
+                        || deptId == 59538081 || deptId == 59552081 || deptId == 59571109 || deptId == 59584063 || deptId == 59591062
+                        || deptId == 59620071 || deptId == 59628060 || deptId == 59632058 || deptId == 59644078 || deptId == 59646091)
+                    {
+                        var adminList = await GetUsersInRoleAsync("StandardAdmin");
+                        string[] adminIds = adminList.Select(v => v.EmployeeId).ToArray();
+                        examEmp = await _employeeRepository.GetAll().Where(v => adminIds.Contains(v.Id) && v.Department == "[" + deptId + "]").Select(v => new ExamineUser { Id = v.Id, Name = v.Name }).FirstOrDefaultAsync();
+                    }
+                    //基层单位
+                    else
+                    {
+                        examEmp = await _employeeRepository.GetAll().Where(v => v.Department == "[" + deptId + "]" && (v.Position.Contains("主任") && !v.Position.Contains("!副主任"))).Select(v => new ExamineUser { Id = v.Id, Name = v.Name }).FirstOrDefaultAsync();
+                        if (examEmp == null)
+                        {
+                            examEmp = await _employeeRepository.GetAll().Where(v => v.Department == "[" + deptId + "]" && v.Position.Contains("副主任")).Select(v => new ExamineUser { Id = v.Id, Name = v.Name }).FirstOrDefaultAsync();
+                            if (examEmp == null)
+                            {
+                                examEmp = await _employeeRepository.GetAll().Where(v => v.Department == "[" + deptId + "]" && (v.Position.Contains("部长") && !v.Position.Contains("!副部长"))).Select(v => new ExamineUser { Id = v.Id, Name = v.Name }).FirstOrDefaultAsync();
+                                if (examEmp == null)
+                                {
+                                    examEmp = await _employeeRepository.GetAll().Where(v => v.Department == "[" + deptId + "]" && v.Position.Contains("!副部长")).Select(v => new ExamineUser { Id = v.Id, Name = v.Name }).FirstOrDefaultAsync();
+                                    if (examEmp == null)
+                                    {
+                                        examEmp = await _employeeRepository.GetAll().Where(v => v.Department == "[" + deptId + "]" && (v.Position.Contains("科长") && !v.Position.Contains("!副科长"))).Select(v => new ExamineUser { Id = v.Id, Name = v.Name }).FirstOrDefaultAsync();
+                                        if (examEmp == null)
+                                        {
+                                            examEmp = await _employeeRepository.GetAll().Where(v => v.Department == "[" + deptId + "]" && v.Position.Contains("!副科长")).Select(v => new ExamineUser { Id = v.Id, Name = v.Name }).FirstOrDefaultAsync();
+                                            if (examEmp == null)
+                                            {
+                                                return new APIResultDto() { Code = 999, Msg = $"发布失败，当前部门[{deptName}]无负责人" };
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    IndicatorsDetail detail = new IndicatorsDetail();
+                    detail.IndicatorsId = entity.Id;
+                    detail.DeptId = deptId;
+                    detail.DeptName = deptName;
+                    detail.EmployeeId = examEmp.Id;
+                    detail.EmployeeName = examEmp.Name;
+                    detail.Status = GYEnums.IndicatorStatus.未填写;
+                    detail.EndTime = input.EndTime.ToDayEnd();
+                    await _indicatorsDetailRepository.InsertAsync(detail);
+                }
+            }
+            return new APIResultDto() { Code = 0, Msg = "发布成功" };
         }
 
         //public async Task<APIResultDto> CreateOrUpdate(CreateOrUpdateIndicatorInput input)
@@ -412,6 +480,39 @@ namespace GYSWP.Indicators
         }
 
         /// <summary>
+        /// 根据id获取指标考核记录
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<PagedResultDto<IndicatorReviewDto>> GetPagedIndicatorRecordByIdAsync(GetIndicatorsInput input)
+        {
+            var detail = _indicatorsDetailRepository.GetAll().Where(v => v.IndicatorsId == input.Id);
+            var indicator = _entityRepository.GetAll();
+            var result = from i in indicator
+                         join d in detail on i.Id equals d.IndicatorsId
+                         select new IndicatorReviewDto()
+                         {
+                             Id = i.Id,
+                             ExpectedValue = i.ExpectedValue,
+                             Status = d.Status,
+                             EmployeeName = d.EmployeeName,
+                             CompleteTime = d.CompleteTime,
+                             IndicatorDetailId = d.Id,
+                             ActualValue = d.ActualValue,
+                             EmployeeDeptName = d.DeptName,
+                             AchieveType = i.AchieveType,
+                             PublishTime = i.CreationTime,
+                             EndTime = d.EndTime
+                         };
+            var count = await result.CountAsync();
+            var entityList = await result
+              .OrderBy(v => v.Status).ThenBy(v => v.EndTime)
+                    .PageBy(input)
+                    .ToListAsync();
+            return new PagedResultDto<IndicatorReviewDto>(count, entityList);
+        }
+
+        /// <summary>
         /// 查询指标所属部门指标列表
         /// </summary>
         /// <param name="input"></param>
@@ -466,12 +567,18 @@ namespace GYSWP.Indicators
         {
             DateTime curTime = DateTime.Today.AddDays(1);
             Logger.InfoFormat(curTime.ToString());
-            var indicator = _entityRepository.GetAll().Where(v => v.EndTime < curTime);
-            var detail = _indicatorsDetailRepository.GetAll().Where(v => v.Status == GYEnums.IndicatorStatus.未填写);
-            var query = from d in detail
-                        join i in indicator on d.IndicatorsId equals i.Id
-                        select d;
-            var overdueList = await query.ToListAsync();
+            //var indicator = _entityRepository.GetAll().Where(v => v.EndTime < curTime);
+            //var detail = _indicatorsDetailRepository.GetAll().Where(v => v.Status == GYEnums.IndicatorStatus.未填写);
+            //var query = from d in detail
+            //            join i in indicator on d.IndicatorsId equals i.Id
+            //            select d;
+            //var overdueList = await query.ToListAsync();
+            //foreach (var item in overdueList)
+            //{
+            //    item.Status = GYEnums.IndicatorStatus.已逾期;
+            //}
+            var detail = _indicatorsDetailRepository.GetAll().Where(v => v.Status == GYEnums.IndicatorStatus.未填写 && v.EndTime < curTime);
+            var overdueList = await detail.ToListAsync();
             foreach (var item in overdueList)
             {
                 item.Status = GYEnums.IndicatorStatus.已逾期;
