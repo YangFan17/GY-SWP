@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.LC_KyjFunctionRecords.Dtos;
 using GYSWP.LC_KyjFunctionRecords;
+using GYSWP.Dtos;
 
 namespace GYSWP.LC_KyjFunctionRecords
 {
@@ -72,11 +73,19 @@ namespace GYSWP.LC_KyjFunctionRecords
         Task BatchDelete(List<Guid> input);
 
 
-		/// <summary>
+        /// <summary>
+        /// 钉钉创建空压机运行记录
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        Task<APIResultDto> CreateKyjFunctionRecordAsync(LC_KyjFunctionRecordEditDto input);
+
+
+        /// <summary>
         /// 导出LC_KyjFunctionRecord为excel表
         /// </summary>
         /// <returns></returns>
-		//Task<FileDto> GetToExcel();
+        //Task<FileDto> GetToExcel();
 
     }
 }
