@@ -21,8 +21,7 @@ using Abp.Linq.Extensions;
 using GYSWP.LC_KyjWeekMaintainRecords;
 using GYSWP.LC_KyjWeekMaintainRecords.Dtos;
 using GYSWP.LC_KyjWeekMaintainRecords.DomainService;
-
-
+using GYSWP.Dtos;
 
 namespace GYSWP.LC_KyjWeekMaintainRecords
 {
@@ -193,18 +192,36 @@ LC_KyjWeekMaintainRecordEditDto editDto;
 			await _entityRepository.DeleteAsync(s => input.Contains(s.Id));
 		}
 
+        /// <summary>
+        /// 钉钉创建LC_KyjWeekMaintainRecord
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public async Task<APIResultDto> CreateKyjWeekMaintainRecordAsync(LC_KyjWeekMaintainRecordEditDto input)
+        {
+            var entity = input.MapTo<LC_KyjWeekMaintainRecord>();
 
-		/// <summary>
-		/// 导出LC_KyjWeekMaintainRecord为excel表,等待开发。
-		/// </summary>
-		/// <returns></returns>
-		//public async Task<FileDto> GetToExcel()
-		//{
-		//	var users = await UserManager.Users.ToListAsync();
-		//	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
-		//	await FillRoleNames(userListDtos);
-		//	return _userListExcelExporter.ExportToFile(userListDtos);
-		//}
+            entity = await _entityRepository.InsertAsync(entity);
+            return new APIResultDto()
+            {
+                Code = 0,
+                Data = entity
+            };
+        }
+
+
+        /// <summary>
+        /// 导出LC_KyjWeekMaintainRecord为excel表,等待开发。
+        /// </summary>
+        /// <returns></returns>
+        //public async Task<FileDto> GetToExcel()
+        //{
+        //	var users = await UserManager.Users.ToListAsync();
+        //	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
+        //	await FillRoleNames(userListDtos);
+        //	return _userListExcelExporter.ExportToFile(userListDtos);
+        //}
 
     }
 }

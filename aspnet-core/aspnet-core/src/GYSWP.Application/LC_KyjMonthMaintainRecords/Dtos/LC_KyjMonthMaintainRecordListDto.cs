@@ -20,11 +20,11 @@ namespace GYSWP.LC_KyjMonthMaintainRecords.Dtos
 
 
 
-		/// <summary>
-		/// EmployeeId
-		/// </summary>
-		[Required(ErrorMessage="EmployeeId不能为空")]
-		public string EmployeeId { get; set; }
+        /// <summary>
+        /// ResponsibleName
+        /// </summary>
+        [Required(ErrorMessage= "ResponsibleName不能为空")]
+		public string ResponsibleName { get; set; }
 
 
 
@@ -39,8 +39,8 @@ namespace GYSWP.LC_KyjMonthMaintainRecords.Dtos
 		/// <summary>
 		/// SupervisorId
 		/// </summary>
-		[Required(ErrorMessage="SupervisorId不能为空")]
-		public string SupervisorId { get; set; }
+		[Required(ErrorMessage= "SupervisorName不能为空")]
+		public string SupervisorName { get; set; }
 
 
 
@@ -125,6 +125,24 @@ namespace GYSWP.LC_KyjMonthMaintainRecords.Dtos
 		/// ProcessingResult
 		/// </summary>
 		public string ProcessingResult { get; set; }
+
+
+
+        /// <summary>
+        /// EmployeeId
+        /// </summary>
+        [Required(ErrorMessage = "EmployeeId不能为空")]
+        [StringLength(200)]
+        public string EmployeeId { get; set; }
+
+
+
+        /// <summary>
+        ///  EmployeeName
+        /// </summary>
+        [Required(ErrorMessage = "EmployeeName不能为空")]
+        [StringLength(50)]
+        public string EmployeeName { get; set; }
 
 
 

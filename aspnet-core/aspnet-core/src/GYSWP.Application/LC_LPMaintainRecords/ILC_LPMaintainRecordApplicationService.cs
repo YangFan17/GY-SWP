@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.LC_LPMaintainRecords.Dtos;
 using GYSWP.LC_LPMaintainRecords;
+using GYSWP.Dtos;
 
 namespace GYSWP.LC_LPMaintainRecords
 {
@@ -71,12 +72,18 @@ namespace GYSWP.LC_LPMaintainRecords
         /// </summary>
         Task BatchDelete(List<Guid> input);
 
+        /// <summary>
+        /// 钉钉创建LC_LPMaintainRecord
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        Task<APIResultDto> CreateLPMaintainRecordAsync(LC_LPMaintainRecordEditDto input);
 
-		/// <summary>
+        /// <summary>
         /// 导出LC_LPMaintainRecord为excel表
         /// </summary>
         /// <returns></returns>
-		//Task<FileDto> GetToExcel();
+        //Task<FileDto> GetToExcel();
 
     }
 }
