@@ -121,7 +121,7 @@ LC_SortingWeekRecordEditDto editDto;
 		/// </summary>
 		/// <param name="input"></param>
 		/// <returns></returns>
-		
+		[AbpAllowAnonymous]
 		public async Task CreateOrUpdate(CreateOrUpdateLC_SortingWeekRecordInput input)
 		{
 

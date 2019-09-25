@@ -13,19 +13,33 @@ namespace GYSWP.LC_SortingMonthRecords
     public class LC_SortingMonthRecord : Entity<Guid>, IHasCreationTime
     {
 
+
         /// <summary>
-        /// 维保人
+        /// ResponsibleName  责任人
+        /// </summary>
+        [StringLength(100)]
+        [Required(ErrorMessage = "ResponsibleName不能为空")]
+        public string ResponsibleName { get; set; }
+
+        /// <summary>
+        /// SupervisorName  监管人
+        /// </summary>
+        [StringLength(50)]
+        [Required(ErrorMessage = "SupervisorName不能为空")]
+        public virtual string SupervisorName { get; set; }
+
+        /// <summary>
+        /// 员工ID
         /// </summary>
         [Required]
-        [StringLength(50)]
+        [StringLength(200)]
         public virtual string EmployeeId { get; set; }
 
         /// <summary>
-        /// 监督人
+        /// 员工快照    
         /// </summary>
-        [Required]
         [StringLength(50)]
-        public virtual string SuperintendentId { get; set; }
+        public virtual string EmployeeName { get; set; }
 
         /// <summary>
         /// 创建日期

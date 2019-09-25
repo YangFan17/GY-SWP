@@ -121,7 +121,7 @@ LC_SsjMonthWhByRecordEditDto editDto;
 		/// </summary>
 		/// <param name="input"></param>
 		/// <returns></returns>
-		
+		[AbpAllowAnonymous]
 		public async Task CreateOrUpdate(CreateOrUpdateLC_SsjMonthWhByRecordInput input)
 		{
 

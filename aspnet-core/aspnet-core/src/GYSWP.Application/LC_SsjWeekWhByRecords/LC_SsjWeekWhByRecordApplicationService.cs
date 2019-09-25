@@ -121,7 +121,7 @@ LC_SsjWeekWhByRecordEditDto editDto;
 		/// </summary>
 		/// <param name="input"></param>
 		/// <returns></returns>
-		
+		[AbpAllowAnonymous]
 		public async Task CreateOrUpdate(CreateOrUpdateLC_SsjWeekWhByRecordInput input)
 		{
 

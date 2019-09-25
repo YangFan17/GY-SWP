@@ -55,6 +55,7 @@ namespace GYSWP.LC_SortingWeekRecords
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
+        [AbpAllowAnonymous]
         Task CreateOrUpdate(CreateOrUpdateLC_SortingWeekRecordInput input);
 
 

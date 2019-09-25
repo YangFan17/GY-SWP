@@ -11,27 +11,40 @@ namespace GYSWP.LC_SortingMonthRecords.Dtos
     public class LC_SortingMonthRecordListDto : EntityDto<Guid>,IHasCreationTime 
     {
 
-        
-		/// <summary>
-		/// EmployeeId
-		/// </summary>
-		[Required(ErrorMessage="EmployeeId不能为空")]
-		public string EmployeeId { get; set; }
+
+        /// <summary>
+        /// ResponsibleName  责任人
+        /// </summary>
+        [StringLength(100)]
+        [Required(ErrorMessage = "ResponsibleName不能为空")]
+        public string ResponsibleName { get; set; }
+
+        /// <summary>
+        /// SupervisorName  监管人
+        /// </summary>
+        [StringLength(50)]
+        [Required(ErrorMessage = "SupervisorName不能为空")]
+        public string SupervisorName { get; set; }
+
+        /// <summary>
+        /// 员工ID
+        /// </summary>
+        [Required]
+        [StringLength(200)]
+        public string EmployeeId { get; set; }
+
+        /// <summary>
+        /// 员工快照    
+        /// </summary>
+        [StringLength(50)]
+        public string EmployeeName { get; set; }
 
 
 
-		/// <summary>
-		/// SuperintendentId
-		/// </summary>
-		[Required(ErrorMessage="SuperintendentId不能为空")]
-		public string SuperintendentId { get; set; }
-
-
-
-		/// <summary>
-		/// CreationTime
-		/// </summary>
-		[Required(ErrorMessage="CreationTime不能为空")]
+        /// <summary>
+        /// CreationTime
+        /// </summary>
+        [Required(ErrorMessage="CreationTime不能为空")]
 		public DateTime CreationTime { get; set; }
 
 
