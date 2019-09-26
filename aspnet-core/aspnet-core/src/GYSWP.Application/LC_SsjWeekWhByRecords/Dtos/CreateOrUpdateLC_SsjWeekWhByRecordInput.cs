@@ -12,4 +12,9 @@ namespace GYSWP.LC_SsjWeekWhByRecords.Dtos
         public LC_SsjWeekWhByRecordEditDto LC_SsjWeekWhByRecord { get; set; }
 
     }
+    public class InsertLC_SsjWeekWhByRecordInput
+    {
+        [Required]
+        public LC_SsjWeekWhByRecordDto LC_SsjWeekWhByRecord { get; set; }
+    }
 }

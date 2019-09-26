@@ -21,8 +21,7 @@ using Abp.Linq.Extensions;
 using GYSWP.LC_SsjMonthWhByRecords;
 using GYSWP.LC_SsjMonthWhByRecords.Dtos;
 using GYSWP.LC_SsjMonthWhByRecords.DomainService;
-
-
+using GYSWP.DocAttachments;
 
 namespace GYSWP.LC_SsjMonthWhByRecords
 {
@@ -36,16 +35,19 @@ namespace GYSWP.LC_SsjMonthWhByRecords
 
         private readonly ILC_SsjMonthWhByRecordManager _entityManager;
 
+        private readonly IRepository<LC_Attachment, Guid> _AttachmententityRepository;
         /// <summary>
         /// 构造函数 
         ///</summary>
         public LC_SsjMonthWhByRecordAppService(
         IRepository<LC_SsjMonthWhByRecord, Guid> entityRepository
-        ,ILC_SsjMonthWhByRecordManager entityManager
+        , IRepository<LC_Attachment, Guid> AttachRepository,
+        ILC_SsjMonthWhByRecordManager entityManager
         )
         {
             _entityRepository = entityRepository; 
              _entityManager=entityManager;
+            _AttachmententityRepository = AttachRepository;
         }
 
 
@@ -194,17 +196,44 @@ LC_SsjMonthWhByRecordEditDto editDto;
 		}
 
 
-		/// <summary>
-		/// 导出LC_SsjMonthWhByRecord为excel表,等待开发。
-		/// </summary>
-		/// <returns></returns>
-		//public async Task<FileDto> GetToExcel()
-		//{
-		//	var users = await UserManager.Users.ToListAsync();
-		//	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
-		//	await FillRoleNames(userListDtos);
-		//	return _userListExcelExporter.ExportToFile(userListDtos);
-		//}
+        /// <summary>
+        /// 导出LC_SsjMonthWhByRecord为excel表,等待开发。
+        /// </summary>
+        /// <returns></returns>
+        //public async Task<FileDto> GetToExcel()
+        //{
+        //	var users = await UserManager.Users.ToListAsync();
+        //	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
+        //	await FillRoleNames(userListDtos);
+        //	return _userListExcelExporter.ExportToFile(userListDtos);
+        //}
+
+        /// <summary>
+        /// 保养记录和照片拍照记录
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public virtual async Task RecordInsert(InsertLC_SsjMonthWhByRecordInput input)
+        {
+            var entity = input.LC_SsjMonthWhByRecord.MapTo<LC_SsjMonthWhByRecord>();
+            var returnId = await _entityRepository.InsertAndGetIdAsync(entity);
+            await CurrentUnitOfWork.SaveChangesAsync();
+            input.LC_SsjMonthWhByRecord.BLL = returnId;
+            if (input.LC_SsjMonthWhByRecord.Path != null)
+            {
+                foreach (var item in input.LC_SsjMonthWhByRecord.Path)
+                {
+                    var AttachEntity = new LC_Attachment();
+                    AttachEntity.Path = item;
+                    AttachEntity.EmployeeId = input.LC_SsjMonthWhByRecord.EmployeeId;
+                    AttachEntity.Type = input.LC_SsjMonthWhByRecord.Type;
+                    AttachEntity.Remark = input.LC_SsjMonthWhByRecord.Remark;
+                    AttachEntity.BLL = returnId;
+                    await _AttachmententityRepository.InsertAsync(AttachEntity);
+                }
+            }
+        }
 
     }
 }

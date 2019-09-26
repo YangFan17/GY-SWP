@@ -43,7 +43,11 @@ namespace  GYSWP.LC_ForkliftMonthWhRecords.Dtos
         [StringLength(50)]
         public string EmployeeName { get; set; }
 
-
+        /// <summary>
+        /// 叉车编号
+        /// </summary>
+        [StringLength(50)]
+        public virtual string EquiNo { get; set; }
 
         /// <summary>
         /// CreationTime

@@ -39,12 +39,14 @@ namespace GYSWP.DocAttachments
         /// 构造函数 
         ///</summary>
         public LC_AttachmentAppService(
-        IRepository<LC_Attachment, Guid> entityRepository
+        IRepository<LC_Attachment, Guid> entityRepository,
+        IRepository<LC_Attachment, Guid> AttachRepository
         , ILC_AttachmentManager entityManager
         )
         {
             _entityRepository = entityRepository;
             _entityManager = entityManager;
+            _entityRepository = AttachRepository;
         }
 
 

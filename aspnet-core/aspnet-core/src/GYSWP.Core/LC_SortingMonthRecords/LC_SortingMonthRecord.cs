@@ -42,6 +42,12 @@ namespace GYSWP.LC_SortingMonthRecords
         public virtual string EmployeeName { get; set; }
 
         /// <summary>
+        /// 分拣设备的名字
+        /// </summary>
+        [StringLength(50)]
+        public virtual string EquiNo { get; set; }
+
+        /// <summary>
         /// 创建日期
         /// </summary>
         [Required]

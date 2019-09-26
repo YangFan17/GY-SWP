@@ -73,11 +73,18 @@ namespace GYSWP.LC_SsjWeekWhByRecords
         Task BatchDelete(List<Guid> input);
 
 
-		/// <summary>
+        /// <summary>
         /// 导出LC_SsjWeekWhByRecord为excel表
         /// </summary>
         /// <returns></returns>
-		//Task<FileDto> GetToExcel();
+        //Task<FileDto> GetToExcel();
+        /// <summary>
+        /// 保养记录和照片拍照记录
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        Task RecordInsert(InsertLC_SsjWeekWhByRecordInput input);
 
     }
 }

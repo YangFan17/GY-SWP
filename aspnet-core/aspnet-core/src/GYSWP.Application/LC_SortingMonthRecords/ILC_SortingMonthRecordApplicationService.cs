@@ -73,11 +73,14 @@ namespace GYSWP.LC_SortingMonthRecords
         Task BatchDelete(List<Guid> input);
 
 
-		/// <summary>
+        /// <summary>
         /// 导出LC_SortingMonthRecord为excel表
         /// </summary>
         /// <returns></returns>
-		//Task<FileDto> GetToExcel();
+        //Task<FileDto> GetToExcel();
+
+        [AbpAllowAnonymous]
+        Task RecordInsert(InsertLC_SortingMonthRecordInput input);
 
     }
 }

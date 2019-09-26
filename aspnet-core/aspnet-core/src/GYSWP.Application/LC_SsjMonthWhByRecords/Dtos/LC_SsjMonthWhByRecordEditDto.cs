@@ -44,6 +44,11 @@ namespace  GYSWP.LC_SsjMonthWhByRecords.Dtos
         public string EmployeeName { get; set; }
 
 
+        /// <summary>
+        /// 分拣设备的名字
+        /// </summary>
+        [StringLength(50)]
+        public virtual string EquiNo { get; set; }
 
         /// <summary>
         /// CreationTime

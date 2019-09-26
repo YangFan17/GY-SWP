@@ -40,6 +40,11 @@ namespace GYSWP.LC_ForkliftMonthWhRecords
         /// </summary>
         [StringLength(50)]
         public virtual string EmployeeName { get; set; }
+        /// <summary>
+        /// 叉车编号
+        /// </summary>
+        [StringLength(50)]
+        public virtual string EquiNo { get; set; }
 
         /// <summary>
         /// 创建日期

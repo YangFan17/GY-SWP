@@ -21,8 +21,7 @@ using Abp.Linq.Extensions;
 using GYSWP.LC_ForkliftMonthWhRecords;
 using GYSWP.LC_ForkliftMonthWhRecords.Dtos;
 using GYSWP.LC_ForkliftMonthWhRecords.DomainService;
-
-
+using GYSWP.DocAttachments;
 
 namespace GYSWP.LC_ForkliftMonthWhRecords
 {
@@ -34,18 +33,22 @@ namespace GYSWP.LC_ForkliftMonthWhRecords
     {
         private readonly IRepository<LC_ForkliftMonthWhRecord, Guid> _entityRepository;
 
+        private readonly IRepository<LC_Attachment, Guid> _AttachmententityRepository;
+
         private readonly ILC_ForkliftMonthWhRecordManager _entityManager;
 
         /// <summary>
         /// 构造函数 
         ///</summary>
         public LC_ForkliftMonthWhRecordAppService(
-        IRepository<LC_ForkliftMonthWhRecord, Guid> entityRepository
-        ,ILC_ForkliftMonthWhRecordManager entityManager
+        IRepository<LC_ForkliftMonthWhRecord, Guid> entityRepository,
+          IRepository<LC_Attachment, Guid> AttachRepository
+        , ILC_ForkliftMonthWhRecordManager entityManager
         )
         {
             _entityRepository = entityRepository; 
              _entityManager=entityManager;
+            _AttachmententityRepository = AttachRepository;
         }
 
 
@@ -194,18 +197,44 @@ LC_ForkliftMonthWhRecordEditDto editDto;
 		}
 
 
-		/// <summary>
-		/// 导出LC_ForkliftMonthWhRecord为excel表,等待开发。
-		/// </summary>
-		/// <returns></returns>
-		//public async Task<FileDto> GetToExcel()
-		//{
-		//	var users = await UserManager.Users.ToListAsync();
-		//	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
-		//	await FillRoleNames(userListDtos);
-		//	return _userListExcelExporter.ExportToFile(userListDtos);
-		//}
+        /// <summary>
+        /// 导出LC_ForkliftMonthWhRecord为excel表,等待开发。
+        /// </summary>
+        /// <returns></returns>
+        //public async Task<FileDto> GetToExcel()
+        //{
+        //	var users = await UserManager.Users.ToListAsync();
+        //	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
+        //	await FillRoleNames(userListDtos);
+        //	return _userListExcelExporter.ExportToFile(userListDtos);
+        //}
 
+        /// <summary>
+        /// 保养记录和照片拍照记录
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public virtual async Task RecordInsert(InsertLC_ForkliftMonthWhRecordInput input)
+        {
+            var entity = input.LC_ForkliftMonthWhRecord.MapTo<LC_ForkliftMonthWhRecord>();
+            var returnId = await _entityRepository.InsertAndGetIdAsync(entity);
+            await CurrentUnitOfWork.SaveChangesAsync();
+            input.LC_ForkliftMonthWhRecord.BLL = returnId;
+            if (input.LC_ForkliftMonthWhRecord.Path != null)
+            {
+                foreach (var item in input.LC_ForkliftMonthWhRecord.Path)
+                {
+                    var AttachEntity = new LC_Attachment();
+                    AttachEntity.Path = item;
+                    AttachEntity.EmployeeId = input.LC_ForkliftMonthWhRecord.EmployeeId;
+                    AttachEntity.Type = input.LC_ForkliftMonthWhRecord.Type;
+                    AttachEntity.Remark = input.LC_ForkliftMonthWhRecord.Remark;
+                    AttachEntity.BLL = returnId;
+                    await _AttachmententityRepository.InsertAsync(AttachEntity);
+                }
+            }
+        }
     }
 }
 
