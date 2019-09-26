@@ -11,15 +11,6 @@ namespace GYSWP.LC_KyjWeekMaintainRecords.Dtos
     public class LC_KyjWeekMaintainRecordListDto : EntityDto<Guid>,IHasCreationTime 
     {
 
-        
-		/// <summary>
-		/// DeviceID
-		/// </summary>
-		[Required(ErrorMessage="DeviceID不能为空")]
-		public string DeviceID { get; set; }
-
-
-
         /// <summary>
         /// ResponsibleName
         /// </summary>

@@ -14,7 +14,6 @@ namespace GYSWP.EntityMapper.LC_LPMaintainRecords
             builder.ToTable("LC_LPMaintainRecords", YoYoAbpefCoreConsts.SchemaNames.CMS);
 
             
-			builder.Property(a => a.DeviceID).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
 			builder.Property(a => a.ResponsibleName).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
 			builder.Property(a => a.CreationTime).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
 			builder.Property(a => a.SupervisorName).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);

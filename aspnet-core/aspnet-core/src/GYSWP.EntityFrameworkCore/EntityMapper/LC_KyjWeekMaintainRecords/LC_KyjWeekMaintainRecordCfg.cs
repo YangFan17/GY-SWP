@@ -14,7 +14,6 @@ namespace GYSWP.EntityMapper.LC_KyjWeekMaintainRecords
             builder.ToTable("LC_KyjWeekMaintainRecords", YoYoAbpefCoreConsts.SchemaNames.CMS);
 
             
-			builder.Property(a => a.DeviceID).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
 			builder.Property(a => a.ResponsibleName).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
 			builder.Property(a => a.CreationTime).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
 			builder.Property(a => a.SupervisorName).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);

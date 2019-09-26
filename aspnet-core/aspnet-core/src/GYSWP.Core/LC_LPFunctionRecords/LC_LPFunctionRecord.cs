@@ -14,13 +14,6 @@ namespace GYSWP.LC_LPFunctionRecords
     {
 
         /// <summary>
-        /// 设备编号
-        /// </summary>
-        [Required]
-        [StringLength(100)]
-        public virtual string DeviceID { get; set; }
-
-        /// <summary>
         /// 维保人
         /// </summary>
         [Required]

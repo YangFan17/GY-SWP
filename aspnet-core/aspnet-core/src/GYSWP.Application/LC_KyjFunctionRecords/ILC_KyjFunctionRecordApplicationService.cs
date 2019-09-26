@@ -74,12 +74,19 @@ namespace GYSWP.LC_KyjFunctionRecords
 
 
         /// <summary>
-        /// 钉钉创建空压机运行记录
+        /// 钉钉添加或者修改LC_KyjFunctionRecord的公共方法
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<APIResultDto> CreateKyjFunctionRecordAsync(LC_KyjFunctionRecordEditDto input);
+        Task<APIResultDto> CreateOrUpdateByDDAsync(DDCreateOrUpdateLC_KyjFunctionRecordInput input);
 
+        /// <summary>
+        /// 钉钉通过指定条件获取LC_KyjFunctionRecordListDto信息
+        /// </summary>
+        /// <param name="employeeId"></param>
+        /// <param name="useTime"></param>
+        /// <returns></returns>
+        Task<LC_KyjFunctionRecordListDto> GetByDDWhereAsync(string employeeId, string remark);
 
         /// <summary>
         /// 导出LC_KyjFunctionRecord为excel表

@@ -72,13 +72,21 @@ namespace GYSWP.LC_LPFunctionRecords
         /// </summary>
         Task BatchDelete(List<Guid> input);
 
+
         /// <summary>
-        /// 钉钉创建LC_LPFunctionRecord
+        /// 钉钉添加或者修改LC_LPFunctionRecord的公共方法
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<APIResultDto> CreateLPFunctionRecordAsync(LC_LPFunctionRecordEditDto input);
+        Task<APIResultDto> CreateOrUpdateByDDAsync(DDCreateOrUpdateLC_LPFunctionRecordInput input);
 
+        /// <summary>
+        /// 钉钉通过指定条件获取LC_LPFunctionRecordListDto信息
+        /// </summary>
+        /// <param name="employeeId"></param>
+        /// <param name="useTime"></param>
+        /// <returns></returns>
+        Task<LC_LPFunctionRecordListDto> GetByDDWhereAsync(string employeeId, string remark);
 
         /// <summary>
         /// 导出LC_LPFunctionRecord为excel表

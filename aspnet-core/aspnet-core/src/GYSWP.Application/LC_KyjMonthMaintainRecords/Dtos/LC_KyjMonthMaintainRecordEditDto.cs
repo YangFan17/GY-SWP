@@ -1,28 +1,14 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using Abp.Application.Services.Dto;
 using Abp.Domain.Entities.Auditing;
 using GYSWP.LC_KyjMonthMaintainRecords;
 
 namespace  GYSWP.LC_KyjMonthMaintainRecords.Dtos
 {
-    public class LC_KyjMonthMaintainRecordEditDto
+    public class LC_KyjMonthMaintainRecordEditDto : EntityDto<Guid?>, IHasCreationTime
     {
-
-        /// <summary>
-        /// Id
-        /// </summary>
-        public Guid? Id { get; set; }         
-
-
-        
-		/// <summary>
-		/// DeviceID
-		/// </summary>
-		[Required(ErrorMessage="DeviceID不能为空")]
-		public string DeviceID { get; set; }
-
-
 
 		/// <summary>
 		/// EmployeeId

@@ -5,20 +5,13 @@ using Abp.Application.Services.Dto;
 using Abp.Domain.Entities.Auditing;
 using System.ComponentModel.DataAnnotations;
 using GYSWP.LC_LPFunctionRecords;
+using Abp.AutoMapper;
 
 namespace GYSWP.LC_LPFunctionRecords.Dtos
 {
+    [AutoMapFrom(typeof(LC_LPFunctionRecord))]
     public class LC_LPFunctionRecordListDto : EntityDto<Guid>,IHasCreationTime 
     {
-
-        
-		/// <summary>
-		/// DeviceID
-		/// </summary>
-		[Required(ErrorMessage="DeviceID不能为空")]
-		public string DeviceID { get; set; }
-
-
 
         /// <summary>
         /// ResponsibleName
@@ -164,6 +157,35 @@ namespace GYSWP.LC_LPFunctionRecords.Dtos
         [Required(ErrorMessage = "EmployeeName不能为空")]
         [StringLength(50)]
         public string EmployeeName { get; set; }
+
+
+
+        /// <summary>
+        /// UseTimeFormat
+        /// </summary>
+        public string UseTimeFormat
+        {
+            get { return UseTime.Value.ToString("yyyy-MM-dd HH:mm:ss"); }
+        }
+
+
+
+        /// <summary>
+        /// DownTimeFormat
+        /// </summary>
+        public string DownTimeFormat
+        {
+            get { return DownTime.Value.ToString("yyyy-MM-dd HH:mm:ss"); }
+        }
+
+
+        /// <summary>
+        /// 获取图片路径
+        /// </summary>
+        public string[] Path
+        {
+            get; set;
+        }
 
 
 

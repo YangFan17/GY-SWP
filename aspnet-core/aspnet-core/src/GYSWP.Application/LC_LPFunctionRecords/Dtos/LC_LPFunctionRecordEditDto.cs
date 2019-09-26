@@ -9,14 +9,6 @@ namespace  GYSWP.LC_LPFunctionRecords.Dtos
 {
     public class LC_LPFunctionRecordEditDto : EntityDto<Guid?>, IHasCreationTime
     {
-        
-		/// <summary>
-		/// DeviceID
-		/// </summary>
-		[Required(ErrorMessage="DeviceID不能为空")]
-		public string DeviceID { get; set; }
-
-
 
         /// <summary>
         /// ResponsibleName
