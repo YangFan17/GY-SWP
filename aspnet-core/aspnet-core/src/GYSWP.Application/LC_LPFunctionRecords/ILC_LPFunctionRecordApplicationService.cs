@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.LC_LPFunctionRecords.Dtos;
 using GYSWP.LC_LPFunctionRecords;
+using GYSWP.Dtos;
 
 namespace GYSWP.LC_LPFunctionRecords
 {
@@ -71,12 +72,19 @@ namespace GYSWP.LC_LPFunctionRecords
         /// </summary>
         Task BatchDelete(List<Guid> input);
 
+        /// <summary>
+        /// 钉钉创建LC_LPFunctionRecord
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        Task<APIResultDto> CreateLPFunctionRecordAsync(LC_LPFunctionRecordEditDto input);
 
-		/// <summary>
+
+        /// <summary>
         /// 导出LC_LPFunctionRecord为excel表
         /// </summary>
         /// <returns></returns>
-		//Task<FileDto> GetToExcel();
+        //Task<FileDto> GetToExcel();
 
     }
 }

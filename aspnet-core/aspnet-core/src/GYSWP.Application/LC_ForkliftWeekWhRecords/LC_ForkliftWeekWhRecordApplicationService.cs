@@ -116,13 +116,13 @@ LC_ForkliftWeekWhRecordEditDto editDto;
 		}
 
 
-		/// <summary>
-		/// 添加或者修改LC_ForkliftWeekWhRecord的公共方法
-		/// </summary>
-		/// <param name="input"></param>
-		/// <returns></returns>
-		
-		public async Task CreateOrUpdate(CreateOrUpdateLC_ForkliftWeekWhRecordInput input)
+        /// <summary>
+        /// 添加或者修改LC_ForkliftWeekWhRecord的公共方法
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public async Task CreateOrUpdate(CreateOrUpdateLC_ForkliftWeekWhRecordInput input)
 		{
 
 			if (input.LC_ForkliftWeekWhRecord.Id.HasValue)

@@ -21,8 +21,7 @@ using Abp.Linq.Extensions;
 using GYSWP.LC_LPFunctionRecords;
 using GYSWP.LC_LPFunctionRecords.Dtos;
 using GYSWP.LC_LPFunctionRecords.DomainService;
-
-
+using GYSWP.Dtos;
 
 namespace GYSWP.LC_LPFunctionRecords
 {
@@ -191,20 +190,38 @@ LC_LPFunctionRecordEditDto editDto;
 		{
 			// TODO:批量删除前的逻辑判断，是否允许删除
 			await _entityRepository.DeleteAsync(s => input.Contains(s.Id));
-		}
+        }
+
+        /// <summary>
+        /// 钉钉创建LC_LPFunctionRecord
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public async Task<APIResultDto> CreateLPFunctionRecordAsync(LC_LPFunctionRecordEditDto input)
+        {
+            var entity = input.MapTo<LC_LPFunctionRecord>();
+
+            entity = await _entityRepository.InsertAsync(entity);
+            return new APIResultDto()
+            {
+                Code = 0,
+                Data = entity
+            };
+        }
 
 
-		/// <summary>
-		/// 导出LC_LPFunctionRecord为excel表,等待开发。
-		/// </summary>
-		/// <returns></returns>
-		//public async Task<FileDto> GetToExcel()
-		//{
-		//	var users = await UserManager.Users.ToListAsync();
-		//	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
-		//	await FillRoleNames(userListDtos);
-		//	return _userListExcelExporter.ExportToFile(userListDtos);
-		//}
+        /// <summary>
+        /// 导出LC_LPFunctionRecord为excel表,等待开发。
+        /// </summary>
+        /// <returns></returns>
+        //public async Task<FileDto> GetToExcel()
+        //{
+        //	var users = await UserManager.Users.ToListAsync();
+        //	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
+        //	await FillRoleNames(userListDtos);
+        //	return _userListExcelExporter.ExportToFile(userListDtos);
+        //}
 
     }
 }

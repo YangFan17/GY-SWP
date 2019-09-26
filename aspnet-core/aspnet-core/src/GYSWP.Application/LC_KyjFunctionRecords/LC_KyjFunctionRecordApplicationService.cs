@@ -21,8 +21,7 @@ using Abp.Linq.Extensions;
 using GYSWP.LC_KyjFunctionRecords;
 using GYSWP.LC_KyjFunctionRecords.Dtos;
 using GYSWP.LC_KyjFunctionRecords.DomainService;
-
-
+using GYSWP.Dtos;
 
 namespace GYSWP.LC_KyjFunctionRecords
 {
@@ -193,18 +192,36 @@ LC_KyjFunctionRecordEditDto editDto;
 			await _entityRepository.DeleteAsync(s => input.Contains(s.Id));
 		}
 
+        /// <summary>
+        /// 钉钉创建空压机运行记录
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public async Task<APIResultDto> CreateKyjFunctionRecordAsync(LC_KyjFunctionRecordEditDto input)
+        {
+            var entity = input.MapTo<LC_KyjFunctionRecord>();
 
-		/// <summary>
-		/// 导出LC_KyjFunctionRecord为excel表,等待开发。
-		/// </summary>
-		/// <returns></returns>
-		//public async Task<FileDto> GetToExcel()
-		//{
-		//	var users = await UserManager.Users.ToListAsync();
-		//	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
-		//	await FillRoleNames(userListDtos);
-		//	return _userListExcelExporter.ExportToFile(userListDtos);
-		//}
+            entity = await _entityRepository.InsertAsync(entity);
+            return new APIResultDto()
+            {
+                Code = 0,
+                Data = entity
+            };
+        }
+
+
+        /// <summary>
+        /// 导出LC_KyjFunctionRecord为excel表,等待开发。
+        /// </summary>
+        /// <returns></returns>
+        //public async Task<FileDto> GetToExcel()
+        //{
+        //	var users = await UserManager.Users.ToListAsync();
+        //	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
+        //	await FillRoleNames(userListDtos);
+        //	return _userListExcelExporter.ExportToFile(userListDtos);
+        //}
 
     }
 }

@@ -15,7 +15,6 @@ namespace GYSWP.EntityMapper.LC_SortingMonthRecords
 
             
 			builder.Property(a => a.EmployeeId).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
-			builder.Property(a => a.SuperintendentId).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
 			builder.Property(a => a.CreationTime).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
 			builder.Property(a => a.IsFjxButtonOk).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
 			builder.Property(a => a.IsTensioningModerate).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);

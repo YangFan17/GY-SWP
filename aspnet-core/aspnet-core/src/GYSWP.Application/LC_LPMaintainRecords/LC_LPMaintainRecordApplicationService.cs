@@ -21,8 +21,7 @@ using Abp.Linq.Extensions;
 using GYSWP.LC_LPMaintainRecords;
 using GYSWP.LC_LPMaintainRecords.Dtos;
 using GYSWP.LC_LPMaintainRecords.DomainService;
-
-
+using GYSWP.Dtos;
 
 namespace GYSWP.LC_LPMaintainRecords
 {
@@ -193,18 +192,36 @@ LC_LPMaintainRecordEditDto editDto;
 			await _entityRepository.DeleteAsync(s => input.Contains(s.Id));
 		}
 
+        /// <summary>
+        /// 钉钉创建LC_LPMaintainRecord
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public async Task<APIResultDto> CreateLPMaintainRecordAsync(LC_LPMaintainRecordEditDto input)
+        {
+            var entity = input.MapTo<LC_LPMaintainRecord>();
 
-		/// <summary>
-		/// 导出LC_LPMaintainRecord为excel表,等待开发。
-		/// </summary>
-		/// <returns></returns>
-		//public async Task<FileDto> GetToExcel()
-		//{
-		//	var users = await UserManager.Users.ToListAsync();
-		//	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
-		//	await FillRoleNames(userListDtos);
-		//	return _userListExcelExporter.ExportToFile(userListDtos);
-		//}
+            entity = await _entityRepository.InsertAsync(entity);
+            return new APIResultDto()
+            {
+                Code = 0,
+                Data = entity
+            };
+        }
+
+
+        /// <summary>
+        /// 导出LC_LPMaintainRecord为excel表,等待开发。
+        /// </summary>
+        /// <returns></returns>
+        //public async Task<FileDto> GetToExcel()
+        //{
+        //	var users = await UserManager.Users.ToListAsync();
+        //	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
+        //	await FillRoleNames(userListDtos);
+        //	return _userListExcelExporter.ExportToFile(userListDtos);
+        //}
 
     }
 }

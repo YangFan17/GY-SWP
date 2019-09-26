@@ -25,7 +25,7 @@ namespace GYSWP.LC_LPMaintainRecords
         /// </summary>
         [Required]
         [StringLength(50)]
-        public virtual string EmployeeId { get; set; }
+        public virtual string ResponsibleName { get; set; }
         /// <summary>
         /// 创建日期
         /// </summary>
@@ -36,7 +36,7 @@ namespace GYSWP.LC_LPMaintainRecords
         /// </summary>
         [Required]
         [StringLength(50)]
-        public virtual string SupervisorId { get; set; }
+        public virtual string SupervisorName { get; set; }
 
         /// <summary>
         /// 检查电源线路有无破损
@@ -104,5 +104,19 @@ namespace GYSWP.LC_LPMaintainRecords
         /// </summary>
         [StringLength(500)]
         public virtual string ProcessingResult { get; set; }
+
+        /// <summary>
+        /// 员工id
+        /// </summary>
+        [Required]
+        [StringLength(200)]
+        public virtual string EmployeeId { get; set; }
+
+        /// <summary>
+        ///  员工快照
+        /// </summary>
+        [Required]
+        [StringLength(50)]
+        public virtual string EmployeeName { get; set; }
     }
 }

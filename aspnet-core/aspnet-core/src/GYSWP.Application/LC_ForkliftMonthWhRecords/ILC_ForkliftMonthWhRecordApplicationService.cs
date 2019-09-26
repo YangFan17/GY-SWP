@@ -55,6 +55,7 @@ namespace GYSWP.LC_ForkliftMonthWhRecords
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
+        [AbpAllowAnonymous]
         Task CreateOrUpdate(CreateOrUpdateLC_ForkliftMonthWhRecordInput input);
 
 

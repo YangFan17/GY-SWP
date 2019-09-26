@@ -15,9 +15,8 @@ namespace GYSWP.EntityMapper.LC_KyjFunctionRecords
 
             
 			builder.Property(a => a.DeviceID).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
-			builder.Property(a => a.EmployeeId).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
-			builder.Property(a => a.SupervisorId).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
-			builder.Property(a => a.RunningTime).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
+			builder.Property(a => a.ResponsibleName).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
+			builder.Property(a => a.SupervisorName).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
 			builder.Property(a => a.UseTime).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
 			builder.Property(a => a.DownTime).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
 			builder.Property(a => a.IsDeviceComplete).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
@@ -34,6 +33,8 @@ namespace GYSWP.EntityMapper.LC_KyjFunctionRecords
 			builder.Property(a => a.IsDeviceClean).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
 			builder.Property(a => a.Desc).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
 			builder.Property(a => a.CreationTime).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
+            builder.Property(a => a.EmployeeId).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
+            builder.Property(a => a.EmployeeName).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
 
 
         }
