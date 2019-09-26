@@ -21,8 +21,7 @@ using Abp.Linq.Extensions;
 using GYSWP.LC_ForkliftWeekWhRecords;
 using GYSWP.LC_ForkliftWeekWhRecords.Dtos;
 using GYSWP.LC_ForkliftWeekWhRecords.DomainService;
-
-
+using GYSWP.DocAttachments;
 
 namespace GYSWP.LC_ForkliftWeekWhRecords
 {
@@ -36,16 +35,20 @@ namespace GYSWP.LC_ForkliftWeekWhRecords
 
         private readonly ILC_ForkliftWeekWhRecordManager _entityManager;
 
+        private readonly IRepository<LC_Attachment, Guid> _AttachmententityRepository;
+
         /// <summary>
         /// 构造函数 
         ///</summary>
         public LC_ForkliftWeekWhRecordAppService(
-        IRepository<LC_ForkliftWeekWhRecord, Guid> entityRepository
-        ,ILC_ForkliftWeekWhRecordManager entityManager
+        IRepository<LC_ForkliftWeekWhRecord, Guid> entityRepository,
+             IRepository<LC_Attachment, Guid> AttachRepository
+        , ILC_ForkliftWeekWhRecordManager entityManager
         )
         {
             _entityRepository = entityRepository; 
              _entityManager=entityManager;
+            _AttachmententityRepository = AttachRepository;
         }
 
 
@@ -116,13 +119,13 @@ LC_ForkliftWeekWhRecordEditDto editDto;
 		}
 
 
-		/// <summary>
-		/// 添加或者修改LC_ForkliftWeekWhRecord的公共方法
-		/// </summary>
-		/// <param name="input"></param>
-		/// <returns></returns>
-		
-		public async Task CreateOrUpdate(CreateOrUpdateLC_ForkliftWeekWhRecordInput input)
+        /// <summary>
+        /// 添加或者修改LC_ForkliftWeekWhRecord的公共方法
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public async Task CreateOrUpdate(CreateOrUpdateLC_ForkliftWeekWhRecordInput input)
 		{
 
 			if (input.LC_ForkliftWeekWhRecord.Id.HasValue)
@@ -194,17 +197,44 @@ LC_ForkliftWeekWhRecordEditDto editDto;
 		}
 
 
-		/// <summary>
-		/// 导出LC_ForkliftWeekWhRecord为excel表,等待开发。
-		/// </summary>
-		/// <returns></returns>
-		//public async Task<FileDto> GetToExcel()
-		//{
-		//	var users = await UserManager.Users.ToListAsync();
-		//	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
-		//	await FillRoleNames(userListDtos);
-		//	return _userListExcelExporter.ExportToFile(userListDtos);
-		//}
+        /// <summary>
+        /// 导出LC_ForkliftWeekWhRecord为excel表,等待开发。
+        /// </summary>
+        /// <returns></returns>
+        //public async Task<FileDto> GetToExcel()
+        //{
+        //	var users = await UserManager.Users.ToListAsync();
+        //	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
+        //	await FillRoleNames(userListDtos);
+        //	return _userListExcelExporter.ExportToFile(userListDtos);
+        //}
+
+        /// <summary>
+        /// 保养记录和照片拍照记录
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public virtual async Task RecordInsert(InsertLC_ForkliftWeekWhRecordInput input)
+        {
+            var entity = input.LC_ForkliftWeekWhRecord.MapTo<LC_ForkliftWeekWhRecord>();
+            var returnId = await _entityRepository.InsertAndGetIdAsync(entity);
+            await CurrentUnitOfWork.SaveChangesAsync();
+            input.LC_ForkliftWeekWhRecord.BLL = returnId;
+            if (input.LC_ForkliftWeekWhRecord.Path != null)
+            {
+                foreach (var item in input.LC_ForkliftWeekWhRecord.Path)
+                {
+                    var AttachEntity = new LC_Attachment();
+                    AttachEntity.Path = item;
+                    AttachEntity.EmployeeId = input.LC_ForkliftWeekWhRecord.EmployeeId;
+                    AttachEntity.Type = input.LC_ForkliftWeekWhRecord.Type;
+                    AttachEntity.Remark = input.LC_ForkliftWeekWhRecord.Remark;
+                    AttachEntity.BLL = returnId;
+                    await _AttachmententityRepository.InsertAsync(AttachEntity);
+                }
+            }
+        }
 
     }
 }

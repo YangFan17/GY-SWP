@@ -15,7 +15,6 @@ namespace GYSWP.EntityMapper.LC_SsjMonthWhByRecords
 
             
 			builder.Property(a => a.EmployeeId).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
-			builder.Property(a => a.SuperintendentId).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
 			builder.Property(a => a.CreationTime).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
 			builder.Property(a => a.IsPartLubrication).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
 			builder.Property(a => a.IsShapeBad).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);

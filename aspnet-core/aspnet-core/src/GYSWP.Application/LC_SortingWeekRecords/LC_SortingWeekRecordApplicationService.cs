@@ -21,8 +21,8 @@ using Abp.Linq.Extensions;
 using GYSWP.LC_SortingWeekRecords;
 using GYSWP.LC_SortingWeekRecords.Dtos;
 using GYSWP.LC_SortingWeekRecords.DomainService;
-
-
+using GYSWP.DocAttachments;
+using GYSWP.DocAttachments.Dtos;
 
 namespace GYSWP.LC_SortingWeekRecords
 {
@@ -36,16 +36,21 @@ namespace GYSWP.LC_SortingWeekRecords
 
         private readonly ILC_SortingWeekRecordManager _entityManager;
 
+        private readonly IRepository<LC_Attachment, Guid> _AttachmententityRepository;
+
         /// <summary>
         /// 构造函数 
         ///</summary>
         public LC_SortingWeekRecordAppService(
         IRepository<LC_SortingWeekRecord, Guid> entityRepository
-        ,ILC_SortingWeekRecordManager entityManager
+        ,
+        IRepository<LC_Attachment, Guid> AttachRepository,
+        ILC_SortingWeekRecordManager entityManager
         )
         {
             _entityRepository = entityRepository; 
              _entityManager=entityManager;
+            _AttachmententityRepository = AttachRepository;
         }
 
 
@@ -121,7 +126,7 @@ LC_SortingWeekRecordEditDto editDto;
 		/// </summary>
 		/// <param name="input"></param>
 		/// <returns></returns>
-		
+		[AbpAllowAnonymous]
 		public async Task CreateOrUpdate(CreateOrUpdateLC_SortingWeekRecordInput input)
 		{
 
@@ -148,9 +153,37 @@ LC_SortingWeekRecordEditDto editDto;
             var entity=input.MapTo<LC_SortingWeekRecord>();
 			
 
-			entity = await _entityRepository.InsertAsync(entity);
-			return entity.MapTo<LC_SortingWeekRecordEditDto>();
+			//entity = await _entityRepository.InsertAsync(entity);
+            var x = await _entityRepository.InsertAndGetIdAsync(entity);
+            await CurrentUnitOfWork.SaveChangesAsync();
+            return entity.MapTo<LC_SortingWeekRecordEditDto>();
 		}
+        /// <summary>
+        /// 保养记录和照片拍照记录
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public virtual async Task RecordInsert(InsertLC_SortingWeekRecordInput input)
+        {
+            var entity = input.LC_SortingWeekRecord.MapTo<LC_SortingWeekRecord>();
+            var returnId = await _entityRepository.InsertAndGetIdAsync(entity);
+            await CurrentUnitOfWork.SaveChangesAsync();
+            input.LC_SortingWeekRecord.BLL = returnId;
+            if(input.LC_SortingWeekRecord.Path!=null)//有照片的情况
+            { 
+                foreach (var item in input.LC_SortingWeekRecord.Path)
+                {
+                    var AttachEntity = new LC_Attachment();
+                    AttachEntity.Path = item;
+                    AttachEntity.EmployeeId = input.LC_SortingWeekRecord.EmployeeId;
+                    AttachEntity.Type = input.LC_SortingWeekRecord.Type;
+                    AttachEntity.Remark = input.LC_SortingWeekRecord.Remark;
+                    AttachEntity.BLL = returnId;
+                    await _AttachmententityRepository.InsertAsync(AttachEntity);
+                }
+            }
+        }
 
 		/// <summary>
 		/// 编辑LC_SortingWeekRecord

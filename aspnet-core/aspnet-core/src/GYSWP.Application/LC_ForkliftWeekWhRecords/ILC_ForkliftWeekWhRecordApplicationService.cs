@@ -55,6 +55,7 @@ namespace GYSWP.LC_ForkliftWeekWhRecords
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
+        [AbpAllowAnonymous]
         Task CreateOrUpdate(CreateOrUpdateLC_ForkliftWeekWhRecordInput input);
 
 
@@ -72,11 +73,18 @@ namespace GYSWP.LC_ForkliftWeekWhRecords
         Task BatchDelete(List<Guid> input);
 
 
-		/// <summary>
+        /// <summary>
         /// 导出LC_ForkliftWeekWhRecord为excel表
         /// </summary>
         /// <returns></returns>
-		//Task<FileDto> GetToExcel();
+        //Task<FileDto> GetToExcel();
+        /// <summary>
+        /// 保养记录和照片拍照记录
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+       Task RecordInsert(InsertLC_ForkliftWeekWhRecordInput input);
 
     }
 }

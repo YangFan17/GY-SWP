@@ -55,6 +55,7 @@ namespace GYSWP.LC_SortingWeekRecords
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
+        [AbpAllowAnonymous]
         Task CreateOrUpdate(CreateOrUpdateLC_SortingWeekRecordInput input);
 
 
@@ -72,11 +73,19 @@ namespace GYSWP.LC_SortingWeekRecords
         Task BatchDelete(List<Guid> input);
 
 
-		/// <summary>
+        /// <summary>
         /// 导出LC_SortingWeekRecord为excel表
         /// </summary>
         /// <returns></returns>
-		//Task<FileDto> GetToExcel();
+        //Task<FileDto> GetToExcel();
+
+        /// <summary>
+        /// 保养记录和照片拍照记录
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        Task RecordInsert(InsertLC_SortingWeekRecordInput input);
 
     }
 }

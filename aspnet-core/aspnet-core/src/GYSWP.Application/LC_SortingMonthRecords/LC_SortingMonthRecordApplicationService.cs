@@ -21,8 +21,7 @@ using Abp.Linq.Extensions;
 using GYSWP.LC_SortingMonthRecords;
 using GYSWP.LC_SortingMonthRecords.Dtos;
 using GYSWP.LC_SortingMonthRecords.DomainService;
-
-
+using GYSWP.DocAttachments;
 
 namespace GYSWP.LC_SortingMonthRecords
 {
@@ -36,16 +35,20 @@ namespace GYSWP.LC_SortingMonthRecords
 
         private readonly ILC_SortingMonthRecordManager _entityManager;
 
+        private readonly IRepository<LC_Attachment, Guid> _AttachmententityRepository;
+
         /// <summary>
         /// 构造函数 
         ///</summary>
         public LC_SortingMonthRecordAppService(
         IRepository<LC_SortingMonthRecord, Guid> entityRepository
-        ,ILC_SortingMonthRecordManager entityManager
+        , IRepository<LC_Attachment, Guid> AttachRepository, 
+        ILC_SortingMonthRecordManager entityManager
         )
         {
             _entityRepository = entityRepository; 
              _entityManager=entityManager;
+            _AttachmententityRepository = AttachRepository;
         }
 
 
@@ -121,7 +124,7 @@ LC_SortingMonthRecordEditDto editDto;
 		/// </summary>
 		/// <param name="input"></param>
 		/// <returns></returns>
-		
+		[AbpAllowAnonymous]
 		public async Task CreateOrUpdate(CreateOrUpdateLC_SortingMonthRecordInput input)
 		{
 
@@ -194,18 +197,44 @@ LC_SortingMonthRecordEditDto editDto;
 		}
 
 
-		/// <summary>
-		/// 导出LC_SortingMonthRecord为excel表,等待开发。
-		/// </summary>
-		/// <returns></returns>
-		//public async Task<FileDto> GetToExcel()
-		//{
-		//	var users = await UserManager.Users.ToListAsync();
-		//	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
-		//	await FillRoleNames(userListDtos);
-		//	return _userListExcelExporter.ExportToFile(userListDtos);
-		//}
+        /// <summary>
+        /// 导出LC_SortingMonthRecord为excel表,等待开发。
+        /// </summary>
+        /// <returns></returns>
+        //public async Task<FileDto> GetToExcel()
+        //{
+        //	var users = await UserManager.Users.ToListAsync();
+        //	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
+        //	await FillRoleNames(userListDtos);
+        //	return _userListExcelExporter.ExportToFile(userListDtos);
+        //}
 
+        /// <summary>
+        /// 保养记录和照片拍照记录
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public virtual async Task RecordInsert(InsertLC_SortingMonthRecordInput input)
+        {
+            var entity = input.LC_SortingMonthRecord.MapTo<LC_SortingMonthRecord>();
+            var returnId = await _entityRepository.InsertAndGetIdAsync(entity);
+            await CurrentUnitOfWork.SaveChangesAsync();
+            input.LC_SortingMonthRecord.BLL = returnId;
+            if(input.LC_SortingMonthRecord.Path!=null)
+            { 
+            foreach (var item in input.LC_SortingMonthRecord.Path)
+            {
+                var AttachEntity = new LC_Attachment();
+                AttachEntity.Path = item;
+                AttachEntity.EmployeeId = input.LC_SortingMonthRecord.EmployeeId;
+                AttachEntity.Type = input.LC_SortingMonthRecord.Type;
+                AttachEntity.Remark = input.LC_SortingMonthRecord.Remark;
+                AttachEntity.BLL = returnId;
+                await _AttachmententityRepository.InsertAsync(AttachEntity);
+            }
+            }
+        }
     }
 }
 

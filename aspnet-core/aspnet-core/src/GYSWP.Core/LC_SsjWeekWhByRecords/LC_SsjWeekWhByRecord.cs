@@ -14,18 +14,31 @@ namespace GYSWP.LC_SsjWeekWhByRecords
     {
 
         /// <summary>
-        /// 维保人
+        /// 责任人
         /// </summary>
         [Required]
-        [StringLength(50)]
-        public virtual string EmployeeId { get; set; }
+        [StringLength(100)]
+        public virtual string ResponsibleName { get; set; }
 
         /// <summary>
-        /// 监督人
+        /// 监管人
         /// </summary>
         [Required]
         [StringLength(50)]
-        public virtual string SuperintendentId { get; set; }
+        public virtual string SupervisorName { get; set; }
+
+        /// <summary>
+        /// 员工ID
+        /// </summary>
+        [Required]
+        [StringLength(200)]
+        public virtual string EmployeeId { get; set; }
+        /// <summary>
+        /// 员工快照    
+        /// </summary>
+        [Required]
+        [StringLength(50)]
+        public virtual string EmployeeName { get; set; }
 
         /// <summary>
         /// 创建日期

@@ -99,7 +99,8 @@ namespace GYSWP.GYEnums
     {
         检查验收 = 1,
         卷烟机损 = 2,
-        设备故障 = 3
+        设备故障 = 3,
+        保养记录 =999
     }
 
     public enum IndicatorStatus

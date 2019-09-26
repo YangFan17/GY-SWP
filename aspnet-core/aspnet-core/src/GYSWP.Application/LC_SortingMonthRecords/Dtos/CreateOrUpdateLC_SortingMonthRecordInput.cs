@@ -12,4 +12,10 @@ namespace GYSWP.LC_SortingMonthRecords.Dtos
         public LC_SortingMonthRecordEditDto LC_SortingMonthRecord { get; set; }
 
     }
+
+    public class InsertLC_SortingMonthRecordInput
+    {
+        [Required]
+        public LC_SortingMonthRecordDto LC_SortingMonthRecord { get; set; }
+    }
 }
