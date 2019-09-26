@@ -22,6 +22,7 @@ using GYSWP.LC_KyjWeekMaintainRecords;
 using GYSWP.LC_KyjWeekMaintainRecords.Dtos;
 using GYSWP.LC_KyjWeekMaintainRecords.DomainService;
 using GYSWP.Dtos;
+using GYSWP.DocAttachments;
 
 namespace GYSWP.LC_KyjWeekMaintainRecords
 {
@@ -32,6 +33,7 @@ namespace GYSWP.LC_KyjWeekMaintainRecords
     public class LC_KyjWeekMaintainRecordAppService : GYSWPAppServiceBase, ILC_KyjWeekMaintainRecordAppService
     {
         private readonly IRepository<LC_KyjWeekMaintainRecord, Guid> _entityRepository;
+        private readonly IRepository<LC_Attachment, Guid> _attachmentRepository;
 
         private readonly ILC_KyjWeekMaintainRecordManager _entityManager;
 
@@ -41,8 +43,10 @@ namespace GYSWP.LC_KyjWeekMaintainRecords
         public LC_KyjWeekMaintainRecordAppService(
         IRepository<LC_KyjWeekMaintainRecord, Guid> entityRepository
         ,ILC_KyjWeekMaintainRecordManager entityManager
+        , IRepository<LC_Attachment, Guid> attachmentRepository
         )
         {
+            _attachmentRepository = attachmentRepository;
             _entityRepository = entityRepository; 
              _entityManager=entityManager;
         }
@@ -193,16 +197,26 @@ LC_KyjWeekMaintainRecordEditDto editDto;
 		}
 
         /// <summary>
-        /// 钉钉创建LC_KyjWeekMaintainRecord
+        /// 钉钉创建LC_KyjWeekMaintainRecord,并保存图片至LC_Attachment
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
         [AbpAllowAnonymous]
-        public async Task<APIResultDto> CreateKyjWeekMaintainRecordAsync(LC_KyjWeekMaintainRecordEditDto input)
+        public async Task<APIResultDto> CreateKyjWeekMaintainRecordAsync(DDCreateOrUpdateLC_KyjWeekMaintainRecordInput input)
         {
-            var entity = input.MapTo<LC_KyjWeekMaintainRecord>();
+            var entity = input.LC_KyjWeekMaintainRecord.MapTo<LC_KyjWeekMaintainRecord>();
 
             entity = await _entityRepository.InsertAsync(entity);
+            foreach (var path in input.DDAttachmentEditDto.Path)
+            {
+                var item = new LC_Attachment();
+                item.Path = path;
+                item.EmployeeId = input.DDAttachmentEditDto.EmployeeId;
+                item.Type = input.DDAttachmentEditDto.Type;
+                item.BLL = entity.Id;
+                item.Remark = input.DDAttachmentEditDto.Remark;
+                await _attachmentRepository.InsertAsync(item);
+            }
             return new APIResultDto()
             {
                 Code = 0,

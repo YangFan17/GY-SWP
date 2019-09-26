@@ -73,11 +73,11 @@ namespace GYSWP.LC_KyjWeekMaintainRecords
         Task BatchDelete(List<Guid> input);
 
         /// <summary>
-        /// 钉钉创建LC_KyjWeekMaintainRecord
+        /// 钉钉创建LC_KyjWeekMaintainRecord,并保存图片至LC_Attachment
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<APIResultDto> CreateKyjWeekMaintainRecordAsync(LC_KyjWeekMaintainRecordEditDto input);
+        Task<APIResultDto> CreateKyjWeekMaintainRecordAsync(DDCreateOrUpdateLC_KyjWeekMaintainRecordInput input);
 
 
         /// <summary>

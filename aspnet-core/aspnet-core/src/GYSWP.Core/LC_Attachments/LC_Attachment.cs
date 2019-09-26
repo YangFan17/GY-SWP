@@ -28,6 +28,7 @@ namespace GYSWP.DocAttachments
         /// 员工Id
         /// </summary>
         [Required]
+        [StringLength(200)]
         public virtual string EmployeeId { get; set; }
 
         /// <summary>
