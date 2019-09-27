@@ -12,4 +12,9 @@ namespace GYSWP.LC_SsjMonthWhByRecords.Dtos
         public LC_SsjMonthWhByRecordEditDto LC_SsjMonthWhByRecord { get; set; }
 
     }
+    public class InsertLC_SsjMonthWhByRecordInput
+    {
+        [Required]
+        public LC_SsjMonthWhByRecordDto LC_SsjMonthWhByRecord { get; set; }
+    }
 }

@@ -15,7 +15,6 @@ namespace GYSWP.EntityMapper.LC_ForkliftMonthWhRecords
 
             
 			builder.Property(a => a.EmployeeId).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
-			builder.Property(a => a.SuperintendentId).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
 			builder.Property(a => a.CreationTime).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
 			builder.Property(a => a.IsScrewBad).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
 			builder.Property(a => a.IsTireSurfaceBad).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);

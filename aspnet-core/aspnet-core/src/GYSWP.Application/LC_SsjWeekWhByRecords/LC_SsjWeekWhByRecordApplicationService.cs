@@ -21,8 +21,7 @@ using Abp.Linq.Extensions;
 using GYSWP.LC_SsjWeekWhByRecords;
 using GYSWP.LC_SsjWeekWhByRecords.Dtos;
 using GYSWP.LC_SsjWeekWhByRecords.DomainService;
-
-
+using GYSWP.DocAttachments;
 
 namespace GYSWP.LC_SsjWeekWhByRecords
 {
@@ -36,16 +35,20 @@ namespace GYSWP.LC_SsjWeekWhByRecords
 
         private readonly ILC_SsjWeekWhByRecordManager _entityManager;
 
+        private readonly IRepository<LC_Attachment, Guid> _AttachmententityRepository;
+
         /// <summary>
         /// 构造函数 
         ///</summary>
         public LC_SsjWeekWhByRecordAppService(
         IRepository<LC_SsjWeekWhByRecord, Guid> entityRepository
-        ,ILC_SsjWeekWhByRecordManager entityManager
+            , IRepository<LC_Attachment, Guid> AttachRepository
+        , ILC_SsjWeekWhByRecordManager entityManager
         )
         {
             _entityRepository = entityRepository; 
              _entityManager=entityManager;
+            _AttachmententityRepository = AttachRepository;
         }
 
 
@@ -121,6 +124,7 @@ LC_SsjWeekWhByRecordEditDto editDto;
 		/// </summary>
 		/// <param name="input"></param>
 		/// <returns></returns>
+		[AbpAllowAnonymous]
 		public async Task CreateOrUpdate(CreateOrUpdateLC_SsjWeekWhByRecordInput input)
 		{
 
@@ -193,17 +197,46 @@ LC_SsjWeekWhByRecordEditDto editDto;
 		}
 
 
-		/// <summary>
-		/// 导出LC_SsjWeekWhByRecord为excel表,等待开发。
-		/// </summary>
-		/// <returns></returns>
-		//public async Task<FileDto> GetToExcel()
-		//{
-		//	var users = await UserManager.Users.ToListAsync();
-		//	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
-		//	await FillRoleNames(userListDtos);
-		//	return _userListExcelExporter.ExportToFile(userListDtos);
-		//}
+        /// <summary>
+        /// 导出LC_SsjWeekWhByRecord为excel表,等待开发。
+        /// </summary>
+        /// <returns></returns>
+        //public async Task<FileDto> GetToExcel()
+        //{
+        //	var users = await UserManager.Users.ToListAsync();
+        //	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
+        //	await FillRoleNames(userListDtos);
+        //	return _userListExcelExporter.ExportToFile(userListDtos);
+        //}
+
+
+        /// <summary>
+        /// 保养记录和照片拍照记录
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public virtual async Task RecordInsert(InsertLC_SsjWeekWhByRecordInput input)
+        {
+            var entity = input.LC_SsjWeekWhByRecord.MapTo<LC_SsjWeekWhByRecord>();
+            var returnId = await _entityRepository.InsertAndGetIdAsync(entity);
+            await CurrentUnitOfWork.SaveChangesAsync();
+            input.LC_SsjWeekWhByRecord.BLL = returnId;
+            if (input.LC_SsjWeekWhByRecord.Path != null)
+            {
+                foreach (var item in input.LC_SsjWeekWhByRecord.Path)
+                {
+                    var AttachEntity = new LC_Attachment();
+                    AttachEntity.Path = item;
+                    AttachEntity.EmployeeId = input.LC_SsjWeekWhByRecord.EmployeeId;
+                    AttachEntity.Type = input.LC_SsjWeekWhByRecord.Type;
+                    AttachEntity.Remark = input.LC_SsjWeekWhByRecord.Remark;
+                    AttachEntity.BLL = returnId;
+                    await _AttachmententityRepository.InsertAsync(AttachEntity);
+                }
+            }
+        }
+
 
     }
 }

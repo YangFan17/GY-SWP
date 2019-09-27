@@ -18,7 +18,7 @@ using Abp.Domain.Services;
 
 using GYSWP;
 using GYSWP.LC_KyjFunctionRecords;
-
+using GYSWP.DocAttachments;
 
 namespace GYSWP.LC_KyjFunctionRecords.DomainService
 {
@@ -41,10 +41,10 @@ namespace GYSWP.LC_KyjFunctionRecords.DomainService
 		}
 
 
-		/// <summary>
-		/// 初始化
-		///</summary>
-		public void InitLC_KyjFunctionRecord()
+        /// <summary>
+        /// 初始化
+        ///</summary>
+        public void InitLC_KyjFunctionRecord()
 		{
 			throw new NotImplementedException();
 		}

@@ -21,8 +21,8 @@ using Abp.Linq.Extensions;
 using GYSWP.LC_LPFunctionRecords;
 using GYSWP.LC_LPFunctionRecords.Dtos;
 using GYSWP.LC_LPFunctionRecords.DomainService;
-
-
+using GYSWP.Dtos;
+using GYSWP.DocAttachments;
 
 namespace GYSWP.LC_LPFunctionRecords
 {
@@ -33,6 +33,7 @@ namespace GYSWP.LC_LPFunctionRecords
     public class LC_LPFunctionRecordAppService : GYSWPAppServiceBase, ILC_LPFunctionRecordAppService
     {
         private readonly IRepository<LC_LPFunctionRecord, Guid> _entityRepository;
+        private readonly IRepository<LC_Attachment, Guid> _attachmentRepository;
 
         private readonly ILC_LPFunctionRecordManager _entityManager;
 
@@ -42,8 +43,10 @@ namespace GYSWP.LC_LPFunctionRecords
         public LC_LPFunctionRecordAppService(
         IRepository<LC_LPFunctionRecord, Guid> entityRepository
         ,ILC_LPFunctionRecordManager entityManager
+            , IRepository<LC_Attachment, Guid> attachmentRepository
         )
         {
+            _attachmentRepository = attachmentRepository;
             _entityRepository = entityRepository; 
              _entityManager=entityManager;
         }
@@ -191,20 +194,116 @@ LC_LPFunctionRecordEditDto editDto;
 		{
 			// TODO:批量删除前的逻辑判断，是否允许删除
 			await _entityRepository.DeleteAsync(s => input.Contains(s.Id));
-		}
+        }
 
+        /// <summary>
+        /// 钉钉添加或者修改LC_LPFunctionRecord的公共方法
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public async Task<APIResultDto> CreateOrUpdateByDDAsync(DDCreateOrUpdateLC_LPFunctionRecordInput input)
+        {
 
-		/// <summary>
-		/// 导出LC_LPFunctionRecord为excel表,等待开发。
-		/// </summary>
-		/// <returns></returns>
-		//public async Task<FileDto> GetToExcel()
-		//{
-		//	var users = await UserManager.Users.ToListAsync();
-		//	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
-		//	await FillRoleNames(userListDtos);
-		//	return _userListExcelExporter.ExportToFile(userListDtos);
-		//}
+            if (input.LC_LPFunctionRecord.Id.HasValue)
+            {
+                return await DDUpdate(input);
+            }
+            else
+            {
+                return await DDCreate(input);
+            }
+        }
+
+        /// <summary>
+        /// 钉钉创建LC_LPFunctionRecord,并保存图片至LC_Attachment
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        protected async Task<APIResultDto> DDCreate(DDCreateOrUpdateLC_LPFunctionRecordInput input)
+        {
+            var entity = input.LC_LPFunctionRecord.MapTo<LC_LPFunctionRecord>();
+            entity = await _entityRepository.InsertAsync(entity);
+
+            foreach (var path in input.DDAttachmentEditDto.Path)
+            {
+                var item = new LC_Attachment();
+                item.Path = path;
+                item.EmployeeId = input.DDAttachmentEditDto.EmployeeId;
+                item.Type = input.DDAttachmentEditDto.Type;
+                item.BLL = entity.Id;
+                item.Remark = input.DDAttachmentEditDto.Remark;
+                await _attachmentRepository.InsertAsync(item);
+            }
+            return new APIResultDto()
+            {
+                Code = 0,
+                Data = entity
+            };
+        }
+
+        /// <summary>
+        /// 钉钉编辑LC_LPFunctionRecord,并保存图片至LC_Attachment
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        protected async Task<APIResultDto> DDUpdate(DDCreateOrUpdateLC_LPFunctionRecordInput input)
+        {
+            //TODO:更新前的逻辑判断，是否允许更新
+
+            var entity = await _entityRepository.GetAsync(input.LC_LPFunctionRecord.Id.Value);
+            input.LC_LPFunctionRecord.MapTo(entity);
+            foreach (var path in input.DDAttachmentEditDto.Path)
+            {
+                var attachment = await _attachmentRepository.CountAsync(aa => aa.Path == path);
+                if (attachment <= 0)
+                {
+                    var item = new LC_Attachment();
+                    item.Path = path;
+                    item.EmployeeId = input.DDAttachmentEditDto.EmployeeId;
+                    item.BLL = entity.Id;
+                    item.Type = input.DDAttachmentEditDto.Type;
+                    item.Remark = input.DDAttachmentEditDto.Remark;
+                    await _attachmentRepository.InsertAsync(item);
+                }
+            }
+            // ObjectMapper.Map(input, entity);
+            await _entityRepository.UpdateAsync(entity);
+            return new APIResultDto()
+            {
+                Code = 0,
+                Data = entity
+            };
+        }
+
+        /// <summary>
+        /// 钉钉通过指定条件获取LC_LPFunctionRecordListDto信息
+        /// </summary>
+        /// <param name="employeeId"></param>
+        /// <param name="remark"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public async Task<LC_LPFunctionRecordListDto> GetByDDWhereAsync(string employeeId, string remark)
+        {
+            var entity = await _entityRepository.FirstOrDefaultAsync(aa => aa.EmployeeId == employeeId && aa.CreationTime.ToString().Contains(DateTime.Now.ToShortDateString()));
+
+            var item = entity.MapTo<LC_LPFunctionRecordListDto>();
+            if (entity != null)
+                item.Path = await _attachmentRepository.GetAll().Where(aa => aa.BLL == entity.Id && aa.Remark == remark).Select(aa => aa.Path).AsNoTracking().ToArrayAsync();
+            return item;
+        }
+
+        /// <summary>
+        /// 导出LC_LPFunctionRecord为excel表,等待开发。
+        /// </summary>
+        /// <returns></returns>
+        //public async Task<FileDto> GetToExcel()
+        //{
+        //	var users = await UserManager.Users.ToListAsync();
+        //	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
+        //	await FillRoleNames(userListDtos);
+        //	return _userListExcelExporter.ExportToFile(userListDtos);
+        //}
 
     }
 }

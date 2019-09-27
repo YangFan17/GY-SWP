@@ -21,8 +21,8 @@ using Abp.Linq.Extensions;
 using GYSWP.LC_KyjWeekMaintainRecords;
 using GYSWP.LC_KyjWeekMaintainRecords.Dtos;
 using GYSWP.LC_KyjWeekMaintainRecords.DomainService;
-
-
+using GYSWP.Dtos;
+using GYSWP.DocAttachments;
 
 namespace GYSWP.LC_KyjWeekMaintainRecords
 {
@@ -33,6 +33,7 @@ namespace GYSWP.LC_KyjWeekMaintainRecords
     public class LC_KyjWeekMaintainRecordAppService : GYSWPAppServiceBase, ILC_KyjWeekMaintainRecordAppService
     {
         private readonly IRepository<LC_KyjWeekMaintainRecord, Guid> _entityRepository;
+        private readonly IRepository<LC_Attachment, Guid> _attachmentRepository;
 
         private readonly ILC_KyjWeekMaintainRecordManager _entityManager;
 
@@ -42,8 +43,10 @@ namespace GYSWP.LC_KyjWeekMaintainRecords
         public LC_KyjWeekMaintainRecordAppService(
         IRepository<LC_KyjWeekMaintainRecord, Guid> entityRepository
         ,ILC_KyjWeekMaintainRecordManager entityManager
+        , IRepository<LC_Attachment, Guid> attachmentRepository
         )
         {
+            _attachmentRepository = attachmentRepository;
             _entityRepository = entityRepository; 
              _entityManager=entityManager;
         }
@@ -193,18 +196,46 @@ LC_KyjWeekMaintainRecordEditDto editDto;
 			await _entityRepository.DeleteAsync(s => input.Contains(s.Id));
 		}
 
+        /// <summary>
+        /// 钉钉创建LC_KyjWeekMaintainRecord,并保存图片至LC_Attachment
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public async Task<APIResultDto> CreateKyjWeekMaintainRecordAsync(DDCreateOrUpdateLC_KyjWeekMaintainRecordInput input)
+        {
+            var entity = input.LC_KyjWeekMaintainRecord.MapTo<LC_KyjWeekMaintainRecord>();
 
-		/// <summary>
-		/// 导出LC_KyjWeekMaintainRecord为excel表,等待开发。
-		/// </summary>
-		/// <returns></returns>
-		//public async Task<FileDto> GetToExcel()
-		//{
-		//	var users = await UserManager.Users.ToListAsync();
-		//	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
-		//	await FillRoleNames(userListDtos);
-		//	return _userListExcelExporter.ExportToFile(userListDtos);
-		//}
+            entity = await _entityRepository.InsertAsync(entity);
+            foreach (var path in input.DDAttachmentEditDto.Path)
+            {
+                var item = new LC_Attachment();
+                item.Path = path;
+                item.EmployeeId = input.DDAttachmentEditDto.EmployeeId;
+                item.Type = input.DDAttachmentEditDto.Type;
+                item.BLL = entity.Id;
+                item.Remark = input.DDAttachmentEditDto.Remark;
+                await _attachmentRepository.InsertAsync(item);
+            }
+            return new APIResultDto()
+            {
+                Code = 0,
+                Data = entity
+            };
+        }
+
+
+        /// <summary>
+        /// 导出LC_KyjWeekMaintainRecord为excel表,等待开发。
+        /// </summary>
+        /// <returns></returns>
+        //public async Task<FileDto> GetToExcel()
+        //{
+        //	var users = await UserManager.Users.ToListAsync();
+        //	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
+        //	await FillRoleNames(userListDtos);
+        //	return _userListExcelExporter.ExportToFile(userListDtos);
+        //}
 
     }
 }

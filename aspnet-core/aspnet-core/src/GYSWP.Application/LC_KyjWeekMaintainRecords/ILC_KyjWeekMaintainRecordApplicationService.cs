@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.LC_KyjWeekMaintainRecords.Dtos;
 using GYSWP.LC_KyjWeekMaintainRecords;
+using GYSWP.Dtos;
 
 namespace GYSWP.LC_KyjWeekMaintainRecords
 {
@@ -71,12 +72,19 @@ namespace GYSWP.LC_KyjWeekMaintainRecords
         /// </summary>
         Task BatchDelete(List<Guid> input);
 
+        /// <summary>
+        /// 钉钉创建LC_KyjWeekMaintainRecord,并保存图片至LC_Attachment
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        Task<APIResultDto> CreateKyjWeekMaintainRecordAsync(DDCreateOrUpdateLC_KyjWeekMaintainRecordInput input);
 
-		/// <summary>
+
+        /// <summary>
         /// 导出LC_KyjWeekMaintainRecord为excel表
         /// </summary>
         /// <returns></returns>
-		//Task<FileDto> GetToExcel();
+        //Task<FileDto> GetToExcel();
 
     }
 }

@@ -12,4 +12,9 @@ namespace GYSWP.LC_ForkliftWeekWhRecords.Dtos
         public LC_ForkliftWeekWhRecordEditDto LC_ForkliftWeekWhRecord { get; set; }
 
     }
+    public class InsertLC_ForkliftWeekWhRecordInput
+    {
+        [Required]
+        public LC_ForkliftWeekWhRecordDto LC_ForkliftWeekWhRecord { get; set; }
+    }
 }

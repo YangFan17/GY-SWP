@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.LC_KyjFunctionRecords.Dtos;
 using GYSWP.LC_KyjFunctionRecords;
+using GYSWP.Dtos;
 
 namespace GYSWP.LC_KyjFunctionRecords
 {
@@ -72,11 +73,26 @@ namespace GYSWP.LC_KyjFunctionRecords
         Task BatchDelete(List<Guid> input);
 
 
-		/// <summary>
+        /// <summary>
+        /// 钉钉添加或者修改LC_KyjFunctionRecord的公共方法
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        Task<APIResultDto> CreateOrUpdateByDDAsync(DDCreateOrUpdateLC_KyjFunctionRecordInput input);
+
+        /// <summary>
+        /// 钉钉通过指定条件获取LC_KyjFunctionRecordListDto信息
+        /// </summary>
+        /// <param name="employeeId"></param>
+        /// <param name="useTime"></param>
+        /// <returns></returns>
+        Task<LC_KyjFunctionRecordListDto> GetByDDWhereAsync(string employeeId, string remark);
+
+        /// <summary>
         /// 导出LC_KyjFunctionRecord为excel表
         /// </summary>
         /// <returns></returns>
-		//Task<FileDto> GetToExcel();
+        //Task<FileDto> GetToExcel();
 
     }
 }

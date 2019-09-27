@@ -14,18 +14,11 @@ namespace GYSWP.LC_KyjFunctionRecords
     {
 
         /// <summary>
-        /// 设备编号
-        /// </summary>
-        [Required]
-        [StringLength(100)]
-        public virtual string DeviceID { get; set; }
-
-        /// <summary>
         /// 维保人
         /// </summary>
         [Required]
         [StringLength(50)]
-        public virtual string EmployeeId { get; set; }
+        public virtual string ResponsibleName{ get; set; }
 
         /// <summary>
         /// 创建日期
@@ -37,12 +30,7 @@ namespace GYSWP.LC_KyjFunctionRecords
         /// </summary>
         [Required]
         [StringLength(50)]
-        public virtual string SupervisorId { get; set; }
-
-        /// <summary>
-        /// 运行时间
-        /// </summary>
-        public virtual DateTime? RunningTime { get; set; }
+        public virtual string SupervisorName { get; set; }
 
         /// <summary>
         /// 使用时间
@@ -119,5 +107,19 @@ namespace GYSWP.LC_KyjFunctionRecords
         /// </summary>
         [StringLength(500)]
         public virtual string Desc { get; set; }
+
+        /// <summary>
+        /// 员工id
+        /// </summary>
+        [Required]
+        [StringLength(200)]
+        public virtual string EmployeeId { get; set; }
+
+        /// <summary>
+        ///  员工快照
+        /// </summary>
+        [Required]
+        [StringLength(50)]
+        public virtual string EmployeeName { get; set; }
     }
 }
