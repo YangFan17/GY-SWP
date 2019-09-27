@@ -12,11 +12,14 @@ using Abp.AutoMapper;
 namespace GYSWP.ClauseRevisions.Dtos
 {
     public class ClauseRevisionListDto : FullAuditedEntity<Guid>
-    {
-		/// <summary>
-		/// Content
-		/// </summary>
-		public string Content { get; set; }
+    {       /// <summary>
+            /// ClauseId
+            /// </summary>
+        public Guid? ClauseId { get; set; }
+        /// <summary>
+        /// Content
+        /// </summary>
+        public string Content { get; set; }
 
 
 		/// <summary>
@@ -93,7 +96,10 @@ namespace GYSWP.ClauseRevisions.Dtos
     }
 
     public class ClauseRecordListDto : EntityDto<Guid>
-    {
+    {       /// <summary>
+            /// ClauseId
+            /// </summary>
+        public Guid? ClauseId { get; set; }
         /// <summary>
 		/// Content
 		/// </summary>

@@ -68,7 +68,7 @@
                                 [(ngModel)]="indicator.expectedValue" [placeholder]="'请填写预期值'"
                                 pattern="^(0|[1-9][0-9]*)(\.[0-9]*)?$" required>
                             <ng-template #suffixIconButton>
-                                <button nz-button nzType="primary" disabled nzSearch>%/次</button>
+                                <!-- <button nz-button nzType="primary" disabled nzSearch>%/次</button> -->
                             </ng-template>
                         </nz-input-group>
                         <nz-form-explain *ngIf="expectedValue.control.dirty&&expectedValue.control.errors">

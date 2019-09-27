@@ -197,61 +197,11 @@ LC_LPFunctionRecordEditDto editDto;
         }
 
         /// <summary>
-        /// 钉钉创建LC_LPFunctionRecord
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        [AbpAllowAnonymous]
-        public async Task<APIResultDto> CreateLPFunctionRecordAsync(LC_LPFunctionRecordEditDto input)
-        {
-            var entity = input.MapTo<LC_LPFunctionRecord>();
-
-            entity = await _entityRepository.InsertAsync(entity);
-            return new APIResultDto()
-            {
-                Code = 0,
-                Data = entity
-            };
-        }
-
-        /// <summary>
-        /// 钉钉通过指定条件获取LC_LPFunctionRecordListDto信息
-        /// </summary>
-        [AbpAllowAnonymous]
-        public async Task<LC_LPFunctionRecordListDto> GetByWhere(string employeeId, DateTime useTime)
-        {
-            var entity = await _entityRepository.FirstOrDefaultAsync(aa => aa.EmployeeId == employeeId && aa.UseTime == useTime);
-
-            return entity.MapTo<LC_LPFunctionRecordListDto>();
-        }
-
-        /// <summary>
-        /// 钉钉编辑LC_LPFunctionRecord
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        [AbpAllowAnonymous]
-        public async Task<APIResultDto> ModifyLPFunctionRecordAsync(LC_LPFunctionRecordEditDto input)
-        {
-            //TODO:更新前的逻辑判断，是否允许更新
-
-            var entity = await _entityRepository.GetAsync(input.Id.Value);
-            input.MapTo(entity);
-
-            // ObjectMapper.Map(input, entity);
-            await _entityRepository.UpdateAsync(entity);
-            return new APIResultDto()
-            {
-                Code = 0,
-                Data = entity
-            };
-        }
-
-        /// <summary>
         /// 钉钉添加或者修改LC_LPFunctionRecord的公共方法
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
+        [AbpAllowAnonymous]
         public async Task<APIResultDto> CreateOrUpdateByDDAsync(DDCreateOrUpdateLC_LPFunctionRecordInput input)
         {
 
@@ -332,12 +282,14 @@ LC_LPFunctionRecordEditDto editDto;
         /// <param name="employeeId"></param>
         /// <param name="remark"></param>
         /// <returns></returns>
+        [AbpAllowAnonymous]
         public async Task<LC_LPFunctionRecordListDto> GetByDDWhereAsync(string employeeId, string remark)
         {
             var entity = await _entityRepository.FirstOrDefaultAsync(aa => aa.EmployeeId == employeeId && aa.CreationTime.ToString().Contains(DateTime.Now.ToShortDateString()));
 
             var item = entity.MapTo<LC_LPFunctionRecordListDto>();
-            item.Path = await _attachmentRepository.GetAll().Where(aa => aa.BLL == entity.Id && aa.Remark == remark).Select(aa => aa.Path).AsNoTracking().ToArrayAsync();
+            if (entity != null)
+                item.Path = await _attachmentRepository.GetAll().Where(aa => aa.BLL == entity.Id && aa.Remark == remark).Select(aa => aa.Path).AsNoTracking().ToArrayAsync();
             return item;
         }
 

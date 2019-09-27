@@ -55,4 +55,11 @@ export class StandardRevisionService {
             return result;
         }));
     }
+
+    getRevisionClauseReportList(params: any): Observable<any> {
+        let url_ = "/api/services/app/Clause/GetRevisionClauseReportAsync";
+        return this._commonhttp.get(url_, params).pipe(map(data => {
+            return data;
+        }));
+    }
 }

@@ -35,4 +35,28 @@ namespace GYSWP.Clauses.Dtos
         public Guid ApplyInfoId { get; set; }
         public Guid Id { get; set; }
     }
+
+    /// <summary>
+    /// 修订条款汇总Dto
+    /// </summary>
+    public class ReportClauseInput : PagedSortedAndFilteredInputDto
+    {
+        public Guid DocumentId { get; set; }
+        //public DateTime Month { get; set; }
+        //public DateTime? StartTime
+        //{
+        //    get
+        //    {
+        //        return new DateTime(Month.Year, Month.Month, 1);
+        //    }
+        //}
+
+        //public DateTime? EndTime
+        //{
+        //    get
+        //    {
+        //        return StartTime.Value.AddMonths(1);
+        //    }
+        //}
+    }
 }

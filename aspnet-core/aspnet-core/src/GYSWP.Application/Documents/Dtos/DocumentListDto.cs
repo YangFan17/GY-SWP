@@ -172,6 +172,9 @@ namespace GYSWP.Documents.Dtos
         public string Name { get; set; }
         public string DocNo { get; set; }
         public string CategoryDesc { get; set; }
-        public DateTime? PublishTime { get; set; }
+        public int ClauseNum { get; set; }
+        public long? CreationUserId { get; set; }
+        public string CreationUserName { get; set; }
+        public DateTime? CreationTime { get; set; }
     }
 }

@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using GYSWP.Clauses;
 using System.Collections.Generic;
 using Abp.AutoMapper;
+using GYSWP.GYEnums;
 
 namespace GYSWP.Clauses.Dtos
 {
@@ -90,6 +91,9 @@ namespace GYSWP.Clauses.Dtos
         public Guid? BLLId { get; set; }
         public DateTime? LastModificationTime { get; set; }
         public DateTime? CreationTime { get; set; }
+        public RevisionType? RevisionType { get; set; }
+        public long? CreatorUserId { get; set; }
+        public string CreatorUserName { get; set; }
         //public int Level { get; set; } = 0;
         public List<ClauseTreeNodeDto> Children = new List<ClauseTreeNodeDto>();
     }

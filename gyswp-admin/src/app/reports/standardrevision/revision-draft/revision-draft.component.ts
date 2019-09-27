@@ -1,26 +1,25 @@
 import { Component, OnInit, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/component-base';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd';
-import { WorkCriterionService, BasicDataService } from 'services';
+import { NzModalService } from 'ng-zorro-antd';
+import { WorkCriterionService, StandardRevisionService } from 'services';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DocumentDto, Clause } from 'entities';
-import * as moment from 'moment';
+import { DocumentDto } from 'entities';
 import { RevisionDetailComponent } from './revision-detail/revision-detail.component';
+import { DraftDetailComponent } from './draft-detail/draft-detail.component';
 @Component({
     moduleId: module.id,
     selector: 'revision-draft',
     templateUrl: 'revision-draft.component.html',
-    providers: [WorkCriterionService]
+    providers: [WorkCriterionService, StandardRevisionService]
 
 })
 export class RevisionDraftComponent extends AppComponentBase implements OnInit {
     docId: string;
+    title: string;
     isConfirm: boolean;
     listOfMapData = [];
     mapOfExpandedData: { [id: string]: TreeNodeInterface[] } = {};
     docInfo: DocumentDto = new DocumentDto();
-    selfChecked = []; // 选中的条款Ids
-    isRevisionWaitTime: boolean = false //是否为审批提交后等待阶段
     docStamps: string;//标准状态
 
     deptId: string;
@@ -28,6 +27,7 @@ export class RevisionDraftComponent extends AppComponentBase implements OnInit {
     date: string;
     constructor(injector: Injector
         , private workCriterionService: WorkCriterionService
+        , private standardRevisionService: StandardRevisionService
         , private actRouter: ActivatedRoute
         , private modal: NzModalService
         , private router: Router
@@ -39,6 +39,13 @@ export class RevisionDraftComponent extends AppComponentBase implements OnInit {
         this.date = this.actRouter.snapshot.params['date'];
     }
     ngOnInit(): void {
+        if (this.type == '1') {
+            this.title = '现行条款明细';
+        } else if (this.type == '2') {
+            this.title = '制定条款明细';
+        } else if (this.type == '4') {
+            this.title = '修订条款明细';
+        }
         this.getDocInfo();
         this.getClauseList();
     }
@@ -63,43 +70,52 @@ export class RevisionDraftComponent extends AppComponentBase implements OnInit {
     }
     getClauseList() {
         if (this.docId) {
-            let params: any = {};
-            params.DocumentId = this.docId;
-            this.workCriterionService.getClauseListAsync(params).subscribe((result) => {
-                this.listOfMapData = result
-                this.listOfMapData.forEach(item => {
-                    this.mapOfExpandedData[item.id] = this.convertTreeToList(item);
-                    // console.log(this.mapOfExpandedData[item.id]);
-                    // 初始化checkBox数据
-                    this.mapOfExpandedData[item.id].forEach(v => {
-                        //判断确认过的条款
-                        if (v.checked == true) {
-                            this.selfChecked.push(v.id);
-                        }
-                        if (v.bllId) {
-                            let pickDate: moment.Moment;
-                            if (v.lastModificationTime) {
-                                pickDate = moment(v.lastModificationTime);
-                            }
-                            else if (v.creationTime) {
-                                pickDate = moment(v.creationTime);
-                            }
-                            let diff = pickDate.diff(moment(), 'days');//相差几天
-                            if (diff > 0 - 90) {
-                                v.isNew = true;
-                            }
-                        }
-                    })
+            if (this.type != '4') {
+                let params: any = {};
+                params.DocumentId = this.docId;
+                this.workCriterionService.getClauseListAsync(params).subscribe((result) => {
+                    this.listOfMapData = result
+                    this.listOfMapData.forEach(item => {
+                        this.mapOfExpandedData[item.id] = this.convertTreeToList(item);
+                    });
                 });
-            });
+            }
+            else {
+                let params: any = {};
+                params.DocumentId = this.docId;
+                this.standardRevisionService.getRevisionClauseReportList(params).subscribe((result) => {
+                    this.listOfMapData = result
+                    this.listOfMapData.forEach(item => {
+                        item.isRoot = true;
+                        this.mapOfExpandedData[item.id] = this.convertTreeToList(item);
+                        // 初始化checkBox数据
+                        this.mapOfExpandedData[item.id].forEach(v => {
+                        })
+                    });
+                });
+            }
         }
     }
+
+    collapse(array: TreeNodeInterface[], data: TreeNodeInterface, $event: boolean): void {
+        if ($event === false) {
+            if (data.children.length > 0) {
+                data.children.forEach(d => {
+                    const target = array.find(a => a.id === d.id)!;
+                    target.expand = false;
+                    this.collapse(array, target, false);
+                });
+            } else {
+                return;
+            }
+        }
+    }
+
     convertTreeToList(root: object): TreeNodeInterface[] {
         const stack: any[] = [];
         const array: any[] = [];
         const hashMap = {};
         stack.push({ ...root, level: 0, expand: true });
-
         while (stack.length !== 0) {
             const node = stack.pop();
             this.visitNode(node, hashMap, array);
@@ -120,23 +136,36 @@ export class RevisionDraftComponent extends AppComponentBase implements OnInit {
     }
 
     showDetail(clauseId: string): void {
-        this.modalHelper
-            .open(RevisionDetailComponent, { docId: this.docInfo.id, docName: this.docInfo.name, id: clauseId }, 950, {
-                nzMask: true,
-                nzClosable: false,
-                nzMaskClosable: false,
-            })
-            .subscribe(isSave => {
-                if (isSave) {
-                    // this.getClauseList();
-                }
-            });
+        if (this.type != '4') {
+            this.modalHelper
+                .open(DraftDetailComponent, { docId: this.docInfo.id, docName: this.docInfo.name, id: clauseId }, 950, {
+                    nzMask: true,
+                    nzClosable: false,
+                    nzMaskClosable: false,
+                })
+                .subscribe(isSave => {
+                    if (isSave) {
+                    }
+                });
+        }
+        else {
+            this.modalHelper
+                .open(RevisionDetailComponent, { docId: this.docInfo.id, docName: this.docInfo.name, id: clauseId }, 950, {
+                    nzMask: true,
+                    nzClosable: false,
+                    nzMaskClosable: false,
+                })
+                .subscribe(isSave => {
+                    if (isSave) {
+                    }
+                });
+        }
     }
     return() {
         this.router.navigate(['app/reports/revision-doc', this.deptId, this.type, this.date]);
     }
-
 }
+
 export interface TreeNodeInterface {
     id: string;
     parentId: string;
@@ -147,6 +176,8 @@ export interface TreeNodeInterface {
     level: number;
     checked: boolean;
     bllId: string;
+    creatorUserName: string;
+    revisionType: number;
     isNew: boolean;
     lastModificationTime: Date;
     creationTime: Date;

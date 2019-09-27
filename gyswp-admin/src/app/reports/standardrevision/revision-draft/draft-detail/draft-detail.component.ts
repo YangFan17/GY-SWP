@@ -1,21 +1,21 @@
 import { Component, Input, Injector } from '@angular/core';
-import { WorkCriterionService } from 'services/work-criterion/work-criterion.service';
-import { ModalComponentBase } from '@shared/component-base/modal-component-base';
-import { Clause, Attachment, ClauseRevision } from 'entities';
+import { WorkCriterionService } from 'services';
+import { ModalComponentBase } from '@shared/component-base';
+import { Clause, Attachment } from 'entities';
 
 @Component({
     moduleId: module.id,
-    selector: 'revision-detail',
-    templateUrl: 'revision-detail.component.html',
+    selector: 'draft-detail',
+    templateUrl: 'draft-detail.component.html',
     providers: [WorkCriterionService]
 })
-export class RevisionDetailComponent extends ModalComponentBase {
+export class DraftDetailComponent extends ModalComponentBase {
     @Input() docId: string;
     @Input() docName: string;
     @Input() id: string;
     title: string = '条款详情';
     disabledClick: boolean = true;
-    clause: ClauseRevision = new ClauseRevision();
+    clause: Clause = new Clause();
     txt: string;
     attachmentList: Attachment[] = [];
 
@@ -30,7 +30,7 @@ export class RevisionDetailComponent extends ModalComponentBase {
 
     getClauseById() {
         if (this.id) {
-            this.workCriterionService.getClauseRevisionByIdAsync(this.id).subscribe(res => {
+            this.workCriterionService.getClauseByIdAsync(this.id).subscribe(res => {
                 this.clause = res;
                 this.txt = this.clause.clauseNo + (this.clause.title ? '\t' + this.clause.title : '') + (this.clause.content ? '\r\n' + this.clause.content : '');
                 this.getAttachmentList();

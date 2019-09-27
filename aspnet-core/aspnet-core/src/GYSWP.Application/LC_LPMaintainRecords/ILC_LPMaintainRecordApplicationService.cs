@@ -73,11 +73,11 @@ namespace GYSWP.LC_LPMaintainRecords
         Task BatchDelete(List<Guid> input);
 
         /// <summary>
-        /// 钉钉创建LC_LPMaintainRecord
+        /// 钉钉创建LC_LPMaintainRecord,并保存图片至LC_Attachment
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<APIResultDto> CreateLPMaintainRecordAsync(LC_LPMaintainRecordEditDto input);
+        Task<APIResultDto> CreateLPMaintainRecordAsync(DDCreateOrUpdateLC_LPMaintainRecordInput input);
 
         /// <summary>
         /// 导出LC_LPMaintainRecord为excel表

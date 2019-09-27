@@ -129,7 +129,7 @@ namespace GYSWP.DingDingApproval
             var deptId = dept.Replace('[', ' ').Replace(']', ' ').Trim();
             var url = string.Format("https://oapi.dingtalk.com/topapi/processinstance/create?access_token={0}", accessToken);
             string pId = await _applyInfoRepository.GetAll().Where(v => v.Id == ApplyInfoId).Select(v => v.ProcessInstanceId).FirstOrDefaultAsync();
-            var clauseList = await _clauseRevisionRepository.GetAll().Where(v => v.DocumentId == DocumentId && v.ApplyInfoId == ApplyInfoId).OrderBy(v => v.RevisionType).ThenBy(v => v.ClauseNo).ThenByDescending(v => v.CreationTime).ToListAsync();
+            var clauseList = await _clauseRevisionRepository.GetAll().Where(v => v.DocumentId == DocumentId && v.ApplyInfoId == ApplyInfoId).OrderBy(v => v.RevisionType).ThenBy(v => v.ClauseNo).ThenBy(v => v.CreationTime).ToListAsync();
             int Cnumber = await _clauseRevisionRepository.CountAsync(v => v.DocumentId == DocumentId && v.ApplyInfoId == ApplyInfoId && v.RevisionType == GYEnums.RevisionType.新增);
             int Unumber = await _clauseRevisionRepository.CountAsync(v => v.DocumentId == DocumentId && v.ApplyInfoId == ApplyInfoId && v.RevisionType == GYEnums.RevisionType.修订);
             int Dnumber = await _clauseRevisionRepository.CountAsync(v => v.DocumentId == DocumentId && v.ApplyInfoId == ApplyInfoId && v.RevisionType == GYEnums.RevisionType.删除);

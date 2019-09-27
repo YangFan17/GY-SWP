@@ -8,7 +8,6 @@ namespace GYSWP.StandardRevisionReports
     {
         public DateTime Month { get; set; }
         public long DeptId { get; set; }
-
         public DateTime? StartTime
         {
             get

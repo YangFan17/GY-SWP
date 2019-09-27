@@ -146,7 +146,7 @@ namespace GYSWP.StandardRevisionReports
                 //废止个数
                 standardRevisionDto.StandardAbolitionNumber = await documents.CountAsync(aa => aa.IsAction == false && aa.InvalidTime >= input.StartTime && aa.InvalidTime < input.EndTime);
                 //修订个数
-                var revisionList = _applyInfoRepository.GetAll().Where(v => v.OperateType == OperateType.修订标准 && v.Status == ApplyStatus.审批通过 && v.ProcessingStatus == RevisionStatus.审核通过);
+                var revisionList = _applyInfoRepository.GetAll().Where(v => v.OperateType == OperateType.修订标准 && v.Status == ApplyStatus.审批通过 && v.ProcessingStatus == RevisionStatus.审核通过 && v.ProcessingHandleTime >= input.StartTime && v.ProcessingHandleTime < input.EndTime);
                 Guid?[] revisionDocIds = await revisionList.Select(v => v.DocumentId).ToArrayAsync();
                 standardRevisionDto.StandardRevisionNumber = await documents.CountAsync(v => revisionDocIds.Contains(v.Id));
                 //制定个数
@@ -168,7 +168,7 @@ namespace GYSWP.StandardRevisionReports
                 //废止个数
                 standardRevisionDto.StandardAbolitionNumber = await documents.CountAsync(aa => aa.IsAction == false && aa.InvalidTime >= input.StartTime && aa.InvalidTime < input.EndTime);
                 //修订个数
-                var revisionList = _applyInfoRepository.GetAll().Where(v => v.OperateType == OperateType.修订标准 && v.Status == ApplyStatus.审批通过 && v.ProcessingStatus == RevisionStatus.审核通过);
+                var revisionList = _applyInfoRepository.GetAll().Where(v => v.OperateType == OperateType.修订标准 && v.Status == ApplyStatus.审批通过 && v.ProcessingStatus == RevisionStatus.审核通过 && v.ProcessingHandleTime >= input.StartTime && v.ProcessingHandleTime < input.EndTime);
                 Guid?[] revisionDocIds = await revisionList.Select(v => v.DocumentId).ToArrayAsync();
                 standardRevisionDto.StandardRevisionNumber = await documents.CountAsync(v => revisionDocIds.Contains(v.Id));
                 //制定个数

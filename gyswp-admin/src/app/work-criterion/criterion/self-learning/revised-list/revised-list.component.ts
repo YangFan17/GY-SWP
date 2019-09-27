@@ -90,6 +90,7 @@ export class RevisedListComponent extends ModalComponentBase {
 
     saveRevised(): void {
         if (this.applyId) {
+            this.saving = true;
             this.confirmModal = this.modal.confirm({
                 nzContent: `是否提交当前所有操作内容?`,
                 nzOnOk: () => {

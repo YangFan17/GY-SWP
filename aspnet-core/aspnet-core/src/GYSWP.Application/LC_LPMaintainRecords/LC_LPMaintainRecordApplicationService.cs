@@ -22,6 +22,7 @@ using GYSWP.LC_LPMaintainRecords;
 using GYSWP.LC_LPMaintainRecords.Dtos;
 using GYSWP.LC_LPMaintainRecords.DomainService;
 using GYSWP.Dtos;
+using GYSWP.DocAttachments;
 
 namespace GYSWP.LC_LPMaintainRecords
 {
@@ -32,6 +33,7 @@ namespace GYSWP.LC_LPMaintainRecords
     public class LC_LPMaintainRecordAppService : GYSWPAppServiceBase, ILC_LPMaintainRecordAppService
     {
         private readonly IRepository<LC_LPMaintainRecord, Guid> _entityRepository;
+        private readonly IRepository<LC_Attachment, Guid> _attachmentRepository;
 
         private readonly ILC_LPMaintainRecordManager _entityManager;
 
@@ -41,8 +43,10 @@ namespace GYSWP.LC_LPMaintainRecords
         public LC_LPMaintainRecordAppService(
         IRepository<LC_LPMaintainRecord, Guid> entityRepository
         ,ILC_LPMaintainRecordManager entityManager
+        , IRepository<LC_Attachment, Guid> attachmentRepository
         )
         {
+            _attachmentRepository = attachmentRepository;
             _entityRepository = entityRepository; 
              _entityManager=entityManager;
         }
@@ -193,16 +197,26 @@ LC_LPMaintainRecordEditDto editDto;
 		}
 
         /// <summary>
-        /// 钉钉创建LC_LPMaintainRecord
+        /// 钉钉创建LC_LPMaintainRecord,并保存图片至LC_Attachment
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
         [AbpAllowAnonymous]
-        public async Task<APIResultDto> CreateLPMaintainRecordAsync(LC_LPMaintainRecordEditDto input)
+        public async Task<APIResultDto> CreateLPMaintainRecordAsync(DDCreateOrUpdateLC_LPMaintainRecordInput input)
         {
-            var entity = input.MapTo<LC_LPMaintainRecord>();
+            var entity = input.LC_LPMaintainRecord.MapTo<LC_LPMaintainRecord>();
 
             entity = await _entityRepository.InsertAsync(entity);
+            foreach (var path in input.DDAttachmentEditDto.Path)
+            {
+                var item = new LC_Attachment();
+                item.Path = path;
+                item.EmployeeId = input.DDAttachmentEditDto.EmployeeId;
+                item.Type = input.DDAttachmentEditDto.Type;
+                item.BLL = entity.Id;
+                item.Remark = input.DDAttachmentEditDto.Remark;
+                await _attachmentRepository.InsertAsync(item);
+            }
             return new APIResultDto()
             {
                 Code = 0,
