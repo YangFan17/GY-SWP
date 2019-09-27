@@ -81,8 +81,8 @@ namespace GYSWP.DingDingApproval
             var url = string.Format("https://oapi.dingtalk.com/topapi/processinstance/create?access_token={0}", accessToken);
             SubmitApprovalEntity request = new SubmitApprovalEntity();
             //发布需要更改路径
-            //request.process_code = "PROC-C3F82626-4DBB-4A6D-8EF1-517D3892CEBB";//202
-            request.process_code = "PROC-6DF666D7-32CC-49F0-B9F3-1FF4D87D8635";
+            request.process_code = "PROC-C3F82626-4DBB-4A6D-8EF1-517D3892CEBB";//202
+            //request.process_code = "PROC-6DF666D7-32CC-49F0-B9F3-1FF4D87D8635";
             request.originator_user_id = user.EmployeeId;
             request.agent_id = ddConfig.AgentID;
             request.dept_id = Convert.ToInt32(deptId);
@@ -136,8 +136,8 @@ namespace GYSWP.DingDingApproval
             int Total = Cnumber + Unumber + Dnumber;
             SubmitApprovalEntity request = new SubmitApprovalEntity();
             //发布需要更改路径
-            //request.process_code = "PROC-34E6C3FC-B1B7-4569-9DEC-1B2E7EA0E1A1";//202
-            request.process_code = "PROC-051C520B-499E-4A94-947A-B5FFFC47750C";
+            request.process_code = "PROC-34E6C3FC-B1B7-4569-9DEC-1B2E7EA0E1A1";//202
+            //request.process_code = "PROC-051C520B-499E-4A94-947A-B5FFFC47750C";
             request.originator_user_id = user.EmployeeId;
             request.agent_id = ddConfig.AgentID;
             request.dept_id = Convert.ToInt32(deptId);
@@ -266,8 +266,8 @@ namespace GYSWP.DingDingApproval
             var clauseList = await _clauseRevisionRepository.GetAll().Where(v => v.DocumentId == DocumentId && v.RevisionType == RevisionType.标准制定 && v.ApplyInfoId == ApplyInfoId).OrderBy(v => v.RevisionType).ThenBy(v => v.ClauseNo).ThenByDescending(v => v.CreationTime).ToListAsync();
             SubmitApprovalEntity request = new SubmitApprovalEntity();
             //发布需要更改路径
-            //request.process_code = "PROC-BFE69EF9-4B66-4697-B917-362D28B71F68";//202
-            request.process_code = "PROC-DCD404D8-883A-4481-9D76-31FA40F03A71";
+            request.process_code = "PROC-BFE69EF9-4B66-4697-B917-362D28B71F68";//202
+            //request.process_code = "PROC-DCD404D8-883A-4481-9D76-31FA40F03A71";
             request.originator_user_id = user.EmployeeId;
             request.agent_id = ddConfig.AgentID;
             //request.dept_id = Convert.ToInt32(deptId); 

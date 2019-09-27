@@ -377,58 +377,82 @@ namespace GYSWP.Indicators
         public async Task<PagedResultDto<IndicatorShowDto>> GetPagedCurrentIndicatorAsync(GetIndicatorsInput input)
         {
             var user = await GetCurrentUserAsync();
-            var detail = _indicatorsDetailRepository.GetAll().Where(v => v.EmployeeId == user.EmployeeId);
-            if (detail.Count() == 0)
+            var userInfo = await _employeeRepository.GetAll().Where(v => v.Id == user.EmployeeId).Select(v => new { v.Position, v.Department }).FirstOrDefaultAsync();
+            if ((userInfo.Department == "[" + 59593071 + "]" || userInfo.Department == "[" + 59634065 + "]"|| userInfo.Department == "[" + 59569075 + "]" || userInfo.Department == "[" + 59584066 + "]" || userInfo.Department == "[" + 59594070 + "]"|| userInfo.Department == "[" + 59617065 + "]" || userInfo.Department == "[" + 59549059 + "]" || userInfo.Department == "[" + 59587088 + "]")
+                 && (userInfo.Position.Contains("县区局（分公司）局长") || userInfo.Position.Contains("物流中心主任")))
             {
-                return new PagedResultDto<IndicatorShowDto>(0, null);
+                string deptId = userInfo.Department.Replace('[', ' ').Replace(']', ' ').Trim();
+                string[] empIds = await GetEmployeeIdsByDeptId(long.Parse(deptId));
+                var detail = _indicatorsDetailRepository.GetAll().Where(v => empIds.Contains(v.EmployeeId));
+                if (detail.Count() == 0)
+                {
+                    return new PagedResultDto<IndicatorShowDto>(0, null);
+                }
+                var indicator = _entityRepository.GetAll();
+                var docInfo = _documentRepository.GetAll().Select(v => new { v.Id, v.Name });
+                var query = from d in detail
+                            join i in indicator on d.IndicatorsId equals i.Id
+                            join doc in docInfo on i.SourceDocId equals doc.Id
+                            select new IndicatorShowDto()
+                            {
+                                Id = i.Id,
+                                CreationTime = i.CreationTime,
+                                CreatorEmpName = i.CreatorEmpName,
+                                Title = i.Title,
+                                Paraphrase = i.Paraphrase,
+                                MeasuringWay = i.MeasuringWay,
+                                ExpectedValue = i.ExpectedValue,
+                                CycleTimeName = i.CycleTime.ToString(),
+                                DeptName = d.DeptName,
+                                Status = d.Status,
+                                CreatorDeptName = i.CreatorDeptName,
+                                IndicatorDetailId = d.Id,
+                                AchieveType = i.AchieveType,
+                                SourceDocName = doc.Name
+                            };
+                var count = await query.CountAsync();
+                var entityList = await query
+                        .OrderBy(v => v.CycleTimeName).ThenByDescending(v => v.CreationTime).AsNoTracking()
+                        .PageBy(input)
+                        .ToListAsync();
+                return new PagedResultDto<IndicatorShowDto>(count, entityList);
             }
-            var indicator = _entityRepository.GetAll();
-            var docInfo = _documentRepository.GetAll().Select(v => new { v.Id, v.Name });
-            //var query = from i in indicator
-            //            join d in detail on i.Id equals d.IndicatorsId into g
-            //            from table in g.DefaultIfEmpty()
-            //            select new IndicatorShowDto()
-            //            {
-            //                Id = i.Id,
-            //                CreationTime = i.CreationTime,
-            //                CreatorEmpName = i.CreatorEmpName,
-            //                Title = i.Title,
-            //                Paraphrase = i.Paraphrase,
-            //                MeasuringWay = i.MeasuringWay,
-            //                ExpectedValue = i.ExpectedValue,
-            //                CycleTimeName = i.CycleTime.ToString(),
-            //                DeptName = table.DeptName,
-            //                Status = table.Status,
-            //                CreatorDeptName = i.CreatorDeptName,
-            //                IndicatorDetailId = table.Id
-            //            };
-            var query = from d in detail
-                        join i in indicator on d.IndicatorsId equals i.Id
-                        join doc in docInfo on i.SourceDocId equals doc.Id
-                        select new IndicatorShowDto()
-                        {
-                            Id = i.Id,
-                            CreationTime = i.CreationTime,
-                            CreatorEmpName = i.CreatorEmpName,
-                            Title = i.Title,
-                            Paraphrase = i.Paraphrase,
-                            MeasuringWay = i.MeasuringWay,
-                            ExpectedValue = i.ExpectedValue,
-                            CycleTimeName = i.CycleTime.ToString(),
-                            DeptName = d.DeptName,
-                            Status = d.Status,
-                            CreatorDeptName = i.CreatorDeptName,
-                            IndicatorDetailId = d.Id,
-                            AchieveType = i.AchieveType,
-                            SourceDocName = doc.Name
-                        };
-
-            var count = await query.CountAsync();
-            var entityList = await query
-                    .OrderBy(v => v.CycleTimeName).ThenByDescending(v => v.CreationTime).AsNoTracking()
-                    .PageBy(input)
-                    .ToListAsync();
-            return new PagedResultDto<IndicatorShowDto>(count, entityList);
+            else
+            {
+                var detail = _indicatorsDetailRepository.GetAll().Where(v => v.EmployeeId == user.EmployeeId);
+                if (detail.Count() == 0)
+                {
+                    return new PagedResultDto<IndicatorShowDto>(0, null);
+                }
+                var indicator = _entityRepository.GetAll();
+                var docInfo = _documentRepository.GetAll().Select(v => new { v.Id, v.Name });
+                var query = from d in detail
+                            join i in indicator on d.IndicatorsId equals i.Id
+                            join doc in docInfo on i.SourceDocId equals doc.Id
+                            select new IndicatorShowDto()
+                            {
+                                Id = i.Id,
+                                CreationTime = i.CreationTime,
+                                CreatorEmpName = i.CreatorEmpName,
+                                Title = i.Title,
+                                Paraphrase = i.Paraphrase,
+                                MeasuringWay = i.MeasuringWay,
+                                ExpectedValue = i.ExpectedValue,
+                                CycleTimeName = i.CycleTime.ToString(),
+                                DeptName = d.DeptName,
+                                Status = d.Status,
+                                CreatorDeptName = i.CreatorDeptName,
+                                IndicatorDetailId = d.Id,
+                                AchieveType = i.AchieveType,
+                                SourceDocName = doc.Name
+                            };
+                var count = await query.CountAsync();
+                var entityList = await query
+                        .OrderBy(v => v.CycleTimeName).ThenByDescending(v => v.CreationTime).AsNoTracking()
+                        .PageBy(input)
+                        .ToListAsync();
+                return new PagedResultDto<IndicatorShowDto>(count, entityList);
+            }
         }
 
         /// <summary>
