@@ -86,7 +86,7 @@ namespace GYSWP.LC_LPFunctionRecords
         /// <param name="employeeId"></param>
         /// <param name="useTime"></param>
         /// <returns></returns>
-        Task<LC_LPFunctionRecordListDto> GetByDDWhereAsync(string employeeId, string remark);
+        Task<LC_LPFunctionRecordListDto> GetByDDWhereAsync(string employeeId);
 
         /// <summary>
         /// 导出LC_LPFunctionRecord为excel表

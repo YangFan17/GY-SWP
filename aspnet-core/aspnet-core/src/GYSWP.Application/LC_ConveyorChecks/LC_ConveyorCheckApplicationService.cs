@@ -372,13 +372,13 @@ namespace GYSWP.LC_ConveyorChecks
         /// 钉钉通过指定条件获取LC_SortingEquipCheckListDto信息
         /// </summary>
         [AbpAllowAnonymous]
-        public async Task<LC_ConveyorCheckDto> GetByDDWhereAsync(string employeeId, string remark)
+        public async Task<LC_ConveyorCheckDto> GetByDDWhereAsync(string employeeId)
         {
             var entity = await _entityRepository.FirstOrDefaultAsync(aa => aa.EmployeeId == employeeId && aa.CreationTime.ToString().Contains(DateTime.Now.ToShortDateString()));
 
             var item = entity.MapTo<LC_ConveyorCheckDto>();
             if (entity != null)
-                item.Path = await _attachmentRepository.GetAll().Where(aa => aa.BLL == entity.Id && aa.Remark == remark).Select(aa => aa.Path).AsNoTracking().ToArrayAsync();
+                item.Path = await _attachmentRepository.GetAll().Where(aa => aa.BLL == entity.Id).Select(aa => aa.Path).AsNoTracking().ToArrayAsync();
             if (item != null) { 
             item.StartTimeFormat = item.BeginTime.Value.ToString("yyyy-MM-dd HH:mm");
             item.EndTimeFormat = item.EndTime.Value.ToString("yyyy-MM-dd HH:mm");

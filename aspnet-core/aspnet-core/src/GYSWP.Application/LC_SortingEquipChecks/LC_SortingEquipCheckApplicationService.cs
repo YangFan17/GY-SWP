@@ -356,13 +356,13 @@ namespace GYSWP.LC_SortingEquipChecks
         /// 钉钉通过指定条件获取LC_SortingEquipCheckListDto信息
         /// </summary>
         [AbpAllowAnonymous]
-        public async Task<LC_SortingEquipCheckDto> GetByDDWhereAsync(string employeeId, string remark,string equiNo)
+        public async Task<LC_SortingEquipCheckDto> GetByDDWhereAsync(string employeeId,string equiNo)
         {
 
                 var entity = await _entityRepository.FirstOrDefaultAsync(aa => aa.EmployeeId == employeeId && aa.CreationTime.ToString().Contains(DateTime.Now.ToShortDateString()) && aa.EquiNo == equiNo);
             var item = entity.MapTo<LC_SortingEquipCheckDto>();
             if (entity != null)
-                item.Path = await _attachmentRepository.GetAll().Where(aa => aa.BLL == entity.Id && aa.Remark == remark).Select(aa => aa.Path).AsNoTracking().ToArrayAsync();
+                item.Path = await _attachmentRepository.GetAll().Where(aa => aa.BLL == entity.Id).Select(aa => aa.Path).AsNoTracking().ToArrayAsync();
             return item;
         }
     }

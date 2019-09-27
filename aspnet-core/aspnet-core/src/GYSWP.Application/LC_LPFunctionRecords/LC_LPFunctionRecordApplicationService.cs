@@ -283,13 +283,13 @@ LC_LPFunctionRecordEditDto editDto;
         /// <param name="remark"></param>
         /// <returns></returns>
         [AbpAllowAnonymous]
-        public async Task<LC_LPFunctionRecordListDto> GetByDDWhereAsync(string employeeId, string remark)
+        public async Task<LC_LPFunctionRecordListDto> GetByDDWhereAsync(string employeeId)
         {
             var entity = await _entityRepository.FirstOrDefaultAsync(aa => aa.EmployeeId == employeeId && aa.CreationTime.ToString().Contains(DateTime.Now.ToShortDateString()));
 
             var item = entity.MapTo<LC_LPFunctionRecordListDto>();
             if (entity != null)
-                item.Path = await _attachmentRepository.GetAll().Where(aa => aa.BLL == entity.Id && aa.Remark == remark).Select(aa => aa.Path).AsNoTracking().ToArrayAsync();
+                item.Path = await _attachmentRepository.GetAll().Where(aa => aa.BLL == entity.Id).Select(aa => aa.Path).AsNoTracking().ToArrayAsync();
             return item;
         }
 

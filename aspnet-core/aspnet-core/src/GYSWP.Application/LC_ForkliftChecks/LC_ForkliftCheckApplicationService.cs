@@ -331,7 +331,7 @@ LC_ForkliftCheckEditDto editDto;
 
                     foreach (var item in input.LC_ForkliftCheck.Path)
                     {
-                        if (await attachmentEntity.CountAsync(aa => aa.Path == item) < 0)
+                        if (await attachmentEntity.CountAsync(aa => aa.Path == item) <= 0)
                         {
                             var AttachEntity = new LC_Attachment();
                             AttachEntity.Path = item;
@@ -370,13 +370,13 @@ LC_ForkliftCheckEditDto editDto;
         /// 钉钉通过指定条件获取LC_SortingEquipCheckListDto信息
         /// </summary>
         [AbpAllowAnonymous]
-        public async Task<LC_ForkliftCheckDto> GetByDDWhereAsync(string employeeId, string remark,string equiNo)
+        public async Task<LC_ForkliftCheckDto> GetByDDWhereAsync(string employeeId,string equiNo)
         {
             var entity = await _entityRepository.FirstOrDefaultAsync(aa => aa.EmployeeId == employeeId && aa.CreationTime.ToString().Contains(DateTime.Now.ToShortDateString())&&aa.EquiNo== equiNo);
 
             var item = entity.MapTo<LC_ForkliftCheckDto>();
             if (entity != null)
-                item.Path = await _attachmentRepository.GetAll().Where(aa => aa.BLL == entity.Id && aa.Remark == remark).Select(aa => aa.Path).AsNoTracking().ToArrayAsync();
+                item.Path = await _attachmentRepository.GetAll().Where(aa => aa.BLL == entity.Id).Select(aa => aa.Path).AsNoTracking().ToArrayAsync();
             if(item!=null)
             { 
             item.StartTimeFormat= item.BeginTime.Value.ToString("yyyy-MM-dd HH:mm");

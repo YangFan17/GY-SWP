@@ -86,7 +86,7 @@ namespace GYSWP.LC_ConveyorChecks
         /// 钉钉通过指定条件获取LC_SortingEquipCheckListDto信息
         /// </summary>
         [AbpAllowAnonymous]
-        Task<LC_ConveyorCheckDto> GetByDDWhereAsync(string employeeId, string remark);
+        Task<LC_ConveyorCheckDto> GetByDDWhereAsync(string employeeId);
 
         /// <summary>
         /// 保养记录和照片拍照记录
