@@ -281,13 +281,13 @@ namespace GYSWP.LC_KyjFunctionRecords
         /// 钉钉通过指定条件获取LC_KyjFunctionRecordListDto信息
         /// </summary>
         [AbpAllowAnonymous]
-        public async Task<LC_KyjFunctionRecordListDto> GetByDDWhereAsync(string employeeId, string remark)
+        public async Task<LC_KyjFunctionRecordListDto> GetByDDWhereAsync(string employeeId)
         {
             var entity = await _entityRepository.FirstOrDefaultAsync(aa => aa.EmployeeId == employeeId && aa.CreationTime.ToString().Contains(DateTime.Now.ToShortDateString()));
 
             var item = entity.MapTo<LC_KyjFunctionRecordListDto>();
             if (entity != null)
-                item.Path = await _attachmentRepository.GetAll().Where(aa => aa.BLL == entity.Id && aa.Remark == remark).Select(aa => aa.Path).AsNoTracking().ToArrayAsync();
+                item.Path = await _attachmentRepository.GetAll().Where(aa => aa.BLL == entity.Id).Select(aa => aa.Path).AsNoTracking().ToArrayAsync();
             return item;
         }
 

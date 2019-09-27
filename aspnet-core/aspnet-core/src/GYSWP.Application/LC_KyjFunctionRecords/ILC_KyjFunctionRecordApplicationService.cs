@@ -86,7 +86,7 @@ namespace GYSWP.LC_KyjFunctionRecords
         /// <param name="employeeId"></param>
         /// <param name="useTime"></param>
         /// <returns></returns>
-        Task<LC_KyjFunctionRecordListDto> GetByDDWhereAsync(string employeeId, string remark);
+        Task<LC_KyjFunctionRecordListDto> GetByDDWhereAsync(string employeeId);
 
         /// <summary>
         /// 导出LC_KyjFunctionRecord为excel表

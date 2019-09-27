@@ -218,6 +218,7 @@ LC_SsjWeekWhByRecordEditDto editDto;
         [AbpAllowAnonymous]
         public virtual async Task RecordInsert(InsertLC_SsjWeekWhByRecordInput input)
         {
+
             var entity = input.LC_SsjWeekWhByRecord.MapTo<LC_SsjWeekWhByRecord>();
             var returnId = await _entityRepository.InsertAndGetIdAsync(entity);
             await CurrentUnitOfWork.SaveChangesAsync();

@@ -84,7 +84,7 @@ namespace GYSWP.LC_ForkliftChecks
 
 
         [AbpAllowAnonymous]
-        Task<LC_ForkliftCheckDto> GetByDDWhereAsync(string employeeId, string remark, string equiNo);
+        Task<LC_ForkliftCheckDto> GetByDDWhereAsync(string employeeId,string equiNo);
 
 
         /// <summary>

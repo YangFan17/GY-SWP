@@ -77,7 +77,7 @@ namespace GYSWP.LC_SortingEquipChecks
         /// 钉钉通过指定条件获取LC_SortingEquipCheckListDto信息
         /// </summary>
         [AbpAllowAnonymous]
-        Task<LC_SortingEquipCheckDto> GetByDDWhereAsync(string employeeId, string remark,string equiNo);
+        Task<LC_SortingEquipCheckDto> GetByDDWhereAsync(string employeeId,string equiNo);
 
         /// <summary>
         /// 保养记录和照片拍照记录
