@@ -330,7 +330,7 @@ namespace GYSWP.PositionInfos
         /// <returns></returns>
         private async Task<List<MainPointsList>> GetMainPointsChildrenAsync(Guid id, string empId)
         {
-            var doc = _documentRepository.GetAll().Select(v => new { v.Id, v.Name, v.DocNo });
+            var doc = _documentRepository.GetAll().Where(v=>v.IsAction == true).Select(v => new { v.Id, v.Name, v.DocNo });
             var points = _mainPointsRecordRepository.GetAll().Where(v => v.PositionInfoId == id);
             var pointsInfo = await (from po in points
                                     join d in doc on po.DocumentId equals d.Id
@@ -417,7 +417,7 @@ namespace GYSWP.PositionInfos
 
         private async Task<List<MainPointsList>> GetDDDocListAsync(Guid id, string empId)
         {
-            var doc = _documentRepository.GetAll().Select(v => new { v.Id, v.Name, v.DocNo });
+            var doc = _documentRepository.GetAll().Where(v=>v.IsAction == true).Select(v => new { v.Id, v.Name, v.DocNo });
             var points = _mainPointsRecordRepository.GetAll().Where(v => v.PositionInfoId == id);
             var pointsInfo = await (from po in points
                                     join d in doc on po.DocumentId equals d.Id

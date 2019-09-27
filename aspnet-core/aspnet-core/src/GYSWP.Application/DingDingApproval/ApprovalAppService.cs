@@ -451,7 +451,7 @@ namespace GYSWP.DingDingApproval
                 msgdto.to_all_user = false;
                 msgdto.agent_id = ddConfig.AgentID;
                 msgdto.msg.msgtype = "text";
-                msgdto.msg.text.content = $"您有新的指标任务下达，请前往标准化工作平台进行查看{DateTime.Now.ToString()}";
+                msgdto.msg.text.content = $"您有新的目标指标检查下达，请前往标准化工作平台进行查看{DateTime.Now.ToString()}";
                 var url = string.Format("https://oapi.dingtalk.com/topapi/message/corpconversation/asyncsend_v2?access_token={0}", accessToken);
                 var jsonString = SerializerHelper.GetJsonString(msgdto, null);
                 using (MemoryStream ms = new MemoryStream())
@@ -474,18 +474,19 @@ namespace GYSWP.DingDingApproval
         /// 发送指标考核结果通知
         /// </summary>
         [AbpAllowAnonymous]
-        public APIResultDto SendIndicatorResultAsync(IndicatorStatus status)
+        public APIResultDto SendIndicatorResultAsync(IndicatorStatus status,string empList)
         {
             try
             {
                 DingDingAppConfig ddConfig = _dingDingAppService.GetDingDingConfigByApp(DingDingAppEnum.标准化工作平台);
                 string accessToken = _dingDingAppService.GetAccessToken(ddConfig.Appkey, ddConfig.Appsecret);
                 var msgdto = new DingMsgDto();
-                msgdto.userid_list = "1926112826844702";
+                msgdto.userid_list = empList;
+                //msgdto.userid_list = "1926112826844702";
                 msgdto.to_all_user = false;
                 msgdto.agent_id = ddConfig.AgentID;
                 msgdto.msg.msgtype = "text";
-                msgdto.msg.text.content = $"您的指标任务{status.ToString()}，请前往标准化工作平台进行查看{DateTime.Now.ToString()}";
+                msgdto.msg.text.content = $"您的目标指标检查{status.ToString()}，请前往标准化工作平台进行查看{DateTime.Now.ToString()}";
                 var url = string.Format("https://oapi.dingtalk.com/topapi/message/corpconversation/asyncsend_v2?access_token={0}", accessToken);
                 var jsonString = SerializerHelper.GetJsonString(msgdto, null);
                 using (MemoryStream ms = new MemoryStream())
@@ -505,7 +506,7 @@ namespace GYSWP.DingDingApproval
         }
 
         /// <summary>
-        /// 发送监督检查填写通知通知
+        /// 发送监督检查填写通知
         /// </summary>
         [AbpAllowAnonymous]
         public APIResultDto SendCriterionExamineMessageAsync(string empId)
@@ -520,7 +521,7 @@ namespace GYSWP.DingDingApproval
                 msgdto.to_all_user = false;
                 msgdto.agent_id = ddConfig.AgentID;
                 msgdto.msg.msgtype = "text";
-                msgdto.msg.text.content = $"您有新的监督检查任务下达，请前往标准化工作平台进行填写{DateTime.Now.ToString()}";
+                msgdto.msg.text.content = $"您有新的标准条款检查下达，请前往标准化工作平台进行填写{DateTime.Now.ToString()}";
                 var url = string.Format("https://oapi.dingtalk.com/topapi/message/corpconversation/asyncsend_v2?access_token={0}", accessToken);
                 var jsonString = SerializerHelper.GetJsonString(msgdto, null);
                 using (MemoryStream ms = new MemoryStream())
