@@ -221,5 +221,10 @@ namespace GYSWP.LC_SortingEquipChecks
         /// </summary>
         [Required]
         public virtual DateTime CreationTime { get; set; }
+
+        /// <summary>
+        /// 创建时间
+        /// </summary>
+        public virtual string EquiNo { get; set; }
     }
 }

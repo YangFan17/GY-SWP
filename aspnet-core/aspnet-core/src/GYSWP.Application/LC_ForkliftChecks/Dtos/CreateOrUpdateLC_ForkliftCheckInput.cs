@@ -12,4 +12,11 @@ namespace GYSWP.LC_ForkliftChecks.Dtos
         public LC_ForkliftCheckEditDto LC_ForkliftCheck { get; set; }
 
     }
+
+    public class InsertLC_ForkliftCheckInput
+    {
+        [Required]
+        public LC_ForkliftCheckDto LC_ForkliftCheck { get; set; }
+
+    }
 }

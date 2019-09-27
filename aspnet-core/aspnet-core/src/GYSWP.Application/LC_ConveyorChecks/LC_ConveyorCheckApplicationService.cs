@@ -27,6 +27,7 @@ using NPOI.XSSF.UserModel;
 using GYSWP.Helpers;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using GYSWP.DocAttachments;
 
 namespace GYSWP.LC_ConveyorChecks
 {
@@ -40,18 +41,22 @@ namespace GYSWP.LC_ConveyorChecks
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly ILC_ConveyorCheckManager _entityManager;
 
+        private readonly IRepository<LC_Attachment, Guid> _attachmentRepository;
+
         /// <summary>
         /// 构造函数 
         ///</summary>
         public LC_ConveyorCheckAppService(
         IRepository<LC_ConveyorCheck, Guid> entityRepository
         , IHostingEnvironment hostingEnvironment
-        , ILC_ConveyorCheckManager entityManager
+        , ILC_ConveyorCheckManager entityManager,
+        IRepository<LC_Attachment, Guid> attachmentRepository
         )
         {
             _entityRepository = entityRepository;
             _entityManager = entityManager;
             _hostingEnvironment = hostingEnvironment;
+            _attachmentRepository = attachmentRepository;
         }
 
 
@@ -307,6 +312,78 @@ namespace GYSWP.LC_ConveyorChecks
                 workbook.Write(fs);
             }
             return "/files/downloadtemp/" + fileName;
+        }
+
+
+        /// <summary>
+        /// 保养记录和照片拍照记录
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public virtual async Task RecordInsertOrUpdate(InsertLC_ConveyorCheckInput input)
+        {
+            if (input.LC_ConveyorCheck.Id.HasValue)//更新操作
+            {
+                var entity = input.LC_ConveyorCheck.MapTo<LC_ConveyorCheckEditDto>();
+                await Update(entity);
+                if (input.LC_ConveyorCheck.Path != null)
+                {
+                    var attachmentEntity = _attachmentRepository.GetAll();
+
+                    foreach (var item in input.LC_ConveyorCheck.Path)
+                    {
+                        if (await attachmentEntity.CountAsync(aa => aa.Path == item) < 0)
+                        {
+                            var AttachEntity = new LC_Attachment();
+                            AttachEntity.Path = item;
+                            AttachEntity.EmployeeId = input.LC_ConveyorCheck.EmployeeId;
+                            AttachEntity.Type = input.LC_ConveyorCheck.Type;
+                            AttachEntity.Remark = input.LC_ConveyorCheck.Remark;
+                            AttachEntity.BLL = input.LC_ConveyorCheck.Id;
+                            await _attachmentRepository.InsertAsync(AttachEntity);
+                        }
+                    }
+                }
+            }
+            else//增加操作
+            {
+                var entity = input.LC_ConveyorCheck.MapTo<LC_ConveyorCheck>();
+                var returnId = await _entityRepository.InsertAndGetIdAsync(entity);
+                await CurrentUnitOfWork.SaveChangesAsync();
+                input.LC_ConveyorCheck.BLL = returnId;
+                if (input.LC_ConveyorCheck.Path != null)
+                {
+                    foreach (var item in input.LC_ConveyorCheck.Path)
+                    {
+                        var AttachEntity = new LC_Attachment();
+                        AttachEntity.Path = item;
+                        AttachEntity.EmployeeId = input.LC_ConveyorCheck.EmployeeId;
+                        AttachEntity.Type = input.LC_ConveyorCheck.Type;
+                        AttachEntity.Remark = input.LC_ConveyorCheck.Remark;
+                        AttachEntity.BLL = returnId;
+                        await _attachmentRepository.InsertAsync(AttachEntity);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 钉钉通过指定条件获取LC_SortingEquipCheckListDto信息
+        /// </summary>
+        [AbpAllowAnonymous]
+        public async Task<LC_ConveyorCheckDto> GetByDDWhereAsync(string employeeId, string remark)
+        {
+            var entity = await _entityRepository.FirstOrDefaultAsync(aa => aa.EmployeeId == employeeId && aa.CreationTime.ToString().Contains(DateTime.Now.ToShortDateString()));
+
+            var item = entity.MapTo<LC_ConveyorCheckDto>();
+            if (entity != null)
+                item.Path = await _attachmentRepository.GetAll().Where(aa => aa.BLL == entity.Id && aa.Remark == remark).Select(aa => aa.Path).AsNoTracking().ToArrayAsync();
+            if (item != null) { 
+            item.StartTimeFormat = item.BeginTime.Value.ToString("yyyy-MM-dd HH:mm");
+            item.EndTimeFormat = item.EndTime.Value.ToString("yyyy-MM-dd HH:mm");
+            }
+            return item;
         }
     }
 }

@@ -81,5 +81,18 @@ namespace GYSWP.LC_ForkliftChecks
 
         Task<APIResultDto> CreateForkliftCheckRecordAsync(LC_ForkliftCheckEditDto input);
         Task<APIResultDto> ExportForkliftCheckRecord(GetLC_ForkliftChecksInput input);
+
+
+        [AbpAllowAnonymous]
+        Task<LC_ForkliftCheckDto> GetByDDWhereAsync(string employeeId, string remark, string equiNo);
+
+
+        /// <summary>
+        /// 保养记录和照片拍照记录
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        Task RecordInsertOrUpdate(InsertLC_ForkliftCheckInput input);
     }
 }

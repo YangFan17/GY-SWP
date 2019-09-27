@@ -28,6 +28,7 @@ using NPOI.XSSF.UserModel;
 using GYSWP.Helpers;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using GYSWP.DocAttachments;
 
 namespace GYSWP.LC_SortingEquipChecks
 {
@@ -41,18 +42,22 @@ namespace GYSWP.LC_SortingEquipChecks
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly ILC_SortingEquipCheckManager _entityManager;
 
+        private readonly IRepository<LC_Attachment, Guid> _attachmentRepository;
+
         /// <summary>
         /// 构造函数 
         ///</summary>
         public LC_SortingEquipCheckAppService(
         IRepository<LC_SortingEquipCheck, Guid> entityRepository
-        , IHostingEnvironment hostingEnvironment
+        , IHostingEnvironment hostingEnvironment,
+        IRepository<LC_Attachment, Guid> attachmentRepository
         , ILC_SortingEquipCheckManager entityManager
         )
         {
             _entityRepository = entityRepository;
             _entityManager = entityManager;
             _hostingEnvironment = hostingEnvironment;
+            _attachmentRepository = attachmentRepository;
         }
 
 
@@ -293,6 +298,72 @@ namespace GYSWP.LC_SortingEquipChecks
                 workbook.Write(fs);
             }
             return "/files/downloadtemp/" + fileName;
+        }
+        /// <summary>
+        /// 保养记录和照片拍照记录
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public virtual async Task RecordInsertOrUpdate(InsertLC_SortingEquipCheckInput input)
+        {
+            if (input.LC_SortingEquipCheck.Id.HasValue)//更新操作
+            {
+                var entity = input.LC_SortingEquipCheck.MapTo<LC_SortingEquipCheckEditDto>();
+                 await Update(entity);
+                if (input.LC_SortingEquipCheck.Path != null)
+                {
+                    var attachmentEntity = _attachmentRepository.GetAll();
+                    
+                    foreach (var item in input.LC_SortingEquipCheck.Path)
+                    {
+                        if(await attachmentEntity.CountAsync(aa=>aa.Path == item) < 0)
+                        { 
+                            var AttachEntity = new LC_Attachment();
+                            AttachEntity.Path = item;
+                            AttachEntity.EmployeeId = input.LC_SortingEquipCheck.EmployeeId;
+                            AttachEntity.Type = input.LC_SortingEquipCheck.Type;
+                            AttachEntity.Remark = input.LC_SortingEquipCheck.Remark;
+                            AttachEntity.BLL = input.LC_SortingEquipCheck.Id;
+                            await _attachmentRepository.InsertAsync(AttachEntity);
+                        }
+                    }
+                }
+            }
+            else//增加操作
+            { 
+            var entity = input.LC_SortingEquipCheck.MapTo<LC_SortingEquipCheck>();
+            var returnId = await _entityRepository.InsertAndGetIdAsync(entity);
+            await CurrentUnitOfWork.SaveChangesAsync();
+            input.LC_SortingEquipCheck.BLL = returnId;
+            if (input.LC_SortingEquipCheck.Path != null)
+            {
+                foreach (var item in input.LC_SortingEquipCheck.Path)
+                {
+                    var AttachEntity = new LC_Attachment();
+                    AttachEntity.Path = item;
+                    AttachEntity.EmployeeId = input.LC_SortingEquipCheck.EmployeeId;
+                    AttachEntity.Type = input.LC_SortingEquipCheck.Type;
+                    AttachEntity.Remark = input.LC_SortingEquipCheck.Remark;
+                    AttachEntity.BLL = returnId;
+                    await _attachmentRepository.InsertAsync(AttachEntity);
+                }
+            }
+            }
+        }
+
+        /// <summary>
+        /// 钉钉通过指定条件获取LC_SortingEquipCheckListDto信息
+        /// </summary>
+        [AbpAllowAnonymous]
+        public async Task<LC_SortingEquipCheckDto> GetByDDWhereAsync(string employeeId, string remark,string equiNo)
+        {
+
+                var entity = await _entityRepository.FirstOrDefaultAsync(aa => aa.EmployeeId == employeeId && aa.CreationTime.ToString().Contains(DateTime.Now.ToShortDateString()) && aa.EquiNo == equiNo);
+            var item = entity.MapTo<LC_SortingEquipCheckDto>();
+            if (entity != null)
+                item.Path = await _attachmentRepository.GetAll().Where(aa => aa.BLL == entity.Id && aa.Remark == remark).Select(aa => aa.Path).AsNoTracking().ToArrayAsync();
+            return item;
         }
     }
 }

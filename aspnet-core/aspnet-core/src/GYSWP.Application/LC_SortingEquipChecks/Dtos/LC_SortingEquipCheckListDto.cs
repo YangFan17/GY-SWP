@@ -284,8 +284,5 @@ namespace GYSWP.LC_SortingEquipChecks.Dtos
 		[Required(ErrorMessage="CreationTime不能为空")]
 		public DateTime CreationTime { get; set; }
 
-
-
-
     }
 }
