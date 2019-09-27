@@ -17,5 +17,11 @@ namespace GYSWP.LC_ForkliftChecks.Dtos
         {
             get; set;
         }
+
+        public string StartTimeFormat { get; set; }
+
+        public string EndTimeFormat { get; set; }
+
+
     }
 }

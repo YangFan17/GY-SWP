@@ -18,5 +18,7 @@ namespace GYSWP.LC_SortingEquipChecks.Dtos
         public string Remark { get; set; }
 
         public Guid? BLL { get; set; }
+
+     
     }
 }

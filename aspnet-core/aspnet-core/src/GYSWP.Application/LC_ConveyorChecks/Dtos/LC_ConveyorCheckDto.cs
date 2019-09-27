@@ -17,5 +17,9 @@ namespace GYSWP.LC_ConveyorChecks.Dtos
         {
             get; set;
         }
+
+        public string StartTimeFormat { get; set; }
+
+        public string EndTimeFormat { get; set; }
     }
 }
