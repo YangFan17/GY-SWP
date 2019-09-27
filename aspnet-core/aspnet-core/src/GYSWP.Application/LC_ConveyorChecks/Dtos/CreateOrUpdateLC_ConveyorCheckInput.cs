@@ -12,4 +12,11 @@ namespace GYSWP.LC_ConveyorChecks.Dtos
         public LC_ConveyorCheckEditDto LC_ConveyorCheck { get; set; }
 
     }
+
+    public class InsertLC_ConveyorCheckInput
+    {
+        [Required]
+        public LC_ConveyorCheckDto LC_ConveyorCheck { get; set; }
+
+    }
 }

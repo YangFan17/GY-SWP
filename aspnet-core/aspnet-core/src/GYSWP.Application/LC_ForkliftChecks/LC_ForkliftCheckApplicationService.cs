@@ -27,6 +27,7 @@ using NPOI.XSSF.UserModel;
 using GYSWP.Helpers;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using GYSWP.DocAttachments;
 
 namespace GYSWP.LC_ForkliftChecks
 {
@@ -39,6 +40,7 @@ namespace GYSWP.LC_ForkliftChecks
         private readonly IRepository<LC_ForkliftCheck, Guid> _entityRepository;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly ILC_ForkliftCheckManager _entityManager;
+        private readonly IRepository<LC_Attachment, Guid> _attachmentRepository;
 
         /// <summary>
         /// 构造函数 
@@ -46,12 +48,14 @@ namespace GYSWP.LC_ForkliftChecks
         public LC_ForkliftCheckAppService(
         IRepository<LC_ForkliftCheck, Guid> entityRepository
         , IHostingEnvironment hostingEnvironment
-        , ILC_ForkliftCheckManager entityManager
+        , ILC_ForkliftCheckManager entityManager,
+        IRepository<LC_Attachment, Guid> attachmentRepository
         )
         {
             _entityRepository = entityRepository; 
              _entityManager=entityManager;
             _hostingEnvironment = hostingEnvironment;
+            _attachmentRepository = attachmentRepository;
         }
 
 
@@ -306,6 +310,74 @@ LC_ForkliftCheckEditDto editDto;
                 workbook.Write(fs);
             }
             return "/files/downloadtemp/" + fileName;
+        }
+
+
+        /// <summary>
+        /// 叉车运行时记录的新增或更新
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public virtual async Task RecordInsertOrUpdate(InsertLC_ForkliftCheckInput input)
+        {
+            if (input.LC_ForkliftCheck.Id.HasValue)//更新操作
+            {
+                var entity = input.LC_ForkliftCheck.MapTo<LC_ForkliftCheckEditDto>();
+                await Update(entity);
+                if (input.LC_ForkliftCheck.Path != null)
+                {
+                    var attachmentEntity = _attachmentRepository.GetAll();
+
+                    foreach (var item in input.LC_ForkliftCheck.Path)
+                    {
+                        if (await attachmentEntity.CountAsync(aa => aa.Path == item) < 0)
+                        {
+                            var AttachEntity = new LC_Attachment();
+                            AttachEntity.Path = item;
+                            AttachEntity.EmployeeId = input.LC_ForkliftCheck.EmployeeId;
+                            AttachEntity.Type = input.LC_ForkliftCheck.Type;
+                            AttachEntity.Remark = input.LC_ForkliftCheck.Remark;
+                            AttachEntity.BLL = input.LC_ForkliftCheck.Id;
+                            await _attachmentRepository.InsertAsync(AttachEntity);
+                        }
+                    }
+                }
+            }
+            else//增加操作
+            {
+                var entity = input.LC_ForkliftCheck.MapTo<LC_ForkliftCheck>();
+                var returnId = await _entityRepository.InsertAndGetIdAsync(entity);
+                await CurrentUnitOfWork.SaveChangesAsync();
+                input.LC_ForkliftCheck.BLL = returnId;
+                if (input.LC_ForkliftCheck.Path != null)
+                {
+                    foreach (var item in input.LC_ForkliftCheck.Path)
+                    {
+                        var AttachEntity = new LC_Attachment();
+                        AttachEntity.Path = item;
+                        AttachEntity.EmployeeId = input.LC_ForkliftCheck.EmployeeId;
+                        AttachEntity.Type = input.LC_ForkliftCheck.Type;
+                        AttachEntity.Remark = input.LC_ForkliftCheck.Remark;
+                        AttachEntity.BLL = returnId;
+                        await _attachmentRepository.InsertAsync(AttachEntity);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 钉钉通过指定条件获取LC_SortingEquipCheckListDto信息
+        /// </summary>
+        [AbpAllowAnonymous]
+        public async Task<LC_ForkliftCheckDto> GetByDDWhereAsync(string employeeId, string remark,string equiNo)
+        {
+            var entity = await _entityRepository.FirstOrDefaultAsync(aa => aa.EmployeeId == employeeId && aa.CreationTime.ToString().Contains(DateTime.Now.ToShortDateString())&&aa.EquiNo== equiNo);
+
+            var item = entity.MapTo<LC_ForkliftCheckDto>();
+            if (entity != null)
+                item.Path = await _attachmentRepository.GetAll().Where(aa => aa.BLL == entity.Id && aa.Remark == remark).Select(aa => aa.Path).AsNoTracking().ToArrayAsync();
+            return item;
         }
     }
 }

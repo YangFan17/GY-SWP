@@ -72,5 +72,19 @@ namespace GYSWP.LC_SortingEquipChecks
         /// </summary>
         Task BatchDelete(List<Guid> input);
         Task<APIResultDto> ExportSortingEquipCheck(GetLC_SortingEquipChecksInput input);
+
+        /// <summary>
+        /// 钉钉通过指定条件获取LC_SortingEquipCheckListDto信息
+        /// </summary>
+        [AbpAllowAnonymous]
+        Task<LC_SortingEquipCheckDto> GetByDDWhereAsync(string employeeId, string remark,string equiNo);
+
+        /// <summary>
+        /// 保养记录和照片拍照记录
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        Task RecordInsertOrUpdate(InsertLC_SortingEquipCheckInput input);
     }
 }

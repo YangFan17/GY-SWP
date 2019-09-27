@@ -12,4 +12,10 @@ namespace GYSWP.LC_SortingEquipChecks.Dtos
         public LC_SortingEquipCheckEditDto LC_SortingEquipCheck { get; set; }
 
     }
+    public class InsertLC_SortingEquipCheckInput
+    {
+        [Required]
+        public LC_SortingEquipCheckDto LC_SortingEquipCheck { get; set; }
+
+    }
 }

@@ -284,6 +284,7 @@ namespace  GYSWP.LC_SortingEquipChecks.Dtos
 
 
 
+        public string EquiNo { get; set; }
 
     }
 }
