@@ -121,7 +121,6 @@ LC_SsjWeekWhByRecordEditDto editDto;
 		/// </summary>
 		/// <param name="input"></param>
 		/// <returns></returns>
-		
 		public async Task CreateOrUpdate(CreateOrUpdateLC_SsjWeekWhByRecordInput input)
 		{
 

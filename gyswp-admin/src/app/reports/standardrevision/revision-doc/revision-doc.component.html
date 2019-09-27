@@ -1,17 +1,19 @@
-<page-header title="制修订标准统计"></page-header>
+<page-header title="{{title}}"></page-header>
 <nz-card>
     <div nz-row>
         <ng-template #totalTemplate let-total>共 {{totalItems}} 条</ng-template>
         <nz-table #nzTable [nzFrontPagination]="false" [nzShowTotal]="totalTemplate" [nzTotal]="totalItems"
             [nzData]="dataList" [(nzPageIndex)]="pageNumber" [(nzPageSize)]="pageSize" [nzLoading]="isTableLoading"
-            [nzShowSizeChanger]="true">
+            [nzShowSizeChanger]="true" (nzPageIndexChange)="refresh()" (nzPageSizeChange)="refresh()">
             <thead>
                 <tr>
                     <th>标准编号</th>
                     <th>标准名称</th>
                     <th>标准分类</th>
-                    <!-- <th>发布时间</th> -->
-                    <th>操作</th>
+                    <th *ngIf="type != '1'">条款数</th>
+                    <th *ngIf="type != '1' && type!= '6'">创建人</th>
+                    <th>创建时间</th>
+                    <th *ngIf="type != '6'">操作</th>
                 </tr>
             </thead>
             <tbody>
@@ -19,12 +21,19 @@
                     <td>{{item.docNo}}</td>
                     <td>{{item.name}}</td>
                     <td>{{item.categoryDesc}}</td>
-                    <!-- <td>{{item.publishTime | date: "yyyy-MM-dd"}}</td> -->
-                    <td>
+                    <td *ngIf="type != '1'">{{item.clauseNum}}</td>
+                    <td *ngIf="type != '1'">{{item.creationUserName != null? item.creationUserName :'-'}}</td>
+                    <td>{{item.creationTime | date: "yyyy-MM-dd"}}</td>
+                    <td *ngIf="type != '6'">
                         <a (click)="goDetail(item.id)">详情</a>
                     </td>
                 </tr>
             </tbody>
         </nz-table>
     </div>
+    <footer-toolbar>
+        <button nz-button [nzType]="'default'" (click)="return()">
+            返回
+        </button>
+    </footer-toolbar>
 </nz-card>

@@ -15,6 +15,7 @@ import { ConfirmDetailComponent } from './standard-confirm/confirm-detail/confir
 import { RevisionDocComponent } from './standardrevision/revision-doc/revision-doc.component';
 import { RevisionDraftComponent } from './standardrevision/revision-draft/revision-draft.component';
 import { RevisionDetailComponent } from './standardrevision/revision-draft/revision-detail/revision-detail.component';
+import { DraftDetailComponent } from './standardrevision/revision-draft/draft-detail/draft-detail.component';
 
 
 @NgModule({
@@ -37,7 +38,8 @@ import { RevisionDetailComponent } from './standardrevision/revision-draft/revis
         ConfirmDetailComponent,
         RevisionDocComponent,
         RevisionDraftComponent,
-        RevisionDetailComponent
+        RevisionDetailComponent,
+        DraftDetailComponent
     ],
     entryComponents: [
         InspectComponent,
@@ -49,7 +51,8 @@ import { RevisionDetailComponent } from './standardrevision/revision-draft/revis
         ConfirmDetailComponent,
         RevisionDocComponent,
         RevisionDraftComponent,
-        RevisionDetailComponent
+        RevisionDetailComponent,
+        DraftDetailComponent
     ]
 })
 export class ReportsModule { }

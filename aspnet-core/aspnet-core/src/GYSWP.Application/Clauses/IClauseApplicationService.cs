@@ -75,5 +75,6 @@ namespace GYSWP.Clauses
         Task<List<ClauseTreeNodeDto>> GetClauseTreeAsync(GetClausesInput input);
         Task<APIResultDto> ClauseRemoveById(EntityDto<Guid> id);
         Task<List<ClauseTreeNodeDto>> GetClauseTreeWithCheckedAsync(GetClausesInput input);
+        //Task<PagedResultDto<ClauseTreeNodeDto>> GetRevisionClauseReportAsync(ReportClauseInput input);
     }
 }

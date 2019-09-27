@@ -24,6 +24,12 @@ using GYSWP.Clauses.DomainService;
 using GYSWP.Dtos;
 using GYSWP.EmployeeClauses;
 using GYSWP.DocAttachments;
+using GYSWP.DocRevisions;
+using GYSWP.GYEnums;
+using GYSWP.ClauseRevisions;
+using Abp.Domain.Uow;
+using GYSWP.Authorization.Users;
+using GYSWP.Documents;
 
 namespace GYSWP.Clauses
 {
@@ -36,6 +42,10 @@ namespace GYSWP.Clauses
         private readonly IRepository<Clause, Guid> _entityRepository;
         private readonly IRepository<EmployeeClause, Guid> _employeeClauseRepository;
         private readonly IRepository<DocAttachment, Guid> _docAttachmentRepository;
+        private readonly IRepository<DocRevision, Guid> _docRevisionRepository;
+        private readonly IRepository<ClauseRevision, Guid> _clauseRevisionRepository;
+        private readonly IRepository<Document, Guid> _documentRepository;
+        private readonly UserManager _userManager;
         private readonly IClauseManager _entityManager;
 
         /// <summary>
@@ -46,12 +56,20 @@ namespace GYSWP.Clauses
         , IClauseManager entityManager
         , IRepository<EmployeeClause, Guid> employeeClauseRepository
         , IRepository<DocAttachment, Guid> docAttachmentRepository
+        , IRepository<DocRevision, Guid> docRevisionRepository
+        , IRepository<ClauseRevision, Guid> clauseRevisionRepository
+        , IRepository<Document, Guid> documentRepository
+        , UserManager userManager
         )
         {
             _entityRepository = entityRepository;
             _entityManager = entityManager;
             _employeeClauseRepository = employeeClauseRepository;
             _docAttachmentRepository = docAttachmentRepository;
+            _docRevisionRepository = docRevisionRepository;
+            _clauseRevisionRepository = clauseRevisionRepository;
+            _documentRepository = documentRepository;
+            _userManager = userManager;
         }
 
 
@@ -108,14 +126,14 @@ namespace GYSWP.Clauses
         /// <returns></returns>
         public async Task<List<ClauseTreeNodeDto>> GetClauseTreeAsync(GetClausesInput input)
         {
-            var clause = await _entityRepository.GetAll().Where(v => v.DocumentId == input.DocumentId).Select(v=>new ClauseTreeListDto()
+            var clause = await _entityRepository.GetAll().Where(v => v.DocumentId == input.DocumentId).Select(v => new ClauseTreeListDto()
             {
                 Id = v.Id,
-                ClauseNo =v.ClauseNo,
-                Title =v.Title,
-                Content =v.Content,
-                ParentId =v.ParentId
-            }).OrderBy(v=>v.ClauseNo).ToListAsync();
+                ClauseNo = v.ClauseNo,
+                Title = v.Title,
+                Content = v.Content,
+                ParentId = v.ParentId
+            }).OrderBy(v => v.ClauseNo).ToListAsync();
             clause.Sort(Factory.Comparer);
             return GetChildren(null, clause);
         }
@@ -322,7 +340,7 @@ namespace GYSWP.Clauses
                 Content = v.Content,
                 BLLId = v.BLLId,
                 LastModificationTime = v.LastModificationTime,
-                CreationTime =v.CreationTime,
+                CreationTime = v.CreationTime,
                 ParentId = v.ParentId
             }).OrderBy(v => v.ClauseNo).ToListAsync();
             clause.Sort(Factory.Comparer);
@@ -330,7 +348,7 @@ namespace GYSWP.Clauses
             {
                 foreach (var cnfmId in confirmIds)
                 {
-                    if(item.Id == cnfmId)
+                    if (item.Id == cnfmId)
                     {
                         item.Checked = true;
                         break;
@@ -340,6 +358,61 @@ namespace GYSWP.Clauses
 
             return GetChildrenWithChecked(null, clause);
         }
+
+        /// <summary>
+        /// 标准统计修订条款汇总
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<List<ClauseTreeNodeDto>> GetRevisionClauseReportAsync(ReportClauseInput input)
+        {
+            using (CurrentUnitOfWork.DisableFilter(AbpDataFilters.SoftDelete))
+            {
+                Guid? docBllId = await _documentRepository.GetAll().Where(v => v.Id == input.DocumentId).Select(v=>v.BLLId).FirstOrDefaultAsync();
+                var clause = _entityRepository.GetAll().Where(v => v.DocumentId == input.DocumentId && v.BLLId.HasValue);
+                var clauseRevision = _clauseRevisionRepository.GetAll().Where(v => (v.DocumentId == input.DocumentId || (v.DocumentId.HasValue ? v.DocumentId == docBllId:true)) && v.Status == RevisionStatus.审核通过 && v.IsDeleted == false);
+                //var clauseRevision = _clauseRevisionRepository.GetAll().Where(v => v.DocumentId == input.DocumentId && v.Status == RevisionStatus.审核通过 && v.RevisionType != RevisionType.标准制定 && v.IsDeleted == false);
+                var list = await (from cr in clauseRevision
+                                  join c in clause on cr.Id equals c.BLLId
+                                  select new ClauseTreeNodeDto()
+                                  {
+                                      Id = cr.Id,
+                                      ClauseNo = c.ClauseNo,
+                                      Title = c.Title,
+                                      Content = c.Content,
+                                      CreationTime = cr.CreationTime,
+                                      RevisionType = cr.RevisionType,
+                                      CreatorUserId = cr.CreatorUserId
+                                  }).ToListAsync();
+                list.Sort(ReportFactory.Comparer);
+                foreach (var item in list)
+                {
+                    if (item.CreatorUserId.HasValue)
+                    {
+                        var user = await _userManager.GetUserByIdAsync(item.CreatorUserId.Value);
+                        item.CreatorUserName = user.EmployeeName;
+                    }
+                    item.Children = await _clauseRevisionRepository.GetAll().Where(v => (v.DocumentId == input.DocumentId || (v.DocumentId.HasValue ? v.DocumentId == docBllId : true)) && v.Status == RevisionStatus.审核通过 && v.ClauseNo == item.ClauseNo && v.Id != item.Id && v.IsDeleted == false).Select(v => new ClauseTreeNodeDto()
+                    //item.Children = await _clauseRevisionRepository.GetAll().Where(v => v.DocumentId == input.DocumentId && v.Status == RevisionStatus.审核通过 && v.RevisionType != RevisionType.标准制定 && v.ClauseNo == item.ClauseNo && v.Id != item.Id && v.IsDeleted == false).Select(v => new ClauseTreeNodeDto()
+                    {
+                        Id = v.Id,
+                        ClauseNo = v.ClauseNo,
+                        Title = v.Title,
+                        Content = v.Content,
+                        CreationTime = v.CreationTime,
+                        RevisionType = v.RevisionType,
+                        CreatorUserId = v.CreatorUserId
+                    }).OrderByDescending(v => v.CreationTime).ToListAsync();
+                    foreach (var child in item.Children)
+                    {
+                        var user = await _userManager.GetUserByIdAsync(child.CreatorUserId.Value);
+                        child.CreatorUserName = user.EmployeeName;
+                    }
+                }
+                return list;
+            }
+        }
+
         class Factory : IComparer<ClauseTreeListDto>
         {
             private Factory() { }
@@ -359,56 +432,52 @@ namespace GYSWP.Clauses
                 }
             }
         }
-        //class StringNumberComparer : IComparer<string>
-        //{
-        //    public int Compare(string x, string y)
-        //    {
-        //        int compareResult;
-        //        int xIndex = 0, yIndex = 0;
-        //        int xIndexLast = 0, yIndexLast = 0;
-        //        int xNumber, yNumber;
-        //        int xLength = x.Length;
-        //        int yLength = y.Length;
 
-        //        do
-        //        {
-        //            bool xHasNextNumber = TryGetNextNumber(x, ref xIndex, out xNumber);
-        //            bool yHasNextNumber = TryGetNextNumber(y, ref yIndex, out yNumber);
+        /// <summary>
+        /// 按照自然数排序（无法覆盖null）
+        /// </summary>
+        class ReportFactory : IComparer<ClauseTreeNodeDto>
+        {
+            private ReportFactory() { }
+            public static IComparer<ClauseTreeNodeDto> Comparer
+            {
+                get { return new ReportFactory(); }
+            }
+            public int Compare(ClauseTreeNodeDto x, ClauseTreeNodeDto y)
+            {
+                try
+                {
+                    int ret = 0;
+                    var xsplit = x.ClauseNo.Split(".".ToCharArray()).Select(z => int.Parse(z)).ToList();
+                    var ysplit = y.ClauseNo.Split(".".ToCharArray()).Select(z => int.Parse(z)).ToList();
+                    for (int i = 0; i < Math.Max(xsplit.Count, ysplit.Count); i++)
+                    {
 
-        //            if (!(xHasNextNumber && yHasNextNumber))
-        //            {
-        //                // At least one the strings has either no more number or contains non-numeric chars
-        //                // In this case do a string comparison of that last part
-        //                return x.Substring(xIndexLast).CompareTo(y.Substring(yIndexLast));
-        //            }
-
-        //            xIndexLast = xIndex;
-        //            yIndexLast = yIndex;
-
-        //            compareResult = xNumber.CompareTo(yNumber);
-        //        }
-        //        while (compareResult == 0
-        //            && xIndex < xLength
-        //            && yIndex < yLength);
-
-        //        return compareResult;
-        //    }
-
-        //    private bool TryGetNextNumber(string text, ref int startIndex, out int number)
-        //    {
-        //        number = 0;
-
-        //        int pos = text.IndexOf('.', startIndex);
-        //        if (pos < 0) pos = text.Length;
-
-        //        if (!int.TryParse(text.Substring(startIndex, pos - startIndex), out number))
-        //            return false;
-
-        //        startIndex = pos + 1;
-
-        //        return true;
-        //    }
-        //}
+                        if (xsplit.Count - 1 < i)
+                        {
+                            ret = -1;
+                            return ret;
+                        }
+                        else if (ysplit.Count - 1 < i)
+                        {
+                            ret = 1;
+                            return ret;
+                        }
+                        else
+                        {
+                            ret = xsplit[i] - ysplit[i];
+                            if (ret != 0)
+                                return ret;
+                        }
+                    }
+                    return ret;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
     }
 }
 

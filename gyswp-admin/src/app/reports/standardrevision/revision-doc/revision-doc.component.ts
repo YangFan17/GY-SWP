@@ -12,8 +12,9 @@ import { WorkCriterionService } from 'services';
 })
 export class RevisionDocComponent extends PagedListingComponentBase<any>{
     deptId: string;
-    type: string;//
+    type: string;
     date: string;
+    title: string;
     constructor(injector: Injector
         , private router: Router
         , private actRouter: ActivatedRoute
@@ -25,14 +26,35 @@ export class RevisionDocComponent extends PagedListingComponentBase<any>{
             this.date = this.actRouter.snapshot.params['date'];
         };
     }
+
+    ngOnInit(): void {
+        if (this.type == '1') {
+            this.title = '现行标准汇总';
+        } else if (this.type == '2') {
+            this.title = '标准制定汇总';
+        } else if (this.type == '4') {
+            this.title = '标准修订汇总';
+        } else if (this.type == '6') {
+            this.title = '标准废止汇总';
+        }
+        this.refreshData();
+    }
+
+    refresh(): void {
+        this.getDataPage(this.pageNumber);
+    }
+    refreshData() {
+        this.pageNumber = 1;
+        this.refresh();
+    }
+
     protected fetchDataList(request: PagedRequestDto, pageNumber: number, finishedCallback: Function): void {
         let params: any = {};
         params.skipCount = request.skipCount;
         params.maxResultCount = request.maxResultCount;
         params.deptId = this.deptId;
         params.type = this.type;
-        params.endTime = this.date;
-        params.startTime = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-1';
+        params.month = this.date;
         this.workCriterionService.getActionDocumentAsync(params).finally(() => {
             finishedCallback();
         })
@@ -43,6 +65,18 @@ export class RevisionDocComponent extends PagedListingComponentBase<any>{
     }
 
     goDetail(itemid: string) {
-        this.router.navigate(['app/reports/revision-draft', itemid, this.deptId, this.type, this.date]);
+        if (this.type == '1') {
+            this.router.navigate(['app/reports/revision-draft', itemid, this.deptId, this.type, this.date]);
+        } else if (this.type == '2') {
+            this.router.navigate(['app/reports/revision-draft', itemid, this.deptId, this.type, this.date]);
+        } else if (this.type == '4') {
+            this.router.navigate(['app/reports/revision-draft', itemid, this.deptId, this.type, this.date]);
+            // this.router.navigate(['app/reports/revision-clause', itemid, this.deptId, this.type, this.date]);
+        } else if (this.type == '6') {
+        }
+    }
+
+    return() {
+        this.router.navigate(['app/reports/standardrevision']);
     }
 }

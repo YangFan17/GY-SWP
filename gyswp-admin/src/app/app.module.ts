@@ -13,7 +13,11 @@ import { AddDocumentComponent } from './home/position-info/add-document/add-docu
 import { EmpDocListComponent } from './home/position-info/emp-doc-list/emp-doc-list.component';
 import { ConfirmLearningComponent } from './work-criterion/criterion/self-learning/confirm-learning/confirm-learning.component';
 import { UploadPositionComponent } from './home/position-info/upload-position/upload-position.component';
-
+import ja from '@angular/common/locales/ja';
+import zh from '@angular/common/locales/zh';
+import { registerLocaleData } from '@angular/common';
+registerLocaleData(ja);
+registerLocaleData(zh);
 @NgModule({
   imports: [
     CommonModule,
