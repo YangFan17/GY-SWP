@@ -67,12 +67,8 @@ export class RevisionDocComponent extends PagedListingComponentBase<any>{
     goDetail(itemid: string) {
         if (this.type == '1') {
             this.router.navigate(['app/reports/revision-draft', itemid, this.deptId, this.type, this.date]);
-        } else if (this.type == '2') {
+        } else {
             this.router.navigate(['app/reports/revision-draft', itemid, this.deptId, this.type, this.date]);
-        } else if (this.type == '4') {
-            this.router.navigate(['app/reports/revision-draft', itemid, this.deptId, this.type, this.date]);
-            // this.router.navigate(['app/reports/revision-clause', itemid, this.deptId, this.type, this.date]);
-        } else if (this.type == '6') {
         }
     }
 

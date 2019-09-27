@@ -22,8 +22,6 @@ export class MyIndicatorComponent extends PagedListingComponentBase<any>{
         this.getDataPage(this.pageNumber);
     }
     refreshData() {
-        console.log("hello");
-
         this.pageNumber = 1;
         this.refresh();
     }

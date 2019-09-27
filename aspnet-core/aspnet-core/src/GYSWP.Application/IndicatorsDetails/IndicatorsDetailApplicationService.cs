@@ -23,6 +23,8 @@ using GYSWP.IndicatorsDetails.Dtos;
 using GYSWP.IndicatorsDetails.DomainService;
 using GYSWP.Dtos;
 using GYSWP.DingDingApproval;
+using GYSWP.Organizations;
+using GYSWP.Employees;
 
 namespace GYSWP.IndicatorsDetails
 {
@@ -35,6 +37,8 @@ namespace GYSWP.IndicatorsDetails
         private readonly IRepository<IndicatorsDetail, Guid> _entityRepository;
         private readonly IApprovalAppService _approvalAppService;
         private readonly IIndicatorsDetailManager _entityManager;
+        private readonly IRepository<Organization, long> _organizationRepository;
+        private readonly IRepository<Employee, string> _employeeRepository;
 
         /// <summary>
         /// 构造函数 
@@ -43,11 +47,15 @@ namespace GYSWP.IndicatorsDetails
         IRepository<IndicatorsDetail, Guid> entityRepository
         , IIndicatorsDetailManager entityManager
         , IApprovalAppService approvalAppService
+        , IRepository<Organization, long> organizationRepository
+        , IRepository<Employee, string> employeeRepository
         )
         {
+            _employeeRepository = employeeRepository;
             _entityRepository = entityRepository;
             _approvalAppService = approvalAppService;
             _entityManager = entityManager;
+            _organizationRepository = organizationRepository;
         }
 
 
@@ -210,9 +218,89 @@ namespace GYSWP.IndicatorsDetails
             //合格or不合格发送消息通知
             if (input.Status != GYEnums.IndicatorStatus.未填写)
             {
-                _approvalAppService.SendIndicatorResultAsync(input.Status);
+                string infoEmpIds = entity.EmployeeId;
+                //基层单位附带通知局长、主任
+                if (entity.DeptId != 1 && entity.DeptId != 59549057 && entity.DeptId != 59646091 && entity.DeptId != 59591062
+                    && entity.DeptId != 59552081 && entity.DeptId != 59632058 && entity.DeptId != 59571109 && entity.DeptId != 59584063
+                    && entity.DeptId != 59644078 && entity.DeptId != 59620071 && entity.DeptId != 59628060 && entity.DeptId != 59538081 
+                    && entity.DeptId != 59490590 && entity.DeptId != 59481641 && entity.DeptId != 59534185 && entity.DeptId != 59534184 
+                    && entity.DeptId != 59534183)
+                {
+                    var orgInfo = await _organizationRepository.GetAll().Where(v => v.Id == entity.DeptId).Select(v => new { v.Id, v.ParentId }).FirstOrDefaultAsync();
+                    long? id;
+                    if (orgInfo.ParentId != 1)
+                    {
+                        long? resultId = orgInfo.ParentId;
+                        id = GetTopDeptId(orgInfo.ParentId, ref resultId);
+                    }
+                    else
+                    {
+                        id = orgInfo.Id;
+                    }
+                    string deptBossId = await _employeeRepository.GetAll().Where(v => v.Department == "[" + id + "]" && (v.Position.Contains("县区局（分公司）局长") || v.Position.Contains("物流中心主任"))).Select(v => v.Id).FirstOrDefaultAsync();
+                    if (!string.IsNullOrEmpty(deptBossId))
+                    {
+                        infoEmpIds = infoEmpIds + "," + deptBossId;
+                    }
+                }
+                _approvalAppService.SendIndicatorResultAsync(input.Status, infoEmpIds);
             }
             return new APIResultDto() { Code = 0, Msg = "保存成功", Data = entity.Id };
+        }
+        
+        /// <summary>
+        /// 领导推送测试接口
+        /// </summary>
+        /// <param name="pid"></param>
+        /// <returns></returns>
+        //[AbpAllowAnonymous]
+        //public async Task<string> TestInfo(long pid)
+        //{
+        //    var entity = new IndicatorsDetail();
+        //    entity.EmployeeId = "0216056802753589";
+        //    entity.DeptId = pid;
+        //    string infoEmpIds = entity.EmployeeId;
+        //    //基层单位附带通知局长、主任
+        //    if (entity.DeptId != 1 && entity.DeptId != 59549057 && entity.DeptId != 59646091 && entity.DeptId != 59591062
+        //        && entity.DeptId != 59552081 && entity.DeptId != 59632058 && entity.DeptId != 59571109 && entity.DeptId != 59584063
+        //        && entity.DeptId != 59644078 && entity.DeptId != 59620071 && entity.DeptId != 59628060 && entity.DeptId != 59538081
+        //        && entity.DeptId != 59490590 && entity.DeptId != 59481641 && entity.DeptId != 59534185 && entity.DeptId != 59534184
+        //        && entity.DeptId != 59534183)
+        //    {
+        //        var orgInfo = await _organizationRepository.GetAll().Where(v => v.Id == entity.DeptId).Select(v => new { v.Id, v.ParentId }).FirstOrDefaultAsync();
+        //        long? id;
+        //        if (orgInfo.ParentId != 1)
+        //        {
+        //            long? resultId = orgInfo.ParentId;
+        //            id = GetTopDeptId(orgInfo.ParentId, ref resultId);
+        //        }
+        //        else
+        //        {
+        //            id = orgInfo.Id;
+        //        }
+        //        string deptBossId = await _employeeRepository.GetAll().Where(v => v.Department == "[" + id + "]" && (v.Position.Contains("县区局（分公司）局长") || v.Position.Contains("物流中心主任"))).Select(v => v.Id).FirstOrDefaultAsync();
+        //        if (!string.IsNullOrEmpty(deptBossId))
+        //        {
+        //            infoEmpIds = infoEmpIds + "," + deptBossId;
+        //        }
+        //    }
+        //    return infoEmpIds;
+        //}
+
+        /// <summary>
+        /// 查询顶级部门Id
+        /// </summary>
+        /// <param name="pId"></param>
+        /// <returns></returns>
+        private long? GetTopDeptId(long? pId, ref long? resultId)
+        {
+            var result = _organizationRepository.GetAll().Where(v => v.Id == pId).Select(v => new { v.ParentId, v.Id }).FirstOrDefault();
+            resultId = result.Id;
+            if (result.ParentId != 1)
+            {
+                GetTopDeptId(result.ParentId, ref resultId);
+            }
+            return resultId;
         }
     }
 }

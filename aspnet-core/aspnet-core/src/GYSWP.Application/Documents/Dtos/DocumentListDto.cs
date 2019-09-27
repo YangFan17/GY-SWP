@@ -176,5 +176,6 @@ namespace GYSWP.Documents.Dtos
         public long? CreationUserId { get; set; }
         public string CreationUserName { get; set; }
         public DateTime? CreationTime { get; set; }
+        public Guid? BLLId { get; set; }
     }
 }
