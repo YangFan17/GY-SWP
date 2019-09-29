@@ -421,7 +421,7 @@ namespace GYSWP.Documents
             }
             else
             {
-                 deptId = deptStr.Replace('[', ' ').Replace(']', ' ').Trim();
+                deptId = deptStr.Replace('[', ' ').Replace(']', ' ').Trim();
             }
             var query = _entityRepository.GetAll().Where(v => v.IsAction == true && (v.PublishTime.HasValue ? v.PublishTime <= DateTime.Today : false) && (v.IsAllUser == true || v.DeptIds.Contains(deptId) || v.EmployeeIds.Contains(curUser.EmployeeId)))
                 //.WhereIf(input.CategoryId.HasValue, v => v.CategoryId == input.CategoryId)
@@ -603,8 +603,12 @@ namespace GYSWP.Documents
         /// <returns></returns>
         public async Task<PagedResultDto<DocumentConfirmDto>> GetReportDocumentConfirmsListAsync(GetDocumentsInput input)
         {
-            var categoryIds = await _categoryRepository.GetAll().Where(v => v.DeptId == input.DeptId).Select(v => v.Id).ToArrayAsync();
-            var query = _entityRepository.GetAll().Where(v => categoryIds.Contains(v.CategoryId) && v.IsAction == true).WhereIf(!string.IsNullOrEmpty(input.KeyWord), v => v.Name.Contains(input.KeyWord) || v.DocNo.Contains(input.KeyWord));
+            //改为只看现行标准下的技术标准，管理标准
+            int zuofeiCategoryId = await _categoryRepository.GetAll().Where(v => v.DeptId == input.DeptId && v.Name == "作废标准库").Select(v => v.Id).FirstOrDefaultAsync();
+            int zuofeiWlwjId = await _categoryRepository.GetAll().Where(v => v.DeptId == input.DeptId && v.Name == "外来文件" && v.ParentId == zuofeiCategoryId).Select(v => v.Id).FirstOrDefaultAsync();
+            int[] curDeptValidId = await _categoryRepository.GetAll().Where(v => v.DeptId == input.DeptId && v.ParentId != 0 && v.ParentId != zuofeiCategoryId && v.ParentId != zuofeiWlwjId && (v.Name == "管理标准" || v.Name == "技术标准")).Select(v => v.Id).ToArrayAsync();
+            //var categoryIds = await _categoryRepository.GetAll().Where(v => v.DeptId == input.DeptId).Select(v => v.Id).ToArrayAsync();
+            var query = _entityRepository.GetAll().Where(v => curDeptValidId.Contains(v.CategoryId) && v.IsAction == true).WhereIf(!string.IsNullOrEmpty(input.KeyWord), v => v.Name.Contains(input.KeyWord) || v.DocNo.Contains(input.KeyWord));
             var entityList = await query.OrderBy(v => v.CategoryId).ThenByDescending(v => v.PublishTime).AsNoTracking().PageBy(input).ToListAsync();
 
             var entityListDtos = entityList.MapTo<List<DocumentConfirmDto>>();

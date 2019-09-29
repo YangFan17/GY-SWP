@@ -240,6 +240,11 @@ namespace GYSWP.Categorys
             return catQuery.ToList();
         }
 
+        /// <summary>
+        /// 基础数据-标准管理部门分类
+        /// </summary>
+        /// <param name="deptId"></param>
+        /// <returns></returns>
         public async Task<List<CategoryTreeNode>> GetTreeAsync(long? deptId)
         {
             if (!deptId.HasValue)
@@ -318,6 +323,40 @@ namespace GYSWP.Categorys
                                 }).OrderBy(v => v.value).ToListAsync();
             var result = entity.MapTo<List<SelectGroups>>();
             return result;
+        }
+
+        /// <summary>
+        /// 标准统计-现行标准统计
+        /// </summary>
+        /// <param name="deptId"></param>
+        /// <returns></returns>
+        public async Task<List<CategoryTreeNode>> GetActiveCategoryTreeAsync()
+        {
+            List<CategoryTreeNode> tree = new List<CategoryTreeNode>();
+            CategoryTreeNode item = new CategoryTreeNode();
+            item.title = "现行标准库";
+            item.key = "999";
+            item.children = new List<CategoryTreeNode>();
+            item.children[0].title = "技术标准";
+            item.children[0].key = "0";
+            item.children[1].title = "管理标准";
+            item.children[1].key = "1";
+            item.children[2].title = "工作标准";
+            item.children[2].key = "2";
+            item.children[3].title = "法律法规";
+            item.children[3].key = "3";
+            item.children[4].title = "上级文件";
+            item.children[4].key = "4";
+            item.children[5].title = "外来标准";
+            item.children[5].key = "5";
+            item.children[6].title = "风险库";
+            item.children[6].key = "6";
+            tree.Add(item);
+            foreach (var entity in item.children)
+            {
+
+            }
+            return tree;
         }
 
         #region 一键生成默认标准库分类

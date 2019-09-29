@@ -81,8 +81,8 @@ namespace GYSWP.DingDingApproval
             var url = string.Format("https://oapi.dingtalk.com/topapi/processinstance/create?access_token={0}", accessToken);
             SubmitApprovalEntity request = new SubmitApprovalEntity();
             //发布需要更改路径
-            request.process_code = "PROC-C3F82626-4DBB-4A6D-8EF1-517D3892CEBB";//202
-            //request.process_code = "PROC-6DF666D7-32CC-49F0-B9F3-1FF4D87D8635";
+            //request.process_code = "PROC-C3F82626-4DBB-4A6D-8EF1-517D3892CEBB";//202
+            request.process_code = "PROC-6DF666D7-32CC-49F0-B9F3-1FF4D87D8635";
             request.originator_user_id = user.EmployeeId;
             request.agent_id = ddConfig.AgentID;
             request.dept_id = Convert.ToInt32(deptId);
@@ -136,8 +136,8 @@ namespace GYSWP.DingDingApproval
             int Total = Cnumber + Unumber + Dnumber;
             SubmitApprovalEntity request = new SubmitApprovalEntity();
             //发布需要更改路径
-            request.process_code = "PROC-34E6C3FC-B1B7-4569-9DEC-1B2E7EA0E1A1";//202
-            //request.process_code = "PROC-051C520B-499E-4A94-947A-B5FFFC47750C";
+            //request.process_code = "PROC-34E6C3FC-B1B7-4569-9DEC-1B2E7EA0E1A1";//202
+            request.process_code = "PROC-051C520B-499E-4A94-947A-B5FFFC47750C";
             request.originator_user_id = user.EmployeeId;
             request.agent_id = ddConfig.AgentID;
             request.dept_id = Convert.ToInt32(deptId);
@@ -247,7 +247,7 @@ namespace GYSWP.DingDingApproval
 
 
         /// <summary>
-        /// 提交制定标准审批修成
+        /// 提交制定标准审批流程
         /// </summary>
         /// <param name="ApplyInfoId"></param>
         /// <param name="DocumentId"></param>
@@ -266,12 +266,12 @@ namespace GYSWP.DingDingApproval
             var clauseList = await _clauseRevisionRepository.GetAll().Where(v => v.DocumentId == DocumentId && v.RevisionType == RevisionType.标准制定 && v.ApplyInfoId == ApplyInfoId).OrderBy(v => v.RevisionType).ThenBy(v => v.ClauseNo).ThenByDescending(v => v.CreationTime).ToListAsync();
             SubmitApprovalEntity request = new SubmitApprovalEntity();
             //发布需要更改路径
-            request.process_code = "PROC-BFE69EF9-4B66-4697-B917-362D28B71F68";//202
-            //request.process_code = "PROC-DCD404D8-883A-4481-9D76-31FA40F03A71";
+            //request.process_code = "PROC-BFE69EF9-4B66-4697-B917-362D28B71F68";//202
+            request.process_code = "PROC-DCD404D8-883A-4481-9D76-31FA40F03A71";
             request.originator_user_id = user.EmployeeId;
             request.agent_id = ddConfig.AgentID;
-            //request.dept_id = Convert.ToInt32(deptId); 
-            request.dept_id = 67209026; // 测试环境 发布需要放开
+            request.dept_id = Convert.ToInt32(deptId);
+            //request.dept_id = 67209026; // 测试环境 发布需要放开
             List<Approval> approvalList = new List<Approval>();
             approvalList.Add(new Approval() { name = "申请人", value = user.EmployeeName });
             approvalList.Add(new Approval() { name = "申请时间", value = DateTime.Now.ToString("yyyy-MM-dd HH:mm") });
@@ -317,6 +317,15 @@ namespace GYSWP.DingDingApproval
             }
         }
 
+        /// <summary>
+        /// 意见反馈
+        /// </summary>
+        /// <param name="AdviseName"></param>
+        /// <param name="EmployeeName"></param>
+        /// <param name="CreationTime"></param>
+        /// <param name="CurrentSituation"></param>
+        /// <param name="Solution"></param>
+        /// <returns></returns>
         [AbpAllowAnonymous]
         public async Task<APIResultDto> SubmitAdviceApproval(string AdviseName, string EmployeeName, DateTime CreationTime, string CurrentSituation, string Solution)
         {
@@ -372,7 +381,8 @@ namespace GYSWP.DingDingApproval
                 DingDingAppConfig ddConfig = _dingDingAppService.GetDingDingConfigByApp(DingDingAppEnum.标准化工作平台);
                 string accessToken = _dingDingAppService.GetAccessToken(ddConfig.Appkey, ddConfig.Appsecret);
                 var msgdto = new DingMsgDto();
-                msgdto.userid_list = "1926112826844702";//杨帆
+                //msgdto.userid_list = "1926112826844702";//杨帆
+                msgdto.userid_list = "166859002437613171";//企管科
                 msgdto.to_all_user = false;
                 msgdto.agent_id = ddConfig.AgentID;
                 msgdto.msg.msgtype = "link";
@@ -436,7 +446,7 @@ namespace GYSWP.DingDingApproval
         }
 
         /// <summary>
-        /// 发送指标考核填写通知
+        /// 发送指标考核填写通知[已停用]
         /// </summary>
         [AbpAllowAnonymous]
         public APIResultDto SendIndicatorMessageAsync(string empId)
@@ -506,7 +516,7 @@ namespace GYSWP.DingDingApproval
         }
 
         /// <summary>
-        /// 发送监督检查填写通知
+        /// 发送条款检查填写通知
         /// </summary>
         [AbpAllowAnonymous]
         public APIResultDto SendCriterionExamineMessageAsync(string empId)
@@ -516,8 +526,8 @@ namespace GYSWP.DingDingApproval
                 DingDingAppConfig ddConfig = _dingDingAppService.GetDingDingConfigByApp(DingDingAppEnum.标准化工作平台);
                 string accessToken = _dingDingAppService.GetAccessToken(ddConfig.Appkey, ddConfig.Appsecret);
                 var msgdto = new DingMsgDto();
-                //msgdto.userid_list = empId; 
-                msgdto.userid_list = "1926112826844702";
+                msgdto.userid_list = empId;
+                //msgdto.userid_list = "1926112826844702";
                 msgdto.to_all_user = false;
                 msgdto.agent_id = ddConfig.AgentID;
                 msgdto.msg.msgtype = "text";
