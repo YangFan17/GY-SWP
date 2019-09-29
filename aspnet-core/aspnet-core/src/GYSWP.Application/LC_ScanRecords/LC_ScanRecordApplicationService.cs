@@ -262,22 +262,24 @@ LC_ScanRecordEditDto editDto;
         [AbpAllowAnonymous]
         public async Task<APIResultDto> CreateOutStorageSacnAsync(LC_ScanRecordEditDto input)
         {
-            LC_TimeLog entity = new LC_TimeLog();
+            //LC_TimeLog entity = new LC_TimeLog();
+            ////entity.EmployeeId = input.EmployeeId;
             //entity.EmployeeId = input.EmployeeId;
-            entity.EmployeeId = input.EmployeeId;
-            entity.EmployeeName = input.EmployeeName;
-            entity.Type = GYEnums.LC_TimeType.出库分拣;
-            entity.Status = GYEnums.LC_TimeStatus.开始;
-            Guid timeLogId = await _timeLogRepository.InsertAndGetIdAsync(entity);
+            //entity.EmployeeName = input.EmployeeName;
+            //entity.Type = GYEnums.LC_TimeType.出库分拣;
+            //entity.Status = GYEnums.LC_TimeStatus.开始;
+            //Guid timeLogId = await _timeLogRepository.InsertAndGetIdAsync(entity);
             await CurrentUnitOfWork.SaveChangesAsync();
             LC_ScanRecord scanRecord = new LC_ScanRecord();
-            scanRecord.TimeLogId = timeLogId;
+            //scanRecord.TimeLogId = timeLogId;
             scanRecord.Status = GYEnums.LC_TimeStatus.开始;
             scanRecord.Type = GYEnums.LC_ScanRecordType.出库扫码;
             scanRecord.EmployeeId = input.EmployeeId;
             scanRecord.EmployeeName = input.EmployeeName;
             await _entityRepository.InsertAsync(scanRecord);
-            return new APIResultDto() { Code = 0, Msg = "保存成功", Data = timeLogId };
+            //return new APIResultDto() { Code = 0, Msg = "保存成功", Data = timeLogId };
+            return new APIResultDto() { Code = 0, Msg = "保存成功"};
+
         }
     }
 }

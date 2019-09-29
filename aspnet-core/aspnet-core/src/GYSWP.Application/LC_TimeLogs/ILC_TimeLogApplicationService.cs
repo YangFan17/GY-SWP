@@ -57,7 +57,7 @@ namespace GYSWP.LC_TimeLogs
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<LC_TimeLogEditDto> CreateOrUpdate(CreateOrUpdateLC_TimeLogInput input);
+        //Task<LC_TimeLogEditDto> CreateOrUpdate(CreateOrUpdateLC_TimeLogInput input);
 
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace GYSWP.LC_TimeLogs
         /// 批量删除LC_TimeLog
         /// </summary>
         Task BatchDelete(List<Guid> input);
-        Task<APIResultDto> CreateBeginInStorageAsync(CreateLC_TimeLogsInput input);
+        //Task<APIResultDto> CreateBeginInStorageAsync(CreateLC_TimeLogsInput input);
 
         Task<APIResultDto> CreateScanOverAsync(CreateLC_TimeLogsInput input);
 
@@ -82,6 +82,6 @@ namespace GYSWP.LC_TimeLogs
         /// <param name="id"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        Task<APIResultDto> ModifyStatusById(Guid? id, LC_TimeStatus status);
+        //Task<APIResultDto> ModifyStatusById(Guid? id, LC_TimeStatus status);
     }
 }
