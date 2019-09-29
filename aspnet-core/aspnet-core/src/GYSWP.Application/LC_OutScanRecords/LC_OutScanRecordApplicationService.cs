@@ -252,7 +252,7 @@ LC_OutScanRecordEditDto editDto;
             entity = await _entityRepository.InsertAsync(entity);
 
             LC_ScanRecord scanRecord = new LC_ScanRecord();
-            scanRecord.TimeLogId = input.LC_OutScanRecord.TimeLogId;
+            //scanRecord.TimeLogId = input.LC_OutScanRecord.TimeLogId;
             scanRecord.Status = GYEnums.LC_TimeStatus.结束;
             scanRecord.Type = GYEnums.LC_ScanRecordType.出库扫码;
             scanRecord.EmployeeId = input.LC_OutScanRecord.EmployeeId;

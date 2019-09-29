@@ -72,5 +72,14 @@ namespace GYSWP.LC_ScanRecords
         /// </summary>
         Task BatchDelete(List<Guid> input);
         Task<APIResultDto> CreateOutStorageSacnAsync(LC_ScanRecordEditDto input);
+
+
+        /// <summary>
+        /// 入库扫码开始
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        Task<APIResultDto> CreateInStorageScanAsync(CreateLC_ScanRecordInput input);
     }
 }

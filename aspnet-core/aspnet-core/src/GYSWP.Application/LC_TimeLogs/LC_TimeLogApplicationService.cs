@@ -117,25 +117,25 @@ namespace GYSWP.LC_TimeLogs
         }
 
 
-        /// <summary>
-        /// 添加或者修改LC_TimeLog的公共方法
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        [AbpAllowAnonymous]
-        [Audited]
-        public async Task<LC_TimeLogEditDto> CreateOrUpdate(CreateOrUpdateLC_TimeLogInput input)
-        {
+        ///// <summary>
+        ///// 添加或者修改LC_TimeLog的公共方法
+        ///// </summary>
+        ///// <param name="input"></param>
+        ///// <returns></returns>
+        //[AbpAllowAnonymous]
+        //[Audited]
+        //public async Task<LC_TimeLogEditDto> CreateOrUpdate(CreateOrUpdateLC_TimeLogInput input)
+        //{
 
-            if (input.LC_TimeLog.Id.HasValue)
-            {
-                return await Update(input.LC_TimeLog);
-            }
-            else
-            {
-                return await Create(input.LC_TimeLog);
-            }
-        }
+        //    if (input.LC_TimeLog.Id.HasValue)
+        //    {
+        //        return await Update(input.LC_TimeLog);
+        //    }
+        //    else
+        //    {
+        //        return await Create(input.LC_TimeLog);
+        //    }
+        //}
 
 
         /// <summary>
@@ -196,22 +196,22 @@ namespace GYSWP.LC_TimeLogs
             await _entityRepository.DeleteAsync(s => input.Contains(s.Id));
         }
 
-        /// <summary>
-        /// 记录开始入库信息
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        [AbpAllowAnonymous]
-        public async Task<APIResultDto> CreateBeginInStorageAsync(CreateLC_TimeLogsInput input)
-        {
-            LC_TimeLog entity = new LC_TimeLog();
-            entity.EmployeeId = input.EmployeeId;
-            entity.EmployeeName = input.EmployeeName;
-            entity.Type = GYEnums.LC_TimeType.入库作业;
-            entity.Status = GYEnums.LC_TimeStatus.开始;
-            entity = await _entityRepository.InsertAsync(entity);
-            return new APIResultDto() { Code = 0, Msg = "保存成功", Data = entity.Id };
-        }
+        ///// <summary>
+        ///// 记录开始入库信息
+        ///// </summary>
+        ///// <param name="input"></param>
+        ///// <returns></returns>
+        //[AbpAllowAnonymous]
+        //public async Task<APIResultDto> CreateBeginInStorageAsync(CreateLC_TimeLogsInput input)
+        //{
+        //    LC_TimeLog entity = new LC_TimeLog();
+        //    entity.EmployeeId = input.EmployeeId;
+        //    entity.EmployeeName = input.EmployeeName;
+        //    entity.Type = GYEnums.LC_TimeType.入库作业;
+        //    entity.Status = GYEnums.LC_TimeStatus.开始;
+        //    entity = await _entityRepository.InsertAsync(entity);
+        //    return new APIResultDto() { Code = 0, Msg = "保存成功", Data = entity.Id };
+        //}
 
         /// <summary>
         /// 扫码出库完成
@@ -235,28 +235,28 @@ namespace GYSWP.LC_TimeLogs
         /// <param name="id"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        [AbpAllowAnonymous]
-        public async Task<APIResultDto> ModifyStatusById(Guid? id, LC_TimeStatus status)
-        {
-            if (id.HasValue)
-            {
-                LC_TimeLog lC_TimeLog = await _entityRepository.FirstOrDefaultAsync(id.Value);
-                if (lC_TimeLog == null)
-                {
-                    return new APIResultDto() { Code = 1, Msg = "未找到当前项" };
-                }
-                else
-                {
-                    lC_TimeLog.Status = status;
-                    lC_TimeLog.EndTime = DateTime.Now;
-                    await _entityRepository.UpdateAsync(lC_TimeLog);
-                    return new APIResultDto() { Code = 0, Msg = "修改状态成功" };
-                }
-            }
-            else
-            {
-                return new APIResultDto() { Code = 0, Msg = "成功结束" };
-            }
-        }
+        //[AbpAllowAnonymous]
+        //public async Task<APIResultDto> ModifyStatusById(Guid? id, LC_TimeStatus status)
+        //{
+        //    if (id.HasValue)
+        //    {
+        //        LC_TimeLog lC_TimeLog = await _entityRepository.FirstOrDefaultAsync(id.Value);
+        //        if (lC_TimeLog == null)
+        //        {
+        //            return new APIResultDto() { Code = 1, Msg = "未找到当前项" };
+        //        }
+        //        else
+        //        {
+        //            lC_TimeLog.Status = status;
+        //            lC_TimeLog.EndTime = DateTime.Now;
+        //            await _entityRepository.UpdateAsync(lC_TimeLog);
+        //            return new APIResultDto() { Code = 0, Msg = "修改状态成功" };
+        //        }
+        //    }
+        //    else
+        //    {
+        //        return new APIResultDto() { Code = 0, Msg = "成功结束" };
+        //    }
+        //}
     }
 }
