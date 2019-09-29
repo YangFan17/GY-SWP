@@ -5,6 +5,7 @@ import { map } from "rxjs/operators";
 import { API_BASE_URL } from "@shared/service-proxies/service-proxies";
 import { NzTreeNode } from "ng-zorro-antd";
 import { PagedResultDto } from "@shared/component-base";
+import { ApiResult } from "entities";
 
 @Injectable()
 export class StandardRevisionService {
@@ -17,7 +18,7 @@ export class StandardRevisionService {
         this.baseUrl = baseUrl ? baseUrl : "";
     }
 
-    GetSearchStandardRevisions(input: any): Observable<any> {
+    getSearchStandardRevisions(input: any): Observable<any> {
         let url_ = "/api/services/app/StandardRevision/GetSearchStandardRevisions";
         return this._commonhttp.get(url_, input).pipe(map(data => {
             return data;
@@ -60,6 +61,35 @@ export class StandardRevisionService {
         let url_ = "/api/services/app/Clause/GetRevisionClauseReportAsync";
         return this._commonhttp.get(url_, params).pipe(map(data => {
             return data;
+        }));
+    }
+
+    getActiveCategoryTree(): Observable<NzTreeNode[]> {
+        let url = "/api/services/app/Category/GetActiveCategoryTreeAsync";
+        return this._commonhttp.get(url).pipe(map(data => {
+            let arry = [];
+            data.map(d => {
+                let tree = new NzTreeNode(d);
+                arry.push(tree);
+            });
+            return arry;
+        }));
+    }
+
+    getActionDocumentList(param: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/Document/GetPagedActionDocAsync";
+        return this._commonhttp.get(url_, param).pipe(map(data => {
+            const result = new PagedResultDto();
+            result.items = data.items;
+            result.totalCount = data.totalCount;
+            return result;
+        }));
+    }
+
+    exportActionDocument(param: any): Observable<ApiResult> {
+        var _url = '/api/services/app/Document/ExportActionDocumentAsync';
+        return this._commonhttp.post(_url, param).pipe(map(data => {
+            return ApiResult.fromJS(data);
         }));
     }
 }

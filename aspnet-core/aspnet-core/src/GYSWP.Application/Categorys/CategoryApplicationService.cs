@@ -296,7 +296,7 @@ namespace GYSWP.Categorys
             var curUser = await GetCurrentUserAsync();
             var deptId = await _employeeRepository.GetAll().Where(v => v.Id == curUser.EmployeeId).Select(v => v.Department).FirstOrDefaultAsync();
             var zuofeiCategory = await _entityRepository.GetAll().Where(v => "[" + v.DeptId + "]" == deptId && v.Name == "作废标准库").Select(v => new { v.Id }).FirstOrDefaultAsync();
-            var entity = await (from c in _entityRepository.GetAll().Where(v => "[" + v.DeptId + "]" == deptId && v.ParentId != 0 && v.ParentId!= zuofeiCategory.Id)
+            var entity = await (from c in _entityRepository.GetAll().Where(v => "[" + v.DeptId + "]" == deptId && v.ParentId != 0 && v.ParentId != zuofeiCategory.Id)
                                 select new
                                 {
                                     text = c.Name,
@@ -330,32 +330,66 @@ namespace GYSWP.Categorys
         /// </summary>
         /// <param name="deptId"></param>
         /// <returns></returns>
-        public async Task<List<CategoryTreeNode>> GetActiveCategoryTreeAsync()
+        public async Task<List<NzTreeNode>> GetActiveCategoryTreeAsync()
         {
-            List<CategoryTreeNode> tree = new List<CategoryTreeNode>();
-            CategoryTreeNode item = new CategoryTreeNode();
-            item.title = "现行标准库";
+            List<NzTreeNode> tree = new List<NzTreeNode>();
+            NzTreeNode item = new NzTreeNode();
+            int totalCount = await _documentRepository.CountAsync(v => v.IsAction == true && v.CategoryDesc != "现行标准库" && v.CategoryDesc != "上级文件");
+            item.title = $"现行标准库({totalCount})";
             item.key = "999";
-            item.children = new List<CategoryTreeNode>();
-            item.children[0].title = "技术标准";
-            item.children[0].key = "0";
-            item.children[1].title = "管理标准";
-            item.children[1].key = "1";
-            item.children[2].title = "工作标准";
-            item.children[2].key = "2";
-            item.children[3].title = "法律法规";
-            item.children[3].key = "3";
-            item.children[4].title = "上级文件";
-            item.children[4].key = "4";
-            item.children[5].title = "外来标准";
-            item.children[5].key = "5";
-            item.children[6].title = "风险库";
-            item.children[6].key = "6";
-            tree.Add(item);
-            foreach (var entity in item.children)
-            {
+            item.expanded = true;
+            item.children = new List<NzTreeNode>();
 
-            }
+            NzTreeNode jsEntity = new NzTreeNode();
+            int jsCount = await _documentRepository.CountAsync(v => v.IsAction == true && v.CategoryDesc.Contains("技术标准"));
+            jsEntity.title = $"技术标准({jsCount})";
+            jsEntity.key = "0";
+            jsEntity.isLeaf = true;
+            item.children.Add(jsEntity);
+
+            NzTreeNode glEntity = new NzTreeNode();
+            int glCount = await _documentRepository.CountAsync(v => v.IsAction == true && v.CategoryDesc.Contains("管理标准"));
+            glEntity.title = $"管理标准({glCount})";
+            glEntity.key = "1";
+            glEntity.isLeaf = true;
+            item.children.Add(glEntity);
+
+            NzTreeNode gzEntity = new NzTreeNode();
+            int gzCount = await _documentRepository.CountAsync(v => v.IsAction == true && v.CategoryDesc.Contains("工作标准"));
+            gzEntity.title = $"工作标准({gzCount})";
+            gzEntity.key = "2";
+            gzEntity.isLeaf = true;
+            item.children.Add(gzEntity);
+
+            NzTreeNode flEntity = new NzTreeNode();
+            int flCount = await _documentRepository.CountAsync(v => v.IsAction == true && v.CategoryDesc.Contains("法律法规"));
+            flEntity.title = $"法律法规({flCount})";
+            flEntity.key = "3";
+            flEntity.isLeaf = true;
+            item.children.Add(flEntity);
+
+            NzTreeNode sjEntity = new NzTreeNode();
+            int sjCount = await _documentRepository.CountAsync(v => v.IsAction == true && v.CategoryDesc.Contains("上级文件"));
+            sjEntity.title = $"上级文件({sjCount})";
+            sjEntity.key = "4";
+            sjEntity.isLeaf = true;
+            item.children.Add(sjEntity);
+
+            NzTreeNode wlEntity = new NzTreeNode();
+            int wlCount = await _documentRepository.CountAsync(v => v.IsAction == true && v.CategoryDesc.Contains("外来标准"));
+            wlEntity.title = $"外来标准({wlCount})";
+            wlEntity.key = "5";
+            wlEntity.isLeaf = true;
+            item.children.Add(wlEntity);
+
+            NzTreeNode fxEntity = new NzTreeNode();
+            int fxCount = await _documentRepository.CountAsync(v => v.IsAction == true && v.CategoryDesc.Contains("风险库"));
+            fxEntity.title = $"风险库({fxCount})";
+            fxEntity.key = "6";
+            fxEntity.isLeaf = true;
+            item.children.Add(fxEntity);
+
+            tree.Add(item);
             return tree;
         }
 

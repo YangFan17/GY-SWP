@@ -101,5 +101,7 @@ namespace GYSWP.Documents
         /// <param name="input"></param>
         /// <returns></returns>
         Task<PagedResultDto<ReportDocDto>> GetActionDocumentsAsync(GetReportDocInput input);
+        Task<PagedResultDto<DocumentTitleDto>> GetPagedActionDocAsync(GetActionDocumentsInput input);
+        Task<APIResultDto> ExportActionDocumentAsync(GetActionDocumentsInput input);
     }
 }

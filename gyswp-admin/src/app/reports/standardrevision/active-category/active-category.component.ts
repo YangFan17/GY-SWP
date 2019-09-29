@@ -1,47 +1,88 @@
 import { Component, OnInit, ViewChild, Output, EventEmitter, Injector } from '@angular/core';
-import { AppComponentBase } from '@shared/component-base';
+import { AppComponentBase, PagedListingComponentBase, PagedRequestDto, PagedResultDto } from '@shared/component-base';
 import { NzTreeComponent, NzDropdownContextComponent, NzTreeNode, NzModalRef, NzDropdownService, NzModalService, NzFormatEmitEvent } from 'ng-zorro-antd';
+import { StandardRevisionService } from 'services';
+import { Router } from '@angular/router';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     moduleId: module.id,
     selector: 'active-category',
     templateUrl: 'active-category.component.html',
-    styleUrls: ['active-category.component.scss']
+    providers: [StandardRevisionService]
 })
-export class ActiveCategoryComponent extends AppComponentBase implements OnInit {
+export class ActiveCategoryComponent extends PagedListingComponentBase<any>{
     @ViewChild('treeCom') treeCom: NzTreeComponent;
-    activedNode: NzTreeNode;
     nodes = [];
-    searchName;
-    @Output() selectedCategory = new EventEmitter<any>();
-
-    constructor(injector: Injector, private nzDropdownService: NzDropdownService
-        , private modal: NzModalService) {
+    selectedCategory: any = { id: '', name: '' };
+    constructor(injector: Injector
+        , private router: Router
+        , private standardRevisionService: StandardRevisionService
+    ) {
         super(injector);
     }
 
     ngOnInit(): void {
-        // this.getTreeAsync();
-    }
-
-    openFolder(data: NzTreeNode | NzFormatEmitEvent): void {
-        if (data instanceof NzTreeNode) {
-            data.isExpanded = !data.isExpanded;
-        } else {
-            data.node.isExpanded = !data.node.isExpanded;
-        }
+        this.getTrees();
     }
 
     activeNode(data: NzFormatEmitEvent): void {
-        if (this.activedNode) {
-            this.treeCom.nzTreeService.setSelectedNodeList(this.activedNode, false);
+        this.selectedCategory = { id: data.node.key, name: data.node.title };
+        this.refreshData();
+    }
+
+    getTrees() {
+        this.standardRevisionService.getActiveCategoryTree().subscribe((data) => {
+            this.nodes = data;
+            this.refreshData()
+        });
+    }
+
+    refresh(): void {
+        this.getDataPage(this.pageNumber);
+    }
+    refreshData() {
+        this.pageNumber = 1;
+        this.refresh();
+    }
+
+    protected fetchDataList(request: PagedRequestDto, pageNumber: number, finishedCallback: Function): void {
+        let params: any = {};
+        params.SkipCount = request.skipCount;
+        params.MaxResultCount = request.maxResultCount;
+        if (this.selectedCategory.id) {
+            params.CategoryId = this.selectedCategory.id;
         }
-        data.node.isSelected = true;
-        this.activedNode = data.node;
-        if (this.selectedCategory) {
-            var catg = { id: this.activedNode.key, name: this.activedNode.title };
-            this.selectedCategory.emit(catg);
+        this.standardRevisionService.getActionDocumentList(params)
+            .finally(() => {
+                finishedCallback();
+            })
+            .subscribe((result: PagedResultDto) => {
+                this.dataList = result.items
+                this.totalItems = result.totalCount;
+            });
+    }
+
+    export() {
+        this.isTableLoading = true;
+        let params: any = {};
+        if (this.selectedCategory.id) {
+            params.CategoryId = this.selectedCategory.id;
         }
-        this.treeCom.nzTreeService.setSelectedNodeList(this.activedNode, false);
+        this.standardRevisionService.exportActionDocument(params).finally(() => {
+            this.isTableLoading = false;
+        }).subscribe((data => {
+            if (data.code == 0) {
+                var url = AppConsts.remoteServiceBaseUrl + data.data;
+                document.getElementById('exportUrl').setAttribute('href', url);
+                document.getElementById('btnExportHref').click();
+            } else {
+                this.notify.error(data.msg);
+            }
+        }));
+    }
+
+    return() {
+        this.router.navigate(['app/reports/standardrevision']);
     }
 }

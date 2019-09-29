@@ -11,6 +11,7 @@ import { ConfirmDetailComponent } from './standard-confirm/confirm-detail/confir
 import { RevisionDocComponent } from './standardrevision/revision-doc/revision-doc.component';
 import { RevisionDraftComponent } from './standardrevision/revision-draft/revision-draft.component';
 import { RevisionDetailComponent } from './standardrevision/revision-draft/revision-detail/revision-detail.component';
+import { ActiveCategoryComponent } from './standardrevision/active-category/active-category.component';
 
 
 
@@ -58,6 +59,11 @@ const routes: Routes = [
     {
         path: 'revision-draft/:id/:deptId/:type/:date',
         component: RevisionDraftComponent,
+        canActivate: [AppRouteGuard]
+    },
+    {
+        path: 'acitve-statistics',
+        component: ActiveCategoryComponent,
         canActivate: [AppRouteGuard]
     }
 ];
