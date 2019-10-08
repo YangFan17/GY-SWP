@@ -9,7 +9,7 @@
         <sv label="归口部门">{{docInfo.deptName}}</sv>
         <sv label="标准分类">{{docInfo.categoryDesc}}</sv>
         <sv label="标准状态"><label *ngIf="docStamps" style="color:red">[{{docStamps}}]</label></sv>
-        <sv label="发布时间">{{docInfo.publishTime | date: "yyyy-MM-dd"}}</sv>
+        <sv label="发布日期">{{docInfo.publishTime | date: "yyyy-MM-dd"}}</sv>
         <sv *ngIf="docInfo.creatorUserName" label="创建人">{{docInfo.creatorUserName}}</sv>
         <sv label="创建时间">{{docInfo.creationTime | date: "yyyy-MM-dd"}}</sv>
     </sv-container>

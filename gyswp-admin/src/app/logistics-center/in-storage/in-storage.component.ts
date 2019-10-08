@@ -23,15 +23,12 @@ export class InStorageComponent extends PagedListingComponentBase<any>{
     }
 
     ngOnInit() {
-        console.log(1);
     }
 
     refresh(): void {
         this.getDataPage(this.pageNumber);
     }
     refreshData() {
-        console.log("hello");
-
         this.pageNumber = 1;
         this.refresh();
     }

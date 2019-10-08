@@ -11,7 +11,6 @@ import { Router } from '@angular/router';
   providers: [StandardRevisionService]
 })
 export class StandardrevisionComponent extends AppComponentBase implements OnInit {
-
   @ViewChild('detpTree') detpTree: NzTreeComponent;
   nodes: any[];
   selectedDept: any = { id: '', name: '' };
@@ -49,7 +48,11 @@ export class StandardrevisionComponent extends AppComponentBase implements OnIni
 
   goTotalCurrent(type: number) {
     var date = this.dateFormat(this.date);
-    this.router.navigate(['app/reports/revision-doc', this.search.deptId, type, date]);
+    if (type == 1 && this.selectedDept.id == '1') {
+      this.router.navigate(['app/reports/acitve-statistics']);
+    } else {
+      this.router.navigate(['app/reports/revision-doc', this.search.deptId, type, date]);
+    }
   }
 
   // 选中节点
@@ -67,7 +70,7 @@ export class StandardrevisionComponent extends AppComponentBase implements OnIni
     this.month = this.date.getMonth() + 1;
     this.isTableLoading = true;
     //alert(this.month)
-    this.standardRevisionService.GetSearchStandardRevisions(this.search).subscribe((data) => {
+    this.standardRevisionService.getSearchStandardRevisions(this.search).subscribe((data) => {
       this.dataList = data;
       this.isTableLoading = false;
     });

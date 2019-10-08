@@ -1,24 +1,16 @@
 
 using System;
-using System.Data;
 using System.Linq;
-using System.Linq.Dynamic;
 using System.Linq.Dynamic.Core;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-
-using Abp.UI;
 using Abp.AutoMapper;
-using Abp.Extensions;
 using Abp.Authorization;
 using Abp.Domain.Repositories;
 using Abp.Application.Services.Dto;
 using Abp.Linq.Extensions;
 
-
-using GYSWP.Documents;
 using GYSWP.Documents.Dtos;
 using GYSWP.Documents.DomainService;
 using GYSWP.Employees.Dtos;
@@ -44,6 +36,10 @@ using GYSWP.GYEnums;
 using GYSWP.ApplyInfos;
 using GYSWP.ClauseRevisions;
 using Abp.Domain.Uow;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using GYSWP.Helpers;
+using Microsoft.AspNetCore.Hosting;
 
 namespace GYSWP.Documents
 {
@@ -67,6 +63,8 @@ namespace GYSWP.Documents
         private readonly IRepository<DocRevision, Guid> _docRevisionRepository;
         private readonly IRepository<ApplyInfo, Guid> _applyInfoRepository;
         private readonly IRepository<ClauseRevision, Guid> _clauseRevisionRepository;
+        private readonly IHostingEnvironment _hostingEnvironment;
+
         /// <summary>
         /// 构造函数 
         ///</summary>
@@ -85,6 +83,7 @@ namespace GYSWP.Documents
         , IRepository<ApplyInfo, Guid> applyInfoRepository
         , IRepository<ClauseRevision, Guid> clauseRevisionRepository
         , IRepository<DocRevision, Guid> docRevisionRepository
+        , IHostingEnvironment hostingEnvironment
         )
         {
             _userManager = userManager;
@@ -101,6 +100,7 @@ namespace GYSWP.Documents
             _applyInfoRepository = applyInfoRepository;
             _clauseRevisionRepository = clauseRevisionRepository;
             _docRevisionRepository = docRevisionRepository;
+            _hostingEnvironment = hostingEnvironment;
         }
 
 
@@ -421,7 +421,7 @@ namespace GYSWP.Documents
             }
             else
             {
-                 deptId = deptStr.Replace('[', ' ').Replace(']', ' ').Trim();
+                deptId = deptStr.Replace('[', ' ').Replace(']', ' ').Trim();
             }
             var query = _entityRepository.GetAll().Where(v => v.IsAction == true && (v.PublishTime.HasValue ? v.PublishTime <= DateTime.Today : false) && (v.IsAllUser == true || v.DeptIds.Contains(deptId) || v.EmployeeIds.Contains(curUser.EmployeeId)))
                 //.WhereIf(input.CategoryId.HasValue, v => v.CategoryId == input.CategoryId)
@@ -443,7 +443,7 @@ namespace GYSWP.Documents
                              DeptName = o.DepartmentName
                          };
             var count = await result.CountAsync();
-            var entityListDtos = await result.OrderBy(v => v.DeptName).ThenBy(v => v.CategoryDesc).ThenByDescending(v => v.PublishTime).AsNoTracking().PageBy(input).ToListAsync();
+            var entityListDtos = await result.OrderBy(v => v.DeptName).ThenBy(v => v.CategoryDesc).ThenByDescending(v => v.PublishTime).PageBy(input).ToListAsync();
             // var entityListDtos = ObjectMapper.Map<List<DocumentListDto>>(entityList);
             //var entityListDtos = entityList.MapTo<List<DocumentListDto>>();
             //var count = await query.CountAsync();
@@ -603,8 +603,12 @@ namespace GYSWP.Documents
         /// <returns></returns>
         public async Task<PagedResultDto<DocumentConfirmDto>> GetReportDocumentConfirmsListAsync(GetDocumentsInput input)
         {
-            var categoryIds = await _categoryRepository.GetAll().Where(v => v.DeptId == input.DeptId).Select(v => v.Id).ToArrayAsync();
-            var query = _entityRepository.GetAll().Where(v => categoryIds.Contains(v.CategoryId) && v.IsAction == true).WhereIf(!string.IsNullOrEmpty(input.KeyWord), v => v.Name.Contains(input.KeyWord) || v.DocNo.Contains(input.KeyWord));
+            //改为只看现行标准下的技术标准，管理标准
+            int zuofeiCategoryId = await _categoryRepository.GetAll().Where(v => v.DeptId == input.DeptId && v.Name == "作废标准库").Select(v => v.Id).FirstOrDefaultAsync();
+            int zuofeiWlwjId = await _categoryRepository.GetAll().Where(v => v.DeptId == input.DeptId && v.Name == "外来文件" && v.ParentId == zuofeiCategoryId).Select(v => v.Id).FirstOrDefaultAsync();
+            int[] curDeptValidId = await _categoryRepository.GetAll().Where(v => v.DeptId == input.DeptId && v.ParentId != 0 && v.ParentId != zuofeiCategoryId && v.ParentId != zuofeiWlwjId && (v.Name == "管理标准" || v.Name == "技术标准")).Select(v => v.Id).ToArrayAsync();
+            //var categoryIds = await _categoryRepository.GetAll().Where(v => v.DeptId == input.DeptId).Select(v => v.Id).ToArrayAsync();
+            var query = _entityRepository.GetAll().Where(v => curDeptValidId.Contains(v.CategoryId) && v.IsAction == true).WhereIf(!string.IsNullOrEmpty(input.KeyWord), v => v.Name.Contains(input.KeyWord) || v.DocNo.Contains(input.KeyWord));
             var entityList = await query.OrderBy(v => v.CategoryId).ThenByDescending(v => v.PublishTime).AsNoTracking().PageBy(input).ToListAsync();
 
             var entityListDtos = entityList.MapTo<List<DocumentConfirmDto>>();
@@ -1009,7 +1013,118 @@ namespace GYSWP.Documents
             result.DeptName = deptName;
             return result;
         }
+
+        /// <summary>
+        /// 标准统计-现行标准分类统计
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<PagedResultDto<DocumentTitleDto>> GetPagedActionDocAsync(GetActionDocumentsInput input)
+        {
+            var query = _entityRepository.GetAll().Where(v => v.IsAction == true && v.CategoryDesc != "现行标准库" && v.CategoryDesc != "上级文件")
+                .WhereIf(input.CategoryId.HasValue, v => v.CategoryDesc.Contains(input.CategoryId.ToString())).AsNoTracking();
+            var cate = _categoryRepository.GetAll().AsNoTracking();
+            var org = _organizationRepository.GetAll().AsNoTracking();
+            var result = from q in query
+                         join c in cate on q.CategoryId equals c.Id
+                         join o in org on c.DeptId equals o.Id
+                         select new DocumentTitleDto()
+                         {
+                             Id = q.Id,
+                             DocNo = q.DocNo,
+                             Name = q.Name,
+                             PublishTime = q.PublishTime,
+                             DeptName = o.DepartmentName
+                         };
+            var count = await result.CountAsync();
+            var entityListDtos = await result.OrderBy(v => v.DeptName).ThenByDescending(v => v.PublishTime).PageBy(input).ToListAsync();
+            return new PagedResultDto<DocumentTitleDto>(count, entityListDtos);
+        }
+
+        /// <summary>
+        /// 现行标准数据导出
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<APIResultDto> ExportActionDocumentAsync(GetActionDocumentsInput input)
+        {
+            try
+            {
+                var exportData = await GetActionDocumentForExcel(input);
+                var result = new APIResultDto();
+                result.Code = 0;
+                result.Data = CreateActionDocumentExcel("现行标准数据导出.xlsx", exportData);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Logger.ErrorFormat("ExportConveyorChecksRecord errormsg{0} Exception{1}", ex.Message, ex);
+                return new APIResultDto() { Code = 901, Msg = "网络忙...请待会儿再试！" };
+
+            }
+        }
+
+        private async Task<List<DocumentTitleDto>> GetActionDocumentForExcel(GetActionDocumentsInput input)
+        {
+            var query = _entityRepository.GetAll().Where(v => v.IsAction == true && v.CategoryDesc != "现行标准库" && v.CategoryDesc != "上级文件")
+              .WhereIf(input.CategoryId.HasValue, v => v.CategoryDesc.Contains(input.CategoryId.ToString())).AsNoTracking();
+            var cate = _categoryRepository.GetAll().AsNoTracking();
+            var org = _organizationRepository.GetAll().AsNoTracking();
+            var result = from q in query
+                         join c in cate on q.CategoryId equals c.Id
+                         join o in org on c.DeptId equals o.Id
+                         select new DocumentTitleDto()
+                         {
+                             Id = q.Id,
+                             DocNo = q.DocNo,
+                             Name = q.Name,
+                             PublishTime = q.PublishTime,
+                             DeptName = o.DepartmentName
+                         };
+            var list = await result.OrderBy(v => v.DeptName).ThenByDescending(v => v.PublishTime).ToListAsync();
+            return list;
+        }
+
+        /// <summary>
+        /// 生成现行标准库EXCEL表
+        /// </summary>
+        /// <param name="fileName">表名</param>
+        /// <param name="data">表数据</param>
+        /// <returns></returns>
+        private string CreateActionDocumentExcel(string fileName, List<DocumentTitleDto> data)
+        {
+            var fullPath = ExcelHelper.GetSavePath(_hostingEnvironment.WebRootPath) + fileName;
+            using (var fs = new FileStream(fullPath, FileMode.Create, FileAccess.Write))
+            {
+                IWorkbook workbook = new XSSFWorkbook();
+                ISheet sheet = workbook.CreateSheet("数据统计");
+                var rowIndex = 0;
+                IRow titleRow = sheet.CreateRow(rowIndex);
+                string[] titles = { "标准编号", "标准名称", "归口部门", "发布日期"};
+                var fontTitle = workbook.CreateFont();
+                fontTitle.IsBold = true;
+                for (int i = 0; i < titles.Length; i++)
+                {
+                    var cell = titleRow.CreateCell(i);
+                    cell.CellStyle.SetFont(fontTitle);
+                    cell.SetCellValue(titles[i]);
+                }
+                var font = workbook.CreateFont();
+                foreach (var item in data)
+                {
+                    rowIndex++;
+                    IRow row = sheet.CreateRow(rowIndex);
+                    ExcelHelper.SetCell(row.CreateCell(0), font, item.DocNo);
+                    ExcelHelper.SetCell(row.CreateCell(1), font, item.Name);
+                    ExcelHelper.SetCell(row.CreateCell(2), font, item.DeptName);
+                    ExcelHelper.SetCell(row.CreateCell(3), font, item.PublishTime.Value.ToString("yyyy-MM-dd"));
+                }
+                workbook.Write(fs);
+            }
+            return "/files/downloadtemp/" + fileName;
+        }
     }
+
     public class SectionNo
     {
         public SectionNo(string no)

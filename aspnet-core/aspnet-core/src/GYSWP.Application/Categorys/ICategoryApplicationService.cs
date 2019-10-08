@@ -78,5 +78,6 @@ namespace GYSWP.Categorys
         Task<List<SelectGroups>> GetCategoryTypeByDeptAsync();
         Task<APIResultDto> InitDeptmentCategory();
         Task<List<SelectGroups>> GetDraftDocCategoryAsync();
+        Task<List<NzTreeNode>> GetActiveCategoryTreeAsync();
     }
 }

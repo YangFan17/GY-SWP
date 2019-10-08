@@ -9,8 +9,8 @@
 <div nz-row>
     <div nz-col nzSpan="24">
         <div *ngIf="nodes && nodes.length > 0">
-            <nz-tree #treeCom [nzData]="nodes" nzMultiple="true" (nzClick)="activeNode($event)"
-                [nzSearchValue]="searchName" (nzSearchValueChange)="nzEvent($event)" (nzDblClick)="openFolder($event)">
+            <nz-tree #treeCom [nzData]="nodes" (nzClick)="activeNode($event)" [nzSearchValue]="searchName"
+                (nzSearchValueChange)="nzEvent($event)" (nzDblClick)="openFolder($event)">
                 <ng-template #contextTemplate>
                     <ul nz-menu nzInDropDown>
                         <li *ngIf="showMenu" nz-menu-item (click)="edit()">修改分类</li>

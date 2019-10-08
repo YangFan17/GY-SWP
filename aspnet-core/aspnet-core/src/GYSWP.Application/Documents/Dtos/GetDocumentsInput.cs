@@ -80,6 +80,21 @@ namespace GYSWP.Documents.Dtos
         public ReportDocEnum Type { get; set; }
     }
 
+    public class GetActionDocumentsInput : PagedSortedAndFilteredInputDto, IShouldNormalize
+    {
+        public ActionCategoryEnum? CategoryId { get; set; }
+        /// <summary>
+        /// 正常化排序使用
+        /// </summary>
+        public void Normalize()
+        {
+            if (string.IsNullOrEmpty(Sorting))
+            {
+                Sorting = "Id";
+            }
+        }
+    }
+
     public enum ReportDocEnum
     {
         现行标准总数 = 1,
@@ -88,5 +103,17 @@ namespace GYSWP.Documents.Dtos
         标准修订个数 = 4,
         标准修订条数 = 5,
         标准废止个数 = 6
+    }
+
+    public enum ActionCategoryEnum
+    {
+        技术标准 = 0,
+        管理标准 = 1,
+        工作标准 = 2,
+        法律法规 = 3,
+        上级文件 = 4,
+        外来标准 = 5,
+        风险库 = 6,
+        现行标准库 = 999
     }
 }

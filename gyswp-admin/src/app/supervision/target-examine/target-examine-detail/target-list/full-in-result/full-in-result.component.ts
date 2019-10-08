@@ -65,7 +65,7 @@ export class FullInResultComponent extends ModalComponentBase implements OnInit 
                 input.status = 3;
             }
         } else {
-            if (this.indicatorDetail.actualValue === this.indicator.expectedValue) {
+            if (this.indicatorDetail.actualValue == this.indicator.expectedValue) {
                 input.status = 2;
             }
             else {
