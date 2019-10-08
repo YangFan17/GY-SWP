@@ -63,7 +63,7 @@ namespace GYSWP.Web.Host.Controllers
                     var uid = Guid.NewGuid().ToString();
                     string newFileName = uid + fileExt; //随机生成新的文件名
                     //var fileDire = webRootPath + @"D:\gyswpData\docfiles/";
-                    var fileDire = @"E:\gyswpData\docfiles/";
+                    var fileDire = @"C:\gyswpData\docfiles/";
                     if (!Directory.Exists(fileDire))
                     {
                         Directory.CreateDirectory(fileDire);
@@ -111,7 +111,7 @@ namespace GYSWP.Web.Host.Controllers
                     fileSize = formFile.Length; //获得文件大小，以字节为单位
                     var uid = Guid.NewGuid().ToString();
                     string newFileName = uid + fileExt; //随机生成新的文件名
-                    var fileDire = @"E:\gyswpData\clausefiles/";
+                    var fileDire = @"C:\gyswpData\clausefiles/";
                     if (!Directory.Exists(fileDire))
                     {
                         Directory.CreateDirectory(fileDire);
@@ -154,7 +154,7 @@ namespace GYSWP.Web.Host.Controllers
                     fileSize = formFile.Length; //获得文件大小，以字节为单位
                     var uid = Guid.NewGuid().ToString();
                     string newFileName = uid + fileExt; //随机生成新的文件名
-                    var fileDire = @"E:\gyswpData\examinefiles/";
+                    var fileDire = @"C:\gyswpData\examinefiles/";
                     if (!Directory.Exists(fileDire))
                     {
                         Directory.CreateDirectory(fileDire);
@@ -195,7 +195,7 @@ namespace GYSWP.Web.Host.Controllers
             //string time = Convert.ToInt64(ts.TotalSeconds).ToString();
             //var fileDire = webRootPath + "/txtUpload/" + Guid.NewGuid();
             //var fileDire = webRootPath + "/txtUpload/" + Guid.NewGuid();
-            var fileDire = @"E:\gyswpData\txtUpload/" + Guid.NewGuid();
+            var fileDire = @"C:\gyswpData\txtUpload/" + Guid.NewGuid();
 
             if (!Directory.Exists(fileDire))
             {
@@ -243,7 +243,7 @@ namespace GYSWP.Web.Host.Controllers
             var filePath = string.Empty;
             var fileName = string.Empty;
             string fileExt = string.Empty;
-            var fileDire = @"E:\gyswpData\positionUpload/" + Guid.NewGuid();
+            var fileDire = @"C:\gyswpData\positionUpload/" + Guid.NewGuid();
 
             if (!Directory.Exists(fileDire))
             {
@@ -282,7 +282,7 @@ namespace GYSWP.Web.Host.Controllers
             var files = Request.Form.Files;
             var filePath = string.Empty;
             var returnUrl = string.Empty;
-            var fileDire = @"E:\gyswpData\logisticsPic";
+            var fileDire = @"C:\gyswpData\logisticsPic";
             foreach (var formFile in files)
             {
                 if (formFile.Length > 0)

@@ -1349,7 +1349,7 @@ namespace GYSWP.CriterionExamines
         public async Task<List<CriterionExamineListDto>> GetPagedExamineByDingIdAsync(GetCriterionExaminesInput input)
         {
             Guid[] examineIds = await _examineDetailRepository.GetAll().Where(v => v.EmployeeId == input.EmployeeId).GroupBy(v => new { v.CriterionExamineId }).Select(v => v.Key.CriterionExamineId).ToArrayAsync();
-            var query = _entityRepository.GetAll().Where(v => examineIds.Contains(v.Id));
+            var query = _entityRepository.GetAll().Where(v => examineIds.Contains(v.Id) && v.IsPublish == true);
             var count = await query.CountAsync();
             var entityList = await query
                     .OrderBy(input.Sorting).AsNoTracking()
