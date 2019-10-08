@@ -282,7 +282,7 @@ namespace GYSWP.Web.Host.Controllers
             var files = Request.Form.Files;
             var filePath = string.Empty;
             var returnUrl = string.Empty;
-            var fileDire = @"C:\gyswpData\logisticsPic";
+            var fileDire = @"E:\gyswpData\logisticsPic";
             foreach (var formFile in files)
             {
                 if (formFile.Length > 0)

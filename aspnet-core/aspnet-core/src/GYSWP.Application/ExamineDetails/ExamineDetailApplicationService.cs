@@ -201,7 +201,7 @@ namespace GYSWP.ExamineDetails
         {
             foreach (var item in input)
             {
-                await _entityRepository.DeleteAsync(v=>v.Id == item);
+                await _entityRepository.DeleteAsync(v => v.Id == item);
             }
         }
 
@@ -310,7 +310,7 @@ namespace GYSWP.ExamineDetails
                                 {
                                     Id = q.Id,
                                     DocumentName = d.Name,
-                                    ClauseInfo = c.ClauseNo + "\t" + (c.Title==null?"":c.Title) + "\r\n" + (c.Content==null?"":c.Content),
+                                    ClauseInfo = c.ClauseNo + "\t" + (c.Title == null ? "" : c.Title) + "\r\n" + (c.Content == null ? "" : c.Content),
                                     Status = q.Status,
                                     Result = q.Result,
                                     EmployeeName = q.EmployeeName
@@ -341,7 +341,7 @@ namespace GYSWP.ExamineDetails
         {
             var query = _entityRepository.GetAll().Where(v => v.EmployeeId == input.EmployeeId);
             var doc = _documentRepository.GetAll().Select(v => new { v.Id, v.Name });
-            var criExamine = _criterionExamineRepository.GetAll();
+            var criExamine = _criterionExamineRepository.GetAll().Where(v => v.IsPublish == true);
             var list = (from q in query
                         join d in doc on q.DocumentId equals d.Id
                         join c in criExamine on q.CriterionExamineId equals c.Id
@@ -383,7 +383,7 @@ namespace GYSWP.ExamineDetails
                             Id = q.Id,
                             DocumentName = d.Name,
                             //ClauseInfo = c.ClauseNo + c.Title != null ? "-" + (c.Title.Length > 15 ? c.Title.Substring(0, 15) + "..." : c.Title) : null + c.Content != null ? "-" + (c.Content.Length > 50 ? c.Content.Substring(0, 50) + "..." : c.Content) : null,
-                            ClauseInfo = c.ClauseNo + (c.Title != null ? (c.Title.Length > 15 ? "-"+c.Title.Substring(0, 15) + "...-" : "-" + c.Title+"-") : "-")
+                            ClauseInfo = c.ClauseNo + (c.Title != null ? (c.Title.Length > 15 ? "-" + c.Title.Substring(0, 15) + "...-" : "-" + c.Title + "-") : "-")
                             + (c.Content != null ? (c.Content.Length > 15 ? c.Content.Substring(0, 15) + "..." : c.Content) : ""),
                             Status = q.Status,
                             Result = q.Result,
@@ -396,5 +396,3 @@ namespace GYSWP.ExamineDetails
         }
     }
 }
-
-
