@@ -3,6 +3,7 @@ import { ModalComponentBase } from '@shared/component-base';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd';
 import { SupervisionService } from 'services';
 import { ExamineRecord } from 'entities';
+import { QuestionBankDetailComponent } from './question-bank-detail/question-bank-detail.component';
 
 @Component({
     moduleId: module.id,
@@ -65,6 +66,21 @@ export class QuestionBankComponent extends ModalComponentBase {
                 })
             }
         });
+    }
+
+    goDetail(id: string): void {
+        if (id) {
+            this.modalHelper
+                .open(QuestionBankDetailComponent, { id: id }, 950, {
+                    nzMask: true,
+                    nzClosable: false,
+                    nzMaskClosable: false,
+                })
+                .subscribe(isSave => {
+                    if (isSave) {
+                    }
+                });
+        }
     }
 
     remove(id: string): void {

@@ -147,6 +147,10 @@ namespace GYSWP.ExamineDetails.Dtos
         {
             get { return Result.ToString(); }
         }
+        /// <summary>
+        /// 条款id 创建考核表详情用
+        /// </summary>
+        public Guid? ClauseId { get; set; }
     }
 
     public class ExamineListDto : EntityDto<Guid>

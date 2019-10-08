@@ -1,0 +1,21 @@
+<!--component html goes here -->
+<div class="padding-bottom-45">
+    <h3 style="text-align: center;">
+        <span>{{title}}</span>
+    </h3>
+    <form nz-form *ngIf="clause">
+        <nz-form-item nz-row>
+            <nz-form-control [nzSm]="24">
+                <textarea readonly nz-input nzAutosize name="content" #content="ngModel" [(ngModel)]="txt"></textarea>
+            </nz-form-control>
+        </nz-form-item>
+        <!-- 功能按钮 -->
+        <div class="custom-modal-footer" style="text-align: right;">
+            <div class="custom-modal-footter-group">
+                <button nz-button type="button" [disabled]="saving" (click)="close()">
+                    确定
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

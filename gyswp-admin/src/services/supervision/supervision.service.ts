@@ -4,7 +4,7 @@ import { CommonHttpClient } from "services/common-httpclient";
 import { map } from "rxjs/operators";
 import { API_BASE_URL } from "@shared/service-proxies/service-proxies";
 import { NzTreeNode } from "ng-zorro-antd";
-import { Employee, ApiResult, CriterionExamine, ExamineRecord, ExamineResult, Attachment, ExamineFeedback, Indicators, IndicatorShowDto } from "entities";
+import { Employee, ApiResult, CriterionExamine, ExamineRecord, ExamineResult, Attachment, ExamineFeedback, Indicators, IndicatorShowDto, Clause } from "entities";
 import { PagedResultDto } from "@shared/component-base";
 @Injectable()
 export class SupervisionService {
@@ -334,6 +334,13 @@ export class SupervisionService {
             result.items = data.items;
             result.totalCount = data.totalCount;
             return result;
+        }));
+    }
+
+    getClauseByIdAsync(id: any): Observable<Clause> {
+        let url_ = "/api/services/app/Clause/getById";
+        return this._commonhttp.get(url_, { id: id }).pipe(map(data => {
+            return Clause.fromJS(data);
         }));
     }
 }

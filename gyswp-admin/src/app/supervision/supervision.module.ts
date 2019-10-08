@@ -23,6 +23,7 @@ import { QgExamineRecordComponent } from './criterion-examine/qg-examine-record/
 import { FullInResultComponent } from './target-examine/target-examine-detail/target-list/full-in-result/full-in-result.component';
 import { TargetSourceDocComponent } from './target-examine/target-examine-detail/target-source-doc/target-source-doc.component';
 import { PublishConfirmComponent } from './target-examine/target-examine-detail/target-list/publish-confirm/publish-confirm.component';
+import { QuestionBankDetailComponent } from './criterion-examine/question-bank/question-bank-detail/question-bank-detail.component';
 
 @NgModule({
     imports: [
@@ -51,7 +52,8 @@ import { PublishConfirmComponent } from './target-examine/target-examine-detail/
         QgExamineRecordComponent,
         FullInResultComponent,
         TargetSourceDocComponent,
-        PublishConfirmComponent
+        PublishConfirmComponent,
+        QuestionBankDetailComponent
     ],
     entryComponents: [
         CriterionExamineComponent,
@@ -70,7 +72,8 @@ import { PublishConfirmComponent } from './target-examine/target-examine-detail/
         QgExamineRecordComponent,
         FullInResultComponent,
         TargetSourceDocComponent,
-        PublishConfirmComponent
+        PublishConfirmComponent,
+        QuestionBankDetailComponent
     ],
     providers: [SupervisionService]
 })
