@@ -225,7 +225,8 @@ namespace GYSWP.ExamineDetails
                             DocumentName = d.Name,
                             ClauseInfo = c.ClauseNo + (c.Title != null ? (c.Title.Length > 15 ? "-" + c.Title.Substring(0, 15) + "...-" : "-" + c.Title + "-") : "-")
                             + (c.Content != null ? (c.Content.Length > 15 ? c.Content.Substring(0, 15) + "..." : c.Content) : ""),
-                            EmployeeName = q.EmployeeName
+                            EmployeeName = q.EmployeeName,
+                            ClauseId = c.Id
                         });
             var entityList = await list.OrderBy(v => v.Status).ThenBy(v => v.EmployeeName).ThenBy(v => v.DocumentName).ToListAsync();
             return entityList;

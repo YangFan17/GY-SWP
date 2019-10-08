@@ -6,6 +6,7 @@ export class ExamineRecord {
     result: number;
     employeeName: string;
     checked: boolean;
+    clauseId: string;
     constructor(data?: any) {
         if (data) {
             for (var property in data) {
@@ -23,6 +24,7 @@ export class ExamineRecord {
             this.employeeName = data["employeeName"];
             this.result = data["result"];
             this.checked = data["checked"];
+            this.clauseId = data["clauseId"];
         }
     }
     toJSON(data?: any) {
