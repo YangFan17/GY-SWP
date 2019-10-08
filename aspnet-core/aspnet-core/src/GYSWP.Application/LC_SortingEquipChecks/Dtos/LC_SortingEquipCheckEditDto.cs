@@ -34,160 +34,140 @@ namespace  GYSWP.LC_SortingEquipChecks.Dtos
 		/// <summary>
 		/// IsChainPlateOk
 		/// </summary>
-		[Required(ErrorMessage="IsChainPlateOk不能为空")]
-		public bool IsChainPlateOk { get; set; }
+		public bool? IsChainPlateOk { get; set; }
 
 
 
 		/// <summary>
 		/// IsControlSwitchOk
 		/// </summary>
-		[Required(ErrorMessage="IsControlSwitchOk不能为空")]
-		public bool IsControlSwitchOk { get; set; }
+		public bool? IsControlSwitchOk { get; set; }
 
 
 
 		/// <summary>
 		/// IsElcOrGasBad
 		/// </summary>
-		[Required(ErrorMessage="IsElcOrGasBad不能为空")]
-		public bool IsElcOrGasBad { get; set; }
+		public bool? IsElcOrGasBad { get; set; }
 
 
 
 		/// <summary>
 		/// IsLiftUp
 		/// </summary>
-		[Required(ErrorMessage="IsLiftUp不能为空")]
-		public bool IsLiftUp { get; set; }
+		public bool? IsLiftUp { get; set; }
 
 
 
 		/// <summary>
 		/// IsSortSysOk
 		/// </summary>
-		[Required(ErrorMessage="IsSortSysOk不能为空")]
-		public bool IsSortSysOk { get; set; }
+		public bool? IsSortSysOk { get; set; }
 
 
 
 		/// <summary>
 		/// IsChanDirty
 		/// </summary>
-		[Required(ErrorMessage="IsChanDirty不能为空")]
-		public bool IsChanDirty { get; set; }
+		public bool? IsChanDirty { get; set; }
 
 
 
 		/// <summary>
 		/// IsCutSealDirty
 		/// </summary>
-		[Required(ErrorMessage="IsCutSealDirty不能为空")]
-		public bool IsCutSealDirty { get; set; }
+		public bool? IsCutSealDirty { get; set; }
 
 
 
 		/// <summary>
 		/// IsBZJControlSwitchOk
 		/// </summary>
-		[Required(ErrorMessage="IsBZJControlSwitchOk不能为空")]
-		public bool IsBZJControlSwitchOk { get; set; }
+		public bool? IsBZJControlSwitchOk { get; set; }
 
 
 
 		/// <summary>
 		/// IsBZJElcOrGasBad
 		/// </summary>
-		[Required(ErrorMessage="IsBZJElcOrGasBad不能为空")]
-		public bool IsBZJElcOrGasBad { get; set; }
+		public bool? IsBZJElcOrGasBad { get; set; }
 
 
 
 		/// <summary>
 		/// IsTempOk
 		/// </summary>
-		[Required(ErrorMessage="IsTempOk不能为空")]
-		public bool IsTempOk { get; set; }
+		public bool? IsTempOk { get; set; }
 
 
 
 		/// <summary>
 		/// IsBZJSysOk
 		/// </summary>
-		[Required(ErrorMessage="IsBZJSysOk不能为空")]
-		public bool IsBZJSysOk { get; set; }
+		public bool? IsBZJSysOk { get; set; }
 
 
 
 		/// <summary>
 		/// IsStoveOk
 		/// </summary>
-		[Required(ErrorMessage="IsStoveOk不能为空")]
-		public bool IsStoveOk { get; set; }
+		public bool? IsStoveOk { get; set; }
 
 
 
 		/// <summary>
 		/// IsLabelingOk
 		/// </summary>
-		[Required(ErrorMessage="IsLabelingOk不能为空")]
-		public bool IsLabelingOk { get; set; }
+		public bool? IsLabelingOk { get; set; }
 
 
 
 		/// <summary>
 		/// IsTBJElcOrGasBad
 		/// </summary>
-		[Required(ErrorMessage="IsTBJElcOrGasBad不能为空")]
-		public bool IsTBJElcOrGasBad { get; set; }
+		public bool? IsTBJElcOrGasBad { get; set; }
 
 
 
 		/// <summary>
 		/// IsLaserShieldOk
 		/// </summary>
-		[Required(ErrorMessage="IsLaserShieldOk不能为空")]
-		public bool IsLaserShieldOk { get; set; }
+		public bool? IsLaserShieldOk { get; set; }
 
 
 
 		/// <summary>
 		/// IsLineOrMachineOk
 		/// </summary>
-		[Required(ErrorMessage="IsLineOrMachineOk不能为空")]
-		public bool IsLineOrMachineOk { get; set; }
+		public bool? IsLineOrMachineOk { get; set; }
 
 
 
 		/// <summary>
 		/// IsCigaretteHouseOk
 		/// </summary>
-		[Required(ErrorMessage="IsCigaretteHouseOk不能为空")]
-		public bool IsCigaretteHouseOk { get; set; }
+		public bool? IsCigaretteHouseOk { get; set; }
 
 
 
 		/// <summary>
 		/// IsSingleOk
 		/// </summary>
-		[Required(ErrorMessage="IsSingleOk不能为空")]
-		public bool IsSingleOk { get; set; }
+		public bool? IsSingleOk { get; set; }
 
 
 
 		/// <summary>
 		/// IsMainLineOk
 		/// </summary>
-		[Required(ErrorMessage="IsMainLineOk不能为空")]
-		public bool IsMainLineOk { get; set; }
+		public bool? IsMainLineOk { get; set; }
 
 
 
 		/// <summary>
 		/// IsCoderOk
 		/// </summary>
-		[Required(ErrorMessage="IsCoderOk不能为空")]
-		public bool IsCoderOk { get; set; }
+		public bool? IsCoderOk { get; set; }
 
 
 
@@ -201,56 +181,49 @@ namespace  GYSWP.LC_SortingEquipChecks.Dtos
 		/// <summary>
 		/// IsBeltDeviation
 		/// </summary>
-		[Required(ErrorMessage="IsBeltDeviation不能为空")]
-		public bool IsBeltDeviation { get; set; }
+		public bool? IsBeltDeviation { get; set; }
 
 
 
 		/// <summary>
 		/// IsFBJOk
 		/// </summary>
-		[Required(ErrorMessage="IsFBJOk不能为空")]
-		public bool IsFBJOk { get; set; }
+		public bool? IsFBJOk { get; set; }
 
 
 
 		/// <summary>
 		/// IsTBJOk
 		/// </summary>
-		[Required(ErrorMessage="IsTBJOk不能为空")]
-		public bool IsTBJOk { get; set; }
+		public bool? IsTBJOk { get; set; }
 
 
 
 		/// <summary>
 		/// IsSysOutOk
 		/// </summary>
-		[Required(ErrorMessage="IsSysOutOk不能为空")]
-		public bool IsSysOutOk { get; set; }
+		public bool? IsSysOutOk { get; set; }
 
 
 
 		/// <summary>
 		/// IsShutElcOrGas
 		/// </summary>
-		[Required(ErrorMessage="IsShutElcOrGas不能为空")]
-		public bool IsShutElcOrGas { get; set; }
+		public bool? IsShutElcOrGas { get; set; }
 
 
 
 		/// <summary>
 		/// IsDataCallback
 		/// </summary>
-		[Required(ErrorMessage="IsDataCallback不能为空")]
-		public bool IsDataCallback { get; set; }
+		public bool? IsDataCallback { get; set; }
 
 
 
 		/// <summary>
 		/// IsMachineClean
 		/// </summary>
-		[Required(ErrorMessage="IsMachineClean不能为空")]
-		public bool IsMachineClean { get; set; }
+		public bool? IsMachineClean { get; set; }
 
 
 

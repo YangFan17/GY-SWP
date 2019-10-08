@@ -68,96 +68,84 @@ namespace  GYSWP.LC_ConveyorChecks.Dtos
 		/// <summary>
 		/// IsEquiFaceClean
 		/// </summary>
-		[Required(ErrorMessage="IsEquiFaceClean不能为空")]
-		public bool IsEquiFaceClean { get; set; }
+		public bool? IsEquiFaceClean { get; set; }
 
 
 
 		/// <summary>
 		/// IsSteadyOk
 		/// </summary>
-		[Required(ErrorMessage="IsSteadyOk不能为空")]
-		public bool IsSteadyOk { get; set; }
+		public bool? IsSteadyOk { get; set; }
 
 
 
 		/// <summary>
 		/// IsScrewOk
 		/// </summary>
-		[Required(ErrorMessage="IsScrewOk不能为空")]
-		public bool IsScrewOk { get; set; }
+		public bool? IsScrewOk { get; set; }
 
 
 
 		/// <summary>
 		/// IsButtonOk
 		/// </summary>
-		[Required(ErrorMessage="IsButtonOk不能为空")]
-		public bool IsButtonOk { get; set; }
+		public bool? IsButtonOk { get; set; }
 
 
 
 		/// <summary>
 		/// IsElcLineBad
 		/// </summary>
-		[Required(ErrorMessage="IsElcLineBad不能为空")]
-		public bool IsElcLineBad { get; set; }
+		public bool? IsElcLineBad { get; set; }
 
 
 
 		/// <summary>
 		/// IsBeltSlant
 		/// </summary>
-		[Required(ErrorMessage="IsBeltSlant不能为空")]
-		public bool IsBeltSlant { get; set; }
+		public bool? IsBeltSlant { get; set; }
 
 
 
 		/// <summary>
 		/// IsBearingOk
 		/// </summary>
-		[Required(ErrorMessage="IsBearingOk不能为空")]
-		public bool IsBearingOk { get; set; }
+		public bool? IsBearingOk { get; set; }
 
 
 
 		/// <summary>
 		/// IsSoundOk
 		/// </summary>
-		[Required(ErrorMessage="IsSoundOk不能为空")]
-		public bool IsSoundOk { get; set; }
+		public bool? IsSoundOk { get; set; }
 
 
 
 		/// <summary>
 		/// IsMotor
 		/// </summary>
-		[Required(ErrorMessage="IsMotor不能为空")]
-		public bool IsMotor { get; set; }
+		public bool? IsMotor { get; set; }
 
 
 
 		/// <summary>
 		/// IsShutPower
 		/// </summary>
-		[Required(ErrorMessage="IsShutPower不能为空")]
-		public bool IsShutPower { get; set; }
+		public bool? IsShutPower { get; set; }
 
 
 
 		/// <summary>
 		/// IsBeltBad
 		/// </summary>
-		[Required(ErrorMessage="IsBeltBad不能为空")]
-		public bool IsBeltBad { get; set; }
+		public bool? IsBeltBad { get; set; }
 
 
 
 		/// <summary>
 		/// IsClean
 		/// </summary>
-		[Required(ErrorMessage="IsClean不能为空")]
-		public bool IsClean { get; set; }
+		public bool? IsClean { get; set; }
 
 
 
@@ -188,9 +176,5 @@ namespace  GYSWP.LC_ConveyorChecks.Dtos
 		/// </summary>
 		[Required(ErrorMessage="CreationTime不能为空")]
 		public DateTime CreationTime { get; set; }
-
-
-
-
     }
 }

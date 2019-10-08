@@ -165,7 +165,12 @@ namespace GYSWP.LC_LPFunctionRecords.Dtos
         /// </summary>
         public string UseTimeFormat
         {
-            get { return UseTime.Value.ToString("yyyy-MM-dd HH:mm:ss"); }
+            get
+            {
+                if (UseTime.HasValue)
+                { return UseTime.Value.ToString("yyyy-MM-dd HH:mm"); }
+                else { return null; }
+            }
         }
 
 
@@ -175,7 +180,17 @@ namespace GYSWP.LC_LPFunctionRecords.Dtos
         /// </summary>
         public string DownTimeFormat
         {
-            get { return DownTime.Value.ToString("yyyy-MM-dd HH:mm:ss"); }
+            get
+            {
+                if (DownTime.HasValue)
+                {
+                    return DownTime.Value.ToString("yyyy-MM-dd HH:mm");
+                }
+                else
+                {
+                    return null;
+                }
+            }
         }
 
 

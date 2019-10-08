@@ -53,86 +53,72 @@ namespace GYSWP.LC_ForkliftChecks
         /// <summary>
         /// 各部位润滑是否正常
         /// </summary>
-        [Required]
-        public virtual bool IslubricatingOk { get; set; }
+        public virtual bool? IslubricatingOk { get; set; }
 
         /// <summary>
         /// 蓄电池接线有无腐蚀、松动
         /// </summary>
-        [Required]
-        public virtual bool IsBatteryBad { get; set; }
+        public virtual bool? IsBatteryBad { get; set; }
 
         /// <summary>
         /// 转向、制动是否灵活
         /// </summary>
-        [Required]
-        public virtual bool IsTurnOrBreakOk { get; set; }
+        public virtual bool? IsTurnOrBreakOk { get; set; }
 
         /// <summary>
         /// 车灯、喇叭是否正常
         /// </summary>
-        [Required]
-        public virtual bool IsLightOrHornOk { get; set; }
+        public virtual bool? IsLightOrHornOk { get; set; }
 
         /// <summary>
         /// 电量是否充足
         /// </summary>
-        [Required]
-        public virtual bool IsFullCharged { get; set; }
+        public virtual bool? IsFullCharged { get; set; }
 
         /// <summary>
         /// 货叉升降是否正常
         /// </summary>
-        [Required]
-        public virtual bool IsForkLifhOk { get; set; }
+        public virtual bool? IsForkLifhOk { get; set; }
 
         /// <summary>
         /// 电量是否满足
         /// </summary>
-        [Required]
-        public virtual bool IsRunFullCharged { get; set; }
+        public virtual bool? IsRunFullCharged { get; set; }
 
         /// <summary>
         /// 刹车、喇叭有无异常
         /// </summary>
-        [Required]
-        public virtual bool IsRunTurnOrBreakOk { get; set; }
+        public virtual bool? IsRunTurnOrBreakOk { get; set; }
 
         /// <summary>
         /// 货叉升降有无异常
         /// </summary>
-        [Required]
-        public virtual bool IsRunLightOrHornOk { get; set; }
+        public virtual bool? IsRunLightOrHornOk { get; set; }
 
         /// <summary>
         /// 运行声音有无异响
         /// </summary>
-        [Required]
-        public virtual bool IsRunSoundOk { get; set; }
+        public virtual bool? IsRunSoundOk { get; set; }
 
         /// <summary>
         /// 停放是否规范到位
         /// </summary>
-        [Required]
-        public virtual bool IsParkStandard { get; set; }
+        public virtual bool? IsParkStandard { get; set; }
 
         /// <summary>
         /// 制动是否拉紧、电源是否关闭
         /// </summary>
-        [Required]
-        public virtual bool IsShutPower { get; set; }
+        public virtual bool? IsShutPower { get; set; }
 
         /// <summary>
         /// 是否需要补充电量
         /// </summary>
-        [Required]
-        public virtual bool IsNeedCharge { get; set; }
+        public virtual bool? IsNeedCharge { get; set; }
 
         /// <summary>
         /// 各部位是否进行清洁
         /// </summary>
-        [Required]
-        public virtual bool IsClean { get; set; }
+        public virtual bool? IsClean { get; set; }
 
         /// <summary>
         /// 故障描述和处理

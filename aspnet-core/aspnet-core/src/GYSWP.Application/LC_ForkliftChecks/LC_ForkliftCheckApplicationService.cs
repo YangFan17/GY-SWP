@@ -377,10 +377,13 @@ LC_ForkliftCheckEditDto editDto;
             var item = entity.MapTo<LC_ForkliftCheckDto>();
             if (entity != null)
                 item.Path = await _attachmentRepository.GetAll().Where(aa => aa.BLL == entity.Id).Select(aa => aa.Path).AsNoTracking().ToArrayAsync();
-            if(item!=null)
+            if(item!=null&& item.BeginTime.HasValue)
             { 
             item.StartTimeFormat= item.BeginTime.Value.ToString("yyyy-MM-dd HH:mm");
-            item.EndTimeFormat= item.EndTime.Value.ToString("yyyy-MM-dd HH:mm");
+            }
+            if (item != null && item.EndTime.HasValue)
+            {
+                item.EndTimeFormat = item.EndTime.Value.ToString("yyyy-MM-dd HH:mm");
             }
             return item;
         }

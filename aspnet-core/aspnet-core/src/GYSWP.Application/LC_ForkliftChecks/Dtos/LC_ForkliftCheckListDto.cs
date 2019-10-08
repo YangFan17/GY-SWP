@@ -64,112 +64,98 @@ namespace GYSWP.LC_ForkliftChecks.Dtos
 		/// <summary>
 		/// IslubricatingOk
 		/// </summary>
-		[Required(ErrorMessage="IslubricatingOk不能为空")]
-		public bool IslubricatingOk { get; set; }
+		public bool? IslubricatingOk { get; set; }
 
 
 
 		/// <summary>
 		/// IsBatteryBad
 		/// </summary>
-		[Required(ErrorMessage="IsBatteryBad不能为空")]
-		public bool IsBatteryBad { get; set; }
+		public bool? IsBatteryBad { get; set; }
 
 
 
 		/// <summary>
 		/// IsTurnOrBreakOk
 		/// </summary>
-		[Required(ErrorMessage="IsTurnOrBreakOk不能为空")]
-		public bool IsTurnOrBreakOk { get; set; }
+		public bool? IsTurnOrBreakOk { get; set; }
 
 
 
 		/// <summary>
 		/// IsLightOrHornOk
 		/// </summary>
-		[Required(ErrorMessage="IsLightOrHornOk不能为空")]
-		public bool IsLightOrHornOk { get; set; }
+		public bool? IsLightOrHornOk { get; set; }
 
 
 
 		/// <summary>
 		/// IsFullCharged
 		/// </summary>
-		[Required(ErrorMessage="IsFullCharged不能为空")]
-		public bool IsFullCharged { get; set; }
+		public bool? IsFullCharged { get; set; }
 
 
 
 		/// <summary>
 		/// IsForkLifhOk
 		/// </summary>
-		[Required(ErrorMessage="IsForkLifhOk不能为空")]
-		public bool IsForkLifhOk { get; set; }
+		public bool? IsForkLifhOk { get; set; }
 
 
 
 		/// <summary>
 		/// IsRunFullCharged
 		/// </summary>
-		[Required(ErrorMessage="IsRunFullCharged不能为空")]
-		public bool IsRunFullCharged { get; set; }
+		public bool? IsRunFullCharged { get; set; }
 
 
 
 		/// <summary>
 		/// IsRunTurnOrBreakOk
 		/// </summary>
-		[Required(ErrorMessage="IsRunTurnOrBreakOk不能为空")]
-		public bool IsRunTurnOrBreakOk { get; set; }
+		public bool? IsRunTurnOrBreakOk { get; set; }
 
 
 
 		/// <summary>
 		/// IsRunLightOrHornOk
 		/// </summary>
-		[Required(ErrorMessage="IsRunLightOrHornOk不能为空")]
-		public bool IsRunLightOrHornOk { get; set; }
+		public bool? IsRunLightOrHornOk { get; set; }
 
 
 
 		/// <summary>
 		/// IsRunSoundOk
 		/// </summary>
-		[Required(ErrorMessage="IsRunSoundOk不能为空")]
-		public bool IsRunSoundOk { get; set; }
+		public bool? IsRunSoundOk { get; set; }
 
 
 
 		/// <summary>
 		/// IsParkStandard
 		/// </summary>
-		[Required(ErrorMessage="IsParkStandard不能为空")]
-		public bool IsParkStandard { get; set; }
+		public bool? IsParkStandard { get; set; }
 
 
 
 		/// <summary>
 		/// IsShutPower
 		/// </summary>
-		[Required(ErrorMessage="IsShutPower不能为空")]
-		public bool IsShutPower { get; set; }
+		public bool? IsShutPower { get; set; }
 
 
 
 		/// <summary>
 		/// IsNeedCharge
 		/// </summary>
-		[Required(ErrorMessage="IsNeedCharge不能为空")]
-		public bool IsNeedCharge { get; set; }
+		public bool? IsNeedCharge { get; set; }
 
 
 
 		/// <summary>
 		/// IsClean
 		/// </summary>
-		[Required(ErrorMessage="IsClean不能为空")]
-		public bool IsClean { get; set; }
+		public bool? IsClean { get; set; }
 
 
 
