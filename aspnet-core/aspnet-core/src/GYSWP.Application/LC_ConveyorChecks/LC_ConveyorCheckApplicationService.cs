@@ -333,7 +333,7 @@ namespace GYSWP.LC_ConveyorChecks
 
                     foreach (var item in input.LC_ConveyorCheck.Path)
                     {
-                        if (await attachmentEntity.CountAsync(aa => aa.Path == item) < 0)
+                        if (await attachmentEntity.CountAsync(aa => aa.Path == item) <= 0)
                         {
                             var AttachEntity = new LC_Attachment();
                             AttachEntity.Path = item;

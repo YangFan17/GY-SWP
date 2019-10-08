@@ -317,7 +317,7 @@ namespace GYSWP.LC_SortingEquipChecks
                     
                     foreach (var item in input.LC_SortingEquipCheck.Path)
                     {
-                        if(await attachmentEntity.CountAsync(aa=>aa.Path == item) < 0)
+                        if(await attachmentEntity.CountAsync(aa=>aa.Path == item) <= 0)
                         { 
                             var AttachEntity = new LC_Attachment();
                             AttachEntity.Path = item;

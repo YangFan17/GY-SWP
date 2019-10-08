@@ -256,7 +256,7 @@ LC_LPFunctionRecordEditDto editDto;
             foreach (var path in input.DDAttachmentEditDto.Path)
             {
                 var attachment = await _attachmentRepository.CountAsync(aa => aa.Path == path);
-                if (attachment <= 0)
+                if (attachment == 0)
                 {
                     var item = new LC_Attachment();
                     item.Path = path;
