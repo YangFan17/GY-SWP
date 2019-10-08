@@ -165,7 +165,11 @@ namespace GYSWP.LC_KyjFunctionRecords.Dtos
         /// </summary>
         public string UseTimeFormat
         {
-            get { return UseTime.Value.ToString("yyyy-MM-dd HH:mm"); }
+            get {
+                if (UseTime.HasValue)
+                    { return UseTime.Value.ToString("yyyy-MM-dd HH:mm"); }
+                else { return null; }
+            }
         }
 
 
@@ -175,7 +179,16 @@ namespace GYSWP.LC_KyjFunctionRecords.Dtos
         /// </summary>
         public string DownTimeFormat
         {
-            get { return DownTime.Value.ToString("yyyy-MM-dd HH:mm"); }
+            get {
+                if (DownTime.HasValue)
+                {
+                    return DownTime.Value.ToString("yyyy-MM-dd HH:mm");
+                }
+                else
+                {
+                    return null;
+                }
+            }
         }
 
 
