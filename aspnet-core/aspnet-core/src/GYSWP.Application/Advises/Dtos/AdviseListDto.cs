@@ -37,7 +37,7 @@ namespace GYSWP.Advises.Dtos
 		/// IsAdoption
 		/// </summary>
 		[Required(ErrorMessage="IsAdoption不能为空")]
-		public bool IsAdoption { get; set; }
+		public bool? IsAdoption { get; set; }
 
 
 
@@ -77,22 +77,14 @@ namespace GYSWP.Advises.Dtos
 		/// </summary>
 		public string DeptName { get; set; }
 
+        /// <summary>
+        /// 联合建议人快照
+        /// </summary>
+        public string UnionEmpName { get; set; }
 
-
-		/// <summary>
-		/// ReviewOpinion
-		/// </summary>
-		public string ReviewOpinion { get; set; }
-
-
-
-		/// <summary>
-		/// ApprovalComments
-		/// </summary>
-		public string ApprovalComments { get; set; }
-
-
-
-
+        /// <summary>
+        /// 是否公示
+        /// </summary>
+        public bool IsPublicity { get; set; }
     }
 }

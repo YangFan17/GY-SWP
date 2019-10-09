@@ -27,8 +27,7 @@ namespace GYSWP.Advises
         /// <summary>
         /// 是否采纳
         /// </summary>
-        [Required]
-        public virtual bool IsAdoption { get; set; }
+        public virtual bool? IsAdoption { get; set; }
         /// <summary>
         /// 员工Id
         /// </summary>
@@ -52,16 +51,15 @@ namespace GYSWP.Advises
         /// 部门快照
         /// </summary>
         public virtual string DeptName { get; set; }
-        /// <summary>
-        /// 评审意见
-        /// </summary>
-        [StringLength(2000)]
-        public virtual string ReviewOpinion { get; set; }
-        /// <summary>
-        /// 领导审批意见
-        /// </summary>
-        [StringLength(2000)]
-        public virtual string ApprovalComments { get; set; }
-    }
 
+        /// <summary>
+        /// 联合建议人快照
+        /// </summary>
+        public virtual string UnionEmpName { get; set; }
+
+        /// <summary>
+        /// 是否公示
+        /// </summary>
+        public virtual bool IsPublicity { get; set; }
+    }
 }
