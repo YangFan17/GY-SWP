@@ -23,10 +23,6 @@ namespace GYSWP.EntityMapper.Advises
 			builder.Property(a => a.CreationTime).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
 			builder.Property(a => a.DeptId).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
 			builder.Property(a => a.DeptName).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
-			builder.Property(a => a.ReviewOpinion).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
-			builder.Property(a => a.ApprovalComments).HasMaxLength(YoYoAbpefCoreConsts.EntityLengthNames.Length64);
-
-
         }
     }
 }

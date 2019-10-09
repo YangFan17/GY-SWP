@@ -17,12 +17,12 @@ namespace GYSWP.Advises
         /// <summary>
         /// 现状描述
         /// </summary>
-        [StringLength(2000)]
+        [StringLength(5000)]
         public virtual string CurrentSituation { get; set; }
         /// <summary>
         /// 对策建议
         /// </summary>
-        [StringLength(2000)]
+        [StringLength(5000)]
         public virtual string Solution { get; set; }
         /// <summary>
         /// 是否采纳
