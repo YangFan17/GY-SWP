@@ -8,8 +8,9 @@ import { SharedModule } from "@shared/shared.module";
 import { AdvisesRoutingModule } from './advises-routing.module';
 import { AdvisesComponent } from './advises/advises.component';
 import { AdviseService } from 'services';
-import { CreateAdviseComponent } from './advises/create-advise/create-advise.component';
 import { DetailAdviseComponent } from './advises/detail-advise/detail-advise.component'
+import { MyAdviceComponent } from './advises/my-advice/my-advice.component';
+import { PublicityManagementComponent } from './advises/publicity-management/publicity-management.component';
 
 @NgModule({
   imports: [
@@ -23,12 +24,15 @@ import { DetailAdviseComponent } from './advises/detail-advise/detail-advise.com
   ],
   declarations: [
     AdvisesComponent,
-    CreateAdviseComponent,
     DetailAdviseComponent,
+    MyAdviceComponent,
+    PublicityManagementComponent,
+    DetailAdviseComponent
   ],
   entryComponents: [
-    CreateAdviseComponent,
-    DetailAdviseComponent,
+    MyAdviceComponent,
+    PublicityManagementComponent,
+    DetailAdviseComponent
   ],
   providers: [AdviseService]
 })

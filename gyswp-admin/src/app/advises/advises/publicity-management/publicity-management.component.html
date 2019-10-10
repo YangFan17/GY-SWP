@@ -1,0 +1,48 @@
+<page-header title="合理化建议公示管理"></page-header>
+<nz-card>
+    <div nz-row>
+        <ng-template #totalTemplate let-total>共 {{totalItems}} 条</ng-template>
+        <nz-table #nzTable [nzFrontPagination]="false" [nzShowTotal]="totalTemplate" [nzTotal]="totalItems"
+            [nzData]="dataList" [(nzPageIndex)]="pageNumber" [(nzPageSize)]="pageSize" [nzLoading]="isTableLoading"
+            [nzShowSizeChanger]="true" (nzPageIndexChange)="refresh()" (nzPageSizeChange)="refresh()">
+            <thead>
+                <tr>
+                    <th>建议名称</th>
+                    <th>现状描述</th>
+                    <th>对策建议</th>
+                    <th>采纳结果</th>
+                    <th>申报日期</th>
+                    <th>公示状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of nzTable.data">
+                    <td>{{item.adviseName | lengthLimit:15}}</td>
+                    <td>{{item.currentSituation | lengthLimit:15}}</td>
+                    <td>{{item.solution | lengthLimit:15}}</td>
+                    <td>
+                        <nz-badge *ngIf="!item.isAdoption" nzStatus="error" nzText="未采纳"></nz-badge>
+                        <nz-badge *ngIf="item.isAdoption" nzStatus="success" nzText="已采纳"></nz-badge>
+                    </td>
+                    <td>{{item.creationTime | _date: 'YYYY-MM-DD'}}</td>
+                    <td>
+                        <nz-badge *ngIf="!item.isPublicity" nzStatus="default" nzText="未公示"></nz-badge>
+                        <nz-badge *ngIf="item.isPublicity" nzStatus="processing" nzText="公示中"></nz-badge>
+                    </td>
+                    <td>
+                        <a (click)="goDetail(item.id)">详情</a>
+                        <nz-divider nzType="vertical"></nz-divider>
+                        <a
+                            (click)="changePubStatus(item.id,item.isPublicity)">{{item.isPublicity == true?'取消公示':'公示'}}</a>
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>
+    </div>
+    <footer-toolbar>
+        <button nz-button [nzType]="'default'" (click)="return()">
+            返回
+        </button>
+    </footer-toolbar>
+</nz-card>

@@ -250,7 +250,6 @@ LC_OutScanRecordEditDto editDto;
         {
             var entity = input.LC_OutScanRecord.MapTo<LC_OutScanRecord>();
             entity = await _entityRepository.InsertAsync(entity);
-
             LC_ScanRecord scanRecord = new LC_ScanRecord();
             //scanRecord.TimeLogId = input.LC_OutScanRecord.TimeLogId;
             scanRecord.Status = GYEnums.LC_TimeStatus.结束;

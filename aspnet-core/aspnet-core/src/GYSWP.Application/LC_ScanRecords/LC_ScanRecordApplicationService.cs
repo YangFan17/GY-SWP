@@ -269,7 +269,7 @@ LC_ScanRecordEditDto editDto;
             //entity.Type = GYEnums.LC_TimeType.出库分拣;
             //entity.Status = GYEnums.LC_TimeStatus.开始;
             //Guid timeLogId = await _timeLogRepository.InsertAndGetIdAsync(entity);
-            await CurrentUnitOfWork.SaveChangesAsync();
+            //await CurrentUnitOfWork.SaveChangesAsync();
             LC_ScanRecord scanRecord = new LC_ScanRecord();
             //scanRecord.TimeLogId = timeLogId;
             scanRecord.Status = GYEnums.LC_TimeStatus.开始;

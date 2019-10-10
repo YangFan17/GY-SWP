@@ -538,5 +538,70 @@ namespace GYSWP.ApplyInfos
                 }
             }
         }
+
+
+        /// <summary>
+        /// 【合理化建议审批】审批通过后修改状态
+        /// </summary>
+        /// <param name="pIId"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public async Task UpdateAdviceByPIIdAsync(string pIId, string result)
+        {
+            var entity = await _entityRepository.FirstOrDefaultAsync(v => v.RevisionPId == pIId);
+            entity.ProcessingHandleTime = DateTime.Now;
+            var docRevision = await _docRevisionRepository.FirstOrDefaultAsync(v => v.ApplyInfoId == entity.Id);
+            var clauseRevisionList = await _clauseRevisionRepository.GetAll().Where(v => v.ApplyInfoId == entity.Id && v.RevisionType == GYEnums.RevisionType.标准制定).OrderBy(v => v.ClauseNo).ThenBy(v => v.CreationTime).ToListAsync();
+            if (result == "agree")
+            {
+                docRevision.Status = GYEnums.RevisionStatus.审核通过;
+                entity.ProcessingStatus = GYEnums.RevisionStatus.审核通过;
+                string categoryName = await _categoryRepository.GetAll().Where(v => v.Id == docRevision.CategoryId).Select(v => v.Name).FirstOrDefaultAsync();
+                //先创建标准实体
+                Document doc = new Document();
+                doc.Name = docRevision.Name;
+                doc.CategoryId = docRevision.CategoryId;
+                doc.CategoryDesc = categoryName;
+                doc.IsAction = false;
+                doc.CategoryId = docRevision.CategoryId;
+                var categoryList = await _categoryManager.GetHierarchyCategories(docRevision.CategoryId);
+                doc.CategoryCode = string.Join(',', categoryList.Select(c => c.Id).ToArray());
+                doc.CategoryDesc = string.Join(',', categoryList.Select(c => c.Name).ToArray());
+                doc.CreatorUserId = docRevision.CreatorUserId;
+                doc.BLLId = docRevision.Id;
+                Guid docId = await _documentRepository.InsertAndGetIdAsync(doc);
+                await CurrentUnitOfWork.SaveChangesAsync();
+                foreach (var item in clauseRevisionList)
+                {
+                    item.Status = GYEnums.RevisionStatus.审核通过;
+                    Clause clause = new Clause();
+                    clause.DocumentId = docId;
+                    clause.ClauseNo = item.ClauseNo;
+                    clause.Title = item.Title;
+                    clause.Content = item.Content;
+                    clause.BLLId = item.Id;
+                    clause.CreatorUserId = item.CreatorUserId;
+                    if (item.ParentId.HasValue)
+                    {
+                        Guid newId = await _clauseRepository.GetAll().Where(v => v.BLLId == item.ParentId).Select(v => v.Id).FirstOrDefaultAsync();
+                        clause.ParentId = newId;
+                    }
+                    await _clauseRepository.InsertAsync(clause);
+                    await CurrentUnitOfWork.SaveChangesAsync();
+                }
+                //发送企管科通知
+                _approvalAppService.SendMessageToQGAdminAsync(docRevision.Name, docId);
+            }
+            else
+            {
+                entity.ProcessingStatus = GYEnums.RevisionStatus.审核拒绝;
+                docRevision.Status = GYEnums.RevisionStatus.审核拒绝;
+                foreach (var item in clauseRevisionList)
+                {
+                    item.Status = GYEnums.RevisionStatus.审核拒绝;
+                }
+            }
+        }
     }
 }

@@ -25,6 +25,7 @@ using GYSWP.Employees;
 using GYSWP.Organizations;
 using GYSWP.Authorization.Users;
 using GYSWP.Dtos;
+using GYSWP.DingDingApproval;
 
 namespace GYSWP.Advises
 {
@@ -38,7 +39,7 @@ namespace GYSWP.Advises
         private readonly UserManager _userManager;
         private readonly IRepository<Employee, string> _employeeRepository;
         private readonly IRepository<Organization, long> _organizationRepository;
-
+        private readonly IApprovalAppService _approvalAppService;
         private readonly IAdviseManager _entityManager;
 
         /// <summary>
@@ -50,6 +51,7 @@ namespace GYSWP.Advises
         , IRepository<Employee, string> employeeRepository
         , IRepository<Organization, long> organizationRepository
         , IAdviseManager entityManager
+        , IApprovalAppService approvalAppService
         )
         {
             _employeeRepository = employeeRepository;
@@ -57,32 +59,73 @@ namespace GYSWP.Advises
             _organizationRepository = organizationRepository;
             _entityRepository = entityRepository;
             _entityManager = entityManager;
+            _approvalAppService = approvalAppService;
         }
 
+        /// <summary>
+        /// 获取公示的合理化建议列表
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<PagedResultDto<AdviseListDto>> GetPagedPublicityAdviceAsync(GetAdvisesInput input)
+        {
+            var query = _entityRepository.GetAll().Where(v => v.IsPublicity == true);
+            var count = await query.CountAsync();
+            var entityList = await query
+                    .OrderByDescending(v=>v.CreationTime).AsNoTracking()
+                    .PageBy(input)
+                    .ToListAsync();
+            var entityListDtos = entityList.MapTo<List<AdviseListDto>>();
+            return new PagedResultDto<AdviseListDto>(count, entityListDtos);
+        }
 
         /// <summary>
-        /// 获取Advise的分页列表信息
+        /// 获取我的合理化建议列表
         ///</summary>
         /// <param name="input"></param>
         /// <returns></returns>
+
+        public async Task<PagedResultDto<AdviseListDto>> GetPagedMyAdviceAsync(GetAdvisesInput input)
+        {
+            var user = await _userManager.GetUserByIdAsync(AbpSession.UserId.Value);
+            var query = _entityRepository.GetAll().Where(aa => aa.EmployeeId == user.EmployeeId);
+            var count = await query.CountAsync();
+            var entityList = await query
+                    .OrderByDescending(v => v.CreationTime).ThenBy(v => v.IsAdoption).AsNoTracking()
+                    .PageBy(input)
+                    .ToListAsync();
+            var entityListDtos = entityList.MapTo<List<AdviseListDto>>();
+            return new PagedResultDto<AdviseListDto>(count, entityListDtos);
+        }
+
+        /// <summary>
+        /// 公示建议管理
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<PagedResultDto<AdviseListDto>> GetPagedPublicityManagmentAsync(GetAdvisesInput input)
+        {
+            var user = await _userManager.GetUserByIdAsync(AbpSession.UserId.Value);
+            var query = _entityRepository.GetAll().Where(v=>v.IsAdoption.HasValue);
+            var count = await query.CountAsync();
+            var entityList = await query
+                    .OrderByDescending(v => v.CreationTime).ThenBy(v => v.IsAdoption).AsNoTracking()
+                    .PageBy(input)
+                    .ToListAsync();
+            var entityListDtos = entityList.MapTo<List<AdviseListDto>>();
+            return new PagedResultDto<AdviseListDto>(count, entityListDtos);
+        }
 
         public async Task<PagedResultDto<AdviseListDto>> GetPagedAsync(GetAdvisesInput input)
         {
             var user = await _userManager.GetUserByIdAsync(AbpSession.UserId.Value);
             var query = _entityRepository.GetAll().Where(aa => aa.EmployeeId == user.EmployeeId);
-            // TODO:根据传入的参数添加过滤条件
-
-
             var count = await query.CountAsync();
-
             var entityList = await query
-                    .OrderBy(input.Sorting).AsNoTracking()
+                    .OrderByDescending(v => v.CreationTime).AsNoTracking()
                     .PageBy(input)
                     .ToListAsync();
-
-            // var entityListDtos = ObjectMapper.Map<List<AdviseListDto>>(entityList);
             var entityListDtos = entityList.MapTo<List<AdviseListDto>>();
-
             return new PagedResultDto<AdviseListDto>(count, entityListDtos);
         }
 
@@ -156,13 +199,13 @@ namespace GYSWP.Advises
             input.IsAdoption = false;
             Organization dept = null;
             Employee employee = null;
-            User user=null;
+            User user = null;
             if (AbpSession.UserId.HasValue)
                 user = await _userManager.GetUserByIdAsync(AbpSession.UserId.Value);
             if (user != null && !String.IsNullOrEmpty(user.EmployeeId))
             {
-                employee =await _employeeRepository.GetAsync(user.EmployeeId);
-                long deptId = long.Parse(employee.Department.Replace("[", "").Replace("]",""));
+                employee = await _employeeRepository.GetAsync(user.EmployeeId);
+                long deptId = long.Parse(employee.Department.Replace("[", "").Replace("]", ""));
                 dept = await _organizationRepository.GetAsync(deptId);
             }
             input.EmployeeId = employee.Id;
@@ -228,7 +271,7 @@ namespace GYSWP.Advises
         {
             List<GetAdviseReportsDto> list = new List<GetAdviseReportsDto>();
             var advises = _entityRepository.GetAll()
-                .Where(aa =>aa.CreationTime >= input.StartTime && aa.CreationTime < input.EndTime);
+                .Where(aa => aa.CreationTime >= input.StartTime && aa.CreationTime < input.EndTime);
             GetAdviseReportsDto adviseReportsDto = new GetAdviseReportsDto();
             if (input.DeptId != 1)
                 adviseReportsDto.AdviseTotal = await advises.CountAsync(aa => aa.DeptId == input.DeptId);
@@ -245,18 +288,6 @@ namespace GYSWP.Advises
         }
 
         /// <summary>
-        /// 导出Advise为excel表,等待开发。
-        /// </summary>
-        /// <returns></returns>
-        //public async Task<FileDto> GetToExcel()
-        //{
-        //	var users = await UserManager.Users.ToListAsync();
-        //	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
-        //	await FillRoleNames(userListDtos);
-        //	return _userListExcelExporter.ExportToFile(userListDtos);
-        //}
-
-        /// <summary>
         /// 钉钉添加建议方法
         /// </summary>
         /// <param name="input"></param>
@@ -264,24 +295,67 @@ namespace GYSWP.Advises
         [AbpAllowAnonymous]
         public async Task<APIResultDto> CreateDDAdviceAsync(CreateDDAdviseInput input)
         {
-                Advise newAdvise = new Advise();
-                newAdvise.AdviseName = input.Advise.AdviseName;
-                newAdvise.CurrentSituation = input.Advise.CurrentSituation;
-                newAdvise.Solution = input.Advise.Solution;
-                newAdvise.EmployeeId = input.Advise.EmployeeId;
-                newAdvise.EmployeeName = input.Advise.EmployeeName;
-                newAdvise.DeptId = input.Advise.DeptId;
-                newAdvise.DeptName = input.Advise.DeptName;
-                newAdvise.UnionEmpName = input.Advise.UnionEmpName;
-
-            var entity = await _entityRepository.InsertAsync(newAdvise);
-            return new APIResultDto()
+            Advise newAdvise = new Advise();
+            newAdvise.AdviseName = input.Advise.AdviseName;
+            newAdvise.CurrentSituation = input.Advise.CurrentSituation;
+            newAdvise.Solution = input.Advise.Solution;
+            newAdvise.EmployeeId = input.Advise.EmployeeId;
+            newAdvise.EmployeeName = input.Advise.EmployeeName;
+            newAdvise.DeptId = input.Advise.DeptId;
+            newAdvise.DeptName = input.Advise.DeptName;
+            newAdvise.UnionEmpName = input.Advise.UnionEmpName;
+            Guid entityId = await _entityRepository.InsertAndGetIdAsync(newAdvise);
+            await CurrentUnitOfWork.SaveChangesAsync();
+            var result =  await _approvalAppService.SubmitAdviceApproval(entityId);
+            if (result.Code == 0)
             {
-                Data = entity,
-                Code = 0
-            };
+                newAdvise.ProcessInstanceId = result.Data.ToString();
+                await _entityRepository.UpdateAsync(newAdvise);
+                return new APIResultDto()
+                {
+                    Msg = "提交申请成功",
+                    Code = 0
+                };
+            }
+            else
+            {
+                return new APIResultDto()
+                {
+                    Msg = "提交申请失败，请联系管理员",
+                    Code = 999
+                };
+            }
+        }
+        /// <summary>
+        /// 通过ID更改其公示状态
+        /// </summary>
+        /// <param name="adviseId"></param>
+        /// <returns></returns>
+        public async Task<APIResultDto> ChangePubStatusAsync(EntityDto<Guid> input)
+        {
+            try
+            {
+                var entity = await _entityRepository.GetAsync(input.Id);
+                entity.IsPublicity = !entity.IsPublicity;
+                return new APIResultDto()
+                {
+                    Msg = "更新成功",
+                    Code = 0
+                };
+            }
+            catch(Exception ex)
+            {
+                Logger.ErrorFormat("AdviseApplicationService ChangePubStatusAsync errormsg{0} Exception{1}", ex.Message, ex);
+                return new APIResultDto()
+                {
+                    Msg = "更新失败",
+                    Code = 999
+                 };
+                
+            }
         }
     }
+   
 }
 
 

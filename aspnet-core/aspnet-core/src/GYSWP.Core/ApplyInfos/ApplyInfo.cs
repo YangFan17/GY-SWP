@@ -11,7 +11,7 @@ namespace GYSWP.ApplyInfos
     public class ApplyInfo : Entity<Guid> //注意修改主键Id数据类型
     {
         /// <summary>
-        /// 所属标准
+        /// 所属标准 或其他业务BLLId
         /// </summary>
         public virtual Guid? DocumentId { get; set; }
         /// <summary>

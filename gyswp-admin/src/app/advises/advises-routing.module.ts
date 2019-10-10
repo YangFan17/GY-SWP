@@ -1,20 +1,27 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { AppRouteGuard } from '@shared/auth/auth-route-guard';
 import { Routes, RouterModule } from '@angular/router';
 import { AdvisesComponent } from './advises/advises.component';
-import { DetailAdviseComponent } from './advises/detail-advise/detail-advise.component'
+import { MyAdviceComponent } from './advises/my-advice/my-advice.component';
+import { PublicityManagementComponent } from './advises/publicity-management/publicity-management.component';
+import { ACLGuard } from '@delon/acl';
 
-const routes: Routes = [{
-  path: 'advises',
-  component: AdvisesComponent,
-  canActivate: [AppRouteGuard],
-}, {
-  path: 'advises-detail',
-  component: DetailAdviseComponent,
-  canActivate: [AppRouteGuard],
-  // data: { title: "项目详情" }
-}
+const routes: Routes = [
+  {
+    path: 'advises',
+    component: AdvisesComponent,
+    canActivate: [AppRouteGuard],
+  },
+  {
+    path: 'my-advice',
+    component: MyAdviceComponent,
+    canActivate: [AppRouteGuard],
+  },
+  {
+    path: 'advice-management',
+    component: PublicityManagementComponent,
+    canActivate: [AppRouteGuard, ACLGuard]
+  }
 ];
 
 @NgModule({

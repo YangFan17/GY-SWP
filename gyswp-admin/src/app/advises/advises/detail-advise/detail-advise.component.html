@@ -9,34 +9,46 @@
       <nz-form-control [nzSm]="20">
         <nz-form-text>{{advise.deptName}}</nz-form-text>
       </nz-form-control>
+    </nz-form-item>
 
+    <nz-form-item nz-row style="margin-bottom: 0px;">
       <nz-form-label nz-col [nzSm]="4">建议人</nz-form-label>
       <nz-form-control [nzSm]="20">
         <nz-form-text>{{advise.employeeName}}</nz-form-text>
       </nz-form-control>
+    </nz-form-item>
 
+    <nz-form-item nz-row style="margin-bottom: 0px;">
       <nz-form-label nz-col [nzSm]="4">申报日期</nz-form-label>
       <nz-form-control [nzSm]="20">
         <nz-form-text>{{advise.creationTime| date: "yyyy-MM-dd"}}</nz-form-text>
       </nz-form-control>
+    </nz-form-item>
 
+    <nz-form-item nz-row style="margin-bottom: 0px;">
       <nz-form-label nz-col [nzSm]="4">是否采纳</nz-form-label>
       <nz-form-control [nzSm]="20">
         <nz-form-text *ngIf="advise.isAdoption==false">未采纳</nz-form-text>
         <nz-form-text *ngIf="advise.isAdoption==true">已采纳</nz-form-text>
         <nz-form-text *ngIf="advise.isAdoption==null">待审批</nz-form-text>
       </nz-form-control>
+    </nz-form-item>
 
+    <nz-form-item nz-row style="margin-bottom: 0px;">
       <nz-form-label nz-col [nzSm]="4">建议名称</nz-form-label>
       <nz-form-control [nzSm]="20">
         <nz-form-text>{{advise.adviseName}}</nz-form-text>
       </nz-form-control>
+    </nz-form-item>
 
+    <nz-form-item nz-row style="margin-bottom: 0px;">
       <nz-form-label nz-col [nzSm]="4">现状描述</nz-form-label>
       <nz-form-control nzHasFeedback [nzSm]="20">
         <textarea nz-input rows="4" nzAutosize maxlength="2000" value="{{advise.currentSituation}}" readonly></textarea>
       </nz-form-control>
+    </nz-form-item>
 
+    <nz-form-item nz-row style="margin-bottom: 0px;">
       <nz-form-label nz-col [nzSm]="4">对策建议</nz-form-label>
       <nz-form-control nzHasFeedback [nzSm]="20">
         <textarea nz-input rows="8" nzAutosize maxlength="2000" value="{{advise.solution}}" readonly></textarea>

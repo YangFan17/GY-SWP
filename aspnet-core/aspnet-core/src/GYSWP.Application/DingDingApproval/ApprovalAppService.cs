@@ -28,6 +28,7 @@ using GYSWP.Clauses;
 using GYSWP.GYEnums;
 using GYSWP.ApplyInfos;
 using GYSWP.DocRevisions;
+using GYSWP.Advises;
 
 namespace GYSWP.DingDingApproval
 {
@@ -42,6 +43,7 @@ namespace GYSWP.DingDingApproval
         private readonly IDingDingAppService _dingDingAppService;
         private readonly IRepository<ApplyInfo, Guid> _applyInfoRepository;
         private readonly IRepository<DocRevision, Guid> _docRevisionRepository;
+        private readonly IRepository<Advise, Guid> _adviceRepository;
 
         public ApprovalAppService(IRepository<SystemData> systemDataRepository
             , IRepository<Organization, long> organizationRepository
@@ -51,6 +53,7 @@ namespace GYSWP.DingDingApproval
             , IRepository<Clause, Guid> clauseRepository
             , IRepository<ApplyInfo, Guid> applyInfoRepository
             , IRepository<DocRevision, Guid> docRevisionRepository
+            , IRepository<Advise, Guid> adviceRepository
 )
         {
             _systemDataRepository = systemDataRepository;
@@ -61,6 +64,7 @@ namespace GYSWP.DingDingApproval
             _clauseRepository = clauseRepository;
             _applyInfoRepository = applyInfoRepository;
             _docRevisionRepository = docRevisionRepository;
+            _adviceRepository = adviceRepository;
         }
 
         /// <summary>
@@ -318,7 +322,7 @@ namespace GYSWP.DingDingApproval
         }
 
         /// <summary>
-        /// 意见反馈
+        /// 提交意见反馈申请
         /// </summary>
         /// <param name="AdviseName"></param>
         /// <param name="EmployeeName"></param>
@@ -327,26 +331,28 @@ namespace GYSWP.DingDingApproval
         /// <param name="Solution"></param>
         /// <returns></returns>
         [AbpAllowAnonymous]
-        public async Task<APIResultDto> SubmitAdviceApproval(string AdviseName, string EmployeeName, DateTime CreationTime, string CurrentSituation, string Solution)
+        public async Task<APIResultDto> SubmitAdviceApproval(Guid id)
         {
-            //string accessToken = "5febf1152a49339ab414ce9cb11dfa66";
             DingDingAppConfig ddConfig = _dingDingAppService.GetDingDingConfigByApp(DingDingAppEnum.标准化工作平台);
             string accessToken = _dingDingAppService.GetAccessToken(ddConfig.Appkey, ddConfig.Appsecret);
-            //var user = await GetCurrentUserAsync();
-            var dept = await _employeeRepository.GetAll().Where(v => v.Id == "1926112826844702").Select(v => v.Department).FirstOrDefaultAsync();
+            var advice = await _adviceRepository.GetAsync(id);
+            var dept = await _employeeRepository.GetAll().Where(v => v.Id == advice.EmployeeId).Select(v => v.Department).FirstOrDefaultAsync();
             var deptId = dept.Replace('[', ' ').Replace(']', ' ').Trim();
+            string deptName = await _organizationRepository.GetAll().Where(v => v.Id.ToString() == deptId).Select(v => v.DepartmentName).FirstOrDefaultAsync();
             var url = string.Format("https://oapi.dingtalk.com/topapi/processinstance/create?access_token={0}", accessToken);
             SubmitApprovalEntity request = new SubmitApprovalEntity();
-            request.process_code = "PROC-A0FDBDA5-BBC6-4004-B72B-88AFC92DC427";
-            request.originator_user_id = "1926112826844702";
-            request.agent_id = ddConfig.AgentID;
+            request.process_code = "PROC-A0FDBDA5-BBC6-4004-B72B-88AFC92DC427";//202
+            request.originator_user_id = advice.EmployeeId;
+            request.agent_id = ddConfig.AgentID; 
             request.dept_id = Convert.ToInt32(deptId);
             List<Approval> approvalList = new List<Approval>();
-            approvalList.Add(new Approval() { name = "建议名称", value = AdviseName });
-            approvalList.Add(new Approval() { name = "建议人", value = EmployeeName });
-            approvalList.Add(new Approval() { name = "申报日期", value = CreationTime.ToString("yyyy-MM-dd HH:mm") });
-            approvalList.Add(new Approval() { name = "现状描述", value = CurrentSituation });
-            approvalList.Add(new Approval() { name = "对策建议", value = Solution });
+            approvalList.Add(new Approval() { name = "部门（单位）", value = deptName });
+            approvalList.Add(new Approval() { name = "建议名称", value = advice.AdviseName });
+            approvalList.Add(new Approval() { name = "建议人", value = advice.EmployeeName });
+            approvalList.Add(new Approval() { name = "联合建议人", value = advice.UnionEmpName });
+            approvalList.Add(new Approval() { name = "申报日期", value = advice.CreationTime.ToString("yyyy-MM-dd HH:mm") });
+            approvalList.Add(new Approval() { name = "现状描述", value = advice.CurrentSituation });
+            approvalList.Add(new Approval() { name = "对策建议", value = advice.Solution });
             request.form_component_values = approvalList;
             ApprovalReturn approvalReturn = new ApprovalReturn();
             var jsonString = SerializerHelper.GetJsonString(request, null);

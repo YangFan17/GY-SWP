@@ -34,13 +34,14 @@ namespace GYSWP.Advises
 		///</summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<PagedResultDto<AdviseListDto>> GetPagedAsync(GetAdvisesInput input);
+        Task<PagedResultDto<AdviseListDto>> GetPagedMyAdviceAsync(GetAdvisesInput input);
 
+        Task<PagedResultDto<AdviseListDto>> GetPagedPublicityAdviceAsync(GetAdvisesInput input);
 
-		/// <summary>
-		/// 通过指定id获取AdviseListDto信息
-		/// </summary>
-		Task<AdviseListDto> GetByIdAsync(EntityDto<Guid> input);
+        /// <summary>
+        /// 通过指定id获取AdviseListDto信息
+        /// </summary>
+        Task<AdviseListDto> GetByIdAsync(EntityDto<Guid> input);
 
 
         /// <summary>
@@ -87,6 +88,8 @@ namespace GYSWP.Advises
         /// <returns></returns>
         //Task<FileDto> GetToExcel();
         Task<APIResultDto> CreateDDAdviceAsync(CreateDDAdviseInput input);
+        Task<PagedResultDto<AdviseListDto>> GetPagedPublicityManagmentAsync(GetAdvisesInput input);
 
+        Task<APIResultDto> ChangePubStatusAsync(EntityDto<Guid> input);
     }
 }

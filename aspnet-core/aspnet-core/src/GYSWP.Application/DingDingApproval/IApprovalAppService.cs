@@ -17,5 +17,6 @@ namespace GYSWP.DingDingApproval
         APIResultDto SendIndicatorMessageAsync(string empId);
         APIResultDto SendCriterionExamineMessageAsync(string empId);
         APIResultDto SendIndicatorResultAsync(IndicatorStatus status,string empList);
+        Task<APIResultDto> SubmitAdviceApproval(Guid id);
     }
 }
