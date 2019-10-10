@@ -1,4 +1,4 @@
-<page-header title="我的合理化建议"></page-header>
+<page-header title="合理化建议公示管理"></page-header>
 <nz-card>
     <div nz-row>
         <ng-template #totalTemplate let-total>共 {{totalItems}} 条</ng-template>
@@ -12,6 +12,7 @@
                     <th>对策建议</th>
                     <th>采纳结果</th>
                     <th>申报日期</th>
+                    <th>公示状态</th>
                     <th>操作</th>
                 </tr>
             </thead>
@@ -21,19 +22,24 @@
                     <td>{{item.currentSituation | lengthLimit:15}}</td>
                     <td>{{item.solution | lengthLimit:15}}</td>
                     <td>
-                        <nz-badge *ngIf="item.isAdoption == false" nzStatus="error" nzText="未采纳"></nz-badge>
-                        <nz-badge *ngIf="item.isAdoption == true" nzStatus="success" nzText="已采纳"></nz-badge>
-                        <nz-badge *ngIf="item.isAdoption == null" nzStatus="default" nzText="待审批"></nz-badge>
+                        <nz-badge *ngIf="!item.isAdoption" nzStatus="error" nzText="未采纳"></nz-badge>
+                        <nz-badge *ngIf="item.isAdoption" nzStatus="success" nzText="已采纳"></nz-badge>
                     </td>
                     <td>{{item.creationTime | _date: 'YYYY-MM-DD'}}</td>
                     <td>
+                        <nz-badge *ngIf="!item.isPublicity" nzStatus="default" nzText="未公示"></nz-badge>
+                        <nz-badge *ngIf="item.isPublicity" nzStatus="processing" nzText="公示中"></nz-badge>
+                    </td>
+                    <td>
                         <a (click)="goDetail(item.id)">详情</a>
+                        <nz-divider nzType="vertical"></nz-divider>
+                        <a>{{item.isPublicity == true?'取消公示':'公示'}}</a>
                     </td>
                 </tr>
             </tbody>
         </nz-table>
     </div>
-    <footer-toolbar errorCollect>
+    <footer-toolbar>
         <button nz-button [nzType]="'default'" (click)="return()">
             返回
         </button>

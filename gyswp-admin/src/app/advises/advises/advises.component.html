@@ -6,7 +6,7 @@
         <i nz-icon type="form"></i>
         <span>我的建议</span>
       </button>
-      <button nz-button type="button" (click)="myAdvice()">
+      <button [acl]="'QiGuanAdmin'" nz-button type="button" (click)="goManagement()">
         <i nz-icon type="eye"></i>
         <span>公示管理</span>
       </button>
@@ -28,9 +28,9 @@
     </thead>
     <tbody>
       <tr *ngFor="let item of nzTable.data">
-        <td>{{item.adviseName | lengthLimit:25}}</td>
-        <td>{{item.currentSituation | lengthLimit:25}}</td>
-        <td>{{item.solution | lengthLimit:25}}</td>
+        <td>{{item.adviseName | lengthLimit:15}}</td>
+        <td>{{item.currentSituation | lengthLimit:15}}</td>
+        <td>{{item.solution | lengthLimit:15}}</td>
         <td>
           <nz-badge *ngIf="!item.isAdoption" nzStatus="error" nzText="未采纳"></nz-badge>
           <nz-badge *ngIf="item.isAdoption" nzStatus="success" nzText="已采纳"></nz-badge>

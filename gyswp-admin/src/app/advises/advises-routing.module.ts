@@ -3,6 +3,8 @@ import { AppRouteGuard } from '@shared/auth/auth-route-guard';
 import { Routes, RouterModule } from '@angular/router';
 import { AdvisesComponent } from './advises/advises.component';
 import { MyAdviceComponent } from './advises/my-advice/my-advice.component';
+import { PublicityManagementComponent } from './advises/publicity-management/publicity-management.component';
+import { ACLGuard } from '@delon/acl';
 
 const routes: Routes = [
   {
@@ -15,6 +17,11 @@ const routes: Routes = [
     component: MyAdviceComponent,
     canActivate: [AppRouteGuard],
   },
+  {
+    path: 'advice-management',
+    component: PublicityManagementComponent,
+    canActivate: [AppRouteGuard, ACLGuard]
+  }
 ];
 
 @NgModule({

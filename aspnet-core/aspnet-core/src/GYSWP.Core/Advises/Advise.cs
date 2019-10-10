@@ -61,5 +61,11 @@ namespace GYSWP.Advises
         /// 是否公示
         /// </summary>
         public virtual bool IsPublicity { get; set; }
+
+        /// <summary>
+        /// 申请Id
+        /// </summary>
+        [StringLength(50)]
+        public virtual string ProcessInstanceId { get; set; }
     }
 }

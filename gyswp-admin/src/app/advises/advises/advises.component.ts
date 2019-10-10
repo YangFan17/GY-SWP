@@ -54,4 +54,7 @@ export class AdvisesComponent extends PagedListingComponentBase<any>{
   myAdvice(): void {
     this.router.navigate(['/app/advises/my-advice']);
   }
+  goManagement(): void {
+    this.router.navigate(['/app/advises/advice-management']);
+  }
 }

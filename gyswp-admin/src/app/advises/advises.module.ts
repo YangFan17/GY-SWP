@@ -10,6 +10,7 @@ import { AdvisesComponent } from './advises/advises.component';
 import { AdviseService } from 'services';
 import { DetailAdviseComponent } from './advises/detail-advise/detail-advise.component'
 import { MyAdviceComponent } from './advises/my-advice/my-advice.component';
+import { PublicityManagementComponent } from './advises/publicity-management/publicity-management.component';
 
 @NgModule({
   imports: [
@@ -23,13 +24,13 @@ import { MyAdviceComponent } from './advises/my-advice/my-advice.component';
   ],
   declarations: [
     AdvisesComponent,
-    // CreateAdviseComponent,
     DetailAdviseComponent,
-    MyAdviceComponent
+    MyAdviceComponent,
+    PublicityManagementComponent
   ],
   entryComponents: [
-    // CreateAdviseComponent,
-    MyAdviceComponent
+    MyAdviceComponent,
+    PublicityManagementComponent
   ],
   providers: [AdviseService]
 })

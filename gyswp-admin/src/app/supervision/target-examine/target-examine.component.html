@@ -62,10 +62,10 @@
                     <th style="text-align: right;">
                     </th>
                     <th>检查指标</th>
-                    <th nzWidth="18%">指标释义</th>
+                    <th>指标释义</th>
                     <th>测量方式</th>
-                    <th nzWidth="8%">周期</th>
-                    <th nzWidth="8%">预期值</th>
+                    <th>周期</th>
+                    <th>预期值</th>
                     <th>指标来源</th>
                     <th>状态</th>
                     <!-- <th>截止日期</th> -->
@@ -80,8 +80,8 @@
                         </label>
                     </td>
                     <td>{{item.title}}</td>
-                    <td>{{item.paraphrase}}</td>
-                    <td>{{item.measuringWay}}</td>
+                    <td title="{{item.paraphrase}}">{{item.paraphrase | lengthLimit:10}}</td>
+                    <td title="{{item.measuringWay}}">{{item.measuringWay | lengthLimit:10}}</td>
                     <td>{{item.cycleTimeName}}</td>
                     <!-- <nz-badge *ngIf="item.statusName == 1" [nzStatus]="'default'" [nzText]="'未填写'"></nz-badge>
                     <nz-badge *ngIf="item.statusName == 2" [nzStatus]="'success'" [nzText]="'已达成'"></nz-badge>

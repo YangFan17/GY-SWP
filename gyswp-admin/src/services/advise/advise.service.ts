@@ -39,6 +39,16 @@ export class AdviseService {
         }));
     }
 
+    getPublicityManagmentList(params: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/Advise/GetPagedPublicityManagmentAsync";
+        return this._commonhttp.get(url_, params).pipe(map(data => {
+            const result = new PagedResultDto();
+            result.items = data.items;
+            result.totalCount = data.totalCount;
+            return result;
+        }));
+    }
+
     /**
      * 获取单条数据详细信息
      * @param id 
