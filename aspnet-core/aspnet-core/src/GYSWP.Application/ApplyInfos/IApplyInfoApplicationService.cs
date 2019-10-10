@@ -37,10 +37,10 @@ namespace GYSWP.ApplyInfos
         Task<PagedResultDto<ApplyInfoListDto>> GetPaged(GetApplyInfosInput input);
 
 
-		/// <summary>
-		/// 通过指定id获取ApplyInfoListDto信息
-		/// </summary>
-		Task<ApplyInfoListDto> GetById(EntityDto<Guid> input);
+        /// <summary>
+        /// 通过指定id获取ApplyInfoListDto信息
+        /// </summary>
+        Task<ApplyInfoListDto> GetById(EntityDto<Guid> input);
 
 
         /// <summary>
@@ -78,5 +78,6 @@ namespace GYSWP.ApplyInfos
         Task UpdateDocClauseByPIIdAsync(string pIId, string result);
         Task<APIResultDto> ApplyDraftDocAsync(ApplyRevisionInput input);
         Task CreateDraDocByPIIdAsync(string pIId, string result);
+        Task UpdateAdviceByPIIdAsync(string pIId, string result);
     }
 }

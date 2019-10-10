@@ -19,8 +19,8 @@ export class AdviseService {
     }
 
     //获取分页数据
-    getAll(params: any): Observable<PagedResultDto> {
-        let url_ = "/api/services/app/Advise/GetPagedAsync";
+    getMyAdviceList(params: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/Advise/GetPagedMyAdviceAsync";
         return this._commonhttp.get(url_, params).pipe(map(data => {
             const result = new PagedResultDto();
             result.items = data.items;
@@ -29,6 +29,15 @@ export class AdviseService {
         }));
     }
 
+    getPublicityAdviceList(params: any): Observable<PagedResultDto> {
+        let url_ = "/api/services/app/Advise/GetPagedPublicityAdviceAsync";
+        return this._commonhttp.get(url_, params).pipe(map(data => {
+            const result = new PagedResultDto();
+            result.items = data.items;
+            result.totalCount = data.totalCount;
+            return result;
+        }));
+    }
 
     /**
      * 获取单条数据详细信息

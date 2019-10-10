@@ -281,7 +281,7 @@ namespace GYSWP.CriterionExamines
                             {
                                 if (groupInfo.Count > 0)
                                 {
-                                    int random = (int)Math.Ceiling(groupInfo.Count * 0.25);
+                                    int random = (int)Math.Ceiling(groupInfo.Count * 0.04);
                                     var empClauseList = await _employeeClauseRepository.GetAll().Where(v => v.EmployeeId == emp.EmpId && v.DocumentId == groupInfo.DocId).OrderBy(v => Guid.NewGuid()).Take(random).ToListAsync();
                                     foreach (var item in empClauseList)
                                     {
@@ -315,7 +315,7 @@ namespace GYSWP.CriterionExamines
                                 #region 全部改为具体人员考核
                                 //if (groupInfo.Count > 0)
                                 //{
-                                //    int random = (int)Math.Ceiling(groupInfo.Count * 0.25);
+                                //    int random = (int)Math.Ceiling(groupInfo.Count * 0.04);
                                 //    var empClauseList = await _employeeClauseRepository.GetAll().Where(v => v.EmployeeId == emp.EmpId && v.DocumentId == groupInfo.DocId).OrderBy(v => Guid.NewGuid()).Take(random).ToListAsync();
                                 //    if (entity.Type == GYEnums.CriterionExamineType.内部考核)//内部考核由每个人员填写
                                 //    {
@@ -360,7 +360,7 @@ namespace GYSWP.CriterionExamines
                                 #endregion
                                 if (groupInfo.Count > 0)
                                 {
-                                    int random = (int)Math.Ceiling(groupInfo.Count * 0.25);
+                                    int random = (int)Math.Ceiling(groupInfo.Count * 0.04);
                                     var empClauseList = await _employeeClauseRepository.GetAll().Where(v => v.EmployeeId == emp.EmpId && v.DocumentId == groupInfo.DocId).OrderBy(v => Guid.NewGuid()).Take(random).ToListAsync();
                                     foreach (var item in empClauseList)
                                     {
@@ -454,7 +454,7 @@ namespace GYSWP.CriterionExamines
         //            int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
         //            if (total > 0)
         //            {
-        //                int random = (int)Math.Ceiling(total * 0.25);//计算抽查总数（总和的20%)
+        //                int random = (int)Math.Ceiling(total * 0.04);//计算抽查总数（总和的20%)
         //                int YingXiao = (int)Math.Ceiling(random * 0.4);//营销标准40%
         //                //如果预期计算结果大于实际数量，取实际结果
         //                if (YingXiao > YingXiaoList.Count())
@@ -536,7 +536,7 @@ namespace GYSWP.CriterionExamines
         //            int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
         //            if (total > 0)
         //            {
-        //                int random = (int)Math.Ceiling(total * 0.25);//计算抽查总数（总和的20%)
+        //                int random = (int)Math.Ceiling(total * 0.04);//计算抽查总数（总和的20%)
         //                int YingXiao = (int)Math.Ceiling(random * 0.3);//营销标准30%
         //                //如果预期计算结果大于实际数量，取实际结果
         //                if (YingXiao > YingXiaoList.Count())
@@ -627,7 +627,7 @@ namespace GYSWP.CriterionExamines
         //        else if (input.DeptId == 59593071) //物流中心
         //        {
         //            int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
-        //            int random = (int)Math.Ceiling(total * 0.25);
+        //            int random = (int)Math.Ceiling(total * 0.04);
         //            var examEmp = await _employeeRepository.GetAll().Where(v => v.Department == "[60007074]" && v.Position == "部长").Select(v => new { v.Id, v.Name }).FirstOrDefaultAsync();
         //            var empClauseList = await _employeeClauseRepository.GetAll().Where(v => employeeIds.Contains(v.EmployeeId)).OrderBy(v => Guid.NewGuid()).Take(random).ToListAsync();
         //            foreach (var item in empClauseList)
@@ -649,7 +649,7 @@ namespace GYSWP.CriterionExamines
         //        else //机关部门
         //        {
         //            int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
-        //            int random = (int)Math.Ceiling(total * 0.25);
+        //            int random = (int)Math.Ceiling(total * 0.04);
         //            var adminList = await GetUsersInRoleAsync("StandardAdmin");
         //            string[] adminIds = adminList.Select(v => v.EmployeeId).ToArray();
         //            var examEmp = await _employeeRepository.GetAll().Where(v => adminIds.Contains(v.Id) && v.Department == "[" + input.DeptId + "]").Select(v => new { v.Id, v.Name }).FirstOrDefaultAsync();
@@ -743,7 +743,7 @@ namespace GYSWP.CriterionExamines
         //            int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
         //            if (total > 0)
         //            {
-        //                int random = (int)Math.Ceiling(total * 0.25);//计算抽查总数（总和的20%)
+        //                int random = (int)Math.Ceiling(total * 0.04);//计算抽查总数（总和的20%)
         //                int YingXiao = (int)Math.Ceiling(random * 0.4);//营销标准40%
         //                //如果预期计算结果大于实际数量，取实际结果
         //                if (YingXiao > YingXiaoList.Count())
@@ -824,7 +824,7 @@ namespace GYSWP.CriterionExamines
         //            int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
         //            if (total > 0)
         //            {
-        //                int random = (int)Math.Ceiling(total * 0.25);//计算抽查总数（总和的20%)
+        //                int random = (int)Math.Ceiling(total * 0.04);//计算抽查总数（总和的20%)
         //                int YingXiao = (int)Math.Ceiling(random * 0.3);//营销标准30%
         //                //如果预期计算结果大于实际数量，取实际结果
         //                if (YingXiao > YingXiaoList.Count())
@@ -913,7 +913,7 @@ namespace GYSWP.CriterionExamines
         //        else if (input.DeptId == 59593071) //物流中心
         //        {
         //            int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
-        //            int random = (int)Math.Ceiling(total * 0.25);
+        //            int random = (int)Math.Ceiling(total * 0.04);
         //            var empClauseList = await _employeeClauseRepository.GetAll().Where(v => employeeIds.Contains(v.EmployeeId)).OrderBy(v => Guid.NewGuid()).Take(random).ToListAsync();
         //            foreach (var item in empClauseList)
         //            {
@@ -934,7 +934,7 @@ namespace GYSWP.CriterionExamines
         //        else //机关部门
         //        {
         //            int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
-        //            int random = (int)Math.Ceiling(total * 0.25);
+        //            int random = (int)Math.Ceiling(total * 0.04);
         //            var empClauseList = await _employeeClauseRepository.GetAll().Where(v => employeeIds.Contains(v.EmployeeId)).OrderBy(v => Guid.NewGuid()).Take(random).ToListAsync();
         //            foreach (var item in empClauseList)
         //            {
@@ -1019,7 +1019,7 @@ namespace GYSWP.CriterionExamines
                     int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
                     if (total > 0)
                     {
-                        int random = (int)Math.Ceiling(total * 0.25);//计算抽查总数（总和的20%)
+                        int random = (int)Math.Ceiling(total * 0.04);//计算抽查总数（总和的20%)
                         int YingXiao = (int)Math.Ceiling(random * 0.4);//营销标准40%
                         //如果预期计算结果大于实际数量，取实际结果
                         if (YingXiao > YingXiaoList.Count())
@@ -1100,7 +1100,7 @@ namespace GYSWP.CriterionExamines
                     int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
                     if (total > 0)
                     {
-                        int random = (int)Math.Ceiling(total * 0.25);//计算抽查总数（总和的20%)
+                        int random = (int)Math.Ceiling(total * 0.04);//计算抽查总数（总和的20%)
                         int YingXiao = (int)Math.Ceiling(random * 0.3);//营销标准30%
                         //如果预期计算结果大于实际数量，取实际结果
                         if (YingXiao > YingXiaoList.Count())
@@ -1189,7 +1189,7 @@ namespace GYSWP.CriterionExamines
                 else if (input.DeptId == 59593071) //物流中心
                 {
                     int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
-                    int random = (int)Math.Ceiling(total * 0.25);
+                    int random = (int)Math.Ceiling(total * 0.04);
                     var empClauseList = await _employeeClauseRepository.GetAll().Where(v => employeeIds.Contains(v.EmployeeId)).OrderBy(v => Guid.NewGuid()).Take(random).ToListAsync();
                     foreach (var item in empClauseList)
                     {
@@ -1210,7 +1210,7 @@ namespace GYSWP.CriterionExamines
                 else //机关部门
                 {
                     int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
-                    int random = (int)Math.Ceiling(total * 0.25);
+                    int random = (int)Math.Ceiling(total * 0.04);
                     var empClauseList = await _employeeClauseRepository.GetAll().Where(v => employeeIds.Contains(v.EmployeeId)).OrderBy(v => Guid.NewGuid()).Take(random).ToListAsync();
                     foreach (var item in empClauseList)
                     {
@@ -1264,7 +1264,7 @@ namespace GYSWP.CriterionExamines
 
                 //查询部门局长、科长、主任
                 var empInfo = await _employeeRepository.GetAll().Where(v => v.Department == "[" + input.DeptId + "]" && ((v.Position.Contains("局长") && !v.Position.Contains("副局长")) || (v.Position.Contains("科长") && !v.Position.Contains("副科长")) || (v.Position == "主任" && !v.Position.Contains("副主任")))).Select(v => new { v.Id, v.Name }).FirstOrDefaultAsync();
-                //生成考核详情 每种标准平均按比例抽取（20%）
+                //生成考核详情 每种标准平均按比例抽取（4%）
                 input.EmpInfo = await _employeeRepository.GetAll().Where(v => v.Department == "[" + input.DeptId + "]").Select(v => new EmpInfo { EmpId = v.Id, EmpName = v.Name }).ToListAsync();
                 foreach (var emp in input.EmpInfo)
                 {
@@ -1276,7 +1276,7 @@ namespace GYSWP.CriterionExamines
                         {
                             if (groupInfo.Count > 0)
                             {
-                                int random = (int)Math.Ceiling(groupInfo.Count * 0.25);
+                                int random = (int)Math.Ceiling(groupInfo.Count * 0.04);
                                 var empClauseList = await _employeeClauseRepository.GetAll().Where(v => v.EmployeeId == emp.EmpId && v.DocumentId == groupInfo.DocId).OrderBy(v => Guid.NewGuid()).Take(random).ToListAsync();
 
                                 foreach (var item in empClauseList)

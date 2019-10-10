@@ -130,10 +130,14 @@ namespace GYSWP.SuperviseReports
             return dataList;
         }
 
+        /// <summary>
+        /// 目标指标检查统计
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public async Task<List<IndicatorSuperviseDto>> GetIndicatorSuperviseReportDataAsync(IndicatorSuperviseInputDto input)
         {
             input.EndTime = input.EndTime.AddDays(1);
-            
             var dept = await _organizationRepository.FirstOrDefaultAsync(input.DeptId);
 
             var deptIds = GetDeptIds(dept.Id);
@@ -141,13 +145,13 @@ namespace GYSWP.SuperviseReports
 
             var baseQuery = _indicatorsDetailRepository.GetAll().Where(c => deptIds.Contains(c.DeptId) && c.CreationTime >= input.BeginTime && c.CreationTime < input.EndTime);
             
-            int totalQuery = baseQuery.Count();
+            int totalQuery = await baseQuery.CountAsync();
 
-            int notFillNum = baseQuery.Where(i => i.Status == IndicatorStatus.未填写).Count();
+            int notFillNum = await baseQuery.Where(i => i.Status == IndicatorStatus.未填写).CountAsync();
 
-            int okNum = baseQuery.Where(i => i.Status == IndicatorStatus.已达成).Count();
+            int okNum = await baseQuery.Where(i => i.Status == IndicatorStatus.已达成).CountAsync();
 
-            int notFinishedNum = baseQuery.Where(i => i.Status == IndicatorStatus.未达成).Count();
+            int notFinishedNum = await baseQuery.Where(i => i.Status == IndicatorStatus.未达成).CountAsync();
 
             return new List<IndicatorSuperviseDto>()
             {

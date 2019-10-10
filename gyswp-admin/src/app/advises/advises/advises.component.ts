@@ -1,33 +1,49 @@
-import { Component, OnInit, Injector } from '@angular/core';
-import { AppComponentBase } from '@shared/app-component-base';
-import { AdviseService } from 'services';
-import { CreateAdviseComponent } from './create-advise/create-advise.component'
+import { Component, Injector } from '@angular/core';
+import { PagedListingComponentBase, PagedRequestDto, PagedResultDto } from '@shared/component-base';
 import { Router } from '@angular/router';
+import { AdviseService } from 'services';
 
 @Component({
   selector: 'app-advises',
   templateUrl: './advises.component.html',
   styles: []
 })
-export class AdvisesComponent extends AppComponentBase implements OnInit {
+export class AdvisesComponent extends PagedListingComponentBase<any>{
   isTableLoading: boolean = false;
-  constructor(injector: Injector, private router: Router, private adviseService: AdviseService) {
+  constructor(
+    injector: Injector
+    , private router: Router
+    , private adviseService: AdviseService
+  ) {
     super(injector);
   }
 
-  ngOnInit() {
-    this.getAdvises();
+  refresh(): void {
+    this.getDataPage(this.pageNumber);
+  }
+  refreshData() {
+    this.pageNumber = 1;
+    this.refresh();
+  }
+  /**
+   * 重置
+   */
+  reset() {
+    this.refresh();
   }
 
-  //新增
-  create(): void {
-    this.modalHelper.open(CreateAdviseComponent, {}, 'md', {
-      nzMask: true
-    }).subscribe(isSave => {
-      if (isSave) {
-        this.getAdvises();
-      }
-    });
+  protected fetchDataList(request: PagedRequestDto, pageNumber: number, finishedCallback: Function): void {
+    let params: any = {};
+    params.SkipCount = request.skipCount;
+    params.MaxResultCount = request.maxResultCount;
+    this.adviseService.getPublicityAdviceList(params)
+      .finally(() => {
+        finishedCallback();
+      })
+      .subscribe((result: PagedResultDto) => {
+        this.dataList = result.items
+        this.totalItems = result.totalCount;
+      });
   }
 
   //详情
@@ -35,18 +51,7 @@ export class AdvisesComponent extends AppComponentBase implements OnInit {
     this.router.navigate(['/app/advises/advises-detail', { id: id }]);
   }
 
-  //获取Advise数据
-  getAdvises() {
-    this.isTableLoading = true;
-    let params: any = {};
-    params.SkipCount = this.query.skipCount()
-    params.MaxResultCount = this.query.pageSize;
-    //alert(this.month)
-    this.adviseService.getAll(params).subscribe((data) => {
-      this.isTableLoading = false;
-      this.query.data = data.items;
-      this.query.total = data.totalCount;
-    });
+  myAdvice(): void {
+    this.router.navigate(['/app/advises/my-advice']);
   }
-
 }

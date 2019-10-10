@@ -58,30 +58,52 @@ namespace GYSWP.Advises
             _entityManager = entityManager;
         }
 
+        /// <summary>
+        /// 获取公示的合理化建议列表
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<PagedResultDto<AdviseListDto>> GetPagedPublicityAdviceAsync(GetAdvisesInput input)
+        {
+            var query = _entityRepository.GetAll().Where(v=>v.IsPublicity == true);
+            var count = await query.CountAsync();
+            var entityList = await query
+                    .OrderBy(input.Sorting).AsNoTracking()
+                    .PageBy(input)
+                    .ToListAsync();
+            var entityListDtos = entityList.MapTo<List<AdviseListDto>>();
+            return new PagedResultDto<AdviseListDto>(count, entityListDtos);
+        }
 
         /// <summary>
-        /// 获取Advise的分页列表信息
+        /// 获取我的合理化建议列表
         ///</summary>
         /// <param name="input"></param>
         /// <returns></returns>
+
+        public async Task<PagedResultDto<AdviseListDto>> GetPagedMyAdviceAsync(GetAdvisesInput input)
+        {
+            var user = await _userManager.GetUserByIdAsync(AbpSession.UserId.Value);
+            var query = _entityRepository.GetAll().Where(aa => aa.EmployeeId == user.EmployeeId);
+            var count = await query.CountAsync();
+            var entityList = await query
+                    .OrderByDescending(v=>v.CreationTime).ThenBy(v=>v.IsAdoption).AsNoTracking()
+                    .PageBy(input)
+                    .ToListAsync();
+            var entityListDtos = entityList.MapTo<List<AdviseListDto>>();
+            return new PagedResultDto<AdviseListDto>(count, entityListDtos);
+        }
 
         public async Task<PagedResultDto<AdviseListDto>> GetPagedAsync(GetAdvisesInput input)
         {
             var user = await _userManager.GetUserByIdAsync(AbpSession.UserId.Value);
             var query = _entityRepository.GetAll().Where(aa => aa.EmployeeId == user.EmployeeId);
-            // TODO:根据传入的参数添加过滤条件
-
-
             var count = await query.CountAsync();
-
             var entityList = await query
                     .OrderBy(input.Sorting).AsNoTracking()
                     .PageBy(input)
                     .ToListAsync();
-
-            // var entityListDtos = ObjectMapper.Map<List<AdviseListDto>>(entityList);
             var entityListDtos = entityList.MapTo<List<AdviseListDto>>();
-
             return new PagedResultDto<AdviseListDto>(count, entityListDtos);
         }
 
@@ -243,19 +265,6 @@ namespace GYSWP.Advises
             }
             return list;
         }
-
-        /// <summary>
-        /// 导出Advise为excel表,等待开发。
-        /// </summary>
-        /// <returns></returns>
-        //public async Task<FileDto> GetToExcel()
-        //{
-        //	var users = await UserManager.Users.ToListAsync();
-        //	var userListDtos = ObjectMapper.Map<List<UserListDto>>(users);
-        //	await FillRoleNames(userListDtos);
-        //	return _userListExcelExporter.ExportToFile(userListDtos);
-        //}
-
     }
 }
 
