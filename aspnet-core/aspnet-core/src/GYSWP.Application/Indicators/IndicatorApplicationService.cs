@@ -28,6 +28,7 @@ using GYSWP.Employees;
 using GYSWP.DingDingApproval;
 using GYSWP.Documents;
 using GYSWP.Employees.DomainService;
+using Abp.Domain.Uow;
 
 namespace GYSWP.Indicators
 {
@@ -184,67 +185,81 @@ namespace GYSWP.Indicators
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
+        [UnitOfWork(IsDisabled = true)]
         public async Task<APIResultDto> PublishIndicatorByIdAsync(PublishIndicatorInput input)
         {
-            foreach (var id in input.IndicatorList)
+            try
             {
-                var entity = await _entityRepository.GetAsync(id);
-                string[] deptStrList = entity.DeptIds.Split(',');
-                long[] deptIdList = Array.ConvertAll<string, long>(deptStrList, s => long.Parse(s));
-                foreach (var deptId in deptIdList.Where(v => v != 1 && v != 59549057))//过滤顶级部门
+                using (var unitOfWork = UnitOfWorkManager.Begin())
                 {
-                    string deptName = await _organizationRepository.GetAll().Where(v => v.Id == deptId).Select(v => v.DepartmentName).FirstOrDefaultAsync();
-                    var examEmp = new ExamineUser();
-                    //机关部门
-                    if (deptId == 59481641 || deptId == 59490590 || deptId == 59534183 || deptId == 59534184 || deptId == 59534185
-                        || deptId == 59538081 || deptId == 59552081 || deptId == 59571109 || deptId == 59584063 || deptId == 59591062
-                        || deptId == 59620071 || deptId == 59628060 || deptId == 59632058 || deptId == 59644078 || deptId == 59646091)
+                    foreach (var id in input.IndicatorList)
                     {
-                        var adminList = await GetUsersInRoleAsync("StandardAdmin");
-                        string[] adminIds = adminList.Select(v => v.EmployeeId).ToArray();
-                        examEmp = await _employeeRepository.GetAll().Where(v => adminIds.Contains(v.Id) && v.Department == "[" + deptId + "]").Select(v => new ExamineUser { Id = v.Id, Name = v.Name }).FirstOrDefaultAsync();
-                    }
-                    //基层单位
-                    else
-                    {
-                        examEmp = await _employeeRepository.GetAll().Where(v => v.Department == "[" + deptId + "]" && (v.Position.Contains("主任") && !v.Position.Contains("!副主任"))).Select(v => new ExamineUser { Id = v.Id, Name = v.Name }).FirstOrDefaultAsync();
-                        if (examEmp == null)
+                        var entity = await _entityRepository.GetAsync(id);
+                        string[] deptStrList = entity.DeptIds.Split(',');
+                        long[] deptIdList = Array.ConvertAll<string, long>(deptStrList, s => long.Parse(s));
+                        foreach (var deptId in deptIdList.Where(v => v != 1 && v != 59549057))//过滤顶级部门
                         {
-                            examEmp = await _employeeRepository.GetAll().Where(v => v.Department == "[" + deptId + "]" && v.Position.Contains("副主任")).Select(v => new ExamineUser { Id = v.Id, Name = v.Name }).FirstOrDefaultAsync();
-                            if (examEmp == null)
+                            string deptName = await _organizationRepository.GetAll().Where(v => v.Id == deptId).Select(v => v.DepartmentName).FirstOrDefaultAsync();
+                            var examEmp = new ExamineUser();
+                            //机关部门
+                            if (deptId == 59481641 || deptId == 59490590 || deptId == 59534183 || deptId == 59534184 || deptId == 59534185
+                                || deptId == 59538081 || deptId == 59552081 || deptId == 59571109 || deptId == 59584063 || deptId == 59591062
+                                || deptId == 59620071 || deptId == 59628060 || deptId == 59632058 || deptId == 59644078 || deptId == 59646091)
                             {
-                                examEmp = await _employeeRepository.GetAll().Where(v => v.Department == "[" + deptId + "]" && (v.Position.Contains("部长") && !v.Position.Contains("!副部长"))).Select(v => new ExamineUser { Id = v.Id, Name = v.Name }).FirstOrDefaultAsync();
+                                var adminList = await GetUsersInRoleAsync("StandardAdmin");
+                                string[] adminIds = adminList.Select(v => v.EmployeeId).ToArray();
+                                examEmp = await _employeeRepository.GetAll().Where(v => adminIds.Contains(v.Id) && v.Department == "[" + deptId + "]").Select(v => new ExamineUser { Id = v.Id, Name = v.Name }).FirstOrDefaultAsync();
+                            }
+                            //基层单位
+                            else
+                            {
+                                examEmp = await _employeeRepository.GetAll().Where(v => v.Department == "[" + deptId + "]" && (v.Position.Contains("主任") && !v.Position.Contains("!副主任"))).Select(v => new ExamineUser { Id = v.Id, Name = v.Name }).FirstOrDefaultAsync();
                                 if (examEmp == null)
                                 {
-                                    examEmp = await _employeeRepository.GetAll().Where(v => v.Department == "[" + deptId + "]" && v.Position.Contains("!副部长")).Select(v => new ExamineUser { Id = v.Id, Name = v.Name }).FirstOrDefaultAsync();
+                                    examEmp = await _employeeRepository.GetAll().Where(v => v.Department == "[" + deptId + "]" && v.Position.Contains("副主任")).Select(v => new ExamineUser { Id = v.Id, Name = v.Name }).FirstOrDefaultAsync();
                                     if (examEmp == null)
                                     {
-                                        examEmp = await _employeeRepository.GetAll().Where(v => v.Department == "[" + deptId + "]" && (v.Position.Contains("科长") && !v.Position.Contains("!副科长"))).Select(v => new ExamineUser { Id = v.Id, Name = v.Name }).FirstOrDefaultAsync();
+                                        examEmp = await _employeeRepository.GetAll().Where(v => v.Department == "[" + deptId + "]" && (v.Position.Contains("部长") && !v.Position.Contains("!副部长"))).Select(v => new ExamineUser { Id = v.Id, Name = v.Name }).FirstOrDefaultAsync();
                                         if (examEmp == null)
                                         {
-                                            examEmp = await _employeeRepository.GetAll().Where(v => v.Department == "[" + deptId + "]" && v.Position.Contains("!副科长")).Select(v => new ExamineUser { Id = v.Id, Name = v.Name }).FirstOrDefaultAsync();
+                                            examEmp = await _employeeRepository.GetAll().Where(v => v.Department == "[" + deptId + "]" && v.Position.Contains("!副部长")).Select(v => new ExamineUser { Id = v.Id, Name = v.Name }).FirstOrDefaultAsync();
                                             if (examEmp == null)
                                             {
-                                                return new APIResultDto() { Code = 999, Msg = $"发布失败，当前部门[{deptName}]无负责人" };
+                                                examEmp = await _employeeRepository.GetAll().Where(v => v.Department == "[" + deptId + "]" && (v.Position.Contains("科长") && !v.Position.Contains("!副科长"))).Select(v => new ExamineUser { Id = v.Id, Name = v.Name }).FirstOrDefaultAsync();
+                                                if (examEmp == null)
+                                                {
+                                                    examEmp = await _employeeRepository.GetAll().Where(v => v.Department == "[" + deptId + "]" && v.Position.Contains("!副科长")).Select(v => new ExamineUser { Id = v.Id, Name = v.Name }).FirstOrDefaultAsync();
+                                                    if (examEmp == null)
+                                                    {
+                                                        //throw new ArgumentNullException($"发布失败，当前部门[{ deptName }]无负责人");
+                                                        return new APIResultDto() { Code = 999, Msg = $"发布失败，当前部门[{deptName}]无负责人" };
+                                                    }
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
+                            IndicatorsDetail detail = new IndicatorsDetail();
+                            detail.IndicatorsId = entity.Id;
+                            detail.DeptId = deptId;
+                            detail.DeptName = deptName;
+                            detail.EmployeeId = examEmp.Id;
+                            detail.EmployeeName = examEmp.Name;
+                            detail.Status = GYEnums.IndicatorStatus.未填写;
+                            detail.EndTime = input.EndTime.ToDayEnd();
+                            await _indicatorsDetailRepository.InsertAsync(detail);
                         }
                     }
-                    IndicatorsDetail detail = new IndicatorsDetail();
-                    detail.IndicatorsId = entity.Id;
-                    detail.DeptId = deptId;
-                    detail.DeptName = deptName;
-                    detail.EmployeeId = examEmp.Id;
-                    detail.EmployeeName = examEmp.Name;
-                    detail.Status = GYEnums.IndicatorStatus.未填写;
-                    detail.EndTime = input.EndTime.ToDayEnd();
-                    await _indicatorsDetailRepository.InsertAsync(detail);
+                    await unitOfWork.CompleteAsync();
                 }
+                return new APIResultDto() { Code = 0, Msg = "发布成功" };
             }
-            return new APIResultDto() { Code = 0, Msg = "发布成功" };
+            catch (Exception ex)
+            {
+                Logger.ErrorFormat("PublishIndicator errormsg{0} Exception{1}", ex.Message, ex);
+                return new APIResultDto() { Code = 901, Msg = "发布失败,请联系管理员" };
+            }
         }
 
         //public async Task<APIResultDto> CreateOrUpdate(CreateOrUpdateIndicatorInput input)
@@ -378,7 +393,7 @@ namespace GYSWP.Indicators
         {
             var user = await GetCurrentUserAsync();
             var userInfo = await _employeeRepository.GetAll().Where(v => v.Id == user.EmployeeId).Select(v => new { v.Position, v.Department }).FirstOrDefaultAsync();
-            if ((userInfo.Department == "[" + 59593071 + "]" || userInfo.Department == "[" + 59634065 + "]"|| userInfo.Department == "[" + 59569075 + "]" || userInfo.Department == "[" + 59584066 + "]" || userInfo.Department == "[" + 59594070 + "]"|| userInfo.Department == "[" + 59617065 + "]" || userInfo.Department == "[" + 59549059 + "]" || userInfo.Department == "[" + 59587088 + "]")
+            if ((userInfo.Department == "[" + 59593071 + "]" || userInfo.Department == "[" + 59634065 + "]" || userInfo.Department == "[" + 59569075 + "]" || userInfo.Department == "[" + 59584066 + "]" || userInfo.Department == "[" + 59594070 + "]" || userInfo.Department == "[" + 59617065 + "]" || userInfo.Department == "[" + 59549059 + "]" || userInfo.Department == "[" + 59587088 + "]")
                  && (userInfo.Position.Contains("县区局（分公司）局长") || userInfo.Position.Contains("物流中心主任")))
             {
                 string deptId = userInfo.Department.Replace('[', ' ').Replace(']', ' ').Trim();

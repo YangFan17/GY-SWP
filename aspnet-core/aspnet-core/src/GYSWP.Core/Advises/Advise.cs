@@ -67,5 +67,10 @@ namespace GYSWP.Advises
         /// </summary>
         [StringLength(50)]
         public virtual string ProcessInstanceId { get; set; }
+
+        /// <summary>
+        /// 审批时间
+        /// </summary>
+        public virtual DateTime? ProcessingHandleTime { get; set; }
     }
 }

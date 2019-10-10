@@ -343,14 +343,15 @@ namespace GYSWP.DingDingApproval
             SubmitApprovalEntity request = new SubmitApprovalEntity();
             request.process_code = "PROC-A0FDBDA5-BBC6-4004-B72B-88AFC92DC427";//202
             request.originator_user_id = advice.EmployeeId;
-            request.agent_id = ddConfig.AgentID; 
-            request.dept_id = Convert.ToInt32(deptId);
+            request.agent_id = ddConfig.AgentID;
+            //request.dept_id = Convert.ToInt32(deptId);
+            request.dept_id = 67209026;
             List<Approval> approvalList = new List<Approval>();
             approvalList.Add(new Approval() { name = "部门（单位）", value = deptName });
-            approvalList.Add(new Approval() { name = "建议名称", value = advice.AdviseName });
             approvalList.Add(new Approval() { name = "建议人", value = advice.EmployeeName });
             approvalList.Add(new Approval() { name = "联合建议人", value = advice.UnionEmpName });
             approvalList.Add(new Approval() { name = "申报日期", value = advice.CreationTime.ToString("yyyy-MM-dd HH:mm") });
+            approvalList.Add(new Approval() { name = "建议名称", value = advice.AdviseName });
             approvalList.Add(new Approval() { name = "现状描述", value = advice.CurrentSituation });
             approvalList.Add(new Approval() { name = "对策建议", value = advice.Solution });
             request.form_component_values = approvalList;

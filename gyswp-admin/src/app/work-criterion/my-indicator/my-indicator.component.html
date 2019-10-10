@@ -22,8 +22,8 @@
             <tbody>
                 <tr *ngFor="let item of nzTable.data">
                     <td>{{item.title}}</td>
-                    <td>{{item.paraphrase}}</td>
-                    <td>{{item.measuringWay}}</td>
+                    <td title="{{item.paraphrase}}">{{item.paraphrase | lengthLimit:10}}</td>
+                    <td title="{{item.measuringWay}}">{{item.measuringWay | lengthLimit:10}}</td>
                     <td>{{item.cycleTimeName}}</td>
                     <!-- <td>{{item.creationTime | date: "yyyy-MM-dd"}}</td> -->
                     <td>{{item.deptName}}</td>

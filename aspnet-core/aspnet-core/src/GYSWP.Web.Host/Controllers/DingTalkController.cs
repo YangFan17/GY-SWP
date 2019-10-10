@@ -126,9 +126,9 @@ namespace GYSWP.Web.Host.Controllers
                             await _applyInfoAppService.CreateDraDocByPIIdAsync(processInstanceId, result);
                             return;
                         }
-                        else if (title.Contains("合理化建议申报表"))
+                        else if (title.Contains("合理化建议申报"))
                         {
-                            await _applyInfoAppService.CreateDraDocByPIIdAsync(processInstanceId, result);
+                            await _applyInfoAppService.UpdateAdviceByPIIdAsync(processInstanceId, result);
                             return;
                         }
                         else //其他
