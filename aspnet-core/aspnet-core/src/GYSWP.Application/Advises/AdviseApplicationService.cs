@@ -24,6 +24,7 @@ using GYSWP.Advises.DomainService;
 using GYSWP.Employees;
 using GYSWP.Organizations;
 using GYSWP.Authorization.Users;
+using GYSWP.Dtos;
 
 namespace GYSWP.Advises
 {
@@ -167,7 +168,6 @@ namespace GYSWP.Advises
             }
         }
 
-
         /// <summary>
         /// 新增Advise
         /// </summary>
@@ -264,6 +264,32 @@ namespace GYSWP.Advises
                 list.Add(adviseReportsDto);
             }
             return list;
+        }
+
+        /// <summary>
+        /// 钉钉添加建议方法
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public async Task<APIResultDto> CreateDDAdviceAsync(CreateDDAdviseInput input)
+        {
+                Advise newAdvise = new Advise();
+                newAdvise.AdviseName = input.Advise.AdviseName;
+                newAdvise.CurrentSituation = input.Advise.CurrentSituation;
+                newAdvise.Solution = input.Advise.Solution;
+                newAdvise.EmployeeId = input.Advise.EmployeeId;
+                newAdvise.EmployeeName = input.Advise.EmployeeName;
+                newAdvise.DeptId = input.Advise.DeptId;
+                newAdvise.DeptName = input.Advise.DeptName;
+                newAdvise.UnionEmpName = input.Advise.UnionEmpName;
+
+            var entity = await _entityRepository.InsertAsync(newAdvise);
+            return new APIResultDto()
+            {
+                Data = entity,
+                Code = 0
+            };
         }
     }
 }

@@ -792,5 +792,33 @@ namespace GYSWP.Organizations
                 return true;
             }
         }
+
+        /// <summary>
+        /// 钉钉接口方法---根据用户ID查用户部门名字
+        /// </summary>
+        /// <param name="department"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public async Task<APIResultDto> GetOrganizationInfo(string EmployeeId)
+        {
+            string deptStr = await _employeeRepository.GetAll().Where(v => v.Id == EmployeeId).Select(v => v.Department).FirstOrDefaultAsync();
+            string deptId = "";
+            if (deptStr.Contains("]["))
+            {
+                var depts = deptStr.Substring(1, deptStr.Length - 2).Split("][");//多部门拆分
+                deptId = depts[0];
+            }
+            else
+            {
+                deptId = deptStr.Replace('[', ' ').Replace(']', ' ').Trim();
+            }
+            var deptInfo = await _entityRepository.GetAll().Where(v => v.Id.ToString() == deptId).Select(v => new { v.Id, v.DepartmentName }).FirstOrDefaultAsync();
+            return new APIResultDto()
+            {
+                Data = deptInfo,
+                Code = 0
+            };
+
+        }
     }
 }
