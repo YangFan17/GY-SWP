@@ -1,40 +1,40 @@
 import { Component, OnInit, Injector, Input } from '@angular/core';
-import { AppComponentBase } from '@shared/app-component-base';
 import { AdviseService } from 'services';
 import { Advise } from 'entities';
 import { ActivatedRoute } from '@angular/router';
+import { FormGroup } from '@angular/forms';
+import { ModalComponentBase } from '@shared/component-base';
 
 @Component({
   selector: 'app-detail-advise',
   templateUrl: './detail-advise.component.html',
   styles: []
 })
-export class DetailAdviseComponent extends AppComponentBase implements OnInit {
+export class DetailAdviseComponent extends ModalComponentBase implements OnInit {
   @Input() adviseId;
   loading: boolean = false;
+  form: FormGroup;
+  id: '';
   advise: Advise = new Advise();
   constructor(injector: Injector, private adviseService: AdviseService
-    , private actRouter: ActivatedRoute) {
+  ) {
     super(injector);
-    this.adviseId = this.actRouter.snapshot.params['id'];
   }
-
-  ngOnInit() {
+  ngOnInit(): void {
     this.getAdvise();
+    this.loading = false;
   }
 
   //获取详情
   getAdvise(): void {
+    console.log("详情api")
     this.loading = true;
-    this.adviseService.getById(this.adviseId).subscribe((data) => {
-      this.loading = false;
+    this.adviseService.getById(this.id).subscribe((data) => {
+      this.loading = true;
       this.advise = data;
     });
   }
-
-  //返回
-  return(): void {
-    history.back();
+  close() {
+    this.success(true);
   }
-
 }

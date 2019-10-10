@@ -1,28 +1,53 @@
-<page-header style="text-align: center;" title="合理化建议申报审批表"></page-header>
-<nz-card [nzBordered]="false" *ngIf="advise" class="info_card_margin">
-  <sv-container size="small" col="1" class="mb-md">
-    <sv label="单位(部门)">{{advise.deptName}}</sv>
-    <sv label="建议人">{{advise.employeeName}}
-    </sv>
-    <sv label="是否采纳">
-      <nz-badge *ngIf="advise.isAdoption==false" nzStatus="error" nzText="否"></nz-badge>
-      <nz-badge *ngIf="advise.isAdoption==true" nzStatus="success" nzText="是"></nz-badge>
-    </sv>
-    <sv label="申报日期">{{advise.creationTime| date: "yyyy-MM-dd"}}</sv>
-    <sv label="建议名称">{{advise.adviseName}}</sv>
-    <sv label="现状描述">{{advise.currentSituation}}</sv>
-    <sv label="对策建议">{{advise.solution}}</sv>
-    <sv label="评审意见">{{advise.reviewOpinion}}</sv>
-    <sv label="领导审批意见">{{advise.approvalComments}}</sv>
+<div class="padding-bottom-45">
+  <h3 style="text-align: center;">
+    <span>合理化建议详情表</span>
+  </h3>
+  <form nz-form *ngIf="advise">
 
-  </sv-container>
-  <footer-toolbar>
-    <button nz-button [nzType]="'default'" (click)="return()">
-      返回
-    </button>
-    <!-- <button *ngIf="editMode && isSaveApply" nz-button [nzType]="'primary'" type="button" [nzLoading]="saving"
-            (click)="saveRevised()">
-            提交制修订
-        </button> -->
-  </footer-toolbar>
-</nz-card>
+    <nz-form-item nz-row style="margin-bottom: 0px;">
+      <nz-form-label nz-col [nzSm]="4">单位(部门)</nz-form-label>
+      <nz-form-control [nzSm]="20">
+        <nz-form-text>{{advise.deptName}}</nz-form-text>
+      </nz-form-control>
+
+      <nz-form-label nz-col [nzSm]="4">建议人</nz-form-label>
+      <nz-form-control [nzSm]="20">
+        <nz-form-text>{{advise.employeeName}}</nz-form-text>
+      </nz-form-control>
+
+      <nz-form-label nz-col [nzSm]="4">申报日期</nz-form-label>
+      <nz-form-control [nzSm]="20">
+        <nz-form-text>{{advise.creationTime| date: "yyyy-MM-dd"}}</nz-form-text>
+      </nz-form-control>
+
+      <nz-form-label nz-col [nzSm]="4">是否采纳</nz-form-label>
+      <nz-form-control [nzSm]="20">
+        <nz-form-text *ngIf="advise.isAdoption==false">未采纳</nz-form-text>
+        <nz-form-text *ngIf="advise.isAdoption==true">已采纳</nz-form-text>
+        <nz-form-text *ngIf="advise.isAdoption==null">待审批</nz-form-text>
+      </nz-form-control>
+
+      <nz-form-label nz-col [nzSm]="4">建议名称</nz-form-label>
+      <nz-form-control [nzSm]="20">
+        <nz-form-text>{{advise.adviseName}}</nz-form-text>
+      </nz-form-control>
+
+      <nz-form-label nz-col [nzSm]="4">现状描述</nz-form-label>
+      <nz-form-control nzHasFeedback [nzSm]="20">
+        <textarea nz-input rows="4" nzAutosize maxlength="2000" value="{{advise.currentSituation}}" readonly></textarea>
+      </nz-form-control>
+
+      <nz-form-label nz-col [nzSm]="4">对策建议</nz-form-label>
+      <nz-form-control nzHasFeedback [nzSm]="20">
+        <textarea nz-input rows="8" nzAutosize maxlength="2000" value="{{advise.solution}}" readonly></textarea>
+      </nz-form-control>
+    </nz-form-item>
+
+    <!-- 功能按钮 -->
+    <div class="modal-footer">
+      <button nz-button type="button" (click)="close()">
+        确定
+      </button>
+    </div>
+  </form>
+</div>

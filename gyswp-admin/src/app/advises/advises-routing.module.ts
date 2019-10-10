@@ -14,7 +14,8 @@ const routes: Routes = [{
   component: DetailAdviseComponent,
   canActivate: [AppRouteGuard],
   // data: { title: "项目详情" }
-}];
+}
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

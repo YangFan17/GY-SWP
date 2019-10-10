@@ -3,6 +3,7 @@ import { AppComponentBase } from '@shared/app-component-base';
 import { AdviseService } from 'services';
 import { CreateAdviseComponent } from './create-advise/create-advise.component'
 import { Router } from '@angular/router';
+import { DetailAdviseComponent } from './detail-advise/detail-advise.component';
 
 @Component({
   selector: 'app-advises',
@@ -30,9 +31,19 @@ export class AdvisesComponent extends AppComponentBase implements OnInit {
     });
   }
 
-  //详情
-  goDetail(id: any): void {
-    this.router.navigate(['/app/advises/advises-detail', { id: id }]);
+  // 详情
+  // goDetail(id: any): void {
+  //   this.router.navigate(['/app/advises/advises-detail', { id: id }]);
+  // }
+
+  SeeDetail(itemid: any) {
+    this.modalHelper.open(DetailAdviseComponent, { id: itemid }, 'md', {
+      nzMask: true
+    }).subscribe(isSave => {
+      if (isSave) {
+      }
+    });
+
   }
 
   //获取Advise数据

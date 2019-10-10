@@ -24,10 +24,11 @@ import { DetailAdviseComponent } from './advises/detail-advise/detail-advise.com
   declarations: [
     AdvisesComponent,
     CreateAdviseComponent,
-    DetailAdviseComponent
+    DetailAdviseComponent,
   ],
   entryComponents: [
-    CreateAdviseComponent
+    CreateAdviseComponent,
+    DetailAdviseComponent,
   ],
   providers: [AdviseService]
 })
