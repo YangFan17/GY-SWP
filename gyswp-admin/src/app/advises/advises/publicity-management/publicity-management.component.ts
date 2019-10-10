@@ -2,6 +2,7 @@ import { Component, Injector } from '@angular/core';
 import { PagedListingComponentBase, PagedRequestDto, PagedResultDto } from '@shared/component-base';
 import { Router } from '@angular/router';
 import { AdviseService } from 'services';
+import { DetailAdviseComponent } from '../detail-advise/detail-advise.component';
 
 @Component({
     moduleId: module.id,
@@ -46,5 +47,33 @@ export class PublicityManagementComponent extends PagedListingComponentBase<any>
 
     return() {
         this.router.navigate(['app/advises/advises']);
+    }
+
+    //更改公式状态方法
+    changePubStatus(itemId: string, isPublicity: boolean) {
+        let msg = "";
+        isPublicity == true ? msg = "是否取消公示本条建议?" : msg = "是否公示本条建议?";
+        this.message.confirm(
+            msg,
+            '信息确认',
+            (result: boolean) => {
+                if (result) {
+                    this.adviseService.changePubStatus(itemId).subscribe(() => {
+                        this.notify.success('成功完成该操作!');
+                        this.refresh();
+                    });
+                }
+            },
+        );
+
+    }
+
+    goDetail(itemId: any) {
+        this.modalHelper.open(DetailAdviseComponent, { adviseId: itemId }, 'md', {
+            nzMask: true
+        }).subscribe(isSave => {
+            if (isSave) {
+            }
+        });
     }
 }

@@ -107,4 +107,12 @@ export class AdviseService {
             return arry;
         }));
     }
+    //更改公示状态方法
+    changePubStatus(id: string): Observable<any> {
+        let _url = "/api/services/app/Advise/ChangePubStatusAsync";
+        let param = { 'id': id };
+        return this._commonhttp.post(_url, param).pipe(map(data => {
+            return data;
+        }))
+    }
 }

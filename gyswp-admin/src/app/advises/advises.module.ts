@@ -26,11 +26,13 @@ import { PublicityManagementComponent } from './advises/publicity-management/pub
     AdvisesComponent,
     DetailAdviseComponent,
     MyAdviceComponent,
-    PublicityManagementComponent
+    PublicityManagementComponent,
+    DetailAdviseComponent
   ],
   entryComponents: [
     MyAdviceComponent,
-    PublicityManagementComponent
+    PublicityManagementComponent,
+    DetailAdviseComponent
   ],
   providers: [AdviseService]
 })

@@ -35,9 +35,9 @@
           <nz-badge *ngIf="!item.isAdoption" nzStatus="error" nzText="未采纳"></nz-badge>
           <nz-badge *ngIf="item.isAdoption" nzStatus="success" nzText="已采纳"></nz-badge>
         </td>
-        <td>{{item.creationTime | _date: 'YYYY-MM-DD'}}</td>
-        <td>
-          <a (click)="goDetail(item.id)">详情</a>
+        <td style="text-align: center">{{item.creationTime | _date: 'YYYY-MM-DD'}}</td>
+        <td style="text-align: center">
+          <a (click)="seeDetail(item.id)">详情</a>
         </td>
       </tr>
     </tbody>

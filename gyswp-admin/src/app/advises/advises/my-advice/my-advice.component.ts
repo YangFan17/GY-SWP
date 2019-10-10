@@ -2,6 +2,7 @@ import { Component, Injector } from '@angular/core';
 import { PagedListingComponentBase, PagedRequestDto, PagedResultDto } from '@shared/component-base';
 import { Router } from '@angular/router';
 import { AdviseService } from 'services';
+import { DetailAdviseComponent } from '../detail-advise/detail-advise.component';
 
 @Component({
     moduleId: module.id,
@@ -46,5 +47,16 @@ export class MyAdviceComponent extends PagedListingComponentBase<any>{
 
     return() {
         this.router.navigate(['app/advises/advises']);
+    }
+
+    goDetail(itemId: any) {
+
+        this.modalHelper.open(DetailAdviseComponent, { adviseId: itemId }, 'md', {
+            nzMask: true
+        }).subscribe(isSave => {
+            if (isSave) {
+            }
+        });
+
     }
 }

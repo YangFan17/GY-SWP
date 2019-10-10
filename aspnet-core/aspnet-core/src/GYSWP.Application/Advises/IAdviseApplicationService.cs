@@ -89,5 +89,7 @@ namespace GYSWP.Advises
         //Task<FileDto> GetToExcel();
         Task<APIResultDto> CreateDDAdviceAsync(CreateDDAdviseInput input);
         Task<PagedResultDto<AdviseListDto>> GetPagedPublicityManagmentAsync(GetAdvisesInput input);
+
+        Task<APIResultDto> ChangePubStatusAsync(EntityDto<Guid> input);
     }
 }

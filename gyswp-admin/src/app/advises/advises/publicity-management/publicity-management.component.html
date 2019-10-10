@@ -33,7 +33,8 @@
                     <td>
                         <a (click)="goDetail(item.id)">详情</a>
                         <nz-divider nzType="vertical"></nz-divider>
-                        <a>{{item.isPublicity == true?'取消公示':'公示'}}</a>
+                        <a
+                            (click)="changePubStatus(item.id,item.isPublicity)">{{item.isPublicity == true?'取消公示':'公示'}}</a>
                     </td>
                 </tr>
             </tbody>

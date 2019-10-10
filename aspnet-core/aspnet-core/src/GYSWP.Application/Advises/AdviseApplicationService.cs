@@ -326,7 +326,36 @@ namespace GYSWP.Advises
                 };
             }
         }
+        /// <summary>
+        /// 通过ID更改其公示状态
+        /// </summary>
+        /// <param name="adviseId"></param>
+        /// <returns></returns>
+        public async Task<APIResultDto> ChangePubStatusAsync(EntityDto<Guid> input)
+        {
+            try
+            {
+                var entity = await _entityRepository.GetAsync(input.Id);
+                entity.IsPublicity = !entity.IsPublicity;
+                return new APIResultDto()
+                {
+                    Msg = "更新成功",
+                    Code = 0
+                };
+            }
+            catch(Exception ex)
+            {
+                Logger.ErrorFormat("AdviseApplicationService ChangePubStatusAsync errormsg{0} Exception{1}", ex.Message, ex);
+                return new APIResultDto()
+                {
+                    Msg = "更新失败",
+                    Code = 999
+                 };
+                
+            }
+        }
     }
+   
 }
 
 
