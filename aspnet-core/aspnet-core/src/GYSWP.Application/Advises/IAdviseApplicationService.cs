@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.Advises.Dtos;
 using GYSWP.Advises;
+using GYSWP.Dtos;
 
 namespace GYSWP.Advises
 {
@@ -85,6 +86,7 @@ namespace GYSWP.Advises
         /// </summary>
         /// <returns></returns>
         //Task<FileDto> GetToExcel();
+        Task<APIResultDto> CreateDDAdviceAsync(CreateDDAdviseInput input);
 
     }
 }

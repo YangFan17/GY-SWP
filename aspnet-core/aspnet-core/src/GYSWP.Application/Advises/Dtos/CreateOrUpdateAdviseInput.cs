@@ -12,4 +12,9 @@ namespace GYSWP.Advises.Dtos
         public AdviseEditDto Advise { get; set; }
 
     }
+    public class CreateDDAdviseInput
+    {
+        [Required]
+        public AdviseDDCreateDto Advise { get; set; }
+    }
 }

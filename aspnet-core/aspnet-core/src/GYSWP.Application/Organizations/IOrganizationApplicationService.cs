@@ -81,5 +81,6 @@ namespace GYSWP.Organizations
         Task<List<OrganizationNzTreeNode>> GetTargetTreesAsync();
         Task<string> GetDeptIdAsync();
         Task<bool> GetIsCountrnDeptAsync(long deptId);
+       
     }
 }
