@@ -26,6 +26,7 @@ using GYSWP.Documents;
 using GYSWP.Dtos;
 using GYSWP.CriterionExamines;
 using Abp.Auditing;
+using Abp.Domain.Uow;
 
 namespace GYSWP.ExamineDetails
 {
@@ -268,7 +269,9 @@ namespace GYSWP.ExamineDetails
         /// <returns></returns>
         public async Task<PagedResultDto<ExamineRecordDto>> GetExamineDetailByCurrentIdAsync(GetExamineDetailsInput input)
         {
-            var user = await GetCurrentUserAsync();
+            using (CurrentUnitOfWork.DisableFilter(AbpDataFilters.SoftDelete))
+            {
+                var user = await GetCurrentUserAsync();
             var query = _entityRepository.GetAll().Where(v => v.EmployeeId == user.EmployeeId && v.CriterionExamineId == input.ExamineId);
             var doc = _documentRepository.GetAll().Select(v => new { v.Id, v.Name });
             var clause = _clauseRepository.GetAll();
@@ -289,6 +292,7 @@ namespace GYSWP.ExamineDetails
             var count = await list.CountAsync();
             var entityList = await list.OrderBy(v => v.Status).ThenByDescending(v => v.Result).ThenBy(v => v.DocumentName).PageBy(input).ToListAsync();
             return new PagedResultDto<ExamineRecordDto>(count, entityList);
+            }
         }
 
         /// <summary>
@@ -300,22 +304,25 @@ namespace GYSWP.ExamineDetails
         [Audited]
         public async Task<ExamineRecordDto> GetExamineDetailByIdAsync(GetExamineDetailsInput input)
         {
-            var query = _entityRepository.GetAll().Where(v => v.Id == input.Id);
-            var doc = _documentRepository.GetAll().Select(v => new { v.Id, v.Name });
-            var clause = _clauseRepository.GetAll();
-            var result = await (from q in query
-                                join d in doc on q.DocumentId equals d.Id
-                                join c in clause on q.ClauseId equals c.Id
-                                select new ExamineRecordDto()
-                                {
-                                    Id = q.Id,
-                                    DocumentName = d.Name,
-                                    ClauseInfo = c.ClauseNo + "\t" + (c.Title == null ? "" : c.Title) + "\r\n" + (c.Content == null ? "" : c.Content),
-                                    Status = q.Status,
-                                    Result = q.Result,
-                                    EmployeeName = q.EmployeeName
-                                }).FirstOrDefaultAsync();
-            return result;
+            using (CurrentUnitOfWork.DisableFilter(AbpDataFilters.SoftDelete))
+            {
+                var query = _entityRepository.GetAll().Where(v => v.Id == input.Id);
+                var doc = _documentRepository.GetAll().Select(v => new { v.Id, v.Name });
+                var clause = _clauseRepository.GetAll();
+                var result = await (from q in query
+                                    join d in doc on q.DocumentId equals d.Id
+                                    join c in clause on q.ClauseId equals c.Id
+                                    select new ExamineRecordDto()
+                                    {
+                                        Id = q.Id,
+                                        DocumentName = d.Name,
+                                        ClauseInfo = c.ClauseNo + "\t" + (c.Title == null ? "" : c.Title) + "\r\n" + (c.Content == null ? "" : c.Content),
+                                        Status = q.Status,
+                                        Result = q.Result,
+                                        EmployeeName = q.EmployeeName
+                                    }).FirstOrDefaultAsync();
+                return result;
+            }
         }
 
 

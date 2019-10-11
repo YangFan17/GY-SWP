@@ -336,6 +336,8 @@ namespace GYSWP.DingDingApproval
             DingDingAppConfig ddConfig = _dingDingAppService.GetDingDingConfigByApp(DingDingAppEnum.标准化工作平台);
             string accessToken = _dingDingAppService.GetAccessToken(ddConfig.Appkey, ddConfig.Appsecret);
             var advice = await _adviceRepository.GetAsync(id);
+            //获取审批钉盘Id
+            var spaceInfo = GetProcessinstanceSpace(accessToken, advice.EmployeeId);
             var dept = await _employeeRepository.GetAll().Where(v => v.Id == advice.EmployeeId).Select(v => v.Department).FirstOrDefaultAsync();
             var deptId = dept.Replace('[', ' ').Replace(']', ' ').Trim();
             string deptName = await _organizationRepository.GetAll().Where(v => v.Id.ToString() == deptId).Select(v => v.DepartmentName).FirstOrDefaultAsync();
@@ -557,6 +559,43 @@ namespace GYSWP.DingDingApproval
             }
         }
 
+        /// <summary>
+        /// 获取审批钉盘SpaceId
+        /// </summary>
+        /// <param name="accessToken"></param>
+        /// <param name="empId"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public APIResultDto GetProcessinstanceSpace(string accessToken, string empId)
+        {
+            try
+            {
+                var url = string.Format("https://oapi.dingtalk.com/topapi/processinstance/cspace/info?access_token={0}&user_id={1}", accessToken,empId);
+                //var jsonString = SerializerHelper.GetJsonString(user_id, null);
+                DingSpaceInfo obj = new DingSpaceInfo();
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    //var bytes = Encoding.UTF8.GetBytes(jsonString);
+                    //ms.Write(null, 0, 0);
+                    //ms.Seek(0, SeekOrigin.Begin);
+                    obj = Post.PostGetJson<DingSpaceInfo>(url, null, ms);
+                };
+                if (obj.success == true)
+                {
+                    return new APIResultDto() { Code = 0, Data = obj.result.space_id };
+                }
+                else
+                {
+                    return new APIResultDto() { Code = 999, Msg = "获取审批钉盘空间接口失败" };
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.ErrorFormat("SendCriterionExamineMessageAsync errormsg{0} Exception{1}", ex.Message, ex);
+                return new APIResultDto() { Code = 901, Msg = "获取审批钉盘空间接口异常" };
+            }
+
+        }
         /// <summary> 
         /// 上传图片并返回MeadiaId
         /// </summary>
