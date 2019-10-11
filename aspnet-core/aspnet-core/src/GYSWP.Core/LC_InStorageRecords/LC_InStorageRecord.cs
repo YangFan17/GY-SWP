@@ -16,7 +16,7 @@ namespace GYSWP.LC_InStorageRecords
         /// <summary>
         /// 到货外键
         /// </summary>
-             public virtual Guid? TimeLogId { get; set; }
+        public virtual Guid? TimeLogId { get; set; }
 
         /// <summary>
         /// 品名规格

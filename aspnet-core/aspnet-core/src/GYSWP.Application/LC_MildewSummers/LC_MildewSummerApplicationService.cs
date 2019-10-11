@@ -73,8 +73,8 @@ namespace GYSWP.LC_MildewSummers
             var count = await query.CountAsync();
 
 			var entityList = await query
-					.OrderBy(input.Sorting).AsNoTracking()
-					.PageBy(input)
+                    .OrderByDescending(v => v.CreationTime).AsNoTracking()
+                    .PageBy(input)
 					.ToListAsync();
 
 			// var entityListDtos = ObjectMapper.Map<List<LC_MildewSummerListDto>>(entityList);

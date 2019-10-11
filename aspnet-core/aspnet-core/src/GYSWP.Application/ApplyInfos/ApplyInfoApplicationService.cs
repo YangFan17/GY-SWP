@@ -29,6 +29,7 @@ using GYSWP.Documents;
 using GYSWP.Categorys;
 using GYSWP.DocRevisions;
 using GYSWP.Categorys.DomainService;
+using GYSWP.Advises;
 
 namespace GYSWP.ApplyInfos
 {
@@ -47,6 +48,7 @@ namespace GYSWP.ApplyInfos
         private readonly IRepository<Category> _categoryRepository;
         private readonly IRepository<DocRevision, Guid> _docRevisionRepository;
         private readonly ICategoryManager _categoryManager;
+        private readonly IRepository<Advise, Guid> _adviceRepository;
 
         /// <summary>
         /// 构造函数 
@@ -61,6 +63,7 @@ namespace GYSWP.ApplyInfos
         , IRepository<Category> categoryRepository
         , IRepository<DocRevision, Guid> docRevisionRepository
         , ICategoryManager categoryManager
+        , IRepository<Advise, Guid> adviceRepository
         )
         {
             _entityRepository = entityRepository;
@@ -72,6 +75,7 @@ namespace GYSWP.ApplyInfos
             _categoryRepository = categoryRepository;
             _docRevisionRepository = docRevisionRepository;
             _categoryManager = categoryManager;
+            _adviceRepository = adviceRepository;
         }
 
 
@@ -549,58 +553,15 @@ namespace GYSWP.ApplyInfos
         [AbpAllowAnonymous]
         public async Task UpdateAdviceByPIIdAsync(string pIId, string result)
         {
-            var entity = await _entityRepository.FirstOrDefaultAsync(v => v.RevisionPId == pIId);
+            var entity = await _adviceRepository.FirstOrDefaultAsync(v => v.ProcessInstanceId == pIId);
             entity.ProcessingHandleTime = DateTime.Now;
-            var docRevision = await _docRevisionRepository.FirstOrDefaultAsync(v => v.ApplyInfoId == entity.Id);
-            var clauseRevisionList = await _clauseRevisionRepository.GetAll().Where(v => v.ApplyInfoId == entity.Id && v.RevisionType == GYEnums.RevisionType.标准制定).OrderBy(v => v.ClauseNo).ThenBy(v => v.CreationTime).ToListAsync();
             if (result == "agree")
             {
-                docRevision.Status = GYEnums.RevisionStatus.审核通过;
-                entity.ProcessingStatus = GYEnums.RevisionStatus.审核通过;
-                string categoryName = await _categoryRepository.GetAll().Where(v => v.Id == docRevision.CategoryId).Select(v => v.Name).FirstOrDefaultAsync();
-                //先创建标准实体
-                Document doc = new Document();
-                doc.Name = docRevision.Name;
-                doc.CategoryId = docRevision.CategoryId;
-                doc.CategoryDesc = categoryName;
-                doc.IsAction = false;
-                doc.CategoryId = docRevision.CategoryId;
-                var categoryList = await _categoryManager.GetHierarchyCategories(docRevision.CategoryId);
-                doc.CategoryCode = string.Join(',', categoryList.Select(c => c.Id).ToArray());
-                doc.CategoryDesc = string.Join(',', categoryList.Select(c => c.Name).ToArray());
-                doc.CreatorUserId = docRevision.CreatorUserId;
-                doc.BLLId = docRevision.Id;
-                Guid docId = await _documentRepository.InsertAndGetIdAsync(doc);
-                await CurrentUnitOfWork.SaveChangesAsync();
-                foreach (var item in clauseRevisionList)
-                {
-                    item.Status = GYEnums.RevisionStatus.审核通过;
-                    Clause clause = new Clause();
-                    clause.DocumentId = docId;
-                    clause.ClauseNo = item.ClauseNo;
-                    clause.Title = item.Title;
-                    clause.Content = item.Content;
-                    clause.BLLId = item.Id;
-                    clause.CreatorUserId = item.CreatorUserId;
-                    if (item.ParentId.HasValue)
-                    {
-                        Guid newId = await _clauseRepository.GetAll().Where(v => v.BLLId == item.ParentId).Select(v => v.Id).FirstOrDefaultAsync();
-                        clause.ParentId = newId;
-                    }
-                    await _clauseRepository.InsertAsync(clause);
-                    await CurrentUnitOfWork.SaveChangesAsync();
-                }
-                //发送企管科通知
-                _approvalAppService.SendMessageToQGAdminAsync(docRevision.Name, docId);
+                entity.IsAdoption = true;
             }
             else
             {
-                entity.ProcessingStatus = GYEnums.RevisionStatus.审核拒绝;
-                docRevision.Status = GYEnums.RevisionStatus.审核拒绝;
-                foreach (var item in clauseRevisionList)
-                {
-                    item.Status = GYEnums.RevisionStatus.审核拒绝;
-                }
+                entity.IsAdoption = false;
             }
         }
     }

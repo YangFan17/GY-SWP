@@ -16,7 +16,7 @@ namespace GYSWP.LC_OutScanRecords
         /// <summary>
         /// 出库外键
         /// </summary>
-             public virtual Guid? TimeLogId { get; set; }
+        public virtual Guid? TimeLogId { get; set; }
 
         /// <summary>
         /// 出库订单数

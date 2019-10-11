@@ -73,7 +73,7 @@ namespace GYSWP.InspectionRecords
             var count = await query.CountAsync();
 
 			var entityList = await query
-					.OrderBy(input.Sorting).AsNoTracking()
+					.OrderByDescending(v=>v.CreationTime).AsNoTracking()
 					.PageBy(input)
 					.ToListAsync();
 

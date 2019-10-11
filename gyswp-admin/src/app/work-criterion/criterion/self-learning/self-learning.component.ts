@@ -339,5 +339,6 @@ export interface TreeNodeInterface {
     isNew: boolean;
     lastModificationTime: Date;
     creationTime: Date;
+    learnOfYearNum: number;
     children?: TreeNodeInterface[];
 }

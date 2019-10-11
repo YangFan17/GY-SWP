@@ -72,7 +72,7 @@ namespace GYSWP.LC_SortingEquipChecks
             var query = _entityRepository.GetAll().WhereIf(input.BeginTime.HasValue, c => c.CreationTime >= input.BeginTime && c.CreationTime < input.EndTime.Value.ToDayEnd());
             var count = await query.CountAsync();
             var entityList = await query
-                    .OrderBy(input.Sorting).AsNoTracking()
+                    .OrderByDescending(v => v.CreationTime).AsNoTracking()
                     .PageBy(input)
                     .ToListAsync();
             var entityListDtos = entityList.MapTo<List<LC_SortingEquipCheckListDto>>();

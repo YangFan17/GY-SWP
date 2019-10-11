@@ -71,6 +71,12 @@ namespace  GYSWP.Advises.Dtos
         /// 是否公示
         /// </summary>
         public bool IsPublicity { get; set; }
+
+        /// <summary>
+        /// 是否需要主要领导审批
+        /// </summary>
+        [Required]
+        public bool IsMainLeader { get; set; }
     }
 
     public class AdviseDDCreateDto
@@ -133,6 +139,8 @@ namespace  GYSWP.Advises.Dtos
         /// </summary>
         public List<FileData> fileDatas { get; set; }
 
+        [Required]
+        public bool IsMainLeader { get; set; }
     }
 
     public class FileData {
@@ -156,5 +164,8 @@ namespace  GYSWP.Advises.Dtos
         /// 文件大小
         /// </summary>
         public string FileType { get; set; }
+        /// <summary>
+        /// 是否需要主要领导审批
+        /// </summary>
     }
 }

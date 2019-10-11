@@ -56,8 +56,7 @@ namespace GYSWP.SCInventoryRecords
         /// <summary>
         /// 在库保管Id
         /// </summary>
-        [Required]
-             public virtual Guid? TimeLogId { get; set; }
+        public virtual Guid? TimeLogId { get; set; }
         /// <summary>
         /// 创建日期
         /// </summary>

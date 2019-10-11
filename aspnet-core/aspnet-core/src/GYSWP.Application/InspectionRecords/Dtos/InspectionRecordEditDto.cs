@@ -115,9 +115,5 @@ namespace  GYSWP.InspectionRecords.Dtos
         /// </summary>
         [Required(ErrorMessage = "CreationTime不能为空")]
         public DateTime CreationTime { get; set; }
-
-
-
-
     }
 }
