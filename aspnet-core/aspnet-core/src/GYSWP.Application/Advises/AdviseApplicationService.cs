@@ -294,7 +294,7 @@ namespace GYSWP.Advises
         /// <returns></returns>
         [AbpAllowAnonymous]
         public async Task<APIResultDto> CreateDDAdviceAsync(CreateDDAdviseInput input)
-        {
+        { 
             Advise newAdvise = new Advise();
             newAdvise.AdviseName = input.Advise.AdviseName;
             newAdvise.CurrentSituation = input.Advise.CurrentSituation;
@@ -303,7 +303,7 @@ namespace GYSWP.Advises
             newAdvise.EmployeeName = input.Advise.EmployeeName;
             newAdvise.DeptId = input.Advise.DeptId;
             newAdvise.DeptName = input.Advise.DeptName;
-            newAdvise.UnionEmpName = input.Advise.UnionEmpName;
+            newAdvise.UnionEmpName = input.Advise.UnionEmpName; 
             Guid entityId = await _entityRepository.InsertAndGetIdAsync(newAdvise);
             await CurrentUnitOfWork.SaveChangesAsync();
             var result =  await _approvalAppService.SubmitAdviceApproval(entityId);

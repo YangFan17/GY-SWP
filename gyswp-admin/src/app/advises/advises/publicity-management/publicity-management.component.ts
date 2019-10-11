@@ -49,7 +49,7 @@ export class PublicityManagementComponent extends PagedListingComponentBase<any>
         this.router.navigate(['app/advises/advises']);
     }
 
-    //更改公式状态方法
+    //更改状态方法
     changePubStatus(itemId: string, isPublicity: boolean) {
         let msg = "";
         isPublicity == true ? msg = "是否取消公示本条建议?" : msg = "是否公示本条建议?";

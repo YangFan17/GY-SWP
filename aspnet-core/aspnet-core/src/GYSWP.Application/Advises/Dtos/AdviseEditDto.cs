@@ -1,5 +1,6 @@
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Abp.Application.Services.Dto;
 using Abp.Domain.Entities.Auditing;
@@ -133,11 +134,38 @@ namespace  GYSWP.Advises.Dtos
         /// 联合建议人快照
         /// </summary>
         public string UnionEmpName { get; set; }
+        /// <summary>
+        /// 钉钉图片信息
+        /// </summary>
+        public List<FileData> fileDatas { get; set; }
 
+        [Required]
+        public bool IsMainLeader { get; set; }
+    }
+
+    public class FileData {
+        /// <summary>
+        /// 目标空间id
+        /// </summary>
+        public string SpaceId { get; set; }
+        /// <summary>
+        /// 文件id
+        /// </summary>
+        public string FileId { get; set; }
+        /// <summary>
+        /// 文件名称
+        /// </summary>
+        public string FileName { get; set; }
+        /// <summary>
+        /// 文件类型
+        /// </summary>
+        public string FileSize { get; set; }
+        /// <summary>
+        /// 文件大小
+        /// </summary>
+        public string FileType { get; set; }
         /// <summary>
         /// 是否需要主要领导审批
         /// </summary>
-        [Required]
-        public bool IsMainLeader { get; set; }
     }
 }
