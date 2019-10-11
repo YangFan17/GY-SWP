@@ -72,5 +72,11 @@ namespace GYSWP.Advises
         /// 审批时间
         /// </summary>
         public virtual DateTime? ProcessingHandleTime { get; set; }
+
+        /// <summary>
+        /// 是否需要主要领导审批
+        /// </summary>
+        [Required]
+        public virtual bool IsMainLeader { get; set; }
     }
 }

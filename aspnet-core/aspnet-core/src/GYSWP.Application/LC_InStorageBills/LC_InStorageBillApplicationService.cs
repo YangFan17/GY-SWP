@@ -56,21 +56,14 @@ namespace GYSWP.LC_InStorageBills
 		 
         public async Task<PagedResultDto<LC_InStorageBillListDto>> GetPaged(GetLC_InStorageBillsInput input)
 		{
-
-		    var query = _entityRepository.GetAll();
-			// TODO:根据传入的参数添加过滤条件
-            
-
-			var count = await query.CountAsync();
+            var query = _entityRepository.GetAll().WhereIf(input.BeginTime.HasValue, c => c.CreationTime >= input.BeginTime && c.CreationTime < input.EndTime.Value.ToDayEnd());
+            var count = await query.CountAsync();
 
 			var entityList = await query
-					.OrderBy(input.Sorting).AsNoTracking()
-					.PageBy(input)
+                    .OrderByDescending(v => v.CreationTime).AsNoTracking()
+                    .PageBy(input)
 					.ToListAsync();
-
-			// var entityListDtos = ObjectMapper.Map<List<LC_InStorageBillListDto>>(entityList);
 			var entityListDtos =entityList.MapTo<List<LC_InStorageBillListDto>>();
-
 			return new PagedResultDto<LC_InStorageBillListDto>(count,entityListDtos);
 		}
 

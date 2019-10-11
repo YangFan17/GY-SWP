@@ -16,7 +16,7 @@ namespace GYSWP.LC_ForkliftChecks
         /// <summary>
         /// 到货外键
         /// </summary>
-             public virtual Guid? TimeLogId { get; set; }
+        public virtual Guid? TimeLogId { get; set; }
 
         /// <summary>
         /// 设备编号

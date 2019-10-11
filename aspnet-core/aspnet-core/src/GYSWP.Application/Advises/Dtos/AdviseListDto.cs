@@ -86,5 +86,10 @@ namespace GYSWP.Advises.Dtos
         /// 是否公示
         /// </summary>
         public bool IsPublicity { get; set; }
+
+        /// <summary>
+        /// 是否需要主要领导审批
+        /// </summary>
+        public bool IsMainLeader { get; set; }
     }
 }

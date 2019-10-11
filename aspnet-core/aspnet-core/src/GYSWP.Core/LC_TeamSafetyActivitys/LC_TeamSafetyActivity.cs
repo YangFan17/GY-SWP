@@ -16,7 +16,7 @@ namespace GYSWP.LC_TeamSafetyActivitys
         /// <summary>
         /// 分拣外键
         /// </summary>
-             public virtual Guid? TimeLogId { get; set; }
+        public virtual Guid? TimeLogId { get; set; }
 
         /// <summary>
         /// 岗前安全例会

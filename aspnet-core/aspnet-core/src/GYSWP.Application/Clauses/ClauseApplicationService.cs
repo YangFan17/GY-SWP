@@ -30,6 +30,7 @@ using GYSWP.ClauseRevisions;
 using Abp.Domain.Uow;
 using GYSWP.Authorization.Users;
 using GYSWP.Documents;
+using GYSWP.SelfChekRecords;
 
 namespace GYSWP.Clauses
 {
@@ -47,6 +48,7 @@ namespace GYSWP.Clauses
         private readonly IRepository<Document, Guid> _documentRepository;
         private readonly UserManager _userManager;
         private readonly IClauseManager _entityManager;
+        private readonly IRepository<SelfChekRecord, Guid> _selfCheckRepository;
 
         /// <summary>
         /// 构造函数 
@@ -60,6 +62,7 @@ namespace GYSWP.Clauses
         , IRepository<ClauseRevision, Guid> clauseRevisionRepository
         , IRepository<Document, Guid> documentRepository
         , UserManager userManager
+        , IRepository<SelfChekRecord, Guid> selfCheckRepository
         )
         {
             _entityRepository = entityRepository;
@@ -70,6 +73,7 @@ namespace GYSWP.Clauses
             _clauseRevisionRepository = clauseRevisionRepository;
             _documentRepository = documentRepository;
             _userManager = userManager;
+            _selfCheckRepository = selfCheckRepository;
         }
 
 
@@ -317,6 +321,7 @@ namespace GYSWP.Clauses
                 LastModificationTime = c.LastModificationTime,
                 CreationTime = c.CreationTime,
                 Checked = c.Checked,
+                LearnOfYearNum = c.LearnOfYearNum,
                 Children = GetChildrenWithChecked(c.Id, clauseList)
             }).ToList();
             return list;
@@ -343,9 +348,33 @@ namespace GYSWP.Clauses
                 CreationTime = v.CreationTime,
                 ParentId = v.ParentId
             }).OrderBy(v => v.ClauseNo).ToListAsync();
-            clause.Sort(Factory.Comparer);
+
+            int curYear = DateTime.Now.Year;
+            //检查完毕后更改
+            //DateTime beginTime = Convert.ToDateTime(curYear + "-01-01 00:00:00");
+            DateTime beginTime = Convert.ToDateTime(curYear + "-09-01 00:00:00");
+            DateTime endTime = beginTime.AddYears(1);
+            var entity = _entityRepository.GetAll().Where(v => v.DocumentId == input.DocumentId);
+            //var selfCheck = _selfCheckRepository.GetAll().Where(v => v.EmployeeId == user.EmployeeId && v.CreationTime >= beginTime && v.CreationTime <= endTime);
+            //var clause = await(from c in entity join
+            //           s in selfCheck on c.Id equals s.ClauseId into table
+            //           from t in table.DefaultIfEmpty()
+            //           select new ClauseTreeListDto()
+            //           {
+            //               Id = c.Id,
+            //               ClauseNo = c.ClauseNo,
+            //               Title = c.Title,
+            //               Content = c.Content,
+            //               BLLId = c.BLLId,
+            //               LastModificationTime = c.LastModificationTime,
+            //               CreationTime = c.CreationTime,
+            //               ParentId = c.ParentId,
+            //               LearnOfYearNum = 
+            //           }).ToListAsync();
+            //clause.Sort(Factory.Comparer);
             foreach (var item in clause)
             {
+                item.LearnOfYearNum = await _selfCheckRepository.CountAsync(v => v.EmployeeId == user.EmployeeId && v.ClauseId == item.Id && v.CreationTime >= beginTime && v.CreationTime <= endTime);
                 foreach (var cnfmId in confirmIds)
                 {
                     if (item.Id == cnfmId)

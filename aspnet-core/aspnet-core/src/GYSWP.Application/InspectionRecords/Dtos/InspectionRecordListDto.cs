@@ -5,9 +5,11 @@ using Abp.Application.Services.Dto;
 using Abp.Domain.Entities.Auditing;
 using System.ComponentModel.DataAnnotations;
 using GYSWP.InspectionRecords;
+using Abp.AutoMapper;
 
 namespace GYSWP.InspectionRecords.Dtos
 {
+    [AutoMapFrom(typeof(InspectionRecord))]
     public class InspectionRecordListDto : EntityDto<long>,IHasCreationTime 
     {
 
@@ -108,7 +110,6 @@ namespace GYSWP.InspectionRecords.Dtos
         /// <summary>
         /// TimeLogId
         /// </summary>
-        [Required(ErrorMessage = "TimeLogId不能为空")]
         public Guid? TimeLogId { get; set; }
 
 
@@ -118,9 +119,5 @@ namespace GYSWP.InspectionRecords.Dtos
         /// </summary>
         [Required(ErrorMessage="CreationTime不能为空")]
 		public DateTime CreationTime { get; set; }
-
-
-
-
     }
 }

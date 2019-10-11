@@ -95,6 +95,11 @@ namespace GYSWP.Clauses.Dtos
         public long? CreatorUserId { get; set; }
         public string CreatorUserName { get; set; }
         //public int Level { get; set; } = 0;
+
+        /// <summary>
+        /// 年度学习次数
+        /// </summary>
+        public int LearnOfYearNum { get; set; }
         public List<ClauseTreeNodeDto> Children = new List<ClauseTreeNodeDto>();
     }
     [AutoMapFrom(typeof(Clause))]
@@ -117,5 +122,10 @@ namespace GYSWP.Clauses.Dtos
         public Guid? BLLId { get; set; }
         public DateTime? LastModificationTime { get; set; }
         public DateTime? CreationTime { get; set; }
+
+        /// <summary>
+        /// 年度学习次数
+        /// </summary>
+        public int LearnOfYearNum { get; set; }
     }
 }
