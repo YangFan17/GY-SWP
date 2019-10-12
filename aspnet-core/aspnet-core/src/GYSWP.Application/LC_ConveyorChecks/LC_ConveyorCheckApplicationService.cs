@@ -28,6 +28,8 @@ using GYSWP.Helpers;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using GYSWP.DocAttachments;
+using GYSWP.Employees;
+using GYSWP.Employees.Dtos;
 
 namespace GYSWP.LC_ConveyorChecks
 {
@@ -42,7 +44,7 @@ namespace GYSWP.LC_ConveyorChecks
         private readonly ILC_ConveyorCheckManager _entityManager;
 
         private readonly IRepository<LC_Attachment, Guid> _attachmentRepository;
-
+        private readonly IRepository<Employee, string> _employeeRepository;
         /// <summary>
         /// 构造函数 
         ///</summary>
@@ -50,9 +52,11 @@ namespace GYSWP.LC_ConveyorChecks
         IRepository<LC_ConveyorCheck, Guid> entityRepository
         , IHostingEnvironment hostingEnvironment
         , ILC_ConveyorCheckManager entityManager,
-        IRepository<LC_Attachment, Guid> attachmentRepository
+        IRepository<LC_Attachment, Guid> attachmentRepository,
+        IRepository<Employee, string> employeeRepository
         )
         {
+            _employeeRepository = employeeRepository;
             _entityRepository = entityRepository;
             _entityManager = entityManager;
             _hostingEnvironment = hostingEnvironment;
@@ -312,6 +316,224 @@ namespace GYSWP.LC_ConveyorChecks
                 workbook.Write(fs);
             }
             return "/files/downloadtemp/" + fileName;
+        }
+
+        /// <summary>
+        /// 导入需求预测数据
+        /// </summary>
+        /// <returns></returns>
+        public async Task<APIResultDto> ImportConveyorCheckExcelAsync()
+        {
+            //获取Excel数据
+            var excelList = await GetConveyorCheckDataAsync();
+            //循环批量更新
+            await UpdateAsyncConveyorCheckData(excelList);
+            return new APIResultDto() { Code = 0, Msg = "导入数据成功" };
+        }
+        /// <summary>
+        /// 从上传的Excel读出数据
+        /// </summary>
+        private async Task<List<LC_ConveyorCheckEditDto>> GetConveyorCheckDataAsync()
+        {
+            string fileName = _hostingEnvironment.WebRootPath + "/files/upload/伸缩式输送机运行记录.xlsx";
+            var LC_ConveyorCheckList = new List<LC_ConveyorCheckEditDto>();
+            using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+            {
+                IWorkbook workbook = new XSSFWorkbook(fs);
+                ISheet sheet = workbook.GetSheet("ConveyorCheck");
+                if (sheet == null) //如果没有找到指定的sheetName对应的sheet，则尝试获取第一个sheet
+                {
+                    sheet = workbook.GetSheetAt(0);
+                }
+
+                if (sheet != null)
+                {
+                    //最后一列的标号
+                    int rowCount = sheet.LastRowNum;
+                    for (int i = 1; i <= rowCount; ++i)//排除首行标题
+                    {
+                        IRow row = sheet.GetRow(i);
+                        if (row == null) continue; //没有数据的行默认是null　　　　　　　
+
+                        var ConveyorCheck = new LC_ConveyorCheckEditDto();
+                        if (row.GetCell(0) != null)
+                        {
+                            ConveyorCheck.EquiNo = row.GetCell(0).ToString();
+                            ConveyorCheck.ResponsibleName = row.GetCell(1).ToString();
+                            ConveyorCheck.SupervisorName = row.GetCell(2).ToString();
+                            if (!string.IsNullOrEmpty(row.GetCell(3).ToString()))
+                            {
+                                ConveyorCheck.RunTime = Convert.ToDateTime(row.GetCell(2).ToString());
+                            }
+                            if (!string.IsNullOrEmpty(row.GetCell(4).ToString()))
+                            {
+                                ConveyorCheck.BeginTime = Convert.ToDateTime(row.GetCell(4).ToString());
+                            }
+                            if (!string.IsNullOrEmpty(row.GetCell(5).ToString()))
+                            {
+                                ConveyorCheck.EndTime = Convert.ToDateTime(row.GetCell(5).ToString());
+                            }
+
+                            if (row.GetCell(6).ToString() == "是" || row.GetCell(6).ToString() == "有")
+                            {
+                                ConveyorCheck.IsEquiFaceClean = true;
+                            }
+                            else if (row.GetCell(6).ToString() == "否" || row.GetCell(6).ToString() == "无")
+                            {
+                                ConveyorCheck.IsEquiFaceClean = false;
+                            }
+
+                            if (row.GetCell(7).ToString() == "是" || row.GetCell(7).ToString() == "有")
+                            {
+                                ConveyorCheck.IsSteadyOk = true;
+                            }
+                            else if (row.GetCell(7).ToString() == "否" || row.GetCell(7).ToString() == "无")
+                            {
+                                ConveyorCheck.IsSteadyOk = false;
+                            }
+
+                            if (row.GetCell(8).ToString() == "是" || row.GetCell(8).ToString() == "有")
+                            {
+                                ConveyorCheck.IsScrewOk = true;
+                            }
+                            else if (row.GetCell(8).ToString() == "否" || row.GetCell(8).ToString() == "无")
+                            {
+                                ConveyorCheck.IsScrewOk = false;
+                            }
+
+                            if (row.GetCell(9).ToString() == "是" || row.GetCell(9).ToString() == "有")
+                            {
+                                ConveyorCheck.IsButtonOk = true;
+                            }
+                            else if (row.GetCell(9).ToString() == "否" || row.GetCell(9).ToString() == "无")
+                            {
+                                ConveyorCheck.IsButtonOk = false;
+                            }
+
+                            if (row.GetCell(10).ToString() == "是" || row.GetCell(10).ToString() == "有")
+                            {
+                                ConveyorCheck.IsElcLineBad = true;
+                            }
+                            else if (row.GetCell(10).ToString() == "否" || row.GetCell(10).ToString() == "无")
+                            {
+                                ConveyorCheck.IsElcLineBad = false;
+                            }
+
+                            if (row.GetCell(11).ToString() == "是" || row.GetCell(11).ToString() == "有")
+                            {
+                                ConveyorCheck.IsBeltSlant = true;
+                            }
+                            else if (row.GetCell(11).ToString() == "否" || row.GetCell(11).ToString() == "无")
+                            {
+                                ConveyorCheck.IsBeltSlant = false;
+                            }
+
+                            if (row.GetCell(12).ToString() == "是" || row.GetCell(12).ToString() == "有")
+                            {
+                                ConveyorCheck.IsBearingOk = true;
+                            }
+                            else if (row.GetCell(12).ToString() == "否" || row.GetCell(12).ToString() == "无")
+                            {
+                                ConveyorCheck.IsBearingOk = false;
+                            }
+
+
+                            if (row.GetCell(13).ToString() == "是" || row.GetCell(13).ToString() == "有")
+                            {
+                                ConveyorCheck.IsSoundOk = true;
+                            }
+                            else if (row.GetCell(13).ToString() == "否" || row.GetCell(13).ToString() == "无")
+                            {
+                                ConveyorCheck.IsSoundOk = false;
+                            }
+
+                            if (row.GetCell(14).ToString() == "是" || row.GetCell(14).ToString() == "有")
+                            {
+                                ConveyorCheck.IsMotor = true;
+                            }
+                            else if (row.GetCell(14).ToString() == "否" || row.GetCell(14).ToString() == "无")
+                            {
+                                ConveyorCheck.IsMotor = false;
+                            }
+
+                            if (row.GetCell(15).ToString() == "是" || row.GetCell(15).ToString() == "有")
+                            {
+                                ConveyorCheck.IsShutPower = true;
+                            }
+                            else if (row.GetCell(15).ToString() == "否" || row.GetCell(15).ToString() == "无")
+                            {
+                                ConveyorCheck.IsShutPower = false;
+                            }
+
+                            if (row.GetCell(16).ToString() == "是" || row.GetCell(16).ToString() == "有")
+                            {
+                                ConveyorCheck.IsBeltBad = true;
+                            }
+                            else if (row.GetCell(16).ToString() == "否" || row.GetCell(16).ToString() == "无")
+                            {
+                                ConveyorCheck.IsBeltBad = false;
+                            }
+
+                            if (row.GetCell(17).ToString() == "是" || row.GetCell(17).ToString() == "有")
+                            {
+                                ConveyorCheck.IsClean = true;
+                            }
+                            else if (row.GetCell(17).ToString() == "否" || row.GetCell(17).ToString() == "无")
+                            {
+                                ConveyorCheck.IsClean = false;
+                            }
+
+                            if (!string.IsNullOrEmpty(row.GetCell(18).ToString()))
+                            {
+                                ConveyorCheck.Troubleshooting =row.GetCell(18).ToString();
+                            }
+
+                            ConveyorCheck.EmployeeId = await _employeeRepository.GetAll().Where(aa => aa.Name == row.GetCell(19).ToString()).Select(v => v.Id).FirstOrDefaultAsync();
+
+                            ConveyorCheck.EmployeeName = row.GetCell(19).ToString();
+                            ConveyorCheck.CreationTime=Convert.ToDateTime(row.GetCell(20).ToString());
+                            LC_ConveyorCheckList.Add(ConveyorCheck);
+                        }
+                    }
+                }
+                return await Task.FromResult(LC_ConveyorCheckList);
+            }
+        }
+
+        /// <summary>
+        /// 更新到数据库
+        /// </summary>
+        private async Task UpdateAsyncConveyorCheckData(List<LC_ConveyorCheckEditDto> excelList)
+        {
+            foreach (var item in excelList)
+            {
+                var entity = new LC_ConveyorCheck();
+                entity.BeginTime = item.BeginTime;
+                entity.CreationTime = item.CreationTime;
+                entity.EmployeeId = item.EmployeeId;
+                entity.EmployeeName = item.EmployeeName;
+                entity.EndTime = item.EndTime;
+                entity.EquiNo = item.EquiNo;
+                entity.IsBearingOk = item.IsBearingOk;
+                entity.IsBeltBad = item.IsBeltBad;
+                entity.IsBeltSlant = item.IsBeltSlant;
+                entity.IsButtonOk = item.IsButtonOk;
+                entity.IsClean = item.IsClean;
+                entity.IsElcLineBad = item.IsElcLineBad;
+                entity.IsEquiFaceClean = item.IsEquiFaceClean;
+                entity.IsMotor = item.IsMotor;
+                entity.IsScrewOk = item.IsScrewOk;
+                entity.IsShutPower = item.IsShutPower;
+                entity.IsSoundOk = item.IsSoundOk;
+                entity.IsSteadyOk = item.IsSteadyOk;
+                entity.ResponsibleName = item.ResponsibleName;
+                entity.RunTime = item.RunTime;
+                entity.SupervisorName = item.SupervisorName;
+                entity.Troubleshooting = item.Troubleshooting;
+                await _entityRepository.InsertAsync(entity);
+                //}
+            }
+            await CurrentUnitOfWork.SaveChangesAsync();
         }
 
 

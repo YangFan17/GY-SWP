@@ -28,6 +28,7 @@ using GYSWP.Helpers;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using GYSWP.Dtos;
+using GYSWP.Employees;
 
 namespace GYSWP.EntryExitRegistrations
 {
@@ -38,7 +39,7 @@ namespace GYSWP.EntryExitRegistrations
     public class EntryExitRegistrationAppService : GYSWPAppServiceBase, IEntryExitRegistrationAppService
     {
         private readonly IRepository<EntryExitRegistration, long> _entityRepository;
-
+        private readonly IRepository<Employee, string> _employeeRepository;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IEntryExitRegistrationManager _entityManager;
 
@@ -48,9 +49,11 @@ namespace GYSWP.EntryExitRegistrations
         public EntryExitRegistrationAppService(
         IRepository<EntryExitRegistration, long> entityRepository
         , IHostingEnvironment hostingEnvironment
-        , IEntryExitRegistrationManager entityManager
+        , IEntryExitRegistrationManager entityManager,
+        IRepository<Employee, string> employeeRepository
         )
         {
+            _employeeRepository = employeeRepository;
             _entityRepository = entityRepository; 
              _entityManager=entityManager;
             _hostingEnvironment = hostingEnvironment;
@@ -287,6 +290,104 @@ EntryExitRegistrationEditDto editDto;
                 workbook.Write(fs);
             }
             return "/files/downloadtemp/" + fileName;
+        }
+
+
+        /// <summary>
+        /// 导入需求预测数据
+        /// </summary>
+        /// <returns></returns>
+        public async Task<APIResultDto> ImportEntryExitRegistrationExcelAsync()
+        {
+            //获取Excel数据
+            var excelList = await GetEntryExitRegistrationDataAsync();
+            //循环批量更新
+            await UpdateAsyncEntryExitRegistrationData(excelList);
+            return new APIResultDto() { Code = 0, Msg = "导入数据成功" };
+        }
+        /// <summary>
+        /// 从上传的Excel读出数据
+        /// </summary>
+        private async Task<List<EntryExitRegistrationEditDto>> GetEntryExitRegistrationDataAsync()
+        {
+            string fileName = _hostingEnvironment.WebRootPath + "/files/upload/卷烟仓库人员出入登记表.xlsx";
+            var EntryExitRegistrationList = new List<EntryExitRegistrationEditDto>();
+            using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+            {
+                IWorkbook workbook = new XSSFWorkbook(fs);
+                ISheet sheet = workbook.GetSheet("EntryExitRegistration");
+                if (sheet == null) //如果没有找到指定的sheetName对应的sheet，则尝试获取第一个sheet
+                {
+                    sheet = workbook.GetSheetAt(0);
+                }
+
+                if (sheet != null)
+                {
+                    //最后一列的标号
+                    int rowCount = sheet.LastRowNum;
+                    for (int i = 1; i <= rowCount; ++i)//排除首行标题
+                    {
+                        IRow row = sheet.GetRow(i);
+                        if (row == null) continue; //没有数据的行默认是null　　　　　　　
+
+                        var EntryExitRegistration = new EntryExitRegistrationEditDto();
+                        if (row.GetCell(0) != null)
+                        {
+                            EntryExitRegistration.ReasonsForWarehousing = row.GetCell(2).ToString();
+                            EntryExitRegistration.Remarks = row.GetCell(4).ToString();
+
+                            if (!string.IsNullOrEmpty(row.GetCell(0).ToString()))
+                            {
+                                EntryExitRegistration.EntryTime = Convert.ToDateTime(row.GetCell(0).ToString());
+                            }
+
+                            if (!string.IsNullOrEmpty(row.GetCell(1).ToString()))
+                            {
+                                EntryExitRegistration.ExitTime = Convert.ToDateTime(row.GetCell(1).ToString());
+                            }
+
+                            if (row.GetCell(3).ToString() == "是" || row.GetCell(3).ToString() == "有")
+                            {
+                                EntryExitRegistration.IsAbnormal = true;
+                            }
+                            else if (row.GetCell(3).ToString() == "否" || row.GetCell(3).ToString() == "无")
+                            {
+                                EntryExitRegistration.IsAbnormal = false;
+                            }
+  
+
+                            EntryExitRegistration.EmployeeId = await _employeeRepository.GetAll().Where(aa => aa.Name == row.GetCell(5).ToString()).Select(v => v.Id).FirstOrDefaultAsync();
+
+                            EntryExitRegistration.EmployeeName = row.GetCell(5).ToString();
+                            EntryExitRegistration.CreationTime = Convert.ToDateTime(row.GetCell(6).ToString());
+                            EntryExitRegistrationList.Add(EntryExitRegistration);
+                        }
+                    }
+                }
+                return await Task.FromResult(EntryExitRegistrationList);
+            }
+        }
+
+        /// <summary>
+        /// 更新到数据库
+        /// </summary>
+        private async Task UpdateAsyncEntryExitRegistrationData(List<EntryExitRegistrationEditDto> excelList)
+        {
+            foreach (var item in excelList)
+            {
+                var entity = new EntryExitRegistration();
+                entity.CreationTime = item.CreationTime;
+                entity.EmployeeId = item.EmployeeId;
+                entity.EmployeeName = item.EmployeeName;
+                entity.ExitTime = item.ExitTime;
+                entity.EntryTime = item.EntryTime;
+                entity.IsAbnormal = item.IsAbnormal;
+                entity.ReasonsForWarehousing = item.ReasonsForWarehousing;
+                entity.Remarks = item.Remarks;
+                await _entityRepository.InsertAsync(entity);
+                //}
+            }
+            await CurrentUnitOfWork.SaveChangesAsync();
         }
     }
 }

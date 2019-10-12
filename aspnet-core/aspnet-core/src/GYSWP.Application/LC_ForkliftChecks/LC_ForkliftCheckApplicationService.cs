@@ -28,6 +28,7 @@ using GYSWP.Helpers;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using GYSWP.DocAttachments;
+using GYSWP.Employees;
 
 namespace GYSWP.LC_ForkliftChecks
 {
@@ -41,6 +42,7 @@ namespace GYSWP.LC_ForkliftChecks
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly ILC_ForkliftCheckManager _entityManager;
         private readonly IRepository<LC_Attachment, Guid> _attachmentRepository;
+        private readonly IRepository<Employee, string> _employeeRepository;
 
         /// <summary>
         /// 构造函数 
@@ -49,9 +51,12 @@ namespace GYSWP.LC_ForkliftChecks
         IRepository<LC_ForkliftCheck, Guid> entityRepository
         , IHostingEnvironment hostingEnvironment
         , ILC_ForkliftCheckManager entityManager,
-        IRepository<LC_Attachment, Guid> attachmentRepository
+        IRepository<LC_Attachment, Guid> attachmentRepository,
+        IRepository<Employee, string> employeeRepository
         )
         {
+            _employeeRepository = employeeRepository;
+            _entityRepository = entityRepository;
             _entityRepository = entityRepository; 
              _entityManager=entityManager;
             _hostingEnvironment = hostingEnvironment;
@@ -386,6 +391,245 @@ LC_ForkliftCheckEditDto editDto;
                 item.EndTimeFormat = item.EndTime.Value.ToString("yyyy-MM-dd HH:mm");
             }
             return item;
+        }
+
+        /// <summary>
+        /// 导入需求预测数据
+        /// </summary>
+        /// <returns></returns>
+        public async Task<APIResultDto> ImportForkliftCheckExcelAsync()
+        {
+            //获取Excel数据
+            var excelList = await GetForkliftCheckDataAsync();
+            //循环批量更新
+            await UpdateAsyncForkliftCheckData(excelList);
+            return new APIResultDto() { Code = 0, Msg = "导入数据成功" };
+        }
+        /// <summary>
+        /// 从上传的Excel读出数据
+        /// </summary>
+        private async Task<List<LC_ForkliftCheckEditDto>> GetForkliftCheckDataAsync()
+        {
+            string fileName = _hostingEnvironment.WebRootPath + "/files/upload/叉车运行记录.xlsx";
+            var LC_ForkliftCheckList = new List<LC_ForkliftCheckEditDto>();
+            using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+            {
+                IWorkbook workbook = new XSSFWorkbook(fs);
+                ISheet sheet = workbook.GetSheet("ForkliftCheck");
+                if (sheet == null) //如果没有找到指定的sheetName对应的sheet，则尝试获取第一个sheet
+                {
+                    sheet = workbook.GetSheetAt(0);
+                }
+
+                if (sheet != null)
+                {
+                    //最后一列的标号
+                    int rowCount = sheet.LastRowNum;
+                    for (int i = 1; i <= rowCount; ++i)//排除首行标题
+                    {
+                        IRow row = sheet.GetRow(i);
+                        if (row == null) continue; //没有数据的行默认是null　　　　　　　
+
+                        var ForkliftCheck = new LC_ForkliftCheckEditDto();
+                        if (row.GetCell(0) != null)
+                        {
+                            ForkliftCheck.EquiNo = row.GetCell(0).ToString();
+                            ForkliftCheck.ResponsibleName = row.GetCell(1).ToString();
+                            ForkliftCheck.SupervisorName = row.GetCell(2).ToString();
+                            if (!string.IsNullOrEmpty(row.GetCell(3).ToString()))
+                            {
+                                ForkliftCheck.RunTime = Convert.ToDateTime(row.GetCell(3).ToString());
+                            }
+                            if (!string.IsNullOrEmpty(row.GetCell(4).ToString()))
+                            {
+                                ForkliftCheck.BeginTime = Convert.ToDateTime(row.GetCell(4).ToString());
+                            }
+                            if (!string.IsNullOrEmpty(row.GetCell(5).ToString()))
+                            {
+                                ForkliftCheck.EndTime = Convert.ToDateTime(row.GetCell(5).ToString());
+                            }
+
+                            if (row.GetCell(6).ToString() == "是" || row.GetCell(6).ToString() == "有")
+                            {
+                                ForkliftCheck.IslubricatingOk = true;
+                            }
+                            else if (row.GetCell(6).ToString() == "否" || row.GetCell(6).ToString() == "无")
+                            {
+                                ForkliftCheck.IslubricatingOk = false;
+                            }
+
+                            if (row.GetCell(7).ToString() == "是" || row.GetCell(7).ToString() == "有")
+                            {
+                                ForkliftCheck.IsBatteryBad = true;
+                            }
+                            else if (row.GetCell(7).ToString() == "否" || row.GetCell(7).ToString() == "无")
+                            {
+                                ForkliftCheck.IsBatteryBad = false;
+                            }
+
+                            if (row.GetCell(8).ToString() == "是" || row.GetCell(8).ToString() == "有")
+                            {
+                                ForkliftCheck.IsTurnOrBreakOk = true;
+                            }
+                            else if (row.GetCell(8).ToString() == "否" || row.GetCell(8).ToString() == "无")
+                            {
+                                ForkliftCheck.IsTurnOrBreakOk = false;
+                            }
+
+                            if (row.GetCell(9).ToString() == "是" || row.GetCell(9).ToString() == "有")
+                            {
+                                ForkliftCheck.IsLightOrHornOk = true;
+                            }
+                            else if (row.GetCell(9).ToString() == "否" || row.GetCell(9).ToString() == "无")
+                            {
+                                ForkliftCheck.IsLightOrHornOk = false;
+                            }
+
+                            if (row.GetCell(10).ToString() == "是" || row.GetCell(10).ToString() == "有")
+                            {
+                                ForkliftCheck.IsFullCharged = true;
+                            }
+                            else if (row.GetCell(10).ToString() == "否" || row.GetCell(10).ToString() == "无")
+                            {
+                                ForkliftCheck.IsFullCharged = false;
+                            }
+
+                            if (row.GetCell(11).ToString() == "是" || row.GetCell(11).ToString() == "有")
+                            {
+                                ForkliftCheck.IsForkLifhOk = true;
+                            }
+                            else if (row.GetCell(11).ToString() == "否" || row.GetCell(11).ToString() == "无")
+                            {
+                                ForkliftCheck.IsForkLifhOk = false;
+                            }
+
+                            if (row.GetCell(12).ToString() == "是" || row.GetCell(12).ToString() == "有")
+                            {
+                                ForkliftCheck.IsRunFullCharged = true;
+                            }
+                            else if (row.GetCell(12).ToString() == "否" || row.GetCell(12).ToString() == "无")
+                            {
+                                ForkliftCheck.IsRunFullCharged = false;
+                            }
+
+
+                            if (row.GetCell(13).ToString() == "是" || row.GetCell(13).ToString() == "有")
+                            {
+                                ForkliftCheck.IsRunTurnOrBreakOk = true;
+                            }
+                            else if (row.GetCell(13).ToString() == "否" || row.GetCell(13).ToString() == "无")
+                            {
+                                ForkliftCheck.IsRunTurnOrBreakOk = false;
+                            }
+
+                            if (row.GetCell(14).ToString() == "是" || row.GetCell(14).ToString() == "有")
+                            {
+                                ForkliftCheck.IsRunLightOrHornOk = true;
+                            }
+                            else if (row.GetCell(14).ToString() == "否" || row.GetCell(14).ToString() == "无")
+                            {
+                                ForkliftCheck.IsRunLightOrHornOk = false;
+                            }
+
+                            if (row.GetCell(15).ToString() == "是" || row.GetCell(15).ToString() == "有")
+                            {
+                                ForkliftCheck.IsRunSoundOk = true;
+                            }
+                            else if (row.GetCell(15).ToString() == "否" || row.GetCell(15).ToString() == "无")
+                            {
+                                ForkliftCheck.IsRunSoundOk = false;
+                            }
+
+                            if (row.GetCell(16).ToString() == "是" || row.GetCell(16).ToString() == "有")
+                            {
+                                ForkliftCheck.IsParkStandard = true;
+                            }
+                            else if (row.GetCell(16).ToString() == "否" || row.GetCell(16).ToString() == "无")
+                            {
+                                ForkliftCheck.IsParkStandard = false;
+                            }
+
+                            if (row.GetCell(17).ToString() == "是" || row.GetCell(17).ToString() == "有")
+                            {
+                                ForkliftCheck.IsShutPower = true;
+                            }
+                            else if (row.GetCell(17).ToString() == "否" || row.GetCell(17).ToString() == "无")
+                            {
+                                ForkliftCheck.IsShutPower = false;
+                            }
+
+                            if (row.GetCell(18).ToString() == "是" || row.GetCell(18).ToString() == "有")
+                            {
+                                ForkliftCheck.IsNeedCharge = true;
+                            }
+                            else if (row.GetCell(18).ToString() == "否" || row.GetCell(18).ToString() == "无")
+                            {
+                                ForkliftCheck.IsNeedCharge = false;
+                            }
+
+                            if (row.GetCell(19).ToString() == "是" || row.GetCell(19).ToString() == "有")
+                            {
+                                ForkliftCheck.IsClean = true;
+                            }
+                            else if (row.GetCell(19).ToString() == "否" || row.GetCell(19).ToString() == "无")
+                            {
+                                ForkliftCheck.IsClean = false;
+                            }
+
+                            if (!string.IsNullOrEmpty(row.GetCell(20).ToString()))
+                            {
+                                ForkliftCheck.Troubleshooting = row.GetCell(20).ToString();
+                            }
+
+                            ForkliftCheck.EmployeeId = await _employeeRepository.GetAll().Where(aa => aa.Name == row.GetCell(21).ToString()).Select(v => v.Id).FirstOrDefaultAsync();
+
+                            ForkliftCheck.EmployeeName = row.GetCell(21).ToString();
+                            ForkliftCheck.CreationTime = Convert.ToDateTime(row.GetCell(22).ToString());
+                            LC_ForkliftCheckList.Add(ForkliftCheck);
+                        }
+                    }
+                }
+                return await Task.FromResult(LC_ForkliftCheckList);
+            }
+        }
+
+        /// <summary>
+        /// 更新到数据库
+        /// </summary>
+        private async Task UpdateAsyncForkliftCheckData(List<LC_ForkliftCheckEditDto> excelList)
+        {
+            foreach (var item in excelList)
+            {
+                var entity = new LC_ForkliftCheck();
+                entity.BeginTime = item.BeginTime;
+                entity.CreationTime = item.CreationTime;
+                entity.EmployeeId = item.EmployeeId;
+                entity.EmployeeName = item.EmployeeName;
+                entity.EndTime = item.EndTime;
+                entity.EquiNo = item.EquiNo;
+                entity.IsBatteryBad = item.IsBatteryBad;
+                entity.IsClean = item.IsClean;
+                entity.IsForkLifhOk = item.IsForkLifhOk;
+                entity.IsFullCharged = item.IsFullCharged;
+                entity.IsClean = item.IsClean;
+                entity.IsLightOrHornOk = item.IsLightOrHornOk;
+                entity.IslubricatingOk = item.IslubricatingOk;
+                entity.IsNeedCharge = item.IsNeedCharge;
+                entity.IsParkStandard = item.IsParkStandard;
+                entity.IsShutPower = item.IsShutPower;
+                entity.IsRunFullCharged = item.IsRunFullCharged;
+                entity.IsRunLightOrHornOk = item.IsRunLightOrHornOk;
+                entity.IsRunSoundOk = item.IsRunSoundOk;
+                entity.IsRunTurnOrBreakOk = item.IsRunTurnOrBreakOk;
+                entity.IsTurnOrBreakOk = item.IsTurnOrBreakOk;
+                entity.ResponsibleName = item.ResponsibleName;
+                entity.RunTime = item.RunTime;
+                entity.SupervisorName = item.SupervisorName;
+                entity.Troubleshooting = item.Troubleshooting;
+                await _entityRepository.InsertAsync(entity);
+                //}
+            }
+            await CurrentUnitOfWork.SaveChangesAsync();
         }
     }
 }

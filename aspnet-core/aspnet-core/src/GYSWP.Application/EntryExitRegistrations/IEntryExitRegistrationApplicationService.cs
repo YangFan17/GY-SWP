@@ -79,5 +79,7 @@ namespace GYSWP.EntryExitRegistrations
         /// <returns></returns>
         //Task<FileDto> GetToExcel();
         Task<APIResultDto> ExportEntryExitRegistratione(GetEntryExitRegistrationsInput input);
+
+        Task<APIResultDto> ImportEntryExitRegistrationExcelAsync();
     }
 }

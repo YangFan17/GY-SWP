@@ -95,5 +95,8 @@ namespace GYSWP.LC_ConveyorChecks
         /// <returns></returns>
         [AbpAllowAnonymous]
         Task RecordInsertOrUpdate(InsertLC_ConveyorCheckInput input);
+
+
+        Task<APIResultDto> ImportConveyorCheckExcelAsync();
     }
 }

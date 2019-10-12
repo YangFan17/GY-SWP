@@ -72,5 +72,7 @@ namespace GYSWP.LC_TeamSafetyActivitys
         /// </summary>
         Task BatchDelete(List<Guid> input);
         Task<APIResultDto> ExportTeamSafetyActivity(GetLC_TeamSafetyActivitysInput input);
+
+        Task<APIResultDto> ImportTeamSafetyActivityExcelAsync();
     }
 }

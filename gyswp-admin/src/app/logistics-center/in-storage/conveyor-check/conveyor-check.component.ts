@@ -2,6 +2,7 @@ import { Component, Injector } from '@angular/core';
 import { PagedListingComponentBase, PagedRequestDto, PagedResultDto } from '@shared/component-base';
 import { LogisticService } from 'services';
 import { AppConsts } from '@shared/AppConsts';
+import { UploadFile } from 'ng-zorro-antd';
 
 @Component({
     moduleId: module.id,
@@ -14,6 +15,7 @@ export class ConveyorCheckComponent extends PagedListingComponentBase<any>{
     timeFormat = 'yyyy-MM-dd';
     // dateRange = [addDays(new Date(), -1 * (new Date()).getDay() + 1), new Date()];
     dateRange: Date[] = [];
+    postUrl: string = '/GYSWPFile/PositionFilesTxTPostsAsync';
     constructor(injector: Injector
         , private logisticService: LogisticService
     ) {
@@ -81,6 +83,17 @@ export class ConveyorCheckComponent extends PagedListingComponentBase<any>{
                 var url = AppConsts.remoteServiceBaseUrl + data.data;
                 document.getElementById('exportUrl').setAttribute('href', url);
                 document.getElementById('btnExportHref').click();
+            } else {
+                this.notify.error(data.msg);
+            }
+            this.exportLoading = false;
+        }));
+    }
+    uploading = false;
+    import() {
+        this.logisticService.importConveyorCheckExcelAsync().subscribe((data => {
+            if (data.code == 0) {
+                console.log('导入数据成功!')
             } else {
                 this.notify.error(data.msg);
             }

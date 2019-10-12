@@ -29,6 +29,7 @@ using GYSWP.Helpers;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using GYSWP.DocAttachments;
+using GYSWP.Employees;
 
 namespace GYSWP.LC_SortingEquipChecks
 {
@@ -41,7 +42,7 @@ namespace GYSWP.LC_SortingEquipChecks
         private readonly IRepository<LC_SortingEquipCheck, Guid> _entityRepository;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly ILC_SortingEquipCheckManager _entityManager;
-
+        private readonly IRepository<Employee, string> _employeeRepository;
         private readonly IRepository<LC_Attachment, Guid> _attachmentRepository;
 
         /// <summary>
@@ -51,9 +52,11 @@ namespace GYSWP.LC_SortingEquipChecks
         IRepository<LC_SortingEquipCheck, Guid> entityRepository
         , IHostingEnvironment hostingEnvironment,
         IRepository<LC_Attachment, Guid> attachmentRepository
-        , ILC_SortingEquipCheckManager entityManager
+        , ILC_SortingEquipCheckManager entityManager,
+         IRepository<Employee, string> employeeRepository
         )
         {
+            _employeeRepository = employeeRepository;
             _entityRepository = entityRepository;
             _entityManager = entityManager;
             _hostingEnvironment = hostingEnvironment;
@@ -364,6 +367,365 @@ namespace GYSWP.LC_SortingEquipChecks
             if (entity != null)
                 item.Path = await _attachmentRepository.GetAll().Where(aa => aa.BLL == entity.Id).Select(aa => aa.Path).AsNoTracking().ToArrayAsync();
             return item;
+        }
+
+        /// <summary>
+        /// 导入需求预测数据
+        /// </summary>
+        /// <returns></returns>
+        public async Task<APIResultDto> ImportSortingEquipCheckExcelAsync()
+        {
+            //获取Excel数据
+            var excelList = await GetSortingEquipCheckDataAsync();
+            //循环批量更新
+            await UpdateAsyncSortingEquipCheckData(excelList);
+            return new APIResultDto() { Code = 0, Msg = "导入数据成功" };
+        }
+        /// <summary>
+        /// 从上传的Excel读出数据
+        /// </summary>
+        private async Task<List<LC_SortingEquipCheckEditDto>> GetSortingEquipCheckDataAsync()
+        {
+            string fileName = _hostingEnvironment.WebRootPath + "/files/upload/分拣设备运行记录.xlsx";
+            var LC_SortingEquipCheckList = new List<LC_SortingEquipCheckEditDto>();
+            using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+            {
+                IWorkbook workbook = new XSSFWorkbook(fs);
+                ISheet sheet = workbook.GetSheet("SortingEquipCheck");
+                if (sheet == null) //如果没有找到指定的sheetName对应的sheet，则尝试获取第一个sheet
+                {
+                    sheet = workbook.GetSheetAt(0);
+                }
+
+                if (sheet != null)
+                {
+                    //最后一列的标号
+                    int rowCount = sheet.LastRowNum;
+                    for (int i = 1; i <= rowCount; ++i)//排除首行标题
+                    {
+                        IRow row = sheet.GetRow(i);
+                        if (row == null) continue; //没有数据的行默认是null　　　　　　　
+
+                        var SortingEquipCheck = new LC_SortingEquipCheckEditDto();
+                        if (row.GetCell(0) != null)
+                        {
+                            SortingEquipCheck.ResponsibleName = row.GetCell(0).ToString();
+                            SortingEquipCheck.SupervisorName = row.GetCell(1).ToString();
+                         
+                            if (row.GetCell(2).ToString() == "是" || row.GetCell(2).ToString() == "有")
+                            {
+                                SortingEquipCheck.IsChainPlateOk = true;
+                            }
+                            else if (row.GetCell(2).ToString() == "否" || row.GetCell(2).ToString() == "无")
+                            {
+                                SortingEquipCheck.IsChainPlateOk = false;
+                            }
+
+                            if (row.GetCell(3).ToString() == "是" || row.GetCell(3).ToString() == "有")
+                            {
+                                SortingEquipCheck.IsControlSwitchOk = true;
+                            }
+                            else if (row.GetCell(3).ToString() == "否" || row.GetCell(3).ToString() == "无")
+                            {
+                                SortingEquipCheck.IsControlSwitchOk = false;
+                            }
+
+                            if (row.GetCell(4).ToString() == "是" || row.GetCell(4).ToString() == "有")
+                            {
+                                SortingEquipCheck.IsElcOrGasBad = true;
+                            }
+                            else if (row.GetCell(4).ToString() == "否" || row.GetCell(4).ToString() == "无")
+                            {
+                                SortingEquipCheck.IsElcOrGasBad = false;
+                            }
+
+                            if (row.GetCell(5).ToString() == "是" || row.GetCell(5).ToString() == "有")
+                            {
+                                SortingEquipCheck.IsLiftUp = true;
+                            }
+                            else if (row.GetCell(5).ToString() == "否" || row.GetCell(5).ToString() == "无")
+                            {
+                                SortingEquipCheck.IsLiftUp = false;
+                            }
+
+                            if (row.GetCell(6).ToString() == "是" || row.GetCell(6).ToString() == "有")
+                            {
+                                SortingEquipCheck.IsSortSysOk = true;
+                            }
+                            else if (row.GetCell(6).ToString() == "否" || row.GetCell(6).ToString() == "无")
+                            {
+                                SortingEquipCheck.IsSortSysOk = false;
+                            }
+
+                            if (row.GetCell(7).ToString() == "是" || row.GetCell(7).ToString() == "有")
+                            {
+                                SortingEquipCheck.IsChanDirty = true;
+                            }
+                            else if (row.GetCell(7).ToString() == "否" || row.GetCell(7).ToString() == "无")
+                            {
+                                SortingEquipCheck.IsChanDirty = false;
+                            }
+
+                            if (row.GetCell(8).ToString() == "是" || row.GetCell(8).ToString() == "有")
+                            {
+                                SortingEquipCheck.IsCutSealDirty = true;
+                            }
+                            else if (row.GetCell(8).ToString() == "否" || row.GetCell(8).ToString() == "无")
+                            {
+                                SortingEquipCheck.IsCutSealDirty = false;
+                            }
+
+
+                            if (row.GetCell(9).ToString() == "是" || row.GetCell(9).ToString() == "有")
+                            {
+                                SortingEquipCheck.IsBZJControlSwitchOk = true;
+                            }
+                            else if (row.GetCell(9).ToString() == "否" || row.GetCell(9).ToString() == "无")
+                            {
+                                SortingEquipCheck.IsBZJControlSwitchOk = false;
+                            }
+
+                            if (row.GetCell(10).ToString() == "是" || row.GetCell(10).ToString() == "有")
+                            {
+                                SortingEquipCheck.IsBZJElcOrGasBad = true;
+                            }
+                            else if (row.GetCell(10).ToString() == "否" || row.GetCell(10).ToString() == "无")
+                            {
+                                SortingEquipCheck.IsBZJElcOrGasBad = false;
+                            }
+
+                            if (row.GetCell(11).ToString() == "是" || row.GetCell(11).ToString() == "有")
+                            {
+                                SortingEquipCheck.IsTempOk = true;
+                            }
+                            else if (row.GetCell(11).ToString() == "否" || row.GetCell(11).ToString() == "无")
+                            {
+                                SortingEquipCheck.IsTempOk = false;
+                            }
+
+                            if (row.GetCell(12).ToString() == "是" || row.GetCell(12).ToString() == "有")
+                            {
+                                SortingEquipCheck.IsBZJSysOk = true;
+                            }
+                            else if (row.GetCell(12).ToString() == "否" || row.GetCell(12).ToString() == "无")
+                            {
+                                SortingEquipCheck.IsBZJSysOk = false;
+                            }
+
+                            if (row.GetCell(13).ToString() == "是" || row.GetCell(13).ToString() == "有")
+                            {
+                                SortingEquipCheck.IsStoveOk = true;
+                            }
+                            else if (row.GetCell(13).ToString() == "否" || row.GetCell(13).ToString() == "无")
+                            {
+                                SortingEquipCheck.IsStoveOk = false;
+                            }
+
+                            if (row.GetCell(14).ToString() == "是" || row.GetCell(14).ToString() == "有")
+                            {
+                                SortingEquipCheck.IsLabelingOk = true;
+                            }
+                            else if (row.GetCell(14).ToString() == "否" || row.GetCell(14).ToString() == "无")
+                            {
+                                SortingEquipCheck.IsLabelingOk = false;
+                            }
+
+                            if (row.GetCell(15).ToString() == "是" || row.GetCell(15).ToString() == "有")
+                            {
+                                SortingEquipCheck.IsTBJElcOrGasBad = true;
+                            }
+                            else if (row.GetCell(15).ToString() == "否" || row.GetCell(15).ToString() == "无")
+                            {
+                                SortingEquipCheck.IsTBJElcOrGasBad = false;
+                            }
+
+                            if (row.GetCell(16).ToString() == "是" || row.GetCell(16).ToString() == "有")
+                            {
+                                SortingEquipCheck.IsLaserShieldOk = true;
+                            }
+                            else if (row.GetCell(16).ToString() == "否" || row.GetCell(16).ToString() == "无")
+                            {
+                                SortingEquipCheck.IsLaserShieldOk = false;
+                            }
+
+                            if (row.GetCell(17).ToString() == "是" || row.GetCell(17).ToString() == "有")
+                            {
+                                SortingEquipCheck.IsLineOrMachineOk = true;
+                            }
+                            else if (row.GetCell(17).ToString() == "否" || row.GetCell(17).ToString() == "无")
+                            {
+                                SortingEquipCheck.IsLineOrMachineOk = false;
+                            }
+
+                            if (row.GetCell(18).ToString() == "是" || row.GetCell(18).ToString() == "有")
+                            {
+                                SortingEquipCheck.IsCigaretteHouseOk = true;
+                            }
+                            else if (row.GetCell(18).ToString() == "否" || row.GetCell(18).ToString() == "无")
+                            {
+                                SortingEquipCheck.IsCigaretteHouseOk = false;
+                            }
+
+                            if (row.GetCell(19).ToString() == "是" || row.GetCell(19).ToString() == "有")
+                            {
+                                SortingEquipCheck.IsSingleOk = true;
+                            }
+                            else if (row.GetCell(19).ToString() == "否" || row.GetCell(19).ToString() == "无")
+                            {
+                                SortingEquipCheck.IsSingleOk = false;
+                            }
+
+                            if (row.GetCell(20).ToString() == "是" || row.GetCell(20).ToString() == "有")
+                            {
+                                SortingEquipCheck.IsMainLineOk = true;
+                            }
+                            else if (row.GetCell(20).ToString() == "否" || row.GetCell(20).ToString() == "无")
+                            {
+                                SortingEquipCheck.IsMainLineOk = false;
+                            }
+
+                            if (row.GetCell(21).ToString() == "是" || row.GetCell(21).ToString() == "有")
+                            {
+                                SortingEquipCheck.IsCoderOk = true;
+                            }
+                            else if (row.GetCell(21).ToString() == "否" || row.GetCell(21).ToString() == "无")
+                            {
+                                SortingEquipCheck.IsCoderOk = false;
+                            }
+                            if (row.GetCell(22).ToString() == "是" || row.GetCell(22).ToString() == "有")
+                            {
+                                SortingEquipCheck.IsBZJWorkOk = true;
+                            }
+                            else if (row.GetCell(22).ToString() == "否" || row.GetCell(22).ToString() == "无")
+                            {
+                                SortingEquipCheck.IsBZJWorkOk = false;
+                            }
+                            if (row.GetCell(23).ToString() == "是" || row.GetCell(23).ToString() == "有")
+                            {
+                                SortingEquipCheck.IsBeltDeviation = true;
+                            }
+                            else if (row.GetCell(23).ToString() == "否" || row.GetCell(23).ToString() == "无")
+                            {
+                                SortingEquipCheck.IsBeltDeviation = false;
+                            }
+                            if (row.GetCell(24).ToString() == "是" || row.GetCell(24).ToString() == "有")
+                            {
+                                SortingEquipCheck.IsFBJOk = true;
+                            }
+                            else if (row.GetCell(24).ToString() == "否" || row.GetCell(24).ToString() == "无")
+                            {
+                                SortingEquipCheck.IsFBJOk = false;
+                            }
+                            if (row.GetCell(25).ToString() == "是" || row.GetCell(25).ToString() == "有")
+                            {
+                                SortingEquipCheck.IsTBJOk = true;
+                            }
+                            else if (row.GetCell(25).ToString() == "否" || row.GetCell(25).ToString() == "无")
+                            {
+                                SortingEquipCheck.IsTBJOk = false;
+                            }
+
+                            if (row.GetCell(27).ToString() == "是" || row.GetCell(27).ToString() == "有")
+                            {
+                                SortingEquipCheck.IsSysOutOk = true;
+                            }
+                            else if (row.GetCell(27).ToString() == "否" || row.GetCell(27).ToString() == "无")
+                            {
+                                SortingEquipCheck.IsSysOutOk = false;
+                            }
+
+                            if (row.GetCell(28).ToString() == "是" || row.GetCell(28).ToString() == "有")
+                            {
+                                SortingEquipCheck.IsShutElcOrGas = true;
+                            }
+                            else if (row.GetCell(28).ToString() == "否" || row.GetCell(28).ToString() == "无")
+                            {
+                                SortingEquipCheck.IsShutElcOrGas = false;
+                            }
+
+                            if (row.GetCell(29).ToString() == "是" || row.GetCell(29).ToString() == "有")
+                            {
+                                SortingEquipCheck.IsDataCallback = true;
+                            }
+                            else if (row.GetCell(29).ToString() == "否" || row.GetCell(29).ToString() == "无")
+                            {
+                                SortingEquipCheck.IsDataCallback = false;
+                            }
+
+                            if (row.GetCell(30).ToString() == "是" || row.GetCell(30).ToString() == "有")
+                            {
+                                SortingEquipCheck.IsMachineClean = true;
+                            }
+                            else if (row.GetCell(30).ToString() == "否" || row.GetCell(30).ToString() == "无")
+                            {
+                                SortingEquipCheck.IsMachineClean = false;
+                            }
+
+
+                            if (!string.IsNullOrEmpty(row.GetCell(26).ToString()))
+                            {
+                                SortingEquipCheck.Troubleshooting = row.GetCell(26).ToString();
+                            }
+
+                            SortingEquipCheck.EmployeeId = await _employeeRepository.GetAll().Where(aa => aa.Name == row.GetCell(31).ToString()).Select(v => v.Id).FirstOrDefaultAsync();
+
+                            SortingEquipCheck.EmployeeName = row.GetCell(31).ToString();
+                            SortingEquipCheck.CreationTime = Convert.ToDateTime(row.GetCell(32).ToString());
+                            LC_SortingEquipCheckList.Add(SortingEquipCheck);
+                        }
+                    }
+                }
+                return await Task.FromResult(LC_SortingEquipCheckList);
+            }
+        }
+
+        /// <summary>
+        /// 更新到数据库
+        /// </summary>
+        private async Task UpdateAsyncSortingEquipCheckData(List<LC_SortingEquipCheckEditDto> excelList)
+        {
+            foreach (var item in excelList)
+            {
+                var entity = new LC_SortingEquipCheck();
+                entity.CreationTime = item.CreationTime;
+                entity.EmployeeId = item.EmployeeId;
+                entity.EmployeeName = item.EmployeeName;
+                entity.IsBeltDeviation = item.IsBeltDeviation;
+                entity.IsBZJControlSwitchOk = item.IsBZJControlSwitchOk;
+                entity.IsBZJElcOrGasBad = item.IsBZJElcOrGasBad;
+                entity.IsBZJSysOk = item.IsBZJSysOk;
+                entity.IsBZJWorkOk = item.IsBZJWorkOk;
+                entity.IsChainPlateOk = item.IsChainPlateOk;
+                entity.IsChanDirty = item.IsChanDirty;
+                entity.IsCigaretteHouseOk = item.IsCigaretteHouseOk;
+                entity.IsCoderOk = item.IsCoderOk;
+                entity.IsControlSwitchOk = item.IsControlSwitchOk;
+                entity.IsCutSealDirty = item.IsCutSealDirty;
+                entity.IsDataCallback = item.IsDataCallback;
+                entity.IsElcOrGasBad = item.IsElcOrGasBad;
+                entity.IsFBJOk = item.IsFBJOk;
+                entity.IsLabelingOk = item.IsLabelingOk;
+                entity.IsLaserShieldOk = item.IsLaserShieldOk;
+                entity.ResponsibleName = item.ResponsibleName;
+                entity.IsLiftUp = item.IsLiftUp;
+                entity.SupervisorName = item.SupervisorName;
+                entity.Troubleshooting = item.Troubleshooting;
+
+                entity.IsLineOrMachineOk = item.IsLineOrMachineOk;
+                entity.IsMachineClean = item.IsMachineClean;
+                entity.IsMainLineOk = item.IsMainLineOk;
+                entity.IsShutElcOrGas = item.IsShutElcOrGas;
+                entity.IsSingleOk = item.IsSingleOk;
+                entity.IsSortSysOk = item.IsSortSysOk;
+                entity.IsStoveOk = item.IsStoveOk;
+                entity.IsSysOutOk = item.IsSysOutOk;
+                entity.IsTBJElcOrGasBad = item.IsTBJElcOrGasBad;
+                entity.IsTBJOk = item.IsTBJOk;
+                entity.IsTempOk = item.IsTempOk;
+                await _entityRepository.InsertAsync(entity);
+                //}
+            }
+            await CurrentUnitOfWork.SaveChangesAsync();
         }
     }
 }

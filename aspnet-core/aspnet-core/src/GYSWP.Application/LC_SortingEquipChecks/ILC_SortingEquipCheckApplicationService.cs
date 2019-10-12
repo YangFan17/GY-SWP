@@ -86,5 +86,7 @@ namespace GYSWP.LC_SortingEquipChecks
         /// <returns></returns>
         [AbpAllowAnonymous]
         Task RecordInsertOrUpdate(InsertLC_SortingEquipCheckInput input);
+
+        Task<APIResultDto> ImportSortingEquipCheckExcelAsync();
     }
 }

@@ -72,5 +72,7 @@ namespace GYSWP.LC_InStorageRecords
         /// </summary>
         Task BatchDelete(List<Guid> input);
         Task<APIResultDto> ExportInStorageRecord(GetLC_InStorageRecordsInput input);
+
+        Task<APIResultDto> ImportInStorageRecordExcelAsync();
     }
 }
