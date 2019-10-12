@@ -11,6 +11,7 @@
                     <th>现状描述</th>
                     <th>对策建议</th>
                     <th>采纳结果</th>
+                    <th>建议人</th>
                     <th>申报日期</th>
                     <th>操作</th>
                 </tr>
@@ -25,6 +26,7 @@
                         <nz-badge *ngIf="item.isAdoption == true" nzStatus="success" nzText="已采纳"></nz-badge>
                         <nz-badge *ngIf="item.isAdoption == null" nzStatus="default" nzText="待审批"></nz-badge>
                     </td>
+                    <td>{{item.employeeName}}</td>
                     <td>{{item.creationTime | _date: 'YYYY-MM-DD'}}</td>
                     <td>
                         <a (click)="goDetail(item.id)">详情</a>

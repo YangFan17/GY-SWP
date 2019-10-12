@@ -11,6 +11,7 @@
                     <th>现状描述</th>
                     <th>对策建议</th>
                     <th>采纳结果</th>
+                    <th>建议人</th>
                     <th>申报日期</th>
                     <th>公示状态</th>
                     <th>操作</th>
@@ -25,6 +26,7 @@
                         <nz-badge *ngIf="!item.isAdoption" nzStatus="error" nzText="未采纳"></nz-badge>
                         <nz-badge *ngIf="item.isAdoption" nzStatus="success" nzText="已采纳"></nz-badge>
                     </td>
+                    <td>{{item.employeeName}}</td>
                     <td>{{item.creationTime | _date: 'YYYY-MM-DD'}}</td>
                     <td>
                         <nz-badge *ngIf="!item.isPublicity" nzStatus="default" nzText="未公示"></nz-badge>

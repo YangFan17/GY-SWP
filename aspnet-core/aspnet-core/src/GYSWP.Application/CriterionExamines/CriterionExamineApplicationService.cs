@@ -32,6 +32,7 @@ using Abp.Auditing;
 using GYSWP.DingDingApproval;
 using GYSWP.Organizations.DomainService;
 using GYSWP.Categorys;
+using Abp.Domain.Uow;
 
 namespace GYSWP.CriterionExamines
 {
@@ -1345,19 +1346,21 @@ namespace GYSWP.CriterionExamines
         /// <param name="dingId"></param>
         /// <returns></returns>
         [AbpAllowAnonymous]
-        [Audited]
         public async Task<List<CriterionExamineListDto>> GetPagedExamineByDingIdAsync(GetCriterionExaminesInput input)
         {
-            Guid[] examineIds = await _examineDetailRepository.GetAll().Where(v => v.EmployeeId == input.EmployeeId).GroupBy(v => new { v.CriterionExamineId }).Select(v => v.Key.CriterionExamineId).ToArrayAsync();
-            var query = _entityRepository.GetAll().Where(v => examineIds.Contains(v.Id) && v.IsPublish == true);
-            var count = await query.CountAsync();
-            var entityList = await query
-                    .OrderBy(input.Sorting).AsNoTracking()
-                    .OrderByDescending(aa => aa.CreationTime)
-                    //.PageBy(input)
-                    .ToListAsync();
-            var entityListDtos = entityList.MapTo<List<CriterionExamineListDto>>();
-            return entityListDtos;
+            using (CurrentUnitOfWork.DisableFilter(AbpDataFilters.SoftDelete))
+            {
+                Guid[] examineIds = await _examineDetailRepository.GetAll().Where(v => v.EmployeeId == input.EmployeeId).GroupBy(v => new { v.CriterionExamineId }).Select(v => v.Key.CriterionExamineId).ToArrayAsync();
+                var query = _entityRepository.GetAll().Where(v => examineIds.Contains(v.Id) && v.IsPublish == true);
+                var count = await query.CountAsync();
+                var entityList = await query
+                        .OrderBy(input.Sorting).AsNoTracking()
+                        .OrderByDescending(aa => aa.CreationTime)
+                        //.PageBy(input)
+                        .ToListAsync();
+                var entityListDtos = entityList.MapTo<List<CriterionExamineListDto>>();
+                return entityListDtos;
+            }
         }
 
         /// <summary>

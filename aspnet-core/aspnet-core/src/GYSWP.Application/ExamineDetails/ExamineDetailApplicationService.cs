@@ -272,26 +272,26 @@ namespace GYSWP.ExamineDetails
             using (CurrentUnitOfWork.DisableFilter(AbpDataFilters.SoftDelete))
             {
                 var user = await GetCurrentUserAsync();
-            var query = _entityRepository.GetAll().Where(v => v.EmployeeId == user.EmployeeId && v.CriterionExamineId == input.ExamineId);
-            var doc = _documentRepository.GetAll().Select(v => new { v.Id, v.Name });
-            var clause = _clauseRepository.GetAll();
-            var list = (from q in query
-                        join d in doc on q.DocumentId equals d.Id
-                        join c in clause on q.ClauseId equals c.Id
-                        select new ExamineRecordDto()
-                        {
-                            Id = q.Id,
-                            DocumentName = d.Name,
-                            //ClauseInfo = c.ClauseNo + "-" + (c.Title.Length > 15 ? c.Title.Substring(0, 15) + "..." : c.Title) + "-" + (c.Content.Length > 50 ? c.Content.Substring(0, 50) + "..." : c.Content),
-                            ClauseInfo = c.ClauseNo + (c.Title != null ? (c.Title.Length > 15 ? "-" + c.Title.Substring(0, 15) + "...-" : "-" + c.Title + "-") : "-")
-                            + (c.Content != null ? (c.Content.Length > 15 ? c.Content.Substring(0, 15) + "..." : c.Content) : ""),
-                            Status = q.Status,
-                            Result = q.Result,
-                            EmployeeName = q.EmployeeName
-                        });
-            var count = await list.CountAsync();
-            var entityList = await list.OrderBy(v => v.Status).ThenByDescending(v => v.Result).ThenBy(v => v.DocumentName).PageBy(input).ToListAsync();
-            return new PagedResultDto<ExamineRecordDto>(count, entityList);
+                var query = _entityRepository.GetAll().Where(v => v.EmployeeId == user.EmployeeId && v.CriterionExamineId == input.ExamineId);
+                var doc = _documentRepository.GetAll().Select(v => new { v.Id, v.Name });
+                var clause = _clauseRepository.GetAll();
+                var list = (from q in query
+                            join d in doc on q.DocumentId equals d.Id
+                            join c in clause on q.ClauseId equals c.Id
+                            select new ExamineRecordDto()
+                            {
+                                Id = q.Id,
+                                DocumentName = d.Name,
+                                //ClauseInfo = c.ClauseNo + "-" + (c.Title.Length > 15 ? c.Title.Substring(0, 15) + "..." : c.Title) + "-" + (c.Content.Length > 50 ? c.Content.Substring(0, 50) + "..." : c.Content),
+                                ClauseInfo = c.ClauseNo + (c.Title != null ? (c.Title.Length > 15 ? "-" + c.Title.Substring(0, 15) + "...-" : "-" + c.Title + "-") : "-")
+                                + (c.Content != null ? (c.Content.Length > 15 ? c.Content.Substring(0, 15) + "..." : c.Content) : ""),
+                                Status = q.Status,
+                                Result = q.Result,
+                                EmployeeName = q.EmployeeName
+                            });
+                var count = await list.CountAsync();
+                var entityList = await list.OrderBy(v => v.Status).ThenByDescending(v => v.Result).ThenBy(v => v.DocumentName).PageBy(input).ToListAsync();
+                return new PagedResultDto<ExamineRecordDto>(count, entityList);
             }
         }
 
@@ -376,30 +376,32 @@ namespace GYSWP.ExamineDetails
         /// <param name="input"></param>
         /// <returns></returns>
         [AbpAllowAnonymous]
-        [Audited]
         public async Task<List<ExamineRecordDto>> GetExamineDetailByDingIdAsync(GetExamineDetailsInput input)
         {
-            var query = _entityRepository.GetAll().Where(v => v.EmployeeId == input.EmployeeId && v.CriterionExamineId == input.ExamineId);
-            var doc = _documentRepository.GetAll().Select(v => new { v.Id, v.Name });
-            var clause = _clauseRepository.GetAll();
-            var list = (from q in query
-                        join d in doc on q.DocumentId equals d.Id
-                        join c in clause on q.ClauseId equals c.Id
-                        select new ExamineRecordDto()
-                        {
-                            Id = q.Id,
-                            DocumentName = d.Name,
-                            //ClauseInfo = c.ClauseNo + c.Title != null ? "-" + (c.Title.Length > 15 ? c.Title.Substring(0, 15) + "..." : c.Title) : null + c.Content != null ? "-" + (c.Content.Length > 50 ? c.Content.Substring(0, 50) + "..." : c.Content) : null,
-                            ClauseInfo = c.ClauseNo + (c.Title != null ? (c.Title.Length > 15 ? "-" + c.Title.Substring(0, 15) + "...-" : "-" + c.Title + "-") : "-")
-                            + (c.Content != null ? (c.Content.Length > 15 ? c.Content.Substring(0, 15) + "..." : c.Content) : ""),
-                            Status = q.Status,
-                            Result = q.Result,
-                            EmployeeName = q.EmployeeName,
-                            CreatorEmpName = q.CreatorEmpName
-                        });
-            var count = await list.CountAsync();
-            var entityList = await list.OrderBy(v => v.Status).ThenByDescending(v => v.Result).ThenBy(v => v.DocumentName).PageBy(input).ToListAsync();
-            return entityList;
+            using (CurrentUnitOfWork.DisableFilter(AbpDataFilters.SoftDelete))
+            {
+                var query = _entityRepository.GetAll().Where(v => v.EmployeeId == input.EmployeeId && v.CriterionExamineId == input.ExamineId);
+                var doc = _documentRepository.GetAll().Select(v => new { v.Id, v.Name });
+                var clause = _clauseRepository.GetAll();
+                var list = (from q in query
+                            join d in doc on q.DocumentId equals d.Id
+                            join c in clause on q.ClauseId equals c.Id
+                            select new ExamineRecordDto()
+                            {
+                                Id = q.Id,
+                                DocumentName = d.Name,
+                                //ClauseInfo = c.ClauseNo + c.Title != null ? "-" + (c.Title.Length > 15 ? c.Title.Substring(0, 15) + "..." : c.Title) : null + c.Content != null ? "-" + (c.Content.Length > 50 ? c.Content.Substring(0, 50) + "..." : c.Content) : null,
+                                ClauseInfo = c.ClauseNo + (c.Title != null ? (c.Title.Length > 15 ? "-" + c.Title.Substring(0, 15) + "...-" : "-" + c.Title + "-") : "-")
+                                + (c.Content != null ? (c.Content.Length > 15 ? c.Content.Substring(0, 15) + "..." : c.Content) : ""),
+                                Status = q.Status,
+                                Result = q.Result,
+                                EmployeeName = q.EmployeeName,
+                                CreatorEmpName = q.CreatorEmpName
+                            });
+                var count = await list.CountAsync();
+                var entityList = await list.OrderBy(v => v.Status).ThenByDescending(v => v.Result).ThenBy(v => v.DocumentName).PageBy(input).ToListAsync();
+                return entityList;
+            }
         }
     }
 }
