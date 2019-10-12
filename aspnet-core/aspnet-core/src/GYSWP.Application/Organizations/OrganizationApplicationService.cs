@@ -26,6 +26,7 @@ using Senparc.CO2NET.HttpUtility;
 using GYSWP.Employees.Dtos;
 using GYSWP.DingDing.Dtos;
 using GYSWP.DingDing;
+using GYSWP.DingDingApproval;
 
 namespace GYSWP.Organizations
 {
@@ -39,6 +40,7 @@ namespace GYSWP.Organizations
         private readonly IRepository<Employee, string> _employeeRepository;
         private readonly IOrganizationManager _entityManager;
         private readonly IDingDingAppService _dingDingAppService;
+        private readonly IApprovalAppService _approvalAppService;
 
         /// <summary>
         /// 构造函数 
@@ -48,12 +50,14 @@ namespace GYSWP.Organizations
         , IRepository<Employee, string> employeeRepository
         , IOrganizationManager entityManager
         , IDingDingAppService dingDingAppService
+        , IApprovalAppService approvalAppService
         )
         {
             _entityRepository = entityRepository;
             _employeeRepository = employeeRepository;
             _entityManager = entityManager;
             _dingDingAppService = dingDingAppService;
+            _approvalAppService = approvalAppService;
         }
 
 
@@ -813,12 +817,26 @@ namespace GYSWP.Organizations
                 deptId = deptStr.Replace('[', ' ').Replace(']', ' ').Trim();
             }
             var deptInfo = await _entityRepository.GetAll().Where(v => v.Id.ToString() == deptId).Select(v => new { v.Id, v.DepartmentName }).FirstOrDefaultAsync();
+            DingDingAppConfig ddConfig = _dingDingAppService.GetDingDingConfigByApp(DingDingAppEnum.标准化工作平台);
+            string accessToken = _dingDingAppService.GetAccessToken(ddConfig.Appkey, ddConfig.Appsecret);
+            APIResultDto spaceInfo = _approvalAppService.GetProcessinstanceSpace(accessToken, EmployeeId);
+            if (spaceInfo.Code == 0)
+            {
+                return new APIResultDto()
+                {
+                    Code = 0,
+                    Data = new {
+                        deptInfo.Id,
+                        deptInfo.DepartmentName,
+                        spaceInfo.Data
+                    }
+                };
+            }
             return new APIResultDto()
             {
-                Data = deptInfo,
-                Code = 0
+                Code = 999,
+                Msg = "审批钉盘信息获取失败"
             };
-
         }
     }
 }

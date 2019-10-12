@@ -303,10 +303,11 @@ namespace GYSWP.Advises
             newAdvise.EmployeeName = input.Advise.EmployeeName;
             newAdvise.DeptId = input.Advise.DeptId;
             newAdvise.DeptName = input.Advise.DeptName;
-            newAdvise.UnionEmpName = input.Advise.UnionEmpName; 
+            newAdvise.UnionEmpName = input.Advise.UnionEmpName;
+            newAdvise.IsMainLeader = input.Advise.IsMainLeader;
             Guid entityId = await _entityRepository.InsertAndGetIdAsync(newAdvise);
             await CurrentUnitOfWork.SaveChangesAsync();
-            var result =  await _approvalAppService.SubmitAdviceApproval(entityId);
+            var result =  await _approvalAppService.SubmitAdviceApproval(entityId,input.Advise.fileDatas);
             if (result.Code == 0)
             {
                 newAdvise.ProcessInstanceId = result.Data.ToString();

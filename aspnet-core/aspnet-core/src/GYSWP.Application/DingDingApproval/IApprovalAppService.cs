@@ -1,8 +1,10 @@
 ﻿using Abp.Application.Services;
+using GYSWP.Advises.Dtos;
 using GYSWP.DingDingApproval.Dtos;
 using GYSWP.Dtos;
 using GYSWP.GYEnums;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace GYSWP.DingDingApproval
@@ -17,6 +19,7 @@ namespace GYSWP.DingDingApproval
         APIResultDto SendIndicatorMessageAsync(string empId);
         APIResultDto SendCriterionExamineMessageAsync(string empId);
         APIResultDto SendIndicatorResultAsync(IndicatorStatus status,string empList);
-        Task<APIResultDto> SubmitAdviceApproval(Guid id);
+        Task<APIResultDto> SubmitAdviceApproval(Guid id, List<FileData> fileDatas);
+        APIResultDto GetProcessinstanceSpace(string accessToken, string empId);
     }
 }

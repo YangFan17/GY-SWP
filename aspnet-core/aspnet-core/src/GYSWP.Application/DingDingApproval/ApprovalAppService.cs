@@ -29,6 +29,7 @@ using GYSWP.GYEnums;
 using GYSWP.ApplyInfos;
 using GYSWP.DocRevisions;
 using GYSWP.Advises;
+using GYSWP.Advises.Dtos;
 
 namespace GYSWP.DingDingApproval
 {
@@ -331,29 +332,33 @@ namespace GYSWP.DingDingApproval
         /// <param name="Solution"></param>
         /// <returns></returns>
         [AbpAllowAnonymous]
-        public async Task<APIResultDto> SubmitAdviceApproval(Guid id)
+        public async Task<APIResultDto> SubmitAdviceApproval(Guid id, List<FileData> fileDatas)
         {
             DingDingAppConfig ddConfig = _dingDingAppService.GetDingDingConfigByApp(DingDingAppEnum.标准化工作平台);
             string accessToken = _dingDingAppService.GetAccessToken(ddConfig.Appkey, ddConfig.Appsecret);
             var advice = await _adviceRepository.GetAsync(id);
+            //获取审批钉盘Id
+            //var spaceInfo = GetProcessinstanceSpace(accessToken, advice.EmployeeId);
             var dept = await _employeeRepository.GetAll().Where(v => v.Id == advice.EmployeeId).Select(v => v.Department).FirstOrDefaultAsync();
             var deptId = dept.Replace('[', ' ').Replace(']', ' ').Trim();
             string deptName = await _organizationRepository.GetAll().Where(v => v.Id.ToString() == deptId).Select(v => v.DepartmentName).FirstOrDefaultAsync();
             var url = string.Format("https://oapi.dingtalk.com/topapi/processinstance/create?access_token={0}", accessToken);
             SubmitApprovalEntity request = new SubmitApprovalEntity();
-            request.process_code = "PROC-A0FDBDA5-BBC6-4004-B72B-88AFC92DC427";//202
+            //request.process_code = "PROC-A0FDBDA5-BBC6-4004-B72B-88AFC92DC427";//202
+            request.process_code = "PROC-LCZJIVQV-T66UAC9MNECX6VLI1U0S1-D2T6MRFJ-6";
             request.originator_user_id = advice.EmployeeId;
             request.agent_id = ddConfig.AgentID;
-            //request.dept_id = Convert.ToInt32(deptId);
-            request.dept_id = 67209026;
+            request.dept_id = Convert.ToInt32(deptId);
             List<Approval> approvalList = new List<Approval>();
             approvalList.Add(new Approval() { name = "部门（单位）", value = deptName });
             approvalList.Add(new Approval() { name = "建议人", value = advice.EmployeeName });
-            approvalList.Add(new Approval() { name = "联合建议人", value = advice.UnionEmpName });
+            approvalList.Add(new Approval() { name = "联合建议人", value = advice.UnionEmpName == null ? "":advice.UnionEmpName });
             approvalList.Add(new Approval() { name = "申报日期", value = advice.CreationTime.ToString("yyyy-MM-dd HH:mm") });
             approvalList.Add(new Approval() { name = "建议名称", value = advice.AdviseName });
             approvalList.Add(new Approval() { name = "现状描述", value = advice.CurrentSituation });
             approvalList.Add(new Approval() { name = "对策建议", value = advice.Solution });
+            approvalList.Add(new Approval() { name = "主要领导审批", value = advice.IsMainLeader == true ? "是" : "否" });
+            approvalList.Add(new Approval() { name = "附件", value = SerializerHelper.GetJsonString(fileDatas, null) });
             request.form_component_values = approvalList;
             ApprovalReturn approvalReturn = new ApprovalReturn();
             var jsonString = SerializerHelper.GetJsonString(request, null);
@@ -370,6 +375,7 @@ namespace GYSWP.DingDingApproval
             }
             else
             {
+                Logger.InfoFormat($"合理化建议审批异常：[{approvalReturn.errcode}]{approvalReturn.errmsg}");
                 return new APIResultDto() { Code = 4, Msg = "提交失败", Data = approvalReturn.errmsg };
             }
         }
@@ -491,7 +497,7 @@ namespace GYSWP.DingDingApproval
         /// 发送指标考核结果通知
         /// </summary>
         [AbpAllowAnonymous]
-        public APIResultDto SendIndicatorResultAsync(IndicatorStatus status,string empList)
+        public APIResultDto SendIndicatorResultAsync(IndicatorStatus status, string empList)
         {
             try
             {
@@ -557,6 +563,43 @@ namespace GYSWP.DingDingApproval
             }
         }
 
+        /// <summary>
+        /// 获取审批钉盘SpaceId
+        /// </summary>
+        /// <param name="accessToken"></param>
+        /// <param name="empId"></param>
+        /// <returns></returns>
+        [AbpAllowAnonymous]
+        public APIResultDto GetProcessinstanceSpace(string accessToken, string empId)
+        {
+            try
+            {
+                var url = string.Format("https://oapi.dingtalk.com/topapi/processinstance/cspace/info?access_token={0}&user_id={1}", accessToken,empId);
+                //var jsonString = SerializerHelper.GetJsonString(user_id, null);
+                DingSpaceInfo obj = new DingSpaceInfo();
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    //var bytes = Encoding.UTF8.GetBytes(jsonString);
+                    //ms.Write(null, 0, 0);
+                    //ms.Seek(0, SeekOrigin.Begin);
+                    obj = Post.PostGetJson<DingSpaceInfo>(url, null, ms);
+                };
+                if (obj.success == true)
+                {
+                    return new APIResultDto() { Code = 0, Data = obj.result.space_id };
+                }
+                else
+                {
+                    return new APIResultDto() { Code = 999, Msg = "获取审批钉盘空间接口失败" };
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.ErrorFormat("SendCriterionExamineMessageAsync errormsg{0} Exception{1}", ex.Message, ex);
+                return new APIResultDto() { Code = 901, Msg = "获取审批钉盘空间接口异常" };
+            }
+
+        }
         /// <summary> 
         /// 上传图片并返回MeadiaId
         /// </summary>
