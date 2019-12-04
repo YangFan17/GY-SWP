@@ -24,6 +24,7 @@ import { FullInResultComponent } from './target-examine/target-examine-detail/ta
 import { TargetSourceDocComponent } from './target-examine/target-examine-detail/target-source-doc/target-source-doc.component';
 import { PublishConfirmComponent } from './target-examine/target-examine-detail/target-list/publish-confirm/publish-confirm.component';
 import { QuestionBankDetailComponent } from './criterion-examine/question-bank/question-bank-detail/question-bank-detail.component';
+import { FailReasonComponent } from './criterion-examine/checking-result/fail-reason/fail-reason.component';
 
 @NgModule({
     imports: [
@@ -53,7 +54,8 @@ import { QuestionBankDetailComponent } from './criterion-examine/question-bank/q
         FullInResultComponent,
         TargetSourceDocComponent,
         PublishConfirmComponent,
-        QuestionBankDetailComponent
+        QuestionBankDetailComponent,
+        FailReasonComponent
     ],
     entryComponents: [
         CriterionExamineComponent,
@@ -73,7 +75,8 @@ import { QuestionBankDetailComponent } from './criterion-examine/question-bank/q
         FullInResultComponent,
         TargetSourceDocComponent,
         PublishConfirmComponent,
-        QuestionBankDetailComponent
+        QuestionBankDetailComponent,
+        FailReasonComponent
     ],
     providers: [SupervisionService]
 })

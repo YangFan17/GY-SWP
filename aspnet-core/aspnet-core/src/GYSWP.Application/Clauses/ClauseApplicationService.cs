@@ -351,8 +351,8 @@ namespace GYSWP.Clauses
 
             int curYear = DateTime.Now.Year;
             //检查完毕后更改
-            //DateTime beginTime = Convert.ToDateTime(curYear + "-01-01 00:00:00");
-            DateTime beginTime = Convert.ToDateTime(curYear + "-09-01 00:00:00");
+            DateTime beginTime = Convert.ToDateTime(curYear + "-01-01 00:00:00");
+            //DateTime beginTime = Convert.ToDateTime(curYear + "-09-01 00:00:00");
             DateTime endTime = beginTime.AddYears(1);
             var entity = _entityRepository.GetAll().Where(v => v.DocumentId == input.DocumentId);
             //var selfCheck = _selfCheckRepository.GetAll().Where(v => v.EmployeeId == user.EmployeeId && v.CreationTime >= beginTime && v.CreationTime <= endTime);
@@ -371,7 +371,7 @@ namespace GYSWP.Clauses
             //               ParentId = c.ParentId,
             //               LearnOfYearNum = 
             //           }).ToListAsync();
-            //clause.Sort(Factory.Comparer);
+            clause.Sort(Factory.Comparer);
             foreach (var item in clause)
             {
                 item.LearnOfYearNum = await _selfCheckRepository.CountAsync(v => v.EmployeeId == user.EmployeeId && v.ClauseId == item.Id && v.CreationTime >= beginTime && v.CreationTime <= endTime);

@@ -1429,5 +1429,20 @@ namespace GYSWP.CriterionExamines
         {
            return await GetEmployeeIdsByDeptId(deptId);
         }
+
+        [AbpAllowAnonymous]
+        public async Task<bool> test(Guid[] id)
+        {
+           var list =  await _entityRepository.GetAll().Where(v => id.ToArray().Contains(v.Id)).ToListAsync();
+            foreach (var item in list)
+            {
+                string[] str = item.Title.Split('月');
+                string end = str[1];
+                string up2 = str[0].Split('年')[0];
+                item.Title = up2 + "年7月" + end;
+              await  _entityRepository.UpdateAsync(item);
+            }
+            return true;
+        }
     }
 }

@@ -206,6 +206,21 @@ ExamineResultEditDto editDto;
             var entity = await _entityRepository.FirstOrDefaultAsync(v=>v.ExamineDetailId == input.Id);
             return entity.MapTo<ExamineResultListDto>();
         }
+
+        /// <summary>
+        /// 不合格填写判定依据同时更改不合格状态
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<APIResultDto> ChangeStatusAndReasonByIdAsync(GetExamineResultsInput input)
+        {
+            var detail = await _examineDetailRepository.FirstOrDefaultAsync(v => v.Id == input.ExamineDetailId);
+            detail.Result = GYEnums.ExamineStatus.不合格;
+
+            var result = await _entityRepository.FirstOrDefaultAsync(v => v.Id == input.Id);
+            result.FailReason = input.FailReason;
+            return new APIResultDto() { Code = 0, Msg = "保存成功", Data = detail.Id };
+        }
     }
 }
 

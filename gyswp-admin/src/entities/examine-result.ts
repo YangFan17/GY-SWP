@@ -5,7 +5,7 @@ export class ExamineResult {
     employeeId: string;
     employeeName: string;
     creationTime: Date;
-
+    failReason: string;
     constructor(data?: any) {
         if (data) {
             for (var property in data) {
@@ -22,6 +22,7 @@ export class ExamineResult {
             this.employeeId = data["employeeId"];
             this.employeeName = data["employeeName"];
             this.creationTime = data["creationTime"];
+            this.failReason = data["failReason"];
         }
     }
     toJSON(data?: any) {

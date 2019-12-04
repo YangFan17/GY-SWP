@@ -72,5 +72,6 @@ namespace GYSWP.ExamineResults
         /// </summary>
         Task BatchDelete(List<Guid> input);
         Task<ExamineResultListDto> GetExamineResultByIdAsync(EntityDto<Guid> input);
+        Task<APIResultDto> ChangeStatusAndReasonByIdAsync(GetExamineResultsInput input);
     }
 }

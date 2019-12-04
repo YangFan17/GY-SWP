@@ -13,6 +13,7 @@ namespace GYSWP.ExamineDetails.Dtos
         public ExamineStatus Result { get; set; }
         public Guid ExamineId { get; set; }
         public string EmployeeId { get; set; }
+
         /// <summary>
         /// 正常化排序使用
         /// </summary>

@@ -28,7 +28,7 @@ namespace GYSWP.SuperviseReports
         private readonly IRepository<IndicatorsDetail, Guid> _indicatorsDetailRepository;
         private readonly IRepository<Organization, long> _organizationRepository;
 
-        public SuperviseAppService(IRepository<CriterionExamine, Guid> criterionExaminesRepository, 
+        public SuperviseAppService(IRepository<CriterionExamine, Guid> criterionExaminesRepository,
             IRepository<ExamineDetail, Guid> examineDetailsRepository,
             IRepository<Employee, string> employeeRepository,
             IRepository<Indicator, Guid> indicatorRepository,
@@ -80,30 +80,30 @@ namespace GYSWP.SuperviseReports
                                  gtemp.Key.CriterionExamineId,
                                  NotUpNum = gtemp.Count()
                              };
-           
+
             var okQuery = from cr in baseQuery
-                             join ex in _examineDetailsRepository.GetAll()
-                             on cr.Id equals ex.CriterionExamineId
-                             where ex.Result == ExamineStatus.合格
-                             group new { ex.EmployeeId, ex.CriterionExamineId, ex.Id } by new { ex.EmployeeId, ex.CriterionExamineId } into gtemp
-                             select new
-                             {
-                                 gtemp.Key.EmployeeId,
-                                 gtemp.Key.CriterionExamineId,
-                                 OkNum = gtemp.Count()
-                             };
+                          join ex in _examineDetailsRepository.GetAll()
+                          on cr.Id equals ex.CriterionExamineId
+                          where ex.Result == ExamineStatus.合格
+                          group new { ex.EmployeeId, ex.CriterionExamineId, ex.Id } by new { ex.EmployeeId, ex.CriterionExamineId } into gtemp
+                          select new
+                          {
+                              gtemp.Key.EmployeeId,
+                              gtemp.Key.CriterionExamineId,
+                              OkNum = gtemp.Count()
+                          };
 
             var notFinishedQuery = from cr in baseQuery
-                             join ex in _examineDetailsRepository.GetAll()
-                             on cr.Id equals ex.CriterionExamineId
-                             where ex.Result == ExamineStatus.未检查
-                             group new { ex.EmployeeId, ex.CriterionExamineId, ex.Id } by new { ex.EmployeeId, ex.CriterionExamineId } into gtemp
-                             select new
-                             {
-                                 gtemp.Key.EmployeeId,
-                                 gtemp.Key.CriterionExamineId,
-                                 NotFinishedNum = gtemp.Count()
-                             };
+                                   join ex in _examineDetailsRepository.GetAll()
+                                   on cr.Id equals ex.CriterionExamineId
+                                   where ex.Result == ExamineStatus.未检查
+                                   group new { ex.EmployeeId, ex.CriterionExamineId, ex.Id } by new { ex.EmployeeId, ex.CriterionExamineId } into gtemp
+                                   select new
+                                   {
+                                       gtemp.Key.EmployeeId,
+                                       gtemp.Key.CriterionExamineId,
+                                       NotFinishedNum = gtemp.Count()
+                                   };
 
             var query = from t in totalQuery
                         join c in _criterionExaminesRepository.GetAll() on t.CriterionExamineId equals c.Id
@@ -138,22 +138,15 @@ namespace GYSWP.SuperviseReports
         public async Task<List<IndicatorSuperviseDto>> GetIndicatorSuperviseReportDataAsync(IndicatorSuperviseInputDto input)
         {
             input.EndTime = input.EndTime.AddDays(1);
-            var dept = await _organizationRepository.FirstOrDefaultAsync(input.DeptId);
-
-            var deptIds = GetDeptIds(dept.Id);
-            deptIds.Add(dept.Id);
-
-            var baseQuery = _indicatorsDetailRepository.GetAll().Where(c => deptIds.Contains(c.DeptId) && c.CreationTime >= input.BeginTime && c.CreationTime < input.EndTime);
-            
-            int totalQuery = await baseQuery.CountAsync();
-
-            int notFillNum = await baseQuery.Where(i => i.Status == IndicatorStatus.未填写).CountAsync();
-
-            int okNum = await baseQuery.Where(i => i.Status == IndicatorStatus.已达成).CountAsync();
-
-            int notFinishedNum = await baseQuery.Where(i => i.Status == IndicatorStatus.未达成).CountAsync();
-
-            return new List<IndicatorSuperviseDto>()
+            if (input.DeptId == 1)
+            {
+                var dept = await _organizationRepository.FirstOrDefaultAsync(input.DeptId);
+                var baseQuery = _indicatorsDetailRepository.GetAll().Where(c => c.CreationTime >= input.BeginTime && c.CreationTime < input.EndTime);
+                int totalQuery = await baseQuery.CountAsync();
+                int notFillNum = await baseQuery.Where(i => i.Status == IndicatorStatus.未填写).CountAsync();
+                int okNum = await baseQuery.Where(i => i.Status == IndicatorStatus.已达成).CountAsync();
+                int notFinishedNum = await baseQuery.Where(i => i.Status == IndicatorStatus.未达成).CountAsync();
+                return new List<IndicatorSuperviseDto>()
             {
                 new IndicatorSuperviseDto
                 {
@@ -164,16 +157,44 @@ namespace GYSWP.SuperviseReports
                     NotFinishedNum = notFinishedNum
                 }
             };
+            }
+            else
+            {
+                var dept = await _organizationRepository.FirstOrDefaultAsync(input.DeptId);
+                var deptIds = GetDeptIds(dept.Id);
+                deptIds.Add(dept.Id);
+                var baseQuery = _indicatorsDetailRepository.GetAll().Where(c => deptIds.Contains(c.DeptId) && c.CreationTime >= input.BeginTime && c.CreationTime < input.EndTime);
+
+                int totalQuery = await baseQuery.CountAsync();
+
+                int notFillNum = await baseQuery.Where(i => i.Status == IndicatorStatus.未填写).CountAsync();
+
+                int okNum = await baseQuery.Where(i => i.Status == IndicatorStatus.已达成).CountAsync();
+
+                int notFinishedNum = await baseQuery.Where(i => i.Status == IndicatorStatus.未达成).CountAsync();
+
+                return new List<IndicatorSuperviseDto>()
+            {
+                new IndicatorSuperviseDto
+                {
+                    DeptName = dept.DepartmentName,
+                    IndicatorTotal = totalQuery,
+                    NotFillNum = notFillNum,
+                    OkNum = okNum,
+                    NotFinishedNum = notFinishedNum
+                }
+            };
+            }
         }
 
         private List<long> GetDeptIds(long id)
         {
-            var deptIds = _organizationRepository.GetAll().Where(i => i.ParentId == id).Select(i=>i.Id).ToList();
+            var deptIds = _organizationRepository.GetAll().Where(i => i.ParentId == id).Select(i => i.Id).ToList();
             foreach (var item in deptIds)
             {
                 GetDeptIds(item);
             }
             return deptIds;
-        } 
+        }
     }
 }

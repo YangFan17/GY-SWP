@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Injector } from '@angular/core';
 import { ModalComponentBase } from '@shared/component-base';
 import { ExamineResult, ExamineRecord, DocAttachment, Attachment } from 'entities';
 import { SupervisionService } from 'services';
+import { FailReasonComponent } from './fail-reason/fail-reason.component';
 
 @Component({
     moduleId: module.id,
@@ -65,6 +66,20 @@ export class CheckingResultComponent extends ModalComponentBase implements OnIni
                 } else {
                     this.notify.error('保存失败，请重试！', '');
                     this.success(false);
+                }
+            });
+    }
+
+    goFailSubmit(): void {
+        this.modalHelper
+            .open(FailReasonComponent, { id: this.examineResult.id, examineDetailId: this.id }, 'md', {
+                nzMask: true,
+                nzClosable: false,
+                nzMaskClosable: false,
+            })
+            .subscribe(isSave => {
+                if (isSave) {
+                    this.success(true);
                 }
             });
     }

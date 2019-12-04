@@ -50,7 +50,6 @@ namespace GYSWP.ExamineResults.Dtos
 		public DateTime CreationTime { get; set; }
 
 
-
-
+        public string FailReason { get; set; }
     }
 }

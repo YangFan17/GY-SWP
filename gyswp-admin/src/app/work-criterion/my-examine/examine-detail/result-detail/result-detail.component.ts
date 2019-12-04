@@ -80,7 +80,7 @@ export class ResultDetailComponent extends ModalComponentBase implements OnInit 
 
     submit(): void {
         this.confirmModal = this.modal.confirm({
-            nzContent: `保存后将无法修改，是否提交?`,
+            nzContent: this.attachmentList.length > 0 ? '保存后将无法修改，是否提交?' : '未上传考核证据，极有可能被判定为不合格，是否提交?',
             nzOnOk: () => {
                 this.saving = true;
                 this.examineResult.examineDetailId = this.id;

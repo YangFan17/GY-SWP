@@ -234,8 +234,8 @@ namespace GYSWP.SelfChekRecords
         {
             int curYear = DateTime.Now.Year;
             //检查完毕后更改
-            //DateTime beginTime = Convert.ToDateTime(curYear + "-01-01 00:00:00");
-            DateTime beginTime = Convert.ToDateTime(curYear + "-09-01 00:00:00");
+            DateTime beginTime = Convert.ToDateTime(curYear + "-01-01 00:00:00");
+            //DateTime beginTime = Convert.ToDateTime(curYear + "-09-01 00:00:00");
             DateTime endTime = beginTime.AddYears(1);
             int count = await _entityRepository.CountAsync(v => v.EmployeeId == empId && v.ClauseId == clauseId && v.CreationTime >= beginTime && v.CreationTime <= endTime);
             return count;

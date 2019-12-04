@@ -139,6 +139,13 @@ export class SupervisionService {
         }));
     }
 
+    changeStatusAndReasonByIdAsync(params: any): Observable<ApiResult> {
+        let url_ = "/api/services/app/ExamineResult/ChangeStatusAndReasonByIdAsync";
+        return this._commonhttp.post(url_, params).pipe(map(data => {
+            return ApiResult.fromJS(data);
+        }));
+    }
+
     getExamineDetailByEmpIdAsync(param: any): Observable<PagedResultDto> {
         let url_ = "/api/services/app/ExamineDetail/GetExamineDetailByEmpIdAsync";
         return this._commonhttp.get(url_, param).pipe(map(data => {

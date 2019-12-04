@@ -36,5 +36,7 @@ namespace  GYSWP.ExamineResults.Dtos
 		/// </summary>
 		[Required(ErrorMessage="CreationTime不能为空")]
 		public DateTime CreationTime { get; set; }
+
+        public string FailReason { get; set; }
     }
 }

@@ -1,0 +1,27 @@
+<div class="padding-bottom-45">
+    <h3 style="text-align: center;">
+        <span>判定依据</span>
+    </h3>
+    <form nz-form #validateForm="ngForm" *ngIf="id">
+        <nz-form-item nz-row>
+            <nz-form-label nz-col [nzSm]="4" nzRequired>判定依据</nz-form-label>
+            <nz-form-control [nzSm]="20" nzHasFeedback>
+                <textarea nz-input rows="3" name="failReason" required maxlength="500" #reason="ngModel"
+                    [(ngModel)]="failReason" [placeholder]="'请填写判定依据'"></textarea>
+                <nz-form-explain *ngIf="reason.control.dirty&&reason.control.errors">
+                    <ng-container *ngIf="reason.control.hasError('required')">请填写判定依据</ng-container>
+                    <ng-container *ngIf="reason.control.hasError('maxlength')">字符长度小于等于500</ng-container>
+                </nz-form-explain>
+            </nz-form-control>
+        </nz-form-item>
+        <div class="modal-footer">
+            <button nz-button type="button" [disabled]="saving" (click)="close()">
+                取消
+            </button>
+            <button nz-button [nzType]="'primary'" type="button" (click)="save()"
+                [disabled]="!validateForm.valid||saving">
+                保存
+            </button>
+        </div>
+    </form>
+</div>

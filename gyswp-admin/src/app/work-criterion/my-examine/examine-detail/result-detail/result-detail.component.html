@@ -29,6 +29,13 @@
                 </nz-form-explain>
             </nz-form-control>
         </nz-form-item>
+        <nz-form-item nz-row *ngIf="examineRecord.result == 3">
+            <nz-form-label nz-col [nzSm]="4" nzRequired>判定依据</nz-form-label>
+            <nz-form-control [nzSm]="20" nzHasFeedback>
+                <textarea nz-input rows="3" readonly name="failReason" required maxlength="500" #failReason="ngModel"
+                    [(ngModel)]="examineResult.failReason" [placeholder]="'未填写判定依据'"></textarea>
+            </nz-form-control>
+        </nz-form-item>
         <nz-form-item nz-row>
             <div nz-col [nzSm]="4"></div>
             <nz-form-control [nzSm]="20">

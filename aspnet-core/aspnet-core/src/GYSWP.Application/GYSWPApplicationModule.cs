@@ -43,11 +43,11 @@ namespace GYSWP
             Configuration.Modules.AbpQuartz().Scheduler.ListenerManager.AddJobListener(IocManager.Resolve<IJobListener>());
 
             //后期解除注释
-            //if (Configuration.BackgroundJobs.IsJobExecutionEnabled)
-            //{
-            //    IocManager.Resolve<IBackgroundWorkerManager>().Add(IocManager.Resolve<IQuartzScheduleJobManager>());
-            //    ConfigureQuartzScheduleJobs();
-            //}
+            if (Configuration.BackgroundJobs.IsJobExecutionEnabled)
+            {
+                IocManager.Resolve<IBackgroundWorkerManager>().Add(IocManager.Resolve<IQuartzScheduleJobManager>());
+                ConfigureQuartzScheduleJobs();
+            }
         }
 
         /// <summary>

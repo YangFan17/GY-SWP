@@ -540,7 +540,7 @@ namespace GYSWP.Indicators
                              ActualValue = d.ActualValue,
                              EmployeeDeptName = d.DeptName,
                              AchieveType = i.AchieveType,
-                             PublishTime = i.CreationTime,
+                             PublishTime = d.CreationTime,
                              EndTime = d.EndTime
                          };
             var count = await result.CountAsync();

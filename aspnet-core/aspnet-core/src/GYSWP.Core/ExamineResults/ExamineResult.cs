@@ -36,6 +36,12 @@ namespace GYSWP.ExamineResults
         /// </summary>
         [Required]
         public virtual DateTime CreationTime { get; set; }
+
+        /// <summary>
+        /// 判定依据
+        /// </summary>
+        [StringLength(200)]
+        public virtual string FailReason { get; set; }
     }
 
 }

@@ -1123,6 +1123,51 @@ namespace GYSWP.Documents
             }
             return "/files/downloadtemp/" + fileName;
         }
+
+        [AbpAllowAnonymous]
+        public async Task<int> TotalDocumentCountAsync(long[] str)
+        {
+            List<Guid> ids = new List<Guid>();
+            foreach (var item in str)
+            {
+                var itemCount = await _entityRepository.GetAll().Where(v => v.DeptIds.Contains(item.ToString())).Select(v => v.Id).ToListAsync();
+                ids.AddRange(itemCount);
+            }
+            return ids.Distinct().Count();
+        }
+        public class CateDto
+        {
+            public string cateName { get; set; }
+            public string docName { get; set; }
+            public int num { get; set; }
+        }
+        [AbpAllowAnonymous]
+        public async Task<List<CateDto>> TotalCategoryDocumentCountAsync(long[] str)
+        {
+            List<Document> ids = new List<Document>();
+            foreach (var item in str)
+            {
+                var itemCount = await _entityRepository.GetAll().Where(v => v.DeptIds.Contains(item.ToString())).ToListAsync();
+                ids.AddRange(itemCount);
+            }
+            var list = ids.Distinct();
+            var cate = _categoryRepository.GetAll();
+            var dto = (from d in ids
+                         join c in cate on d.CategoryId equals c.Id
+                         select new CateDto
+                         {
+                            docName = d.Name,
+                            cateName = c.Name
+                         }).ToList();
+          var x =  (from d in dto
+            group new { d.docName,d.cateName} by d.cateName into g
+            select new CateDto
+            {
+                cateName = g.Key,
+                num = g.Distinct().Count()
+            }).ToList();
+            return x;
+        }
     }
 
     public class SectionNo

@@ -21,7 +21,7 @@
             <tr *ngFor="let item of nzTable.data">
                 <td>{{item.employeeDeptName}}</td>
                 <td>{{item.achieveTypeName + item.expectedValue}}</td>
-                <td>{{item.actualValue?item.actualValue:'-'}}</td>
+                <td>{{item.actualValue != null ?item.actualValue:'-'}}</td>
                 <td>
                     <nz-badge *ngIf="item.status == 1" [nzStatus]="'default'" [nzText]="'未填写'"></nz-badge>
                     <nz-badge *ngIf="item.status == 2" [nzStatus]="'success'" [nzText]="'已达成'"></nz-badge>
