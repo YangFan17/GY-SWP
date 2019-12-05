@@ -996,19 +996,33 @@ namespace GYSWP.CriterionExamines
                 #region 公共模块
                 string[] employeeIds = await GetEmployeeIdsByDeptId(input.DeptId);
                 var empClauseGroupList = await _employeeClauseRepository.GetAll().Where(v => employeeIds.Contains(v.EmployeeId)).GroupBy(v => v.DocumentId).Select(v => v.Key).ToListAsync();
-                var doc = _documentRepository.GetAll().Where(v => v.IsAction == true);
-                var org = _organizationRepository.GetAll();
+                var a = empClauseGroupList.ToList();
+                var doc = _documentRepository.GetAll().Where(v => v.IsAction == true).Select(v=>new { v.Id,v.CategoryId});
+                var b = doc.ToList();
+                var org = _organizationRepository.GetAll().Select(v=>new { v.Id,v.DepartmentName});
+                var category = _categoryRepository.GetAll().Select(v=>new {v.Id,v.DeptId });
+                //var docCategroyList = (from e in empClauseGroupList
+                //                       join d in doc on e equals d.Id
+                //                       join o in org on d.DeptIds equals o.Id.ToString()
+                //                       select new
+                //                       {
+                //                           e,
+                //                           DeptName = o.DepartmentName
+                //                       }).ToList();
                 var docCategroyList = (from e in empClauseGroupList
                                        join d in doc on e equals d.Id
-                                       join o in org on d.DeptIds equals o.Id.ToString()
+                                       join c in category on d.CategoryId equals c.Id
+                                       join o in org on c.DeptId equals o.Id
                                        select new
                                        {
                                            e,
                                            DeptName = o.DepartmentName
                                        }).ToList();
 
-                var YingXiaoList = docCategroyList.Where(d => d.DeptName == "市场营销科");//已确认的营销标准
-                var ZhuanMaiList = docCategroyList.Where(d => d.DeptName == "专卖科");//已确认的专卖标准
+                //var YingXiaoList = docCategroyList.Where(d => d.DeptName == "市场营销科");//已确认的营销标准
+                var YingXiaoList = docCategroyList.Where(d => d.DeptName.Contains("营销"));//已确认的营销标准（从营销中心认领的标准）
+                //var ZhuanMaiList = docCategroyList.Where(d => d.DeptName == "专卖科");//已确认的专卖标准
+                var ZhuanMaiList = docCategroyList.Where(d => d.DeptName.Contains("专卖"));//已确认的专卖标准(从专卖认领的标准）
 
 
                 #endregion
@@ -1016,7 +1030,8 @@ namespace GYSWP.CriterionExamines
                 #region 纯销区考核
                 if (input.DeptId == 59549059 || input.DeptId == 59584066 || input.DeptId == 59587088 || input.DeptId == 59634065)
                 {
-                    var OtherList = docCategroyList.Where(d => d.DeptName != "专卖科" && d.DeptName != "市场营销科");//已确认的其他标准
+                    //var OtherList = docCategroyList.Where(d => d.DeptName != "专卖科" && d.DeptName != "市场营销科");//已确认的其他标准
+                    var OtherList = docCategroyList.Where(d => !d.DeptName.Contains("营销") && !d.DeptName.Contains("专卖"));//已确认的其他标准
                     int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
                     if (total > 0)
                     {
@@ -1090,14 +1105,18 @@ namespace GYSWP.CriterionExamines
                 #region 烟产区考核
                 else if (input.DeptId == 59569075 || input.DeptId == 59594070 || input.DeptId == 59617065)
                 {
-                    var YanYeList = docCategroyList.Where(y => y.DeptName == "烟叶生产科" || y.DeptName == "烟叶生产管理科"
-                    || y.DeptName == "王家站" || y.DeptName == "剑门烟叶站" || y.DeptName == "普安烟叶站" || y.DeptName == "武连烟叶站"
-                    || y.DeptName == "枣林烟叶收购点" || y.DeptName == "檬子烟叶收购点" || y.DeptName == "双汇烟叶收购点");//已确认的烟叶标准
-                    var OtherList = docCategroyList.Where(d => d.DeptName != "专卖科" && d.DeptName != "市场营销科"
-                    && d.DeptName != "烟叶生产科" && d.DeptName != "烟叶生产管理科"
-                    && d.DeptName != "王家站" && d.DeptName != "剑门烟叶站" && d.DeptName != "普安烟叶站" && d.DeptName != "武连烟叶站"
-                    && d.DeptName != "枣林烟叶收购点" && d.DeptName != "檬子烟叶收购点" && d.DeptName != "双汇烟叶收购点"
-                    );//已确认的其他标准
+                    //var YanYeList = docCategroyList.Where(y => y.DeptName == "烟叶生产科" || y.DeptName == "烟叶生产管理科"
+                    //|| y.DeptName == "王家站" || y.DeptName == "剑门烟叶站" || y.DeptName == "普安烟叶站" || y.DeptName == "武连烟叶站"
+                    //|| y.DeptName == "枣林烟叶收购点" || y.DeptName == "檬子烟叶收购点" || y.DeptName == "双汇烟叶收购点");//已确认的烟叶标准
+                    var YanYeList = docCategroyList.Where(y => y.DeptName.Contains("烟叶"));//从烟叶中心确认的标准
+                    //var OtherList = docCategroyList.Where(d => d.DeptName != "专卖科" && d.DeptName != "市场营销科"
+                    //&& d.DeptName != "烟叶生产科" && d.DeptName != "烟叶生产管理科"
+                    //&& d.DeptName != "王家站" && d.DeptName != "剑门烟叶站" && d.DeptName != "普安烟叶站" && d.DeptName != "武连烟叶站"
+                    //&& d.DeptName != "枣林烟叶收购点" && d.DeptName != "檬子烟叶收购点" && d.DeptName != "双汇烟叶收购点"
+                    //);//已确认的其他标准
+                    var OtherList = docCategroyList.Where(d => !d.DeptName.Contains("营销") && !d.DeptName.Contains("专卖") && 
+                    !d.DeptName.Contains("烟叶"));//已确认的其他标准
+
                     int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
                     if (total > 0)
                     {
@@ -1427,20 +1446,20 @@ namespace GYSWP.CriterionExamines
         [AbpAllowAnonymous]
         public async Task<string[]> GetEmpByDeptId(long deptId)
         {
-           return await GetEmployeeIdsByDeptId(deptId);
+            return await GetEmployeeIdsByDeptId(deptId);
         }
 
         [AbpAllowAnonymous]
         public async Task<bool> test(Guid[] id)
         {
-           var list =  await _entityRepository.GetAll().Where(v => id.ToArray().Contains(v.Id)).ToListAsync();
+            var list = await _entityRepository.GetAll().Where(v => id.ToArray().Contains(v.Id)).ToListAsync();
             foreach (var item in list)
             {
                 string[] str = item.Title.Split('月');
                 string end = str[1];
                 string up2 = str[0].Split('年')[0];
                 item.Title = up2 + "年7月" + end;
-              await  _entityRepository.UpdateAsync(item);
+                await _entityRepository.UpdateAsync(item);
             }
             return true;
         }

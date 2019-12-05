@@ -630,7 +630,7 @@ namespace GYSWP.Organizations
             OrganizationTreeNodeDto result = new OrganizationTreeNodeDto();
             result.Key = 0;
             result.Title = "考核部门";
-            var organization = await _entityRepository.GetAll().Where(v => v.ParentId == 1).Select(v => new OrganizationTreeNodeDto()
+            var organization = await _entityRepository.GetAll().Where(v => v.ParentId == 1).OrderBy(v=>v.Order).Select(v => new OrganizationTreeNodeDto()
             {
                 Key = v.Id,
                 Title = v.DepartmentName,
