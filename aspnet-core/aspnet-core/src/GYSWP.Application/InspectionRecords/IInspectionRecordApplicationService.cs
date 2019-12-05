@@ -20,6 +20,7 @@ using Abp.Application.Services.Dto;
 
 using GYSWP.InspectionRecords.Dtos;
 using GYSWP.InspectionRecords;
+using GYSWP.Dtos;
 
 namespace GYSWP.InspectionRecords
 {
@@ -72,11 +73,12 @@ namespace GYSWP.InspectionRecords
         Task BatchDeleteAsync(List<long> input);
 
 
-		/// <summary>
+        /// <summary>
         /// 导出InspectionRecord为excel表
         /// </summary>
         /// <returns></returns>
-		//Task<FileDto> GetToExcel();
+        //Task<FileDto> GetToExcel();
+        Task<APIResultDto> ImportInspectionRecordExcelAsync();
 
     }
 }

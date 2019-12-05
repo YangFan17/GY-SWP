@@ -29,6 +29,7 @@ using Microsoft.AspNetCore.Hosting;
 using NPOI.XSSF.UserModel;
 using System.IO;
 using NPOI.SS.UserModel;
+using GYSWP.Employees;
 
 namespace GYSWP.LC_OutScanRecords
 {
@@ -44,6 +45,7 @@ namespace GYSWP.LC_OutScanRecords
         private readonly IHostingEnvironment _hostingEnvironment;
 
         private readonly ILC_OutScanRecordManager _entityManager;
+        private readonly IRepository<Employee, string> _employeeRepository;
 
         /// <summary>
         /// 构造函数 
@@ -53,9 +55,11 @@ namespace GYSWP.LC_OutScanRecords
             , IRepository<LC_TimeLog, Guid> timeLogRepository
             , IRepository<LC_ScanRecord, Guid> scanRecordRepository
             , IHostingEnvironment hostingEnvironment
-        , ILC_OutScanRecordManager entityManager
+        , ILC_OutScanRecordManager entityManager,
+            IRepository<Employee, string> employeeRepository
         )
         {
+            _employeeRepository = employeeRepository;
             _entityRepository = entityRepository; 
              _entityManager=entityManager;
             _timeLogRepository = timeLogRepository;
@@ -335,6 +339,96 @@ LC_OutScanRecordEditDto editDto;
                 workbook.Write(fs);
             }
             return "/files/downloadtemp/" + fileName;
+        }
+
+        /// <summary>
+        /// 导入需求预测数据
+        /// </summary>
+        /// <returns></returns>
+        public async Task<APIResultDto> ImportOutScanRecordExcelAsync()
+        {
+            //获取Excel数据
+            var excelList = await GetOutScanRecordDataAsync();
+            //循环批量更新
+            await UpdateAsyncOutScanRecordData(excelList);
+            return new APIResultDto() { Code = 0, Msg = "导入数据成功" };
+        }
+        /// <summary>
+        /// 从上传的Excel读出数据
+        /// </summary>
+        private async Task<List<LC_OutScanRecordEditDto>> GetOutScanRecordDataAsync()
+        {
+            string fileName = _hostingEnvironment.WebRootPath + "/files/upload/卷烟出库扫码记录表.xlsx";
+            var LC_OutScanRecordList = new List<LC_OutScanRecordEditDto>();
+            using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+            {
+                IWorkbook workbook = new XSSFWorkbook(fs);
+                ISheet sheet = workbook.GetSheet("OutScanRecord");
+                if (sheet == null) //如果没有找到指定的sheetName对应的sheet，则尝试获取第一个sheet
+                {
+                    sheet = workbook.GetSheetAt(0);
+                }
+
+                if (sheet != null)
+                {
+                    //最后一列的标号
+                    int rowCount = sheet.LastRowNum;
+                    for (int i = 1; i <= rowCount; ++i)//排除首行标题
+                    {
+                        IRow row = sheet.GetRow(i);
+                        if (row == null) continue; //没有数据的行默认是null　　　　　　　
+
+                        var OutScanRecord = new LC_OutScanRecordEditDto();
+                        if (row.GetCell(0) != null)
+                        {
+                            if(!string.IsNullOrWhiteSpace(row.GetCell(0).ToString()))
+                            { 
+                                OutScanRecord.OrderNum = int.Parse(row.GetCell(0).ToString());
+                            }
+                            if (!string.IsNullOrWhiteSpace(row.GetCell(1).ToString()))
+                            {
+                                OutScanRecord.ExpectedScanNum = int.Parse(row.GetCell(1).ToString());
+                            }
+                            if (!string.IsNullOrWhiteSpace(row.GetCell(2).ToString()))
+                            {
+                                OutScanRecord.AcutalScanNum = int.Parse(row.GetCell(2).ToString());
+                            }
+                            if (!string.IsNullOrWhiteSpace(row.GetCell(3).ToString()))
+                            {
+                                OutScanRecord.AloneNotScanNum = int.Parse(row.GetCell(3).ToString());
+                            }
+                            OutScanRecord.Remark = row.GetCell(4).ToString();
+                            OutScanRecord.EmployeeId = await _employeeRepository.GetAll().Where(aa => aa.Name == row.GetCell(5).ToString()).Select(v => v.Id).FirstOrDefaultAsync();
+                            OutScanRecord.EmployeeName = row.GetCell(5).ToString();
+                            OutScanRecord.CreationTime = Convert.ToDateTime(row.GetCell(6).ToString());
+                            LC_OutScanRecordList.Add(OutScanRecord);
+                        }
+                    }
+                }
+                return await Task.FromResult(LC_OutScanRecordList);
+            }
+        }
+
+        /// <summary>
+        /// 更新到数据库
+        /// </summary>
+        private async Task UpdateAsyncOutScanRecordData(List<LC_OutScanRecordEditDto> excelList)
+        {
+            foreach (var item in excelList)
+            {
+                var entity = new LC_OutScanRecord();
+                entity.CreationTime = item.CreationTime;
+                entity.EmployeeId = item.EmployeeId;
+                entity.EmployeeName = item.EmployeeName;
+                entity.OrderNum = item.OrderNum;
+                entity.Remark = item.Remark;
+                entity.AcutalScanNum = item.AcutalScanNum;
+                entity.AloneNotScanNum = item.AloneNotScanNum;
+                entity.ExpectedScanNum = item.ExpectedScanNum;
+                await _entityRepository.InsertAsync(entity);
+                //}
+            }
+            await CurrentUnitOfWork.SaveChangesAsync();
         }
     }
 }

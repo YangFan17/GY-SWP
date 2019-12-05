@@ -73,5 +73,7 @@ namespace GYSWP.LC_OutScanRecords
         Task BatchDelete(List<Guid> input);
         Task<APIResultDto> CreateOutSacnRecordAsync(CreateOrUpdateLC_OutScanRecordInput input);
         Task<APIResultDto> ExportOutScanRecord(GetLC_OutScanRecordsInput input);
+
+        Task<APIResultDto> ImportOutScanRecordExcelAsync();
     }
 }

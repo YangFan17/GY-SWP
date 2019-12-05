@@ -28,6 +28,7 @@ using GYSWP.Helpers;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using GYSWP.Dtos;
+using GYSWP.Employees;
 
 namespace GYSWP.InspectionRecords
 {
@@ -41,7 +42,7 @@ namespace GYSWP.InspectionRecords
 
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IInspectionRecordManager _entityManager;
-
+        private readonly IRepository<Employee, string> _employeeRepository;
         /// <summary>
         /// 构造函数 
         ///</summary>
@@ -49,8 +50,10 @@ namespace GYSWP.InspectionRecords
         IRepository<InspectionRecord, long> entityRepository
         , IHostingEnvironment hostingEnvironment
         , IInspectionRecordManager entityManager
+            , IRepository<Employee, string> employeeRepository
         )
         {
+            _employeeRepository = employeeRepository;
             _entityRepository = entityRepository; 
              _entityManager=entityManager;
             _hostingEnvironment = hostingEnvironment;
@@ -292,6 +295,171 @@ InspectionRecordEditDto editDto;
                 workbook.Write(fs);
             }
             return "/files/downloadtemp/" + fileName;
+        }
+
+        /// <summary>
+        /// 导入需求预测数据
+        /// </summary>
+        /// <returns></returns>
+        public async Task<APIResultDto> ImportInspectionRecordExcelAsync()
+        {
+            //获取Excel数据
+            var excelList = await GetInspectionRecordDataAsync();
+            //循环批量更新
+            await UpdateAsyncInspectionRecordData(excelList);
+            return new APIResultDto() { Code = 0, Msg = "导入数据成功" };
+        }
+        /// <summary>
+        /// 从上传的Excel读出数据
+        /// </summary>
+        private async Task<List<InspectionRecordEditDto>> GetInspectionRecordDataAsync()
+        {
+            string fileName = _hostingEnvironment.WebRootPath + "/files/upload/巡查记录表.xlsx";
+            var LC_InspectionRecordList = new List<InspectionRecordEditDto>();
+            using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+            {
+                IWorkbook workbook = new XSSFWorkbook(fs);
+                ISheet sheet = workbook.GetSheet("InspectionRecord");
+                if (sheet == null) //如果没有找到指定的sheetName对应的sheet，则尝试获取第一个sheet
+                {
+                    sheet = workbook.GetSheetAt(0);
+                }
+
+                if (sheet != null)
+                {
+                    //最后一列的标号
+                    int rowCount = sheet.LastRowNum;
+                    for (int i = 1; i <= rowCount; ++i)//排除首行标题
+                    {
+                        IRow row = sheet.GetRow(i);
+                        if (row == null) continue; //没有数据的行默认是null　　　　　　　
+
+                        var InspectionRecord = new InspectionRecordEditDto();
+                        if (row.GetCell(0) != null)
+                        {
+
+                            if (row.GetCell(0).ToString() == "是" || row.GetCell(0).ToString() == "有")
+                            {
+                                InspectionRecord.IsDWLAbnormal = true;
+                            }
+                            else if (row.GetCell(0).ToString() == "否" || row.GetCell(0).ToString() == "无")
+                            {
+                                InspectionRecord.IsDWLAbnormal = false;
+                            }
+
+                            if (row.GetCell(1).ToString() == "是" || row.GetCell(1).ToString() == "有")
+                            {
+                                InspectionRecord.IsWallDestruction = true;
+                            }
+                            else if (row.GetCell(1).ToString() == "否" || row.GetCell(1).ToString() == "无")
+                            {
+                                InspectionRecord.IsWallDestruction = false;
+                            }
+
+                            if (row.GetCell(2).ToString() == "是" || row.GetCell(2).ToString() == "有")
+                            {
+                                InspectionRecord.IsRoofWallSeepage = true;
+                            }
+                            else if (row.GetCell(2).ToString() == "否" || row.GetCell(2).ToString() == "无")
+                            {
+                                InspectionRecord.IsRoofWallSeepage = false;
+                            }
+
+                            if (row.GetCell(3).ToString() == "是" || row.GetCell(3).ToString() == "有")
+                            {
+                                InspectionRecord.IsHumitureExceeding = true;
+                            }
+                            else if (row.GetCell(3).ToString() == "否" || row.GetCell(3).ToString() == "无")
+                            {
+                                InspectionRecord.IsHumitureExceeding = false;
+                            }
+
+                            if (row.GetCell(4).ToString() == "是" || row.GetCell(4).ToString() == "有")
+                            {
+                                InspectionRecord.IsFASNormal = true;
+                            }
+                            else if (row.GetCell(4).ToString() == "否" || row.GetCell(4).ToString() == "无")
+                            {
+                                InspectionRecord.IsFASNormal = false;
+                            }
+
+                            if (row.GetCell(5).ToString() == "是" || row.GetCell(5).ToString() == "有")
+                            {
+                                InspectionRecord.IsBurglarAlarmNormal = true;
+                            }
+                            else if (row.GetCell(5).ToString() == "否" || row.GetCell(5).ToString() == "无")
+                            {
+                                InspectionRecord.IsBurglarAlarmNormal = false;
+                            }
+
+                            if (row.GetCell(6).ToString() == "是" || row.GetCell(6).ToString() == "有")
+                            {
+                                InspectionRecord.IsSASSValid = true;
+                            }
+                            else if (row.GetCell(6).ToString() == "否" || row.GetCell(6).ToString() == "无")
+                            {
+                                InspectionRecord.IsSASSValid = false;
+                            }
+                            if (row.GetCell(7).ToString() == "是" || row.GetCell(7).ToString() == "有")
+                            {
+                                InspectionRecord.IsCameraShelter = true;
+                            }
+                            else if (row.GetCell(7).ToString() == "否" || row.GetCell(7).ToString() == "无")
+                            {
+                                InspectionRecord.IsCameraShelter = false;
+                            }
+                            if (row.GetCell(8).ToString() == "是" || row.GetCell(8).ToString() == "有")
+                            {
+                                InspectionRecord.IsFPDStop = true;
+                            }
+                            else if (row.GetCell(8).ToString() == "否" || row.GetCell(8).ToString() == "无")
+                            {
+                                InspectionRecord.IsFPDStop = false;
+                            }
+                            if (row.GetCell(9).ToString() == "是" || row.GetCell(9).ToString() == "有")
+                            {
+                                InspectionRecord.IsEXITStop = true;
+                            }
+                            else if (row.GetCell(9).ToString() == "否" || row.GetCell(9).ToString() == "无")
+                            {
+                                InspectionRecord.IsEXITStop = false;
+                            }
+                            InspectionRecord.EmployeeId = await _employeeRepository.GetAll().Where(aa => aa.Name == row.GetCell(10).ToString()).Select(v => v.Id).FirstOrDefaultAsync();
+                            InspectionRecord.EmployeeName = row.GetCell(10).ToString();
+                            InspectionRecord.CreationTime = Convert.ToDateTime(row.GetCell(11).ToString());
+                            LC_InspectionRecordList.Add(InspectionRecord);
+                        }
+                    }
+                }
+                return await Task.FromResult(LC_InspectionRecordList);
+            }
+        }
+
+        /// <summary>
+        /// 更新到数据库
+        /// </summary>
+        private async Task UpdateAsyncInspectionRecordData(List<InspectionRecordEditDto> excelList)
+        {
+            foreach (var item in excelList)
+            {
+                var entity = new InspectionRecord();
+                entity.CreationTime = item.CreationTime;
+                entity.EmployeeId = item.EmployeeId;
+                entity.EmployeeName = item.EmployeeName;
+                entity.IsBurglarAlarmNormal = item.IsBurglarAlarmNormal;
+                entity.IsCameraShelter = item.IsCameraShelter;
+                entity.IsDWLAbnormal = item.IsDWLAbnormal;
+                entity.IsEXITStop = item.IsEXITStop;
+                entity.IsFASNormal = item.IsFASNormal;
+                entity.IsFPDStop = item.IsFPDStop;
+                entity.IsHumitureExceeding = item.IsHumitureExceeding;
+                entity.IsRoofWallSeepage = item.IsRoofWallSeepage;
+                entity.IsSASSValid = item.IsSASSValid;
+                entity.IsWallDestruction = item.IsWallDestruction;
+                await _entityRepository.InsertAsync(entity);
+                //}
+            }
+            await CurrentUnitOfWork.SaveChangesAsync();
         }
     }
 }

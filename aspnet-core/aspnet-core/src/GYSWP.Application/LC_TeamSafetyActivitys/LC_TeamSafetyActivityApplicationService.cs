@@ -28,6 +28,7 @@ using NPOI.XSSF.UserModel;
 using GYSWP.Helpers;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using GYSWP.Employees;
 
 namespace GYSWP.LC_TeamSafetyActivitys
 {
@@ -40,6 +41,7 @@ namespace GYSWP.LC_TeamSafetyActivitys
         private readonly IRepository<LC_TeamSafetyActivity, Guid> _entityRepository;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly ILC_TeamSafetyActivityManager _entityManager;
+        private readonly IRepository<Employee, string> _employeeRepository;
 
         /// <summary>
         /// 构造函数 
@@ -47,9 +49,11 @@ namespace GYSWP.LC_TeamSafetyActivitys
         public LC_TeamSafetyActivityAppService(
         IRepository<LC_TeamSafetyActivity, Guid> entityRepository
         , IHostingEnvironment hostingEnvironment
-        , ILC_TeamSafetyActivityManager entityManager
+        , ILC_TeamSafetyActivityManager entityManager,
+        IRepository<Employee, string> employeeRepository
         )
         {
+            _employeeRepository = employeeRepository;
             _entityRepository = entityRepository;
             _hostingEnvironment = hostingEnvironment;
             _entityManager = entityManager;
@@ -285,5 +289,243 @@ namespace GYSWP.LC_TeamSafetyActivitys
             }
             return "/files/downloadtemp/" + fileName;
         }
+
+
+        /// <summary>
+        /// 导入需求预测数据
+        /// </summary>
+        /// <returns></returns>
+        public async Task<APIResultDto> ImportTeamSafetyActivityExcelAsync()
+        {
+            //获取Excel数据
+            var excelList = await GetTeamSafetyActivityDataAsync();
+            //循环批量更新
+            await UpdateAsyncTeamSafetyActivityData(excelList);
+            return new APIResultDto() { Code = 0, Msg = "导入数据成功" };
+        }
+        /// <summary>
+        /// 从上传的Excel读出数据
+        /// </summary>
+        private async Task<List<LC_TeamSafetyActivityEditDto>> GetTeamSafetyActivityDataAsync()
+        {
+            string fileName = _hostingEnvironment.WebRootPath + "/files/upload/班组安全活动.xlsx";
+            var LC_TeamSafetyActivityList = new List<LC_TeamSafetyActivityEditDto>();
+            using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+            {
+                IWorkbook workbook = new XSSFWorkbook(fs);
+                ISheet sheet = workbook.GetSheet("TeamSafetyActivity");
+                if (sheet == null) //如果没有找到指定的sheetName对应的sheet，则尝试获取第一个sheet
+                {
+                    sheet = workbook.GetSheetAt(0);
+                }
+
+                if (sheet != null)
+                {
+                    //最后一列的标号
+                    int rowCount = sheet.LastRowNum;
+                    for (int i = 1; i <= rowCount; ++i)//排除首行标题
+                    {
+                        IRow row = sheet.GetRow(i);
+                        if (row == null) continue; //没有数据的行默认是null　　　　　　　
+
+                        var TeamSafetyActivity = new LC_TeamSafetyActivityEditDto();
+                        if (row.GetCell(0) != null)
+                        {
+                            TeamSafetyActivity.SafetyMeeting = row.GetCell(0).ToString();
+                            TeamSafetyActivity.ResponsibleName = row.GetCell(1).ToString();
+                            TeamSafetyActivity.EmpSafeAdvice = row.GetCell(9).ToString();
+                            TeamSafetyActivity.CommonCigaretNum =int.Parse(row.GetCell(10).ToString());
+                            TeamSafetyActivity.ShapedCigaretNum = int.Parse(row.GetCell(11).ToString());
+
+                            if (!string.IsNullOrEmpty(row.GetCell(12).ToString()))
+                            {
+                                TeamSafetyActivity.BeginSortTime = Convert.ToDateTime(row.GetCell(12).ToString());
+                            }
+                            if (!string.IsNullOrEmpty(row.GetCell(13).ToString()))
+                            {
+                                TeamSafetyActivity.EndSortTime = Convert.ToDateTime(row.GetCell(13).ToString());
+                            }
+                            if (!string.IsNullOrEmpty(row.GetCell(14).ToString()))
+                            {
+                                TeamSafetyActivity.NormalStopTime = Convert.ToDateTime(row.GetCell(14).ToString());
+                            }
+                            if (!string.IsNullOrEmpty(row.GetCell(15).ToString()))
+                            {
+                                TeamSafetyActivity.AbnormalStopTime = Convert.ToDateTime(row.GetCell(15).ToString());
+                            }
+
+                            if (row.GetCell(1).ToString() == "是" || row.GetCell(1).ToString() == "有")
+                            {
+                                TeamSafetyActivity.IsSafeEquipOk = true;
+                            }
+                            else if (row.GetCell(1).ToString() == "否" || row.GetCell(1).ToString() == "无")
+                            {
+                                TeamSafetyActivity.IsSafeEquipOk = false;
+                            }
+
+                            if (row.GetCell(2).ToString() == "是" || row.GetCell(2).ToString() == "有")
+                            {
+                                TeamSafetyActivity.IsEmpHealth = true;
+                            }
+                            else if (row.GetCell(2).ToString() == "否" || row.GetCell(2).ToString() == "无")
+                            {
+                                TeamSafetyActivity.IsEmpHealth = false;
+                            }
+
+                            if (row.GetCell(3).ToString() == "是" || row.GetCell(3).ToString() == "有")
+                            {
+                                TeamSafetyActivity.IsTdjOrLsjOk = true;
+                            }
+                            else if (row.GetCell(3).ToString() == "否" || row.GetCell(3).ToString() == "无")
+                            {
+                                TeamSafetyActivity.IsTdjOrLsjOk = false;
+                            }
+
+                            if (row.GetCell(4).ToString() == "是" || row.GetCell(4).ToString() == "有")
+                            {
+                                TeamSafetyActivity.IsAisleOk = true;
+                            }
+                            else if (row.GetCell(4).ToString() == "否" || row.GetCell(4).ToString() == "无")
+                            {
+                                TeamSafetyActivity.IsAisleOk = false;
+                            }
+
+                            if (row.GetCell(5).ToString() == "是" || row.GetCell(5).ToString() == "有")
+                            {
+                                TeamSafetyActivity.IsExitBad = true;
+                            }
+                            else if (row.GetCell(5).ToString() == "否" || row.GetCell(5).ToString() == "无")
+                            {
+                                TeamSafetyActivity.IsExitBad = false;
+                            }
+
+                            if (row.GetCell(6).ToString() == "是" || row.GetCell(6).ToString() == "有")
+                            {
+                                TeamSafetyActivity.IsFireEquipBad = true;
+                            }
+                            else if (row.GetCell(6).ToString() == "否" || row.GetCell(6).ToString() == "无")
+                            {
+                                TeamSafetyActivity.IsFireEquipBad = false;
+                            }
+
+                            if (row.GetCell(7).ToString() == "是" || row.GetCell(7).ToString() == "有")
+                            {
+                                TeamSafetyActivity.IsSafeMarkClean = true;
+                            }
+                            else if (row.GetCell(7).ToString() == "否" || row.GetCell(7).ToString() == "无")
+                            {
+                                TeamSafetyActivity.IsSafeMarkClean = false;
+                            }
+
+
+                            if (row.GetCell(8).ToString() == "是" || row.GetCell(8).ToString() == "有")
+                            {
+                                TeamSafetyActivity.IsSafeMarkFall = true;
+                            }
+                            else if (row.GetCell(8).ToString() == "否" || row.GetCell(8).ToString() == "无")
+                            {
+                                TeamSafetyActivity.IsSafeMarkFall = false;
+                            }
+
+
+                            if (row.GetCell(16).ToString() == "是" || row.GetCell(16).ToString() == "有")
+                            {
+                                TeamSafetyActivity.IsNotDanger = true;
+                            }
+                            else if (row.GetCell(16).ToString() == "否" || row.GetCell(16).ToString() == "无")
+                            {
+                                TeamSafetyActivity.IsNotDanger = false;
+                            }
+
+
+                            if (row.GetCell(17).ToString() == "是" || row.GetCell(17).ToString() == "有")
+                            {
+                                TeamSafetyActivity.IsOtherAdmittance = true;
+                            }
+                            else if (row.GetCell(17).ToString() == "否" || row.GetCell(17).ToString() == "无")
+                            {
+                                TeamSafetyActivity.IsOtherAdmittance = false;
+                            }
+
+                            if (row.GetCell(18).ToString() == "是" || row.GetCell(18).ToString() == "有")
+                            {
+                                TeamSafetyActivity.IsViolation = true;
+                            }
+                            else if (row.GetCell(18).ToString() == "否" || row.GetCell(18).ToString() == "无")
+                            {
+                                TeamSafetyActivity.IsViolation = false;
+                            }
+
+                            if (row.GetCell(19).ToString() == "是" || row.GetCell(19).ToString() == "有")
+                            {
+                                TeamSafetyActivity.IsElcOrGasShut = true;
+                            }
+                            else if (row.GetCell(19).ToString() == "否" || row.GetCell(19).ToString() == "无")
+                            {
+                                TeamSafetyActivity.IsElcOrGasShut = false;
+                            }
+
+                            if (row.GetCell(20).ToString() == "是" || row.GetCell(20).ToString() == "有")
+                            {
+                                TeamSafetyActivity.IsCloseWindow = true;
+                            }
+                            else if (row.GetCell(20).ToString() == "否" || row.GetCell(20).ToString() == "无")
+                            {
+                                TeamSafetyActivity.IsCloseWindow = false;
+                            }
+                            TeamSafetyActivity.SafeSupervision = row.GetCell(21).ToString();
+                            TeamSafetyActivity.ResponsibleName = row.GetCell(22).ToString();
+                            TeamSafetyActivity.EmployeeId = await _employeeRepository.GetAll().Where(aa => aa.Name == row.GetCell(23).ToString()).Select(v => v.Id).FirstOrDefaultAsync();
+
+                            TeamSafetyActivity.EmployeeName = row.GetCell(23).ToString();
+                            TeamSafetyActivity.CreationTime = Convert.ToDateTime(row.GetCell(24).ToString());
+                            LC_TeamSafetyActivityList.Add(TeamSafetyActivity);
+                        }
+                    }
+                }
+                return await Task.FromResult(LC_TeamSafetyActivityList);
+            }
+        }
+
+        /// <summary>
+        /// 更新到数据库
+        /// </summary>
+        private async Task UpdateAsyncTeamSafetyActivityData(List<LC_TeamSafetyActivityEditDto> excelList)
+        {
+            foreach (var item in excelList)
+            {
+                var entity = new LC_TeamSafetyActivity();
+                entity.AbnormalStopTime = item.AbnormalStopTime;
+                entity.CreationTime = item.CreationTime;
+                entity.EmployeeId = item.EmployeeId;
+                entity.EmployeeName = item.EmployeeName;
+                entity.BeginSortTime = item.BeginSortTime;
+                entity.CommonCigaretNum = item.CommonCigaretNum;
+                entity.EmpSafeAdvice = item.EmpSafeAdvice;
+                entity.EndSortTime = item.EndSortTime;
+                entity.IsAisleOk = item.IsAisleOk;
+                entity.IsCloseWindow = item.IsCloseWindow;
+                entity.IsElcOrGasShut = item.IsElcOrGasShut;
+                entity.IsEmpHealth = item.IsEmpHealth;
+                entity.IsExitBad = item.IsExitBad;
+                entity.IsFireEquipBad = item.IsFireEquipBad;
+                entity.IsNotDanger = item.IsNotDanger;
+                entity.IsOtherAdmittance = item.IsOtherAdmittance;
+                entity.IsSafeEquipOk = item.IsSafeEquipOk;
+                entity.IsSafeMarkClean = item.IsSafeMarkClean;
+                entity.ResponsibleName = item.ResponsibleName;
+                entity.IsSafeMarkFall = item.IsSafeMarkFall;
+                entity.IsTdjOrLsjOk = item.IsTdjOrLsjOk;
+                entity.IsViolation = item.IsViolation;
+                entity.NormalStopTime = item.NormalStopTime;
+                entity.SafeSupervision = item.SafeSupervision;
+                entity.SafetyMeeting = item.SafetyMeeting;
+                entity.ShapedCigaretNum = item.ShapedCigaretNum;
+                await _entityRepository.InsertAsync(entity);
+                //}
+            }
+            await CurrentUnitOfWork.SaveChangesAsync();
+        }
+
     }
 }

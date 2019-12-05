@@ -28,6 +28,7 @@ using GYSWP.Helpers;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using NPOI.SS.Util;
+using GYSWP.Employees;
 
 namespace GYSWP.LC_InStorageRecords
 {
@@ -40,6 +41,7 @@ namespace GYSWP.LC_InStorageRecords
         private readonly IRepository<LC_InStorageRecord, Guid> _entityRepository;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly ILC_InStorageRecordManager _entityManager;
+        private readonly IRepository<Employee, string> _employeeRepository;
 
         /// <summary>
         /// 构造函数 
@@ -48,8 +50,10 @@ namespace GYSWP.LC_InStorageRecords
         IRepository<LC_InStorageRecord, Guid> entityRepository
         , IHostingEnvironment hostingEnvironment
         , ILC_InStorageRecordManager entityManager
+            , IRepository<Employee, string> employeeRepository
         )
         {
+            _employeeRepository = employeeRepository;
             _entityRepository = entityRepository; 
              _entityManager=entityManager;
             _hostingEnvironment = hostingEnvironment;
@@ -329,6 +333,93 @@ LC_InStorageRecordEditDto editDto;
                 workbook.Write(fs);
             }
             return "/files/downloadtemp/" +"测试表格.xlsx";
+        }
+
+        /// <summary>
+        /// 导入需求预测数据
+        /// </summary>
+        /// <returns></returns>
+        public async Task<APIResultDto> ImportInStorageRecordExcelAsync()
+        {
+            //获取Excel数据
+            var excelList = await GetInStorageRecordDataAsync();
+            //循环批量更新
+            await UpdateAsyncInStorageRecordData(excelList);
+            return new APIResultDto() { Code = 0, Msg = "导入数据成功" };
+        }
+        /// <summary>
+        /// 从上传的Excel读出数据
+        /// </summary>
+        private async Task<List<LC_InStorageRecordEditDto>> GetInStorageRecordDataAsync()
+        {
+            string fileName = _hostingEnvironment.WebRootPath + "/files/upload/卷烟入库记录.xlsx";
+            var LC_InStorageRecordList = new List<LC_InStorageRecordEditDto>();
+            using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+            {
+                IWorkbook workbook = new XSSFWorkbook(fs);
+                ISheet sheet = workbook.GetSheet("InStorageRecord");
+                if (sheet == null) //如果没有找到指定的sheetName对应的sheet，则尝试获取第一个sheet
+                {
+                    sheet = workbook.GetSheetAt(0);
+                }
+
+                if (sheet != null)
+                {
+                    //最后一列的标号
+                    int rowCount = sheet.LastRowNum;
+                    for (int i = 1; i <= rowCount; ++i)//排除首行标题
+                    {
+                        IRow row = sheet.GetRow(i);
+                        if (row == null) continue; //没有数据的行默认是null　　　　　　　
+
+                        var InStorageRecord = new LC_InStorageRecordEditDto();
+                        if (row.GetCell(0) != null)
+                        {
+                            InStorageRecord.Name = row.GetCell(0).ToString();
+                            InStorageRecord.CarNo = row.GetCell(1).ToString();
+                            InStorageRecord.DeliveryUnit = row.GetCell(2).ToString();
+                            InStorageRecord.BillNo = row.GetCell(3).ToString();
+                            InStorageRecord.ReceivableAmount =int.Parse(row.GetCell(4).ToString());
+                            InStorageRecord.ActualAmount =int.Parse(row.GetCell(5).ToString());
+                            InStorageRecord.DiffContent = row.GetCell(6).ToString();
+                            InStorageRecord.Quality = row.GetCell(7).ToString();
+                            InStorageRecord.ReceiverName = row.GetCell(8).ToString();
+                            InStorageRecord.Remark = row.GetCell(9).ToString();
+                            InStorageRecord.EmployeeId = await _employeeRepository.GetAll().Where(aa => aa.Name == row.GetCell(10).ToString()).Select(v => v.Id).FirstOrDefaultAsync();
+                            InStorageRecord.EmployeeName = row.GetCell(10).ToString();
+                            InStorageRecord.CreationTime = Convert.ToDateTime(row.GetCell(11).ToString());
+                            LC_InStorageRecordList.Add(InStorageRecord);
+                        }
+                    }
+                }
+                return await Task.FromResult(LC_InStorageRecordList);
+            }
+        }
+
+        /// <summary>
+        /// 更新到数据库
+        /// </summary>
+        private async Task UpdateAsyncInStorageRecordData(List<LC_InStorageRecordEditDto> excelList)
+        {
+            foreach (var item in excelList)
+            {
+                var entity = new LC_InStorageRecord();
+                entity.CreationTime = item.CreationTime;
+                entity.EmployeeId = item.EmployeeId;
+                entity.EmployeeName = item.EmployeeName;
+                entity.Name = item.Name;
+                entity.CarNo = item.CarNo;
+                entity.DeliveryUnit = item.DeliveryUnit;
+                entity.DiffContent = item.DiffContent;
+                entity.Quality = item.Quality;
+                entity.ReceivableAmount = item.ReceivableAmount;
+                entity.ReceiverName = item.ReceiverName;
+                entity.Remark = item.Remark;
+                entity.BillNo = item.BillNo;
+                await _entityRepository.InsertAsync(entity);
+                //}
+            }
+            await CurrentUnitOfWork.SaveChangesAsync();
         }
     }
 }

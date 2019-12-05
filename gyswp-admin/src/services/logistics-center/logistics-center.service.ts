@@ -218,6 +218,13 @@ export class LogisticService {
         }));
     }
 
+    importConveyorCheckExcelAsync(): Observable<ApiResult> {
+        var _url = '/api/services/app/LC_ConveyorCheck/ImportConveyorCheckExcelAsync';
+        return this._commonhttp.post(_url).pipe(map(data => {
+            return ApiResult.fromJS(data);
+        }));
+    }
+
     getPagedForkliftCheckAsync(param: any): Observable<PagedResultDto> {
         let url_ = "/api/services/app/LC_ForkliftCheck/GetPaged";
         return this._commonhttp.get(url_, param).pipe(map(data => {

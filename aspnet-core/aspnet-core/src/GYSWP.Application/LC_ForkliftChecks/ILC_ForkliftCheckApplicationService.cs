@@ -94,5 +94,7 @@ namespace GYSWP.LC_ForkliftChecks
         /// <returns></returns>
         [AbpAllowAnonymous]
         Task RecordInsertOrUpdate(InsertLC_ForkliftCheckInput input);
+        Task<APIResultDto> ImportForkliftCheckExcelAsync();
+
     }
 }
