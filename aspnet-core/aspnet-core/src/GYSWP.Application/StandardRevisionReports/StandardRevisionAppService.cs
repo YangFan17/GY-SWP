@@ -136,21 +136,26 @@ namespace GYSWP.StandardRevisionReports
             List<StandardRevisionDto> list = new List<StandardRevisionDto>();
             StandardRevisionDto standardRevisionDto = new StandardRevisionDto();
             var dept = await _organizationRepository.GetAll().Where(v => v.Id == input.DeptId).Select(v => new { v.Id, v.DepartmentName }).FirstOrDefaultAsync();
-            var clauseRevisions = _clauseRevisionRepository.GetAll().Where(aa => aa.CreationTime >= input.StartTime && aa.CreationTime < input.EndTime);
+            //var clauseRevisions = _clauseRevisionRepository.GetAll().Where(aa => aa.CreationTime >= input.StartTime && aa.CreationTime < input.EndTime);
+            var clauseRevisions = _clauseRevisionRepository.GetAll().Where(aa => aa.CreationTime.Year == input.Year);
             if (input.DeptId != 1)
             {
                 int[] category = await _categoryRepository.GetAll().Where(v => v.DeptId == input.DeptId).Select(v => v.Id).ToArrayAsync();
                 var documents = _documentRepository.GetAll().Where(aa => category.Contains(aa.CategoryId));
                 standardRevisionDto.DeptName = dept.DepartmentName;
-                standardRevisionDto.TotalCurrentStandards = await documents.CountAsync(aa => aa.PublishTime < input.EndTime && aa.IsAction == true);
+                //standardRevisionDto.TotalCurrentStandards = await documents.CountAsync(aa => aa.PublishTime < input.EndTime && aa.IsAction == true);
+                standardRevisionDto.TotalCurrentStandards = await documents.CountAsync(aa => aa.PublishTime.Value.Year <= input.Year && aa.IsAction == true);
                 //废止个数
-                standardRevisionDto.StandardAbolitionNumber = await documents.CountAsync(aa => aa.IsAction == false && aa.InvalidTime >= input.StartTime && aa.InvalidTime < input.EndTime);
+                //standardRevisionDto.StandardAbolitionNumber = await documents.CountAsync(aa => aa.IsAction == false && aa.InvalidTime >= input.StartTime && aa.InvalidTime < input.EndTime);
+                standardRevisionDto.StandardAbolitionNumber = await documents.CountAsync(aa => aa.IsAction == false && aa.InvalidTime.Value.Year == input.Year);
                 //修订个数
-                var revisionList = _applyInfoRepository.GetAll().Where(v => v.OperateType == OperateType.修订标准 && v.Status == ApplyStatus.审批通过 && v.ProcessingStatus == RevisionStatus.审核通过 && v.ProcessingHandleTime >= input.StartTime && v.ProcessingHandleTime < input.EndTime);
+                //var revisionList = _applyInfoRepository.GetAll().Where(v => v.OperateType == OperateType.修订标准 && v.Status == ApplyStatus.审批通过 && v.ProcessingStatus == RevisionStatus.审核通过 && v.ProcessingHandleTime >= input.StartTime && v.ProcessingHandleTime < input.EndTime);
+                var revisionList = _applyInfoRepository.GetAll().Where(v => v.OperateType == OperateType.修订标准 && v.Status == ApplyStatus.审批通过 && v.ProcessingStatus == RevisionStatus.审核通过 && v.ProcessingHandleTime.Value.Year == input.Year);
                 Guid?[] revisionDocIds = await revisionList.Select(v => v.DocumentId).ToArrayAsync();
                 standardRevisionDto.StandardRevisionNumber = await documents.CountAsync(v => revisionDocIds.Contains(v.Id));
                 //制定个数
-                var settingDoc = _docRevisionRepository.GetAll().Where(v => v.DeptId == input.DeptId.ToString() && v.Status == RevisionStatus.审核通过 && v.RevisionType == RevisionType.标准制定 && v.CreationTime >= input.StartTime && v.CreationTime < input.EndTime).Select(v => v.Id);
+                //var settingDoc = _docRevisionRepository.GetAll().Where(v => v.DeptId == input.DeptId.ToString() && v.Status == RevisionStatus.审核通过 && v.RevisionType == RevisionType.标准制定 && v.CreationTime >= input.StartTime && v.CreationTime < input.EndTime).Select(v => v.Id);
+                var settingDoc = _docRevisionRepository.GetAll().Where(v => v.DeptId == input.DeptId.ToString() && v.Status == RevisionStatus.审核通过 && v.RevisionType == RevisionType.标准制定 && v.CreationTime.Year == input.Year).Select(v => v.Id);
                 standardRevisionDto.StandardSettingNumber = await settingDoc.CountAsync();
                 //制定条数
                 //Guid[] settingDocIds = await settingDoc.ToArrayAsync();
@@ -158,21 +163,24 @@ namespace GYSWP.StandardRevisionReports
                 //修订条数
                 //Guid[] curDeptRevisionIds = await documents.Where(v => revisionDocIds.Contains(v.Id)).Select(v => v.Id).ToArrayAsync();
                 //standardRevisionDto.StandardRevisionStripNumber = await clauseRevisions.CountAsync(v => v.Status == RevisionStatus.审核通过 && v.RevisionType != RevisionType.标准制定 && curDeptRevisionIds.Contains(v.DocumentId.Value));
-
             }
             else
             {
                 var documents = _documentRepository.GetAll();
                 standardRevisionDto.DeptName = dept.DepartmentName;
-                standardRevisionDto.TotalCurrentStandards = await documents.CountAsync(aa => aa.PublishTime < input.EndTime && aa.IsAction == true);
+                //standardRevisionDto.TotalCurrentStandards = await documents.CountAsync(aa => aa.PublishTime < input.EndTime && aa.IsAction == true);
+                standardRevisionDto.TotalCurrentStandards = await documents.CountAsync(aa => aa.PublishTime.Value.Year <= input.Year && aa.IsAction == true);
                 //废止个数
-                standardRevisionDto.StandardAbolitionNumber = await documents.CountAsync(aa => aa.IsAction == false && aa.InvalidTime >= input.StartTime && aa.InvalidTime < input.EndTime);
+                //standardRevisionDto.StandardAbolitionNumber = await documents.CountAsync(aa => aa.IsAction == false && aa.InvalidTime >= input.StartTime && aa.InvalidTime < input.EndTime);
+                standardRevisionDto.StandardAbolitionNumber = await documents.CountAsync(aa => aa.IsAction == false && aa.InvalidTime.Value.Year == input.Year);
                 //修订个数
-                var revisionList = _applyInfoRepository.GetAll().Where(v => v.OperateType == OperateType.修订标准 && v.Status == ApplyStatus.审批通过 && v.ProcessingStatus == RevisionStatus.审核通过 && v.ProcessingHandleTime >= input.StartTime && v.ProcessingHandleTime < input.EndTime);
+                //var revisionList = _applyInfoRepository.GetAll().Where(v => v.OperateType == OperateType.修订标准 && v.Status == ApplyStatus.审批通过 && v.ProcessingStatus == RevisionStatus.审核通过 && v.ProcessingHandleTime >= input.StartTime && v.ProcessingHandleTime < input.EndTime);
+                var revisionList = _applyInfoRepository.GetAll().Where(v => v.OperateType == OperateType.修订标准 && v.Status == ApplyStatus.审批通过 && v.ProcessingStatus == RevisionStatus.审核通过 && v.ProcessingHandleTime.Value.Year == input.Year);
                 Guid?[] revisionDocIds = await revisionList.Select(v => v.DocumentId).ToArrayAsync();
                 standardRevisionDto.StandardRevisionNumber = await documents.CountAsync(v => revisionDocIds.Contains(v.Id));
                 //制定个数
-                var settingDoc = _docRevisionRepository.GetAll().Where(v => v.Status == RevisionStatus.审核通过 && v.RevisionType == RevisionType.标准制定 && v.CreationTime >= input.StartTime && v.CreationTime < input.EndTime).Select(v => v.Id);
+                //var settingDoc = _docRevisionRepository.GetAll().Where(v => v.Status == RevisionStatus.审核通过 && v.RevisionType == RevisionType.标准制定 && v.CreationTime >= input.StartTime && v.CreationTime < input.EndTime).Select(v => v.Id);
+                var settingDoc = _docRevisionRepository.GetAll().Where(v => v.Status == RevisionStatus.审核通过 && v.RevisionType == RevisionType.标准制定 && v.CreationTime.Year == input.Year).Select(v => v.Id);
                 standardRevisionDto.StandardSettingNumber = await settingDoc.CountAsync();
                 //制定条数
                 //Guid[] settingDocIds = await settingDoc.ToArrayAsync();

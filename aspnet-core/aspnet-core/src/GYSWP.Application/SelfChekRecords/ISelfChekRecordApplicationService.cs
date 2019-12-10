@@ -77,5 +77,6 @@ namespace GYSWP.SelfChekRecords
 
         Task SelfCheckedClauseWithDDAsync(SelfChekDDInput input);
         Task<int> GetCurClauseStudyCountAsync(string empId, Guid clauseId);
+        Task<List<InspectListDto>> GetInspectReports(InspectInputDto input);
     }
 }

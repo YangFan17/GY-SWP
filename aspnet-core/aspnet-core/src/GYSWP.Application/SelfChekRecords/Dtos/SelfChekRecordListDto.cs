@@ -10,8 +10,6 @@ namespace GYSWP.SelfChekRecords.Dtos
 {
     public class SelfChekRecordListDto : EntityDto<Guid>,IHasCreationTime 
     {
-
-        
 		/// <summary>
 		/// ClauseId
 		/// </summary>
@@ -45,5 +43,18 @@ namespace GYSWP.SelfChekRecords.Dtos
         /// </summary>
         [Required]
         public Guid DocumentId { get; set; }
+    }
+
+    /// <summary>
+    /// 阅读统计DTO
+    /// </summary>
+    public class InspectListDto
+    {
+        public string Name { get; set; }
+        public string Position { get; set; }
+        public int PostUseNum { get; set; }
+        public string ClickRateDesc { get; set; }
+        public string SurfaceRateDesc { get; set; }
+        public int ClickNum { get; set; }
     }
 }

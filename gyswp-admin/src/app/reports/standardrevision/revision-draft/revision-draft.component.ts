@@ -1,6 +1,5 @@
 import { Component, OnInit, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/component-base';
-import { NzModalService } from 'ng-zorro-antd';
 import { WorkCriterionService, StandardRevisionService } from 'services';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DocumentDto } from 'entities';
@@ -29,7 +28,6 @@ export class RevisionDraftComponent extends AppComponentBase implements OnInit {
         , private workCriterionService: WorkCriterionService
         , private standardRevisionService: StandardRevisionService
         , private actRouter: ActivatedRoute
-        , private modal: NzModalService
         , private router: Router
     ) {
         super(injector);

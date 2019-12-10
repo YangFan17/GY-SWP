@@ -11,10 +11,12 @@
         <div nz-row [nzGutter]="18">
           <div nz-col [nzSpan]="6" class="mb-md">
             <nz-form-item class="d-flex" style="margin-bottom: 0px;">
-              <nz-form-label nzFor="month">月份</nz-form-label>
+              <nz-form-label nzFor="month">年度</nz-form-label>
               <nz-form-control class="flex-1">
-                <nz-month-picker [(ngModel)]="date" name="date" (ngModelChange)="onChange($event)" nzPlaceHolder="选择月份">
-                </nz-month-picker>
+                <!-- <nz-month-picker [(ngModel)]="date" name="date" (ngModelChange)="onChange($event)" nzPlaceHolder="选择月份">
+                </nz-month-picker> -->
+                <nz-year-picker [(ngModel)]="date" name="date" (ngModelChange)="onChange($event)" nzPlaceHolder="选择年度">
+                </nz-year-picker>
               </nz-form-control>
             </nz-form-item>
           </div>

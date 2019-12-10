@@ -54,7 +54,8 @@ export class RevisionDocComponent extends PagedListingComponentBase<any>{
         params.maxResultCount = request.maxResultCount;
         params.deptId = this.deptId;
         params.type = this.type;
-        params.month = this.date;
+        // params.month = this.date;
+        params.year = this.date;
         this.workCriterionService.getActionDocumentAsync(params).finally(() => {
             finishedCallback();
         })

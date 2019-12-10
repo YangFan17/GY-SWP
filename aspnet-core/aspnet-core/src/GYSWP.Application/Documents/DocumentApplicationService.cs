@@ -899,7 +899,8 @@ namespace GYSWP.Documents
             }
             if (input.Type == ReportDocEnum.现行标准总数)
             {
-                var query = document.Where(e => e.PublishTime <= input.EndTime && e.IsAction == true);
+                //var query = document.Where(e => e.PublishTime <= input.EndTime && e.IsAction == true);
+                var query = document.Where(e => e.PublishTime.Value.Year <= input.Year && e.IsAction == true);
                 var count = await query.CountAsync();
                 var entityListDtos = await (from q in query
                                             select new ReportDocDto()
@@ -914,7 +915,8 @@ namespace GYSWP.Documents
             }
             else if (input.Type == ReportDocEnum.标准制定个数)
             {
-                var result = _docRevisionRepository.GetAll().Where(v => v.Status == RevisionStatus.审核通过 && v.RevisionType == RevisionType.标准制定 && v.CreationTime >= input.StartTime && v.CreationTime < input.EndTime).Select(v => v.Id);
+                //var result = _docRevisionRepository.GetAll().Where(v => v.Status == RevisionStatus.审核通过 && v.RevisionType == RevisionType.标准制定 && v.CreationTime >= input.StartTime && v.CreationTime < input.EndTime).Select(v => v.Id);
+                var result = _docRevisionRepository.GetAll().Where(v => v.Status == RevisionStatus.审核通过 && v.RevisionType == RevisionType.标准制定 && v.CreationTime.Year == input.Year).Select(v => v.Id);
                 Guid[] results = await result.ToArrayAsync();
                 var count = await result.CountAsync();
                 var query = document.Where(e => results.Contains(e.BLLId.Value));
@@ -941,7 +943,8 @@ namespace GYSWP.Documents
             }
             else if (input.Type == ReportDocEnum.标准废止个数)
             {
-                var query = document.Where(aa => aa.IsAction == false && aa.InvalidTime >= input.StartTime && aa.InvalidTime < input.EndTime);
+                //var query = document.Where(aa => aa.IsAction == false && aa.InvalidTime >= input.StartTime && aa.InvalidTime < input.EndTime);
+                var query = document.Where(aa => aa.IsAction == false && aa.InvalidTime.Value.Year == input.Year);
                 var count = await query.CountAsync();
                 var entityListDtos = await (from q in query
                                             select new ReportDocDto()
@@ -960,7 +963,8 @@ namespace GYSWP.Documents
                 using (CurrentUnitOfWork.DisableFilter(AbpDataFilters.SoftDelete))
                 {
                     var query = document;
-                    var revisionList = _applyInfoRepository.GetAll().Where(v => v.OperateType == OperateType.修订标准 && v.Status == ApplyStatus.审批通过 && v.ProcessingStatus == RevisionStatus.审核通过 && v.CreationTime >= input.StartTime && v.CreationTime < input.EndTime);
+                    //var revisionList = _applyInfoRepository.GetAll().Where(v => v.OperateType == OperateType.修订标准 && v.Status == ApplyStatus.审批通过 && v.ProcessingStatus == RevisionStatus.审核通过 && v.CreationTime >= input.StartTime && v.CreationTime < input.EndTime);
+                    var revisionList = _applyInfoRepository.GetAll().Where(v => v.OperateType == OperateType.修订标准 && v.Status == ApplyStatus.审批通过 && v.ProcessingStatus == RevisionStatus.审核通过 && v.CreationTime.Year == input.Year);
                     Guid?[] revisionDocIds = await revisionList.Select(v => v.DocumentId).ToArrayAsync();
                     var count = await query.CountAsync(v => revisionDocIds.Contains(v.Id) &&v.IsDeleted == false);
                     var result = query.Where(v => revisionDocIds.Contains(v.Id));

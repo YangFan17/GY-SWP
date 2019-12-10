@@ -14,10 +14,12 @@ export class StandardrevisionComponent extends AppComponentBase implements OnIni
   @ViewChild('detpTree') detpTree: NzTreeComponent;
   nodes: any[];
   selectedDept: any = { id: '', name: '' };
-  month: number;
+  // month: number;
+  year: number;
   date = new Date();
   dataList: any[];
-  search = { month: '', deptId: 1 };
+  // search = { month: '', year: '', deptId: 1 };
+  search = { year: 2019, deptId: 1 };
   isTableLoading = false;
 
   constructor(
@@ -29,7 +31,8 @@ export class StandardrevisionComponent extends AppComponentBase implements OnIni
   }
 
   ngOnInit() {
-    this.search.month = this.date.getFullYear() + '-' + (this.date.getMonth() + 1) + '-1';
+    // this.search.month = this.date.getFullYear() + '-' + (this.date.getMonth() + 1) + '-1';
+    this.search.year = this.date.getFullYear();
     this.getTrees();
   }
 
@@ -47,7 +50,8 @@ export class StandardrevisionComponent extends AppComponentBase implements OnIni
   }
 
   goTotalCurrent(type: number) {
-    var date = this.dateFormat(this.date);
+    // var date = this.dateFormat(this.date);
+    var date = this.date.getFullYear();
     if (type == 1 && this.selectedDept.id == '1') {
       this.router.navigate(['app/reports/acitve-statistics']);
     } else {
@@ -67,7 +71,8 @@ export class StandardrevisionComponent extends AppComponentBase implements OnIni
 
   getStandardRevisionData() {
     this.search.deptId = this.selectedDept.id;
-    this.month = this.date.getMonth() + 1;
+    // this.month = this.date.getMonth() + 1;
+    this.year = this.date.getFullYear();
     this.isTableLoading = true;
     //alert(this.month)
     this.standardRevisionService.getSearchStandardRevisions(this.search).subscribe((data) => {
@@ -82,12 +87,13 @@ export class StandardrevisionComponent extends AppComponentBase implements OnIni
 
   reset() {
     this.date = new Date();
-    this.search.month = this.date.getFullYear() + '-' + (this.date.getMonth() + 1) + '-1';
+    // this.search.month = this.date.getFullYear() + '-' + (this.date.getMonth() + 1) + '-1';
+    this.search.year = this.date.getFullYear();
     this.refreshData();
   }
 
   onChange(result: Date): void {
-    this.search.month = this.date.getFullYear() + '-' + (this.date.getMonth() + 1) + '-1';
-    //console.log('onChange: ', result);
+    // this.search.month = this.date.getFullYear() + '-' + (this.date.getMonth() + 1) + '-1';
+    this.search.year = this.date.getFullYear();
   }
 }

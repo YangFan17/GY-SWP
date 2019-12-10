@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/component-base';
 import { NzTreeComponent, NzFormatEmitEvent } from 'ng-zorro-antd';
-import { BasicDataService, InspectService } from 'services';
+import { InspectService } from 'services';
 
 
 @Component({
@@ -15,10 +15,11 @@ export class InspectComponent extends AppComponentBase implements OnInit {
     @ViewChild('detpTree') detpTree: NzTreeComponent;
     nodes: any[];
     selectedDept: any = { id: '', name: '' };
-    month: number;
+    // month: number;
     date = new Date();
     dataList: any[];
-    search = { month: '', deptId: 0, userName: '' };
+    // search = { month: '', deptId: 0, userName: '' };
+    search = { year: 2019, deptId: 0, userName: '' };
     isTableLoading = false;
 
     constructor(injector: Injector
@@ -28,7 +29,8 @@ export class InspectComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit(): void {
-        this.search.month = this.date.getFullYear() + '-' + (this.date.getMonth() + 1) + '-1';
+        // this.search.month = this.date.getFullYear() + '-' + (this.date.getMonth() + 1) + '-1';
+        this.search.year = this.date.getFullYear();
         this.getTrees();
     }
 
@@ -56,8 +58,9 @@ export class InspectComponent extends AppComponentBase implements OnInit {
     }
 
     getInspectData() {
+        // this.month = this.date.getMonth() + 1;
         this.search.deptId = this.selectedDept.id;
-        this.month = this.date.getMonth() + 1;
+        this.search.year = this.date.getFullYear();
         this.isTableLoading = true;
         //alert(this.month)
         this.inspectService.getSearchInspectReports(this.search).subscribe((data) => {
@@ -71,16 +74,17 @@ export class InspectComponent extends AppComponentBase implements OnInit {
     }
 
     reset() {
-        this.search.month = '';
+        // this.search.month = '';
         this.search.userName = '';
         this.date = new Date();
-        this.search.month = this.date.getFullYear() + '-' + (this.date.getMonth() + 1) + '-1';
+        this.search.year = this.date.getFullYear();
+        // this.search.month = this.date.getFullYear() + '-' + (this.date.getMonth() + 1) + '-1';
         this.refreshData();
     }
 
     onChange(result: Date): void {
-        this.search.month = this.date.getFullYear() + '-' + (this.date.getMonth() + 1) + '-1';
+        // this.search.month = this.date.getFullYear() + '-' + (this.date.getMonth() + 1) + '-1';
         //console.log('onChange: ', result);
+        this.search.year = this.date.getFullYear();
     }
-
 }

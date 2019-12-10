@@ -2,8 +2,6 @@ import { Inject, Optional, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { CommonHttpClient } from "services/common-httpclient";
 import { map } from "rxjs/operators";
-import { ApiResult, DocumentDto, Clause, SelectGroup, ClauseRevision, DocRevision, CriterionExamine, ExamineRecord, Attachment, ExamineResult, ExamineFeedback } from "entities";
-import { PagedResultDto } from "@shared/component-base";
 import { API_BASE_URL } from "@shared/service-proxies/service-proxies";
 import { NzTreeNode } from "ng-zorro-antd";
 
@@ -19,7 +17,7 @@ export class InspectService {
     }
 
     getSearchInspectReports(input: any): Observable<any> {
-        let url_ = "/api/services/app/Inspect/GetSearchInspectReports";
+        let url_ = "/api/services/app/SelfChekRecord/GetInspectReports";
         return this._commonhttp.get(url_, input).pipe(map(data => {
             return data;
         }));

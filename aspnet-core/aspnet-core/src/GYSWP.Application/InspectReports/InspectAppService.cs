@@ -12,6 +12,7 @@ using System.Linq;
 using System.Linq.Dynamic.Core;
 using Microsoft.EntityFrameworkCore;
 using GYSWP.SelfChekRecords.Dtos;
+using GYSWP.SelfChekRecordss;
 
 namespace GYSWP.InspectReports
 {

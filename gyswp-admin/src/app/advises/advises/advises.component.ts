@@ -54,7 +54,9 @@ export class AdvisesComponent extends PagedListingComponentBase<any>{
 
   seeDetail(itemid: any) {
     this.modalHelper.open(DetailAdviseComponent, { adviseId: itemid }, 'md', {
-      nzMask: true
+      nzMask: true,
+      nzClosable: false,
+      nzMaskClosable: false
     }).subscribe(isSave => {
       if (isSave) {
       }

@@ -60,23 +60,24 @@ namespace GYSWP.Documents.Dtos
     public class GetReportDocInput : PagedSortedAndFilteredInputDto
     {
         public long DeptId { get; set; }
-        public DateTime? StartTime
-        {
-            get
-            {
-               var date = Convert.ToDateTime(Month);
-                return new DateTime(date.Year, date.Month, 1);
-            }
-        }
-        public string Month { get; set; }
+        public int Year { get; set; }
+        //public DateTime? StartTime
+        //{
+        //    get
+        //    {
+        //       var date = Convert.ToDateTime(Month);
+        //        return new DateTime(date.Year, date.Month, 1);
+        //    }
+        //}
+        //public string Month { get; set; }
 
-        public DateTime? EndTime
-        {
-            get
-            {
-                return StartTime.Value.AddMonths(1);
-            }
-        }
+        //public DateTime? EndTime
+        //{
+        //    get
+        //    {
+        //        return StartTime.Value.AddMonths(1);
+        //    }
+        //}
         public ReportDocEnum Type { get; set; }
     }
 

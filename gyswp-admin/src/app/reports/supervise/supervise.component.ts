@@ -72,7 +72,8 @@ export class SuperviseComponent extends AppComponentBase implements OnInit {
         this.search.beginTime = '';
         this.search.endTime = '';
         this.search.userName = '';
-        this.dateRange = [addDays(new Date(), -1 * (new Date()).getDay() + 1), new Date()]
+        // this.dateRange = [addDays(new Date(), -1 * (new Date()).getDay() + 1), new Date()];
+        this.dateRange = [];
         this.refreshData();
     }
 

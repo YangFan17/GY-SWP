@@ -49,15 +49,15 @@
                         <th>抽查表</th>
                         <th>抽查时间</th>
                         <th>抽查条数</th>
-                        <th>不符合</th>
-                        <th>符合</th>
+                        <th>不合格</th>
+                        <th>合格</th>
                         <th>未完成</th>
                         <th>执行率</th>
                         <th>达成率</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let item of nzTable.data">
+                    <tr *ngFor="let item of nzTable.data" [ngClass]="{'total': item.userName == '汇总'}">
                         <td>{{item.userName}}</td>
                         <td>{{item.position}}</td>
                         <td>{{item.examineTitle}}</td>

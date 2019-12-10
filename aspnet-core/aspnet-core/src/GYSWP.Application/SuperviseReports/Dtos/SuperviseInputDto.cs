@@ -12,6 +12,6 @@ namespace GYSWP.SuperviseReports.Dtos
 
         public string UserName { get; set; }
 
-        public long DeptId { get; set; }
+        public long? DeptId { get; set; }
     }
 }

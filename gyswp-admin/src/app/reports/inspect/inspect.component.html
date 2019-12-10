@@ -13,8 +13,11 @@
                         <nz-form-item class="d-flex" style="margin-bottom: 0px;">
                             <nz-form-label nzFor="month">月份</nz-form-label>
                             <nz-form-control class="flex-1">
-                                <nz-month-picker [(ngModel)]="date" name="date" (ngModelChange)="onChange($event)"
-                                    nzPlaceHolder="选择月份"></nz-month-picker>
+                                <!-- <nz-month-picker [(ngModel)]="date" name="date" (ngModelChange)="onChange($event)"
+                                    nzPlaceHolder="选择月份"></nz-month-picker> -->
+                                <nz-year-picker [(ngModel)]="date" name="date" (ngModelChange)="onChange($event)"
+                                    nzPlaceHolder="选择年度">
+                                </nz-year-picker>
                             </nz-form-control>
                         </nz-form-item>
                     </div>
@@ -46,15 +49,15 @@
                         <th>姓名</th>
                         <th>职位</th>
                         <th>岗位适用条数</th>
-                        <th title="点击学习天数/20个工作日">点击率（{{month}}月）</th>
+                        <th title="点击学习天数/300个工作日">点击率（年）</th>
                         <th title="年点击学习条数/岗位适用总条数">点击面</th>
-                        <th title="月点击标准条款总数">点击量（{{month}}月）</th>
+                        <th title="年点击标准条款总数">点击量（年）</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let item of nzTable.data">
-                        <td>{{item.employeeName}}</td>
-                        <td>{{item.employeePosition}}</td>
+                        <td>{{item.name}}</td>
+                        <td>{{item.position}}</td>
                         <td>{{item.postUseNum}}</td>
                         <td>{{item.clickRateDesc}}</td>
                         <td>{{item.surfaceRateDesc}}</td>
