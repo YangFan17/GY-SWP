@@ -272,45 +272,38 @@ namespace GYSWP.SelfChekRecords
                 var empList = await _employeeRepository.GetAll().Where(v => v.Department.Contains(input.DeptId.ToString())).WhereIf(!string.IsNullOrEmpty(input.UserName), v => v.Name.Contains(input.UserName)).Select(v => new { v.Id, v.Name, v.Position }).ToListAsync();
                 foreach (var emp in empList)
                 {
+                    //InspectListDto entity = new InspectListDto();
+                    //entity.Name = emp.Name;
+                    //entity.Position = emp.Position;
+                    ////entity.ClickRateDesc = await _entityRepository.GetAll().Where(v => v.EmployeeId == emp.Id && v.CreationTime.Year == year).GroupBy(v => new { v.CreationTime.Month, v.CreationTime.Day }).CountAsync() + "%";
+                    //var learnDay = await _entityRepository.GetAll().Where(v => v.EmployeeId == emp.Id && v.CreationTime.Year == input.Year).GroupBy(v => new { v.CreationTime.Month, v.CreationTime.Day }).CountAsync();
+                    //if (learnDay > 0)
+                    //{
+                    //    entity.ClickRateDesc = Math.Round(learnDay / 300.00 * 100, 2) + "%";
+                    //}
+                    //else
+                    //{
+                    //    entity.ClickRateDesc = "0";
+                    //}
+                    //entity.PostUseNum = await _employeeClauseRepository.CountAsync(v => v.EmployeeId == emp.Id);
+                    //entity.ClickNum = await _entityRepository.CountAsync(v => v.EmployeeId == emp.Id && v.CreationTime.Year == input.Year);
+                    //int temp = await _entityRepository.GetAll().Where(v => v.EmployeeId == emp.Id && v.CreationTime.Year == input.Year).GroupBy(v => v.ClauseId).CountAsync();
+                    //entity.SurfaceRateDesc = temp == 0 ? "0" : Math.Round(temp / (entity.PostUseNum * 1.0m) * 100, 2) + "%";
+                    //dataList.Add(entity);
+                    input.EmpId = emp.Id;
+                    var result = await _selfChekRecordRepository.GetInspectReportsByEmpId(input);
                     InspectListDto entity = new InspectListDto();
                     entity.Name = emp.Name;
                     entity.Position = emp.Position;
-                    //entity.ClickRateDesc = await _entityRepository.GetAll().Where(v => v.EmployeeId == emp.Id && v.CreationTime.Year == year).GroupBy(v => new { v.CreationTime.Month, v.CreationTime.Day }).CountAsync() + "%";
-                    var learnDay = await _entityRepository.GetAll().Where(v => v.EmployeeId == emp.Id && v.CreationTime.Year == input.Year).GroupBy(v => new { v.CreationTime.Month, v.CreationTime.Day }).CountAsync();
-                    if (learnDay > 0)
-                    {
-                        entity.ClickRateDesc = Math.Round(learnDay / 300.00 * 100, 2) + "%";
-                    }
-                    else
-                    {
-                        entity.ClickRateDesc = "0";
-                    }
-                    entity.PostUseNum = await _employeeClauseRepository.CountAsync(v => v.EmployeeId == emp.Id);
-                    entity.ClickNum = await _entityRepository.CountAsync(v => v.EmployeeId == emp.Id && v.CreationTime.Year == input.Year);
-                    int temp = await _entityRepository.GetAll().Where(v => v.EmployeeId == emp.Id && v.CreationTime.Year == input.Year).GroupBy(v => v.ClauseId).CountAsync();
-                    entity.SurfaceRateDesc = temp == 0 ? "0" : Math.Round(temp / (entity.PostUseNum * 1.0m) * 100, 2) + "%";
+                    entity.ClickRateDesc = result.ClickRateDesc;
+                    entity.PostUseNum = result.PostUseNum;
+                    entity.ClickNum = result.ClickNum;
+                    entity.SurfaceRateDesc = result.SurfaceRateDesc;
                     dataList.Add(entity);
                 }
             }
             else
             {
-                //InspectListDto entity = new InspectListDto();
-                //entity.Name = "四川省烟草公司广元市公司";
-                //entity.Position = "/";
-                //var learnDay = await _entityRepository.GetAll().Where(v => v.CreationTime.Year == year).GroupBy(v => new { v.CreationTime.Month, v.CreationTime.Day }).CountAsync();
-                //if (learnDay > 0)
-                //{
-                //    entity.ClickRateDesc = Math.Round(learnDay / 300.00 * 100, 2) + "%";
-                //}
-                //else
-                //{
-                //    entity.ClickRateDesc = "0";
-                //}
-                //entity.PostUseNum = await _employeeClauseRepository.GetAll().GroupBy(v => v.ClauseId).CountAsync();
-                //entity.ClickNum = await _entityRepository.CountAsync(v => v.CreationTime.Year == year);
-                //int temp = await _entityRepository.GetAll().Where(v => v.CreationTime.Year == year).GroupBy(v => v.ClauseId).CountAsync();
-                //entity.SurfaceRateDesc = temp == 0 ? "0" : Math.Round(temp / (entity.PostUseNum * 1.0m) * 100, 2) + "%";
-                //dataList.Add(entity);
                 var result = await _selfChekRecordRepository.GetTotalInspectReports(input);
                 InspectListDto entity = new InspectListDto();
                 entity.Name = result.EmployeeName;

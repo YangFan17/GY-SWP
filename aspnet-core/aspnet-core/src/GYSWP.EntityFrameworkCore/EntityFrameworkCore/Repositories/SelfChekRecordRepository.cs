@@ -150,11 +150,20 @@ namespace GYSWP.EntityFrameworkCore.Repositories
                 new SqlParameter("@Year", input.Year),
             };
 
-            var sql = @"SELECT '四川省烟草公司广元市公司' Name,'/' Position,'/' DepartmentName,
+            var sql = @"SELECT '四川省烟草公司广元市公司' Name,'/' Position,
  CASE WHEN ( t1.postUse = 0 ) THEN 0 WHEN ( t1.postUse IS NULL ) THEN 0 ELSE t1.postUse END ECNum
 ,t2.clickNum ClickNum,CASE
-		WHEN ( t3.clickRate = 0 ) THEN 0 WHEN ( t3.clickRate IS NULL ) THEN 0 ELSE t3.clickRate/ ( 300.00 ) END ClickRate,CASE
-	WHEN ( t4.surfaceRate = 0 ) THEN 0 WHEN ( t4.surfaceRate IS NULL ) THEN 0 ELSE t1.postUse/ ( t4.surfaceRate* 1.00 ) END SurfaceRate
+		WHEN ( t3.clickRate = 0 ) THEN 0 WHEN ( t3.clickRate IS NULL ) THEN 0 ELSE t3.clickRate/ ( 250.00 ) END ClickRate,CASE	
+	WHEN ( t4.surfaceRate = 0 ) THEN
+	0 
+	WHEN ( t4.surfaceRate IS NULL ) THEN
+	0 
+		WHEN ( t1.postUse = 0 ) THEN
+	0 
+		WHEN ( t1.postUse IS NULL ) THEN
+	0 
+	ELSE  t4.surfaceRate/ (t1.postUse* 1.00 ) 
+	END SurfaceRate
 	FROM
 	( SELECT COUNT ( pUN.pun ) postUse FROM ( SELECT COUNT ( 1 ) pun FROM EmployeeClauses GROUP BY ClauseId ) pUN ) t1
 	LEFT JOIN ( SELECT COUNT ( 1 ) clickNum FROM SelfChekRecords WHERE YEAR ( CreationTime ) = @Year ) t2 ON 1 = 1
@@ -189,7 +198,88 @@ namespace GYSWP.EntityFrameworkCore.Repositories
                     {
                         entity.EmployeeName = dataReader["Name"].ToString();
                         entity.EmployeePosition = dataReader["Position"].ToString();
-                        entity.DeptName = dataReader["DepartmentName"].ToString();
+                        entity.PostUseNum = (int)dataReader["ECNum"];
+                        entity.SurfaceRate = (decimal)dataReader["SurfaceRate"];
+                        entity.ClickRate = (decimal)dataReader["ClickRate"];
+                        entity.ClickNum = (int)dataReader["ClickNum"];
+                    }
+                    return entity;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 根据EmpId查询阅读数据
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<InspectDto> GetInspectReportsByEmpId(InspectInputDto input)
+        {
+            EnsureConnectionOpen();
+            SqlParameter[] param = new SqlParameter[]
+            {
+                new SqlParameter("@Year", input.Year),
+                new SqlParameter("@EmpId", input.EmpId),
+            };
+
+            var sql = @"SELECT CASE
+		
+		WHEN ( t1.postUse = 0 ) THEN
+		0 
+		WHEN ( t1.postUse IS NULL ) THEN
+		0 ELSE t1.postUse 
+	END ECNum,
+	t2.clickNum ClickNum,
+CASE
+	
+	WHEN ( t3.clickRate = 0 ) THEN
+	0 
+	WHEN ( t3.clickRate IS NULL ) THEN
+	0 ELSE t3.clickRate/ ( 250.00 ) 
+	END ClickRate,CASE	
+	WHEN ( t4.surfaceRate = 0 ) THEN
+	0 
+	WHEN ( t4.surfaceRate IS NULL ) THEN
+	0 
+		WHEN ( t1.postUse = 0 ) THEN
+	0 
+		WHEN ( t1.postUse IS NULL ) THEN
+	0 
+	ELSE  t4.surfaceRate/ (t1.postUse* 1.00 ) 
+	END SurfaceRate
+FROM
+	( SELECT COUNT ( pUN.pun ) postUse FROM ( SELECT COUNT ( 1 ) pun FROM EmployeeClauses where EmployeeId = @EmpId GROUP BY ClauseId ) pUN ) t1
+	LEFT JOIN ( SELECT COUNT ( 1 ) clickNum FROM SelfChekRecords WHERE EmployeeId = @EmpId and YEAR ( CreationTime ) = @Year ) t2 ON 1 = 1
+	LEFT JOIN (
+	SELECT COUNT
+		( cR.cr ) clickRate 
+	FROM
+		(
+		SELECT COUNT
+			( 1 ) cr 
+		FROM
+			SelfChekRecords 
+		WHERE
+		EmployeeId = @EmpId and	YEAR ( CreationTime ) = @Year 
+		GROUP BY
+			MONTH ( CreationTime ),
+		DAY ( CreationTime )) cR 
+	) t3 ON 1 = 1
+	LEFT JOIN (
+	SELECT COUNT
+		( sR.sr ) surfaceRate 
+	FROM
+	( SELECT COUNT ( 1 ) sr FROM SelfChekRecords WHERE EmployeeId = @EmpId and YEAR ( CreationTime ) = @Year GROUP BY ClauseId ) sR 
+	) t4 ON 1 = 1";
+
+            var command = CreateCommand(sql, CommandType.Text, param);
+            using (command)
+            {
+                using (var dataReader = await command.ExecuteReaderAsync())
+                {
+                    var entity = new InspectDto();
+                    while (dataReader.Read())
+                    {
                         entity.PostUseNum = (int)dataReader["ECNum"];
                         entity.SurfaceRate = (decimal)dataReader["SurfaceRate"];
                         entity.ClickRate = (decimal)dataReader["ClickRate"];

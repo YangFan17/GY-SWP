@@ -12,5 +12,6 @@ namespace GYSWP.SelfChekRecordss
     {
         Task<List<InspectDto>> GetSearchInspectReports(InspectInputDto input);
         Task<InspectDto> GetTotalInspectReports(InspectInputDto input);
+        Task<InspectDto> GetInspectReportsByEmpId(InspectInputDto input);
     }
 }
