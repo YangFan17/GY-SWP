@@ -996,9 +996,9 @@ namespace GYSWP.CriterionExamines
                 #region 公共模块
                 string[] employeeIds = await GetEmployeeIdsByDeptId(input.DeptId);
                 var empClauseGroupList = await _employeeClauseRepository.GetAll().Where(v => employeeIds.Contains(v.EmployeeId)).GroupBy(v => v.DocumentId).Select(v => v.Key).ToListAsync();
-                var a = empClauseGroupList.ToList();
+                //var a = empClauseGroupList.ToList();
                 var doc = _documentRepository.GetAll().Where(v => v.IsAction == true).Select(v=>new { v.Id,v.CategoryId});
-                var b = doc.ToList();
+                //var b = doc.ToList();
                 var org = _organizationRepository.GetAll().Select(v=>new { v.Id,v.DepartmentName});
                 var category = _categoryRepository.GetAll().Select(v=>new {v.Id,v.DeptId });
                 //var docCategroyList = (from e in empClauseGroupList
@@ -1052,9 +1052,9 @@ namespace GYSWP.CriterionExamines
                         {
                             Other = OtherList.Count();
                         }
-                        var YingXiaoClauseList = await _employeeClauseRepository.GetAll().Where(v => YingXiaoList.Select(y => y.e).Contains(v.DocumentId)).OrderBy(v => Guid.NewGuid()).Take(YingXiao).ToListAsync();
-                        var ZhuanMaiClauseList = await _employeeClauseRepository.GetAll().Where(v => ZhuanMaiList.Select(z => z.e).Contains(v.DocumentId)).OrderBy(v => Guid.NewGuid()).Take(ZhuanMai).ToListAsync();
-                        var OtherClauseList = await _employeeClauseRepository.GetAll().Where(v => OtherList.Select(o => o.e).Contains(v.DocumentId)).OrderBy(v => Guid.NewGuid()).Take(Other).ToListAsync();
+                        var YingXiaoClauseList = await _employeeClauseRepository.GetAll().Where(v => YingXiaoList.Select(y => y.e).Contains(v.DocumentId) && employeeIds.Contains(v.EmployeeId)).OrderBy(v => Guid.NewGuid()).Take(YingXiao).ToListAsync();
+                        var ZhuanMaiClauseList = await _employeeClauseRepository.GetAll().Where(v => ZhuanMaiList.Select(z => z.e).Contains(v.DocumentId) && employeeIds.Contains(v.EmployeeId)).OrderBy(v => Guid.NewGuid()).Take(ZhuanMai).ToListAsync();
+                        var OtherClauseList = await _employeeClauseRepository.GetAll().Where(v => OtherList.Select(o => o.e).Contains(v.DocumentId) && employeeIds.Contains(v.EmployeeId)).OrderBy(v => Guid.NewGuid()).Take(Other).ToListAsync();
 
                         foreach (var item in YingXiaoClauseList)
                         {
@@ -1142,10 +1142,10 @@ namespace GYSWP.CriterionExamines
                         {
                             Other = OtherList.Count();
                         }
-                        var YingXiaoClauseList = await _employeeClauseRepository.GetAll().Where(v => YingXiaoList.Select(y => y.e).Contains(v.DocumentId)).OrderBy(v => Guid.NewGuid()).Take(YingXiao).ToListAsync();
-                        var ZhuanMaiClauseList = await _employeeClauseRepository.GetAll().Where(v => ZhuanMaiList.Select(z => z.e).Contains(v.DocumentId)).OrderBy(v => Guid.NewGuid()).Take(ZhuanMai).ToListAsync();
-                        var YanYeClauseList = await _employeeClauseRepository.GetAll().Where(v => YanYeList.Select(z => z.e).Contains(v.DocumentId)).OrderBy(v => Guid.NewGuid()).Take(Yanye).ToListAsync();
-                        var OtherClauseList = await _employeeClauseRepository.GetAll().Where(v => OtherList.Select(o => o.e).Contains(v.DocumentId)).OrderBy(v => Guid.NewGuid()).Take(Other).ToListAsync();
+                        var YingXiaoClauseList = await _employeeClauseRepository.GetAll().Where(v => YingXiaoList.Select(y => y.e).Contains(v.DocumentId) && employeeIds.Contains(v.EmployeeId)).OrderBy(v => Guid.NewGuid()).Take(YingXiao).ToListAsync();
+                        var ZhuanMaiClauseList = await _employeeClauseRepository.GetAll().Where(v => ZhuanMaiList.Select(z => z.e).Contains(v.DocumentId) && employeeIds.Contains(v.EmployeeId)).OrderBy(v => Guid.NewGuid()).Take(ZhuanMai).ToListAsync();
+                        var YanYeClauseList = await _employeeClauseRepository.GetAll().Where(v => YanYeList.Select(z => z.e).Contains(v.DocumentId) && employeeIds.Contains(v.EmployeeId)).OrderBy(v => Guid.NewGuid()).Take(Yanye).ToListAsync();
+                        var OtherClauseList = await _employeeClauseRepository.GetAll().Where(v => OtherList.Select(o => o.e).Contains(v.DocumentId) && employeeIds.Contains(v.EmployeeId)).OrderBy(v => Guid.NewGuid()).Take(Other).ToListAsync();
                         foreach (var item in YingXiaoClauseList)
                         {
                             ExamineDetail edEntity = new ExamineDetail();
@@ -1210,7 +1210,7 @@ namespace GYSWP.CriterionExamines
                 {
                     int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
                     int random = (int)Math.Ceiling(total * 0.04);
-                    var empClauseList = await _employeeClauseRepository.GetAll().Where(v => employeeIds.Contains(v.EmployeeId)).OrderBy(v => Guid.NewGuid()).Take(random).ToListAsync();
+                    var empClauseList = await _employeeClauseRepository.GetAll().Where(v => employeeIds.Contains(v.EmployeeId) && employeeIds.Contains(v.EmployeeId)).OrderBy(v => Guid.NewGuid()).Take(random).ToListAsync();
                     foreach (var item in empClauseList)
                     {
                         ExamineDetail edEntity = new ExamineDetail();
@@ -1231,7 +1231,7 @@ namespace GYSWP.CriterionExamines
                 {
                     int total = await _employeeClauseRepository.CountAsync(v => employeeIds.Contains(v.EmployeeId));
                     int random = (int)Math.Ceiling(total * 0.04);
-                    var empClauseList = await _employeeClauseRepository.GetAll().Where(v => employeeIds.Contains(v.EmployeeId)).OrderBy(v => Guid.NewGuid()).Take(random).ToListAsync();
+                    var empClauseList = await _employeeClauseRepository.GetAll().Where(v => employeeIds.Contains(v.EmployeeId) && employeeIds.Contains(v.EmployeeId)).OrderBy(v => Guid.NewGuid()).Take(random).ToListAsync();
                     foreach (var item in empClauseList)
                     {
                         ExamineDetail edEntity = new ExamineDetail();
