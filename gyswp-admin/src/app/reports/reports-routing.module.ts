@@ -12,6 +12,7 @@ import { RevisionDocComponent } from './standardrevision/revision-doc/revision-d
 import { RevisionDraftComponent } from './standardrevision/revision-draft/revision-draft.component';
 import { RevisionDetailComponent } from './standardrevision/revision-draft/revision-detail/revision-detail.component';
 import { ActiveCategoryComponent } from './standardrevision/active-category/active-category.component';
+import { SuperviseSummaryComponent } from './supervise/supervise-summary/supervise-summary.component';
 
 
 
@@ -64,6 +65,12 @@ const routes: Routes = [
     {
         path: 'acitve-statistics',
         component: ActiveCategoryComponent,
+        canActivate: [AppRouteGuard]
+    }
+    ,
+    {
+        path: 'supervise-summary',
+        component: SuperviseSummaryComponent,
         canActivate: [AppRouteGuard]
     }
 ];

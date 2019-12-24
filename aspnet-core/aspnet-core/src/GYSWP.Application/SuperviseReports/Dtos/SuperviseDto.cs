@@ -48,4 +48,47 @@ namespace GYSWP.SuperviseReports.Dtos
             }
         }
     }
+
+
+    /// <summary>
+    /// 标办条款检查汇总
+    /// </summary>
+    public class SuperviseSummaryDto
+    {
+        public string DeptName { get; set; }
+
+        public int ExamineNum { get; set; }
+
+        public int NotUpNum { get; set; }
+
+        public int OkNum { get; set; }
+
+        public int NotFinished { get; set; }
+
+        public string ImplementRate
+        {
+            get
+            {
+                if (ExamineNum == 0)
+                {
+                    return "0.00%";
+                }
+
+                return Math.Round((ExamineNum - NotFinished) / (ExamineNum * 1.0m) * 100, 2) + "%";
+            }
+        }
+
+        public string ReachRate
+        {
+            get
+            {
+                if (ExamineNum == 0)
+                {
+                    return "0.00%";
+                }
+
+                return Math.Round(OkNum / (ExamineNum * 1.0m) * 100, 2) + "%";
+            }
+        }
+    }
 }

@@ -16,6 +16,12 @@ using Abp.Linq.Extensions;
 using GYSWP.Indicators;
 using GYSWP.IndicatorsDetails;
 using GYSWP.Organizations;
+using GYSWP.Dtos;
+using GYSWP.Helpers;
+using System.IO;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using Microsoft.AspNetCore.Hosting;
 
 namespace GYSWP.SuperviseReports
 {
@@ -27,12 +33,15 @@ namespace GYSWP.SuperviseReports
         private readonly IRepository<Indicator, Guid> _indicatorRepository;
         private readonly IRepository<IndicatorsDetail, Guid> _indicatorsDetailRepository;
         private readonly IRepository<Organization, long> _organizationRepository;
+        private readonly IHostingEnvironment _hostingEnvironment;
+
 
         public SuperviseAppService(IRepository<CriterionExamine, Guid> criterionExaminesRepository,
             IRepository<ExamineDetail, Guid> examineDetailsRepository,
             IRepository<Employee, string> employeeRepository,
             IRepository<Indicator, Guid> indicatorRepository,
             IRepository<IndicatorsDetail, Guid> indicatorsDetailRepository,
+            IHostingEnvironment hostingEnvironment,
             IRepository<Organization, long> organizationRepository)
         {
             _criterionExaminesRepository = criterionExaminesRepository;
@@ -41,6 +50,7 @@ namespace GYSWP.SuperviseReports
             _indicatorRepository = indicatorRepository;
             _indicatorsDetailRepository = indicatorsDetailRepository;
             _organizationRepository = organizationRepository;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         public async Task<Dictionary<Guid, string>> GetSupervisesAsync(DateTime month, long deptId)
@@ -149,7 +159,8 @@ namespace GYSWP.SuperviseReports
                 List<SuperviseDto> dataList = new List<SuperviseDto>();
                 var criterion = _criterionExaminesRepository.GetAll().Where(c => c.IsPublish == true && c.CreationTime >= input.BeginTime && c.CreationTime < input.EndTime);
                 var detail = _examineDetailsRepository.GetAll();
-                var query = from c in criterion join d in detail on c.Id equals d.CriterionExamineId
+                var query = from c in criterion
+                            join d in detail on c.Id equals d.CriterionExamineId
                             select new
                             {
                                 c.Id,
@@ -234,6 +245,94 @@ namespace GYSWP.SuperviseReports
                 GetDeptIds(item);
             }
             return deptIds;
+        }
+
+
+        /// <summary>
+        /// 标办检查汇总
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<SuperviseSummaryDto>> GetQGSuperviseSummaryAsync(SuperviseInputDto input)
+        {
+            List<SuperviseSummaryDto> list = new List<SuperviseSummaryDto>();
+            var adminList = await GetUsersInRoleAsync("QiGuanAdmin");
+            string[] adminIds = adminList.Select(v => v.EmployeeId).ToArray();
+            var orgList = await _organizationRepository.GetAll().Where(v => v.ParentId == 1).OrderBy(v => v.Order).Select(v => new { v.Id, v.DepartmentName }).ToListAsync();
+
+            foreach (var item in orgList)
+            {
+                SuperviseSummaryDto entity = new SuperviseSummaryDto();
+                entity.DeptName = item.DepartmentName;
+                Guid[] examineId = await _criterionExaminesRepository.GetAll().Where(v => v.Type == CriterionExamineType.标办考核 && v.IsPublish == true && adminIds.Contains(v.CreatorEmpeeId) && v.DeptId == item.Id && v.CreationTime >= input.BeginTime && v.CreationTime < input.EndTime).Select(v => v.Id).ToArrayAsync();
+                entity.ExamineNum = await _examineDetailsRepository.CountAsync(v => examineId.Contains(v.CriterionExamineId) && v.CreationTime >= input.BeginTime && v.CreationTime < input.EndTime);
+                entity.NotUpNum = await _examineDetailsRepository.CountAsync(v => examineId.Contains(v.CriterionExamineId) && v.Result == ExamineStatus.不合格 && v.CreationTime >= input.BeginTime && v.CreationTime < input.EndTime);
+                entity.OkNum = await _examineDetailsRepository.CountAsync(v => examineId.Contains(v.CriterionExamineId) && v.Result == ExamineStatus.合格 && v.CreationTime >= input.BeginTime && v.CreationTime < input.EndTime);
+                entity.NotFinished = await _examineDetailsRepository.CountAsync(v => examineId.Contains(v.CriterionExamineId) && v.Result == ExamineStatus.未检查 && v.CreationTime >= input.BeginTime && v.CreationTime < input.EndTime);
+                list.Add(entity);
+            }
+            return list;
+        }
+
+
+        public async Task<APIResultDto> ExportQGSuperviseSummary(SuperviseInputDto input)
+        {
+            try
+            {
+                var exportData = await GetQGSuperviseSummaryAsync(input);
+                var result = new APIResultDto();
+                result.Code = 0;
+                result.Data = CreateQGSuperviseSummaryExcel("标办检查汇总.xlsx", exportData);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Logger.ErrorFormat("ExportQGSuperviseSummary errormsg{0} Exception{1}", ex.Message, ex);
+                return new APIResultDto() { Code = 901, Msg = "网络忙...请待会儿再试！" };
+
+            }
+        }
+
+
+        /// <summary>
+        /// 创建标办检查汇总表
+        /// </summary>
+        /// <param name="fileName">表名</param>
+        /// <param name="data">表数据</param>
+        /// <returns></returns>
+        private string CreateQGSuperviseSummaryExcel(string fileName, List<SuperviseSummaryDto> data)
+        {
+            var fullPath = ExcelHelper.GetSavePath(_hostingEnvironment.WebRootPath) + fileName;
+            using (var fs = new FileStream(fullPath, FileMode.Create, FileAccess.Write))
+            {
+                IWorkbook workbook = new XSSFWorkbook();
+                ISheet sheet = workbook.CreateSheet("InspectionRecorde");
+                var rowIndex = 0;
+                IRow titleRow = sheet.CreateRow(rowIndex);
+                string[] titles = { "部门", "抽查条数", "合格", "不合格", "未完成", "执行率", "达成率"};
+                var fontTitle = workbook.CreateFont();
+                fontTitle.IsBold = true;
+                for (int i = 0; i < titles.Length; i++)
+                {
+                    var cell = titleRow.CreateCell(i);
+                    cell.CellStyle.SetFont(fontTitle);
+                    cell.SetCellValue(titles[i]);
+                }
+                var font = workbook.CreateFont();
+                foreach (var item in data)
+                {
+                    rowIndex++;
+                    IRow row = sheet.CreateRow(rowIndex);
+                    ExcelHelper.SetCell(row.CreateCell(0), font, item.DeptName);
+                    ExcelHelper.SetCell(row.CreateCell(1), font, item.ExamineNum);
+                    ExcelHelper.SetCell(row.CreateCell(2), font, item.OkNum);
+                    ExcelHelper.SetCell(row.CreateCell(3), font, item.NotUpNum);
+                    ExcelHelper.SetCell(row.CreateCell(4), font, item.NotFinished);
+                    ExcelHelper.SetCell(row.CreateCell(5), font, item.ImplementRate);
+                    ExcelHelper.SetCell(row.CreateCell(6), font, item.ReachRate);
+                }
+                workbook.Write(fs);
+            }
+            return "/files/downloadtemp/" + fileName;
         }
     }
 }

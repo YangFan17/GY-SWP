@@ -96,11 +96,13 @@ namespace GYSWP.CriterionExamines
 
         public async Task<PagedResultDto<CriterionExamineListDto>> GetPaged(GetCriterionExaminesInput input)
         {
-
-            var query = _entityRepository.GetAll().Where(v => v.DeptId == input.DeptId && v.IsPublish == true);
+            var user = await GetCurrentUserAsync();
+            string deptId = await _employeeRepository.GetAll().Where(v => v.Id == user.EmployeeId).Select(v => v.Department).FirstOrDefaultAsync();
+            long orgId = await _organizationRepository.GetAll().Where(v => "[" + v.Id + "]" == deptId).Select(v => v.Id).FirstOrDefaultAsync();
+            var query = _entityRepository.GetAll().Where(v => v.CreatorDeptId == orgId && v.DeptId == input.DeptId && v.IsPublish == true);
             var count = await query.CountAsync();
             var entityList = await query
-                    .OrderBy(input.Sorting).AsNoTracking()
+                    .OrderByDescending(v=>v.CreationTime).AsNoTracking()
                     .PageBy(input)
                     .ToListAsync();
             var entityListDtos = entityList.MapTo<List<CriterionExamineListDto>>();
@@ -981,7 +983,7 @@ namespace GYSWP.CriterionExamines
                 entity.CreatorDeptId = organization.Id;
                 entity.CreatorDeptName = organization.DepartmentName;
                 DateTime date = DateTime.Now;
-                if (input.Type == GYEnums.CriterionExamineType.外部考核)
+                if (input.Type == GYEnums.CriterionExamineType.标办考核)
                 {
                     entity.Title = organization.DepartmentName + date.Year + "年" + date.Month + "月考核" + input.DeptName;
                 }
@@ -1352,7 +1354,7 @@ namespace GYSWP.CriterionExamines
             var query = _entityRepository.GetAll().Where(v => examineIds.Contains(v.Id) && v.IsPublish == true);
             var count = await query.CountAsync();
             var entityList = await query
-                    .OrderBy(input.Sorting).AsNoTracking()
+                    .OrderByDescending(v=>v.CreationTime).AsNoTracking()
                     .PageBy(input)
                     .ToListAsync();
             var entityListDtos = entityList.MapTo<List<CriterionExamineListDto>>();
@@ -1410,7 +1412,7 @@ namespace GYSWP.CriterionExamines
             var query = _entityRepository.GetAll().Where(v => v.CreatorDeptId == 59644078 && v.IsPublish == true);
             var count = await query.CountAsync();
             var entityList = await query
-                    .OrderBy(input.Sorting).AsNoTracking()
+                    .OrderByDescending(v=>v.CreationTime).AsNoTracking()
                     .PageBy(input)
                     .ToListAsync();
             var entityListDtos = entityList.MapTo<List<CriterionExamineListDto>>();
@@ -1449,19 +1451,19 @@ namespace GYSWP.CriterionExamines
             return await GetEmployeeIdsByDeptId(deptId);
         }
 
-        [AbpAllowAnonymous]
-        public async Task<bool> test(Guid[] id)
-        {
-            var list = await _entityRepository.GetAll().Where(v => id.ToArray().Contains(v.Id)).ToListAsync();
-            foreach (var item in list)
-            {
-                string[] str = item.Title.Split('月');
-                string end = str[1];
-                string up2 = str[0].Split('年')[0];
-                item.Title = up2 + "年7月" + end;
-                await _entityRepository.UpdateAsync(item);
-            }
-            return true;
-        }
+        //[AbpAllowAnonymous]
+        //public async Task<bool> test(Guid[] id)
+        //{
+        //    var list = await _entityRepository.GetAll().Where(v => id.ToArray().Contains(v.Id)).ToListAsync();
+        //    foreach (var item in list)
+        //    {
+        //        string[] str = item.Title.Split('月');
+        //        string end = str[1];
+        //        string up2 = str[0].Split('年')[0];
+        //        item.Title = up2 + "年7月" + end;
+        //        await _entityRepository.UpdateAsync(item);
+        //    }
+        //    return true;
+        //}
     }
 }

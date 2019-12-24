@@ -17,6 +17,7 @@ import { RevisionDraftComponent } from './standardrevision/revision-draft/revisi
 import { RevisionDetailComponent } from './standardrevision/revision-draft/revision-detail/revision-detail.component';
 import { DraftDetailComponent } from './standardrevision/revision-draft/draft-detail/draft-detail.component';
 import { ActiveCategoryComponent } from './standardrevision/active-category/active-category.component';
+import { SuperviseSummaryComponent } from './supervise/supervise-summary/supervise-summary.component';
 
 
 @NgModule({
@@ -41,7 +42,8 @@ import { ActiveCategoryComponent } from './standardrevision/active-category/acti
         RevisionDraftComponent,
         RevisionDetailComponent,
         DraftDetailComponent,
-        ActiveCategoryComponent
+        ActiveCategoryComponent,
+        SuperviseSummaryComponent
     ],
     entryComponents: [
         InspectComponent,
@@ -55,7 +57,8 @@ import { ActiveCategoryComponent } from './standardrevision/active-category/acti
         RevisionDraftComponent,
         RevisionDetailComponent,
         DraftDetailComponent,
-        ActiveCategoryComponent
+        ActiveCategoryComponent,
+        SuperviseSummaryComponent
     ]
 })
 export class ReportsModule { }

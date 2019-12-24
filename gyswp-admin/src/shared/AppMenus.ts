@@ -132,6 +132,12 @@ export class AppMenus {
                     link: "/app/reports/adviseReport",
                     reuse: false,
                     acl: ["QiGuanAdmin", "Admin"],// 权限
+                },
+                {
+                    text: "标办检查汇总",
+                    link: "/app/reports/supervise-summary",
+                    reuse: false,
+                    acl: ["QiGuanAdmin", "Admin"],// 权限
                 }
             ]
         },

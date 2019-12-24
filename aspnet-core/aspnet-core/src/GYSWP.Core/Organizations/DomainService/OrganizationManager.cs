@@ -52,6 +52,7 @@ namespace GYSWP.Organizations.DomainService
 			throw new NotImplementedException();
 		}
 
+        #region 获取当前用户根部门Id
         /// <summary>
         /// 获取当前用户根部门Id
         /// </summary>
@@ -97,5 +98,6 @@ namespace GYSWP.Organizations.DomainService
             }
             return resultId;
         }
+        #endregion
     }
 }

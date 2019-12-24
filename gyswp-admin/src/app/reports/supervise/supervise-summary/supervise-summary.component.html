@@ -1,0 +1,67 @@
+<page-header [title]=""></page-header>
+<nz-card>
+    <div nz-row>
+        <div nz-col nzSpan="24">
+            <form nz-form [nzLayout]="'inline'">
+                <div nz-row [nzGutter]="18">
+                    <div nz-col [nzSpan]="8" class="mb-md">
+                        <nz-form-item class="d-flex" style="margin-bottom: 0px;">
+                            <nz-form-label nzFor="month">时间范围</nz-form-label>
+                            <nz-form-control class="flex-1">
+                                <nz-range-picker name="dateRange" [(ngModel)]="dateRange"
+                                    (ngModelChange)="onChange($event)">
+                                </nz-range-picker>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <div nz-col [nzSpan]="8" class="mb-md right" [class.text-right]="'true'" style="float: right;">
+                        <nz-form-item class="d-flex" style="margin-right: 0px;margin-bottom: 0px;">
+                            <nz-form-control class="flex-1">
+                                <button nz-button type="button" (click)="refreshData()" nzType="primary"
+                                    [nzLoading]="isTableLoading">
+                                    查询</button>
+                                <button nz-button type="button" (click)="reset()" class="mx-sm">重置</button>
+                                <a style="display: none;" id="exportUrl" href="#">
+                                    <button type="button" id="btnExportHref">隐藏下载</button>
+                                </a>
+                                <button nz-button type="button" (click)="export()" [nzLoading]="exportLoading">
+                                    <i class="anticon anticon-download"></i>
+                                    <span>导出</span>
+                                </button>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                </div>
+            </form>
+            <nz-table #nzTable [nzFrontPagination]="false" [nzShowPagination]="false" [nzHideOnSinglePage]="'true'"
+                [nzData]="dataList" [nzLoading]="isTableLoading">
+                <thead>
+                    <tr>
+                        <th>部门</th>
+                        <th>抽查条数</th>
+                        <th>合格</th>
+                        <th>不合格</th>
+                        <th>未完成</th>
+                        <th>执行率</th>
+                        <th>达成率</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of nzTable.data">
+                        <td>{{item.deptName}}</td>
+                        <td>{{item.examineNum}}</td>
+                        <td>{{item.okNum}}</td>
+                        <td>{{item.notUpNum}}</td>
+                        <td>{{item.notFinished}}</td>
+                        <td>
+                            {{item.implementRate}}
+                        </td>
+                        <td>
+                            {{item.reachRate}}
+                        </td>
+                    </tr>
+                </tbody>
+            </nz-table>
+        </div>
+    </div>
+</nz-card>

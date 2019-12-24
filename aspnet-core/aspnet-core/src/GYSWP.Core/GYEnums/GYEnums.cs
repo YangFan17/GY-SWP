@@ -57,7 +57,8 @@ namespace GYSWP.GYEnums
     public enum CriterionExamineType
     {
         内部考核 = 1,
-        外部考核 = 2
+        外部考核 = 2,
+        标办考核 = 3
     }
     public enum ExamineStatus
     {
