@@ -22,7 +22,8 @@
                     <td>{{item.name}}</td>
                     <td>{{item.categoryDesc}}</td>
                     <td *ngIf="type != '1'">{{item.clauseNum}}</td>
-                    <td *ngIf="type != '1'">{{item.creationUserName != null? item.creationUserName :'-'}}</td>
+                    <td *ngIf="type != '1' && type!= '6'">{{item.creationUserName != null? item.creationUserName :'-'}}
+                    </td>
                     <td>{{item.creationTime | date: "yyyy-MM-dd"}}</td>
                     <td *ngIf="type != '6'">
                         <a (click)="goDetail(item.id)">详情</a>
