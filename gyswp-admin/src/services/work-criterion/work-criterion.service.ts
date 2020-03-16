@@ -280,6 +280,13 @@ export class WorkCriterionService {
         }));
     }
 
+    getRevisedAttachmentByIdAsync(params: any): Observable<Attachment[]> {
+        let url_ = "/api/services/app/DocAttachment/GetRevisedAttachmentByIdAsync";
+        return this._commonhttp.get(url_, params).pipe(map(data => {
+            return Attachment.fromJSArray(data);
+        }));
+    }
+
     createExamineResultAsync(input: any): Observable<any> {
         let url_ = "/api/services/app/ExamineResult/CreateOrUpdate";
         let result = { examineResult: input };

@@ -23,6 +23,8 @@ using GYSWP.ExamineResults.Dtos;
 using GYSWP.ExamineResults.DomainService;
 using GYSWP.Dtos;
 using GYSWP.ExamineDetails;
+using GYSWP.DingDingApproval;
+using GYSWP.Documents;
 
 namespace GYSWP.ExamineResults
 {
@@ -35,6 +37,8 @@ namespace GYSWP.ExamineResults
         private readonly IRepository<ExamineResult, Guid> _entityRepository;
         private readonly IRepository<ExamineDetail, Guid> _examineDetailRepository;
         private readonly IExamineResultManager _entityManager;
+        private readonly IApprovalAppService _approvalAppService;
+        private readonly IRepository<Document, Guid> _documentRepository;
 
         /// <summary>
         /// 构造函数 
@@ -43,11 +47,15 @@ namespace GYSWP.ExamineResults
         IRepository<ExamineResult, Guid> entityRepository
         ,IExamineResultManager entityManager
         , IRepository<ExamineDetail, Guid> examineDetailRepository
+        , IRepository<Document, Guid> documentRepository
+        , IApprovalAppService approvalAppService
         )
         {
             _entityRepository = entityRepository; 
              _entityManager=entityManager;
             _examineDetailRepository = examineDetailRepository;
+            _documentRepository = documentRepository;
+            _approvalAppService = approvalAppService;
         }
 
 
@@ -219,6 +227,8 @@ ExamineResultEditDto editDto;
 
             var result = await _entityRepository.FirstOrDefaultAsync(v => v.Id == input.Id);
             result.FailReason = input.FailReason;
+            string docName = await _documentRepository.GetAll().Where(v => v.Id == detail.DocumentId).Select(v => v.Name).FirstOrDefaultAsync();
+            _approvalAppService.SendExamineResultAsync(detail.EmployeeId, detail.Result.ToString(), docName);
             return new APIResultDto() { Code = 0, Msg = "保存成功", Data = detail.Id };
         }
     }

@@ -236,6 +236,24 @@ namespace GYSWP.DocAttachments
                 }).ToListAsync();
             return list;
         }
+
+        /// <summary>
+        /// 制修订附件查询
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<List<DocAttachmentDto>> GetRevisedAttachmentByIdAsync(GetDocAttachmentsInput input)
+        {
+            var list = await _entityRepository.GetAll().Where(v => v.Type == GYEnums.AttachmentType.制修订附件 && v.BLL == input.BllId)
+                .Select(v => new DocAttachmentDto
+                {
+                    Id = v.Id,
+                    Name = v.Name,
+                    FileSize = v.FileSize,
+                    Path = v.Path
+                }).ToListAsync();
+            return list;
+        }
         //public async Task<DocAttachmentDto> GetCriterionAttachmentByIdAsync(GetDocAttachmentsInput input)
         //{
         //    var entity = await _entityRepository.GetAll().Where(v => v.Type == GYEnums.AttachmentType.标准附件 && v.BLL == input.BllId)

@@ -93,7 +93,8 @@ namespace GYSWP.GYEnums
     {
         标准附件 = 1,
         条款附件 = 2,
-        考核附件 = 3
+        考核附件 = 3,
+        制修订附件 = 4
     }
 
     public enum LC_AttachmentType

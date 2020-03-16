@@ -4,7 +4,7 @@
     </h3>
     <div nz-row>
         <nz-alert nzType="info"
-            nzMessage="当前共操作 {{dataCount.total}} 条，包括：新增 {{dataCount.cnumber}}， 修订 {{dataCount.unumber}}，删除 {{dataCount.dnumber}}（注：若修订相同条款，则默认采纳最后一次修订）"
+            nzMessage="当前共操作 {{dataCount.total}} 条，包括：新增 {{dataCount.cnumber}}， 修订 {{dataCount.unumber}}，删除 {{dataCount.dnumber}}（注：①若修订相同条款，则默认采纳最后一次修订；②请上传'企业标准意见征求表'）"
             nzShowIcon>
         </nz-alert>
     </div>
@@ -47,14 +47,38 @@
             </nz-table>
         </div>
     </div>
-    <!-- </div> -->
+
+    <div style="margin:30px;">
+        <nz-list class="demo-loadmore-list" [nzDataSource]="attachmentList" [nzItemLayout]="'horizontal'"
+            nzHeader="附件列表" [nzRenderItem]="item" style="margin-top: 40px;">
+            <ng-template #item let-item>
+                <nz-list-item style="padding-top: 2px;padding-bottom: 2px;" [nzActions]="[delete]">
+                    <ng-template #delete><a style="color:#ff4d4f;" (click)="deleteAttachment(item.uid)">删除</a>
+                    </ng-template>
+                    <nz-list-item-meta style="text-align: left;" [nzDescription]="nzDescription">
+                    </nz-list-item-meta>
+                    <ng-template #nzDescription>
+                        <a href="{{item.url | fileUrl}}" target="_blank">{{item.name}}</a>
+                    </ng-template>
+                </nz-list-item>
+            </ng-template>
+        </nz-list>
+    </div>
     <!-- 功能按钮 -->
     <div class="custom-modal-footer" style="text-align: right;">
         <div class="custom-modal-footter-group">
             <button nz-button type="button" [disabled]="saving" (click)="close()">
                 取消
             </button>
-            <button nz-button [nzType]="'primary'" type="button" (click)="saveRevised()" [nzLoading]="saving">
+            <nz-upload style="margin-left: 10px; margin-right: 10px;" [nzDisabled]="uploadLoading"
+                nzAction="{{postUrl | hostUrl}}" [nzShowUploadList]="false" (nzChange)="handleChange($event)"
+                [nzBeforeUpload]="beforeUpload">
+                <button nz-button>
+                    <i nz-icon type="cloud-upload" class="anticon anticon-upload"></i><span>上传附件</span>
+                </button>
+            </nz-upload>
+            <button nz-button [nzType]="'primary'" type="button" (click)="saveRevised()"
+                [disabled]="attachmentList.length == 0" [nzLoading]="saving">
                 提交制修订
             </button>
         </div>

@@ -93,5 +93,6 @@ namespace GYSWP.DocAttachments
         /// <returns></returns>
         Task<List<DocAttachmentDto>> GetCriterionAttachmentByIdAsync(GetDocAttachmentsInput input);
         Task<APIResultDto> GetPreviewDocByIdAsync(EntityDto<Guid> input);
+        Task<List<DocAttachmentDto>> GetRevisedAttachmentByIdAsync(GetDocAttachmentsInput input);
     }
 }

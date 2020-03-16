@@ -27,6 +27,7 @@ using GYSWP.Employees.Dtos;
 using GYSWP.DingDing.Dtos;
 using GYSWP.DingDing;
 using GYSWP.DingDingApproval;
+using Abp.Runtime.Caching;
 
 namespace GYSWP.Organizations
 {
@@ -41,6 +42,7 @@ namespace GYSWP.Organizations
         private readonly IOrganizationManager _entityManager;
         private readonly IDingDingAppService _dingDingAppService;
         private readonly IApprovalAppService _approvalAppService;
+        //private readonly ICacheManager _cacheManager;
 
         /// <summary>
         /// 构造函数 
@@ -51,6 +53,7 @@ namespace GYSWP.Organizations
         , IOrganizationManager entityManager
         , IDingDingAppService dingDingAppService
         , IApprovalAppService approvalAppService
+        //, ICacheManager cacheManager
         )
         {
             _entityRepository = entityRepository;
@@ -58,6 +61,7 @@ namespace GYSWP.Organizations
             _entityManager = entityManager;
             _dingDingAppService = dingDingAppService;
             _approvalAppService = approvalAppService;
+            //_cacheManager = cacheManager;
         }
 
 
@@ -204,6 +208,29 @@ namespace GYSWP.Organizations
             // TODO:批量删除前的逻辑判断，是否允许删除
             await _entityRepository.DeleteAsync(s => input.Contains(s.Id));
         }
+
+        //public async Task<object> TestCacheAsync()
+        //{
+        //    var cache = _cacheManager.GetCache("Org");
+        //    //var list = cache as OrganizationListDto;
+        //    var list = await cache.GetOrDefaultAsync("AllDept");
+        //    return list;
+        //}
+
+        //public async Task<object> TestCreateCacheAsync()
+        //{
+        //    var organizationList = await (from o in _entityRepository.GetAll()
+        //                                  select new OrganizationListDto()
+        //                                  {
+        //                                      Id = o.Id,
+        //                                      DepartmentName = o.DepartmentName,
+        //                                      OrgDeptName = o.DepartmentName,
+        //                                      ParentId = o.ParentId,
+        //                                      Order = o.Order
+        //                                  }).OrderBy(v => v.Order).ToListAsync();
+        //    await _cacheManager.GetCache("Org").SetAsync("AllDept", organizationList,TimeSpan.FromMinutes(60));
+        //    return null;
+        //}
 
         /// <summary>
         /// 按需获取组织架构(带人统计)

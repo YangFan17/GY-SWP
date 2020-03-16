@@ -311,5 +311,53 @@ namespace GYSWP.Web.Host.Controllers
             }
             return Task.FromResult((IActionResult)Ok(returnUrl));
         }
+
+        /// <summary>
+        /// 企业标准意见征求表上传
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        [RequestFormSizeLimit(valueCountLimit: 2147483647)]
+        [HttpPost]
+        [AbpAllowAnonymous]
+        public async Task<IActionResult> RevisedFilePostsAsync(IFormFile[] file)
+        {
+            var date = Request;
+            var files = Request.Form.Files;
+            var filePath = string.Empty;
+            var returnUrl = string.Empty;
+            var fileName = string.Empty;
+            long fileSize = 0;
+            string fileExt = string.Empty;
+
+            foreach (var formFile in files)
+            {
+                if (formFile.Length > 0)
+                {
+                    fileName = formFile.FileName.Substring(0, formFile.FileName.LastIndexOf('.'));
+                    fileExt = Path.GetExtension(formFile.FileName); //文件扩展名，不含“.”
+                    fileSize = formFile.Length; //获得文件大小，以字节为单位
+                    var uid = Guid.NewGuid().ToString();
+                    string newFileName = uid + fileExt; //随机生成新的文件名
+                    var fileDire = @"C:\gyswpData\revisedfiles/";
+                    if (!Directory.Exists(fileDire))
+                    {
+                        Directory.CreateDirectory(fileDire);
+                    }
+                    filePath = fileDire + newFileName;
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await formFile.CopyToAsync(stream);
+                    }
+
+                    returnUrl = "/revisedfiles/" + newFileName;
+                }
+            }
+            var apiResult = new APIResultDto();
+            apiResult.Code = 0;
+            apiResult.Msg = "上传文件成功";
+            apiResult.Data = new { name = fileName, size = fileSize, ext = fileExt, url = returnUrl };
+            return Json(apiResult);
+        }
     }
 }

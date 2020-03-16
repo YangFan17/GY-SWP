@@ -27,6 +27,7 @@ using GYSWP.Dtos;
 using GYSWP.CriterionExamines;
 using Abp.Auditing;
 using Abp.Domain.Uow;
+using GYSWP.DingDingApproval;
 
 namespace GYSWP.ExamineDetails
 {
@@ -41,6 +42,7 @@ namespace GYSWP.ExamineDetails
         private readonly IRepository<Document, Guid> _documentRepository;
         private readonly IExamineDetailManager _entityManager;
         private readonly IRepository<CriterionExamine, Guid> _criterionExamineRepository;
+        private readonly IApprovalAppService _approvalAppService;
 
         /// <summary>
         /// 构造函数 
@@ -51,6 +53,7 @@ namespace GYSWP.ExamineDetails
         , IRepository<Clause, Guid> clauseRepository
         , IRepository<Document, Guid> documentRepository
         , IRepository<CriterionExamine, Guid> criterionExamineRepository
+        , IApprovalAppService approvalAppService
         )
         {
             _entityRepository = entityRepository;
@@ -58,6 +61,7 @@ namespace GYSWP.ExamineDetails
             _clauseRepository = clauseRepository;
             _documentRepository = documentRepository;
             _criterionExamineRepository = criterionExamineRepository;
+            _approvalAppService = approvalAppService;
         }
 
 
@@ -259,7 +263,8 @@ namespace GYSWP.ExamineDetails
                             EmployeeName = q.EmployeeName
                         });
             var count = await list.CountAsync();
-            var entityList = await list.OrderBy(v => v.Status).ThenByDescending(v => v.Result).ThenBy(v => v.EmployeeName).ThenBy(v => v.DocumentName).PageBy(input).ToListAsync();
+            var entityList = await list.OrderBy(v => v.Result).ThenByDescending(v => v.Status).ThenBy(v => v.EmployeeName).ThenBy(v => v.DocumentName).PageBy(input).ToListAsync();
+            //var entityList = await list.OrderBy(v => v.Status).ThenByDescending(v => v.Result).ThenBy(v => v.EmployeeName).ThenBy(v => v.DocumentName).PageBy(input).ToListAsync();
             return new PagedResultDto<ExamineRecordDto>(count, entityList);
         }
 
@@ -336,6 +341,8 @@ namespace GYSWP.ExamineDetails
             var entity = await _entityRepository.FirstOrDefaultAsync(v => v.Id == input.Id);
             entity.Result = input.Result;
             await _entityRepository.UpdateAsync(entity);
+            string docName = await _documentRepository.GetAll().Where(v => v.Id == entity.DocumentId).Select(v => v.Name).FirstOrDefaultAsync();
+            _approvalAppService.SendExamineResultAsync(entity.EmployeeId,entity.Result.ToString(),docName);
             return new APIResultDto() { Code = 0, Msg = "保存成功", Data = entity.Id };
         }
 
